@@ -9,7 +9,7 @@ public class SumoClient : MonoBehaviour
 	public static SumoClient Instance { get; private set; }
 	public class OnReadCompleteEventArgs : EventArgs
 	{
-		public List<VehicleData> vehicles;
+		public List<CarData> vehicles;
 	}
 	public event EventHandler<OnReadCompleteEventArgs> OnReadComplete;
 
@@ -24,11 +24,11 @@ public class SumoClient : MonoBehaviour
 	{
 		Instance = this;
 	}
-	private void Start()
-	{
-		string fullPath = Path.GetFullPath(filePath);
-		Debug.Log("Đường dẫn đầy đủ: " + fullPath);
-	}
+	//private void Start()
+	//{
+	//	string fullPath = Path.GetFullPath(filePath);
+	//	Debug.Log("Đường dẫn đầy đủ: " + fullPath);
+	//}
 	void Update()
 	{
 		if (File.Exists(lockFilePath))
@@ -54,19 +54,12 @@ public class SumoClient : MonoBehaviour
 			using (StreamReader sr = new StreamReader(fs))
 			{
 				string jsonContent = sr.ReadToEnd();
-
 				// Kiểm tra nếu dữ liệu không thay đổi thì không parse lại
 				if (jsonContent == lastJson) return;
 				lastJson = jsonContent;
-
-				List<VehicleData> vehicles = JsonConvert.DeserializeObject<List<VehicleData>>(jsonContent);
+				//Debug.Log(jsonContent);
+				List<CarData> vehicles = JsonConvert.DeserializeObject<List<CarData>>(jsonContent);
 				OnReadComplete?.Invoke(this, new OnReadCompleteEventArgs { vehicles = vehicles });
-
-				foreach (var vehicle in vehicles)
-				{
-					Vector2 position = new Vector2(vehicle.position[0], vehicle.position[1]);
-					//Debug.Log($"ID: {vehicle.id}, Position: {position}, Speed: {vehicle.speed}, Lane: {vehicle.lane}");
-				}
 			}
 		}
 		catch (Exception e)
