@@ -1,0 +1,698 @@
+﻿[
+    {
+        "id": "-E0",
+        "startRoadLane": {
+            "x": 0.02,
+            "y": 100.09
+        },
+        "endRoadLane": {
+            "x": -1.38,
+            "y": 13.85
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": -8.98,
+            "y": 100.23
+        },
+        "endWalkingLane": {
+            "x": -10.38,
+            "y": 13.99
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": -1.4,
+            "y": -86.24000000000001
+        },
+        "position": {
+            "x": -0.6799999999999999,
+            "y": 56.97
+        }
+    },
+    {
+        "id": "-E1",
+        "startRoadLane": {
+            "x": 111.35,
+            "y": 1.9
+        },
+        "endRoadLane": {
+            "x": 13.82,
+            "y": 1.64
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": 111.33,
+            "y": 10.9
+        },
+        "endWalkingLane": {
+            "x": 13.79,
+            "y": 10.64
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": -97.53,
+            "y": -0.26
+        },
+        "position": {
+            "x": 62.584999999999994,
+            "y": 1.77
+        }
+    },
+    {
+        "id": "-E10",
+        "startRoadLane": {
+            "x": -117.69,
+            "y": -105.34
+        },
+        "endRoadLane": {
+            "x": -118.35,
+            "y": -14.35
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": -108.69,
+            "y": -105.27
+        },
+        "endWalkingLane": {
+            "x": -109.35,
+            "y": -14.28
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": -0.6599999999999966,
+            "y": 90.99000000000001
+        },
+        "position": {
+            "x": -118.02,
+            "y": -59.845
+        }
+    },
+    {
+        "id": "-E11",
+        "startRoadLane": {
+            "x": -13.54,
+            "y": -115.0
+        },
+        "endRoadLane": {
+            "x": -107.67,
+            "y": -115.27
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": -13.56,
+            "y": -106.0
+        },
+        "endWalkingLane": {
+            "x": -107.69,
+            "y": -106.27
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": -94.13,
+            "y": -0.269999999999996
+        },
+        "position": {
+            "x": -60.605000000000004,
+            "y": -115.13499999999999
+        }
+    },
+    {
+        "id": "-E2",
+        "startRoadLane": {
+            "x": -106.25,
+            "y": -2.26
+        },
+        "endRoadLane": {
+            "x": -13.66,
+            "y": -1.69
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": -106.19,
+            "y": -11.26
+        },
+        "endWalkingLane": {
+            "x": -13.6,
+            "y": -10.69
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": 92.59,
+            "y": 0.5699999999999998
+        },
+        "position": {
+            "x": -59.955,
+            "y": -1.9749999999999999
+        }
+    },
+    {
+        "id": "-E3",
+        "startRoadLane": {
+            "x": 1.64,
+            "y": -102.75
+        },
+        "endRoadLane": {
+            "x": 1.6,
+            "y": -13.67
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": 10.64,
+            "y": -102.75
+        },
+        "endWalkingLane": {
+            "x": 10.6,
+            "y": -13.67
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": -0.039999999999999813,
+            "y": 89.08
+        },
+        "position": {
+            "x": 1.62,
+            "y": -58.21
+        }
+    },
+    {
+        "id": "-E4",
+        "startRoadLane": {
+            "x": 127.72,
+            "y": -102.77
+        },
+        "endRoadLane": {
+            "x": 126.82,
+            "y": -13.16
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": 136.72,
+            "y": -102.68
+        },
+        "endWalkingLane": {
+            "x": 135.82,
+            "y": -13.07
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": -0.9000000000000057,
+            "y": 89.61
+        },
+        "position": {
+            "x": 127.27,
+            "y": -57.964999999999996
+        }
+    },
+    {
+        "id": "-E5",
+        "startRoadLane": {
+            "x": 13.87,
+            "y": -117.91
+        },
+        "endRoadLane": {
+            "x": 114.75,
+            "y": -116.1
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": 14.03,
+            "y": -126.91
+        },
+        "endWalkingLane": {
+            "x": 114.92,
+            "y": -125.1
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": 100.88,
+            "y": 1.8100000000000023
+        },
+        "position": {
+            "x": 64.31,
+            "y": -117.005
+        }
+    },
+    {
+        "id": "-E6",
+        "startRoadLane": {
+            "x": 112.06,
+            "y": 115.08
+        },
+        "endRoadLane": {
+            "x": 15.28,
+            "y": 115.3
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": 112.09,
+            "y": 124.08
+        },
+        "endWalkingLane": {
+            "x": 15.3,
+            "y": 124.3
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": -96.78,
+            "y": 0.21999999999999886
+        },
+        "position": {
+            "x": 63.67,
+            "y": 115.19
+        }
+    },
+    {
+        "id": "-E7",
+        "startRoadLane": {
+            "x": 126.49,
+            "y": 14.1
+        },
+        "endRoadLane": {
+            "x": 125.23,
+            "y": 102.07
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": 135.49,
+            "y": 14.23
+        },
+        "endWalkingLane": {
+            "x": 134.23,
+            "y": 102.19
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": -1.259999999999991,
+            "y": 87.97
+        },
+        "position": {
+            "x": 125.86,
+            "y": 58.084999999999994
+        }
+    },
+    {
+        "id": "-E8",
+        "startRoadLane": {
+            "x": -107.31,
+            "y": 113.24
+        },
+        "endRoadLane": {
+            "x": -11.85,
+            "y": 112.27
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": -107.4,
+            "y": 104.24
+        },
+        "endWalkingLane": {
+            "x": -11.94,
+            "y": 103.27
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": 95.46000000000001,
+            "y": -0.9699999999999989
+        },
+        "position": {
+            "x": -59.58,
+            "y": 112.755
+        }
+    },
+    {
+        "id": "-E9",
+        "startRoadLane": {
+            "x": -118.31,
+            "y": 13.02
+        },
+        "endRoadLane": {
+            "x": -117.41,
+            "y": 103.34
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": -109.31,
+            "y": 12.93
+        },
+        "endWalkingLane": {
+            "x": -108.41,
+            "y": 103.25
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": 0.9000000000000057,
+            "y": 90.32000000000001
+        },
+        "position": {
+            "x": -117.86,
+            "y": 58.18
+        }
+    },
+    {
+        "id": "E0",
+        "startRoadLane": {
+            "x": 1.82,
+            "y": 13.79
+        },
+        "endRoadLane": {
+            "x": 3.22,
+            "y": 100.04
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": 10.82,
+            "y": 13.65
+        },
+        "endWalkingLane": {
+            "x": 12.22,
+            "y": 99.89
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": 1.4000000000000001,
+            "y": 86.25
+        },
+        "position": {
+            "x": 2.52,
+            "y": 56.915000000000006
+        }
+    },
+    {
+        "id": "E1",
+        "startRoadLane": {
+            "x": 13.83,
+            "y": -1.56
+        },
+        "endRoadLane": {
+            "x": 111.36,
+            "y": -1.3
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": 13.85,
+            "y": -10.56
+        },
+        "endWalkingLane": {
+            "x": 111.38,
+            "y": -10.3
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": 97.53,
+            "y": 0.26
+        },
+        "position": {
+            "x": 62.595,
+            "y": -1.4300000000000002
+        }
+    },
+    {
+        "id": "E10",
+        "startRoadLane": {
+            "x": -121.55,
+            "y": -14.37
+        },
+        "endRoadLane": {
+            "x": -120.89,
+            "y": -105.36
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": -130.55,
+            "y": -14.44
+        },
+        "endWalkingLane": {
+            "x": -129.89,
+            "y": -105.43
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": 0.6599999999999966,
+            "y": -90.99
+        },
+        "position": {
+            "x": -121.22,
+            "y": -59.865
+        }
+    },
+    {
+        "id": "E11",
+        "startRoadLane": {
+            "x": -107.66,
+            "y": -118.47
+        },
+        "endRoadLane": {
+            "x": -13.53,
+            "y": -118.2
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": -107.63,
+            "y": -127.47
+        },
+        "endWalkingLane": {
+            "x": -13.5,
+            "y": -127.2
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": 94.13,
+            "y": 0.269999999999996
+        },
+        "position": {
+            "x": -60.595,
+            "y": -118.33500000000001
+        }
+    },
+    {
+        "id": "E2",
+        "startRoadLane": {
+            "x": -13.68,
+            "y": 1.51
+        },
+        "endRoadLane": {
+            "x": -106.27,
+            "y": 0.94
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": -13.73,
+            "y": 10.51
+        },
+        "endWalkingLane": {
+            "x": -106.33,
+            "y": 9.94
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": -92.59,
+            "y": -0.5700000000000001
+        },
+        "position": {
+            "x": -59.974999999999994,
+            "y": 1.225
+        }
+    },
+    {
+        "id": "E3",
+        "startRoadLane": {
+            "x": -1.6,
+            "y": -13.67
+        },
+        "endRoadLane": {
+            "x": -1.56,
+            "y": -102.75
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": -10.6,
+            "y": -13.67
+        },
+        "endWalkingLane": {
+            "x": -10.56,
+            "y": -102.76
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": 0.040000000000000036,
+            "y": -89.08
+        },
+        "position": {
+            "x": -1.58,
+            "y": -58.21
+        }
+    },
+    {
+        "id": "E4",
+        "startRoadLane": {
+            "x": 123.62,
+            "y": -13.19
+        },
+        "endRoadLane": {
+            "x": 124.52,
+            "y": -102.8
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": 114.62,
+            "y": -13.28
+        },
+        "endWalkingLane": {
+            "x": 115.52,
+            "y": -102.89
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": 0.8999999999999915,
+            "y": -89.61
+        },
+        "position": {
+            "x": 124.07,
+            "y": -57.995
+        }
+    },
+    {
+        "id": "E5",
+        "startRoadLane": {
+            "x": 114.7,
+            "y": -112.9
+        },
+        "endRoadLane": {
+            "x": 13.82,
+            "y": -114.71
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": 114.53,
+            "y": -103.9
+        },
+        "endWalkingLane": {
+            "x": 13.65,
+            "y": -105.71
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": -100.88,
+            "y": -1.809999999999988
+        },
+        "position": {
+            "x": 64.26,
+            "y": -113.805
+        }
+    },
+    {
+        "id": "E6",
+        "startRoadLane": {
+            "x": 15.28,
+            "y": 112.1
+        },
+        "endRoadLane": {
+            "x": 112.06,
+            "y": 111.88
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": 15.26,
+            "y": 103.1
+        },
+        "endWalkingLane": {
+            "x": 112.04,
+            "y": 102.88
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": 96.78,
+            "y": -0.21999999999999886
+        },
+        "position": {
+            "x": 63.67,
+            "y": 111.99
+        }
+    },
+    {
+        "id": "E7",
+        "startRoadLane": {
+            "x": 122.03,
+            "y": 102.02
+        },
+        "endRoadLane": {
+            "x": 123.29,
+            "y": 14.05
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": 113.03,
+            "y": 101.89
+        },
+        "endWalkingLane": {
+            "x": 114.29,
+            "y": 13.92
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": 1.2600000000000051,
+            "y": -87.97
+        },
+        "position": {
+            "x": 122.66,
+            "y": 58.035
+        }
+    },
+    {
+        "id": "E8",
+        "startRoadLane": {
+            "x": -11.81,
+            "y": 115.47
+        },
+        "endRoadLane": {
+            "x": -107.27,
+            "y": 116.44
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": -11.72,
+            "y": 124.47
+        },
+        "endWalkingLane": {
+            "x": -107.18,
+            "y": 125.44
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": -95.46,
+            "y": 0.9699999999999989
+        },
+        "position": {
+            "x": -59.54,
+            "y": 115.955
+        }
+    },
+    {
+        "id": "E9",
+        "startRoadLane": {
+            "x": -120.61,
+            "y": 103.37
+        },
+        "endRoadLane": {
+            "x": -121.51,
+            "y": 13.06
+        },
+        "roadNum": 3,
+        "startWalkingLane": {
+            "x": -129.61,
+            "y": 103.46
+        },
+        "endWalkingLane": {
+            "x": -130.51,
+            "y": 13.15
+        },
+        "walkingNum": 1,
+        "direction": {
+            "x": -0.9000000000000057,
+            "y": -90.31
+        },
+        "position": {
+            "x": -121.06,
+            "y": 58.215
+        }
+    }
+]
