@@ -5,6 +5,7 @@ using System;
 
 public class TrafficerManager : MonoBehaviour
 {
+	public static TrafficerManager Instance { get; private set; }
 	public const string CAR = "Car";
 	public const string PEDESTRIAN = "Pedestrian";
 
@@ -12,6 +13,12 @@ public class TrafficerManager : MonoBehaviour
 	[SerializeField] private Pedestrian[] pedestrianPrefabs;
 	private List<Trafficer> existTrafficers = new List<Trafficer>();
 	private Dictionary<string, Trafficer> trafficerDict = new Dictionary<string, Trafficer>();
+
+	private void Awake()
+	{
+		Instance = this;
+	}
+
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
     {
@@ -51,9 +58,7 @@ public class TrafficerManager : MonoBehaviour
 			{
 				if (!trafficer.isExist)
 				{
-					trafficerDict.Remove(trafficer.GetId());
-					existTrafficers.Remove(trafficer);
-					Destroy(trafficer.gameObject);
+					DestroyTrafficer(trafficer);
 				}
 			}
 		}
@@ -77,5 +82,15 @@ public class TrafficerManager : MonoBehaviour
 		newPedestrian.Set(p);
 		existTrafficers.Add(newPedestrian);
 		trafficerDict.Add(newPedestrian.GetId(), newPedestrian);
+	}
+	public List<Trafficer> GetTrafficers()
+	{
+		return existTrafficers;
+	}
+	private void DestroyTrafficer(Trafficer trafficer)
+	{
+		trafficerDict.Remove(trafficer.GetId());
+		existTrafficers.Remove(trafficer);
+		Destroy(trafficer.gameObject);
 	}
 }

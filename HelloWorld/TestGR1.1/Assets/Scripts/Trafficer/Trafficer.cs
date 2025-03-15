@@ -1,12 +1,14 @@
+using System;
 using System.Xml.Serialization;
 using UnityEngine;
 
 public abstract class Trafficer : MonoBehaviour
 {
-    private string id = null;
+	private string id = null;
 	private Vector3 destination;
 	private float speed;
     private Vector3 lastPosition;
+	[SerializeField] private Transform cameraHolder;
 
 	public bool isExist = true;
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -53,5 +55,17 @@ public abstract class Trafficer : MonoBehaviour
 		SetId(trafficerData.id);
 		SetDestination(new Vector3(trafficerData.position[0], 0, trafficerData.position[1]));
 		SetSpeed(trafficerData.speed);
+	}
+	public Transform GetCameraHolder()
+	{
+		return cameraHolder;
+	}
+	private void OnDestroy()
+	{
+		CameraController cmC = cameraHolder.GetComponentInChildren<CameraController>();
+		if ( cmC != null)
+		{
+			cmC.SetRandomTrafficerView();
+		}
 	}
 }

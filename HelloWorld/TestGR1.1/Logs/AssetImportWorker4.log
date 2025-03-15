@@ -1,0 +1,698 @@
+Using pre-set license
+Built from '6000.0/staging' branch; Version is '6000.0.41f1 (46e447368a18) revision 4645959'; Using compiler version '193933523'; Build Type 'Release'
+OS: 'Windows 11  (10.0.26100) 64bit CoreSingleLanguage' Language: 'en' Physical Memory: 16068 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 1
+
+COMMAND LINE ARGUMENTS:
+D:\ProgramData\Unity\6000.0.41f1\Editor\Unity.exe
+-adb2
+-batchMode
+-noUpm
+-name
+AssetImportWorker4
+-projectPath
+D:/program/SUMO1/HelloWorld/TestGR1.1
+-logFile
+Logs/AssetImportWorker4.log
+-srvPort
+49799
+-job-worker-count
+7
+-background-job-worker-count
+8
+-gc-helper-count
+1
+Successfully changed project path to: D:/program/SUMO1/HelloWorld/TestGR1.1
+D:/program/SUMO1/HelloWorld/TestGR1.1
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+Player connection [1388]  Target information:
+
+Player connection [1388]  * "[IP] 192.168.0.103 [Port] 0 [Flags] 2 [Guid] 2335981254 [EditorId] 2335981254 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-IA9OBHQ) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [1388] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [1388] Host joined alternative multi-casting on [225.0.0.222:34997]...
+JobSystem: Creating JobQueue using job-worker-count value 7
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Refreshing native plugins compatible for Editor in 4.86 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 6000.0.41f1 (46e447368a18)
+[Subsystems] Discovering subsystems at path D:/ProgramData/Unity/6000.0.41f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path D:/program/SUMO1/HelloWorld/TestGR1.1/Assets
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce MX570 (ID=0x25a6)
+    Vendor:   NVIDIA
+    VRAM:     1934 MB
+    Driver:   32.0.15.5612
+Initialize mono
+Mono path[0] = 'D:/ProgramData/Unity/6000.0.41f1/Editor/Data/Managed'
+Mono path[1] = 'D:/ProgramData/Unity/6000.0.41f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'D:/ProgramData/Unity/6000.0.41f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56120
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: D:/ProgramData/Unity/6000.0.41f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Register platform support module: D:/ProgramData/Unity/6000.0.41f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+Register platform support module: D:/ProgramData/Unity/6000.0.41f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll
+Registered in 0.002405 seconds.
+- Loaded All Assemblies, in  0.397 seconds
+[usbmuxd] Start listen thread
+[usbmuxd] Listen thread started
+[usbmuxd] Send listen message
+Native extension for iOS target not found
+Native extension for Android target not found
+Android Extension - Scanning For ADB Devices 247 ms
+Native extension for WindowsStandalone target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.628 seconds
+Domain Reload Profiling: 1025ms
+	BeginReloadAssembly (155ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (33ms)
+	RebuildNativeTypeToScriptingClass (12ms)
+	initialDomainReloadingComplete (44ms)
+	LoadAllAssembliesAndSetupDomain (153ms)
+		LoadAssemblies (154ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (150ms)
+			TypeCache.Refresh (148ms)
+				TypeCache.ScanAssembly (135ms)
+			BuildScriptInfoCaches (0ms)
+			ResolveRequiredComponents (0ms)
+	FinalizeReload (628ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (587ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (339ms)
+			SetLoadedEditorAssemblies (4ms)
+			BeforeProcessingInitializeOnLoad (53ms)
+			ProcessInitializeOnLoadAttributes (131ms)
+			ProcessInitializeOnLoadMethodAttributes (60ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+========================================================================
+Worker process is ready to serve import requests
+Import Worker Mode flag is 0x00
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.751 seconds
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+'Packages/com.unity.cinemachine/Editor/Obsolete/CinemachineVirtualCameraBaseEditor.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+'Packages/com.unity.cinemachine/Editor/Editors/CinemachineVirtualCameraBaseEditor.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+Refreshing native plugins compatible for Editor in 0.55 ms, found 3 plugins.
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for WindowsStandalone target not found
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+Package Manager log level set to [2]
+[Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] Unable to send message (not connected to server process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.869 seconds
+Domain Reload Profiling: 1619ms
+	BeginReloadAssembly (155ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (5ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (28ms)
+	RebuildCommonClasses (32ms)
+	RebuildNativeTypeToScriptingClass (10ms)
+	initialDomainReloadingComplete (36ms)
+	LoadAllAssembliesAndSetupDomain (515ms)
+		LoadAssemblies (341ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (269ms)
+			TypeCache.Refresh (201ms)
+				TypeCache.ScanAssembly (180ms)
+			BuildScriptInfoCaches (50ms)
+			ResolveRequiredComponents (14ms)
+	FinalizeReload (870ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (688ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (16ms)
+			SetLoadedEditorAssemblies (6ms)
+			BeforeProcessingInitializeOnLoad (100ms)
+			ProcessInitializeOnLoadAttributes (483ms)
+			ProcessInitializeOnLoadMethodAttributes (80ms)
+			AfterProcessingInitializeOnLoad (3ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (6ms)
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.01 seconds
+Refreshing native plugins compatible for Editor in 0.88 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 240 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 6471 unused Assets / (6.7 MB). Loaded Objects now: 7179.
+Memory consumption went from 178.8 MB to 172.0 MB.
+Total: 9.935000 ms (FindLiveObjects: 0.598700 ms CreateObjectMapping: 0.563400 ms MarkObjects: 5.584500 ms  DeleteObjects: 3.186500 ms)
+
+========================================================================
+Received Prepare
+'Packages/com.unity.cinemachine/Editor/Obsolete/CinemachineVirtualCameraBaseEditor.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+'Packages/com.unity.cinemachine/Editor/Editors/CinemachineVirtualCameraBaseEditor.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+Refreshing native plugins compatible for Editor in 1.29 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 29 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 6463 unused Assets / (7.4 MB). Loaded Objects now: 7177.
+Memory consumption went from 142.2 MB to 134.8 MB.
+Total: 15.964400 ms (FindLiveObjects: 0.887000 ms CreateObjectMapping: 1.097800 ms MarkObjects: 8.809000 ms  DeleteObjects: 5.167500 ms)
+
+Prepare: number of updated asset objects reloaded= 0
+========================================================================
+Received Prepare
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.927 seconds
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+'Packages/com.unity.cinemachine/Editor/Obsolete/CinemachineVirtualCameraBaseEditor.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+'Packages/com.unity.cinemachine/Editor/Editors/CinemachineVirtualCameraBaseEditor.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+Refreshing native plugins compatible for Editor in 0.56 ms, found 3 plugins.
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for WindowsStandalone target not found
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+[Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] Unable to send message (not connected to server process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  1.086 seconds
+Domain Reload Profiling: 2016ms
+	BeginReloadAssembly (267ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (8ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (72ms)
+	RebuildCommonClasses (44ms)
+	RebuildNativeTypeToScriptingClass (13ms)
+	initialDomainReloadingComplete (35ms)
+	LoadAllAssembliesAndSetupDomain (570ms)
+		LoadAssemblies (445ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (263ms)
+			TypeCache.Refresh (15ms)
+				TypeCache.ScanAssembly (1ms)
+			BuildScriptInfoCaches (222ms)
+			ResolveRequiredComponents (18ms)
+	FinalizeReload (1087ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (835ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (22ms)
+			SetLoadedEditorAssemblies (10ms)
+			BeforeProcessingInitializeOnLoad (148ms)
+			ProcessInitializeOnLoadAttributes (590ms)
+			ProcessInitializeOnLoadMethodAttributes (60ms)
+			AfterProcessingInitializeOnLoad (4ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (20ms)
+Refreshing native plugins compatible for Editor in 1.47 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 39 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 6470 unused Assets / (7.0 MB). Loaded Objects now: 7192.
+Memory consumption went from 157.3 MB to 150.3 MB.
+Total: 13.552800 ms (FindLiveObjects: 1.041500 ms CreateObjectMapping: 0.583700 ms MarkObjects: 7.514700 ms  DeleteObjects: 4.411700 ms)
+
+Prepare: number of updated asset objects reloaded= 0
+========================================================================
+Received Import Request.
+  Time since last request: 2293.710227 seconds.
+  path: Assets/AnimeGirls/BaseCharacter
+  artifactKey: Guid(7e6aef82b559af64c9b699321cbcce90) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter using Guid(7e6aef82b559af64c9b699321cbcce90) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'f51bd4595865a648e10afdb9492aaea2') in 0.0353635 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 0
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000035 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/Underwear1.prefab
+  artifactKey: Guid(1733e098fdf8a9447bda920a3e41b14e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/Underwear1.prefab using Guid(1733e098fdf8a9447bda920a3e41b14e) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '0c610896589523a68756e99d9417b702') in 0.9522308 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 160
+
+========================================================================
+Received Import Request.
+  Time since last request: 1.296906 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/Demo files
+  artifactKey: Guid(c23e212718ab6714cacf61e3305075d1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/Demo files using Guid(c23e212718ab6714cacf61e3305075d1) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'd349b820a359cba0b7ea5c1792b4d05c') in 0.0013107 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 0
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.209840 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/Demo files/Anim_Idle.fbx
+  artifactKey: Guid(6d53a488351422c4b9e379c87bd0c523) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/Demo files/Anim_Idle.fbx using Guid(6d53a488351422c4b9e379c87bd0c523) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '4ee832a6ab84ef6a980b80175ef85d1a') in 0.0653565 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 95
+
+========================================================================
+Received Import Request.
+  Time since last request: 2.631165 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles
+  artifactKey: Guid(3ee06154672a6f945b79158f4e51f142) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles using Guid(3ee06154672a6f945b79158f4e51f142) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '5ffab7b7ae8f59a77d0092a3379222e2') in 0.0007607 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 0
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.049367 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/BaseCharacter.fbx
+  artifactKey: Guid(d8e6717bd7507b44c9fc5a0a6749ec6c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/BaseCharacter.fbx using Guid(d8e6717bd7507b44c9fc5a0a6749ec6c) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '4cc8abba8093a8330a6ca3bc0a617216') in 0.7899061 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 165
+
+========================================================================
+Received Import Request.
+  Time since last request: 9.675971 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Shader
+  artifactKey: Guid(0b39e08c1c82d7f4da861fe24255467d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Shader using Guid(0b39e08c1c82d7f4da861fe24255467d) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '2bb5f4ed93cb3c9da7a94ec713c32086') in 0.0012387 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 0
+
+========================================================================
+Received Import Request.
+  Time since last request: 1.310448 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Body.mat
+  artifactKey: Guid(8e526af249278a0498ce8273e07fcc49) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Body.mat using Guid(8e526af249278a0498ce8273e07fcc49) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '8f601d4296acf7344893b3f6a5bd0d11') in 0.0270197 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000025 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_Hair_4_head.mat
+  artifactKey: Guid(33f16960b5faae741a694a6018f8f68d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_Hair_4_head.mat using Guid(33f16960b5faae741a694a6018f8f68d) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '4eb2bcd49791379cba777a4828b0a953') in 0.0196596 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000035 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_EyeReflection.mat
+  artifactKey: Guid(1b5c7ed19ffba894c8cea260f2347c40) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_EyeReflection.mat using Guid(1b5c7ed19ffba894c8cea260f2347c40) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '0c2dcf846590b0b9a71f89a5891013e2') in 0.0149054 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000038 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_underwear_2.mat
+  artifactKey: Guid(5869b0877c9aac0429ded83b64254243) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_underwear_2.mat using Guid(5869b0877c9aac0429ded83b64254243) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'e70d1b8af3705464f52a7d9297fe3932') in 0.1389247 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000085 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_Hair_2_hair.mat
+  artifactKey: Guid(9e09ff6eb81e1bb46ac6c49cc77be78a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_Hair_2_hair.mat using Guid(9e09ff6eb81e1bb46ac6c49cc77be78a) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'e7781f061e261d6cdf45df1fb8a0b0c3') in 0.0116936 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000044 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_underwear_3.mat
+  artifactKey: Guid(d2903b263d559f54794c1af4772a0e14) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_underwear_3.mat using Guid(d2903b263d559f54794c1af4772a0e14) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '51e9222e33b621909b4917acdff68fc0') in 0.0119877 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000043 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/mouth_inside.mat
+  artifactKey: Guid(6591b6a58c1933643bb87bf9fbef044c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/mouth_inside.mat using Guid(6591b6a58c1933643bb87bf9fbef044c) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'a5fe58718bb2dc66b331d1ab9cd02f49') in 0.0089569 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000036 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_Hair_5_hair.mat
+  artifactKey: Guid(3a1e33245c62cf54dad1f33cb1420dc1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_Hair_5_hair.mat using Guid(3a1e33245c62cf54dad1f33cb1420dc1) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'c1dd6c049342bb4837658fc65840e6c3') in 0.0096447 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 23.621881 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Eye.mat
+  artifactKey: Guid(023452b84affa6f43a8feea0e1c55499) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Eye.mat using Guid(023452b84affa6f43a8feea0e1c55499) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'b24c8f29e70480535a356717a783ad04') in 5.4955446 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000034 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_Hair_1_head.mat
+  artifactKey: Guid(d76781e69b0e937439800ef45648aed7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Mat/Mat_Hair_1_head.mat using Guid(d76781e69b0e937439800ef45648aed7) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '4ed85aad6da55f2ddbc374c5d9518d24') in 0.0131401 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 11.594670 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/Underwear1.prefab
+  artifactKey: Guid(1733e098fdf8a9447bda920a3e41b14e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/Underwear1.prefab using Guid(1733e098fdf8a9447bda920a3e41b14e) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '49250012cb07c79ba7785704ee178d9c') in 0.0452639 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 160
+
+========================================================================
+Received Import Request.
+  Time since last request: 2.485285 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/Demo files/Mat_Background.mat
+  artifactKey: Guid(dc180ddaa9633db4c8e015141d784cfe) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/Demo files/Mat_Background.mat using Guid(dc180ddaa9633db4c8e015141d784cfe) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '8a3f7af3070ac23c6eebb9e36fa13219') in 0.0127743 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 4.706902 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter
+  artifactKey: Guid(f9f9e92d49849014386e7cdb245c993f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter using Guid(f9f9e92d49849014386e7cdb245c993f) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'e93dc7fcd2f0947058b1f944674cafaa') in 0.0011597 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 0
+
+========================================================================
+Received Import Request.
+  Time since last request: 5.785513 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Tex/Tex_Body.png
+  artifactKey: Guid(33ae753ae5250b64b8518d1412278dc9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Tex/Tex_Body.png using Guid(33ae753ae5250b64b8518d1412278dc9) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '050b67e80ed99bb03c75e3007a63d186') in 0.0371199 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000027 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Tex/Tex_Hair4_head.png
+  artifactKey: Guid(e1465639d7246b84b8635491c7ffeaec) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Tex/Tex_Hair4_head.png using Guid(e1465639d7246b84b8635491c7ffeaec) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'db676421a450455165396a01f994c5e3') in 0.0198478 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000029 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Tex/Tex_EyeReflection.png
+  artifactKey: Guid(069ab9513901678428ac108cea95a855) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Tex/Tex_EyeReflection.png using Guid(069ab9513901678428ac108cea95a855) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'a872cd3028f921db0098d0b6678fc422') in 0.0164927 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000027 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Tex/Tex_Mouth.png
+  artifactKey: Guid(afcebc1f40668274fbb842430ff85d43) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Tex/Tex_Mouth.png using Guid(afcebc1f40668274fbb842430ff85d43) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '3e97f88d676c8e0401b7af90a84aa3fb') in 0.013975 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000037 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Tex/Tex_Hair1_head.png
+  artifactKey: Guid(306bd9a3a9617b6438a3b9d67ee2505c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Tex/Tex_Hair1_head.png using Guid(306bd9a3a9617b6438a3b9d67ee2505c) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '37cca40f009af88d4d090bc0a6dd654e') in 0.0172134 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000036 seconds.
+  path: Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Tex/Tex_Face.png
+  artifactKey: Guid(c247e86b94f92384ab47aab540ea1248) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/BaseCharacter/BaseCharacter/Sourcefiles/Tex/Tex_Face.png using Guid(c247e86b94f92384ab47aab540ea1248) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '487ce3e4e55f7c6861ea600a9d945910') in 0.0150396 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 9.042343 seconds.
+  path: Assets/AnimeGirls/Casual1/Casual1.prefab
+  artifactKey: Guid(678bf8bc91771fa498236de892b83d1d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/Casual1/Casual1.prefab using Guid(678bf8bc91771fa498236de892b83d1d) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '2737f3d5fd2e41bdf13e1462aaeed655') in 0.0749325 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 156
+
+========================================================================
+Received Import Request.
+  Time since last request: 2.611216 seconds.
+  path: Assets/AnimeGirls/Casual1/Demo.unity
+  artifactKey: Guid(2cae45722582e78408f2ad67a6e95179) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/Casual1/Demo.unity using Guid(2cae45722582e78408f2ad67a6e95179) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'cafb04f43e76f0cd89e6f21722536e53') in 0.0012343 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 0
+
+========================================================================
+Received Prepare
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.806 seconds
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+'Packages/com.unity.cinemachine/Editor/Obsolete/CinemachineVirtualCameraBaseEditor.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+'Packages/com.unity.cinemachine/Editor/Editors/CinemachineVirtualCameraBaseEditor.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+Refreshing native plugins compatible for Editor in 0.81 ms, found 3 plugins.
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for WindowsStandalone target not found
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+[Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] Unable to send message (not connected to server process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  1.655 seconds
+Domain Reload Profiling: 2465ms
+	BeginReloadAssembly (246ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (17ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (77ms)
+	RebuildCommonClasses (39ms)
+	RebuildNativeTypeToScriptingClass (12ms)
+	initialDomainReloadingComplete (25ms)
+	LoadAllAssembliesAndSetupDomain (488ms)
+		LoadAssemblies (387ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (211ms)
+			TypeCache.Refresh (9ms)
+				TypeCache.ScanAssembly (0ms)
+			BuildScriptInfoCaches (184ms)
+			ResolveRequiredComponents (13ms)
+	FinalizeReload (1655ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (1340ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (22ms)
+			SetLoadedEditorAssemblies (12ms)
+			BeforeProcessingInitializeOnLoad (262ms)
+			ProcessInitializeOnLoadAttributes (910ms)
+			ProcessInitializeOnLoadMethodAttributes (131ms)
+			AfterProcessingInitializeOnLoad (3ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (27ms)
+Refreshing native plugins compatible for Editor in 1.00 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 29 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 6470 unused Assets / (6.6 MB). Loaded Objects now: 7269.
+Memory consumption went from 176.1 MB to 169.5 MB.
+Total: 14.957400 ms (FindLiveObjects: 1.001700 ms CreateObjectMapping: 0.785600 ms MarkObjects: 7.542900 ms  DeleteObjects: 5.624500 ms)
+
+Prepare: number of updated asset objects reloaded= 0
+========================================================================
+Received Import Request.
+  Time since last request: 38.237998 seconds.
+  path: Assets/AnimeGirls/Casual1/SourceFiles/Mesh/AnimeGirl.fbx
+  artifactKey: Guid(7e0043553097dc34e867f52b292bb164) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/AnimeGirls/Casual1/SourceFiles/Mesh/AnimeGirl.fbx using Guid(7e0043553097dc34e867f52b292bb164) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'd25e726268dbb05f21f37e93de8eb6a0') in 0.9435494 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 146
+
+========================================================================
+Received Prepare
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.873 seconds
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+'Packages/com.unity.cinemachine/Editor/Obsolete/CinemachineVirtualCameraBaseEditor.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+'Packages/com.unity.cinemachine/Editor/Editors/CinemachineVirtualCameraBaseEditor.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+Refreshing native plugins compatible for Editor in 0.57 ms, found 3 plugins.
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for WindowsStandalone target not found
+Assembly reference Packages/com.unity.cinemachine/Editor/Samples/ExposeHDRPInternals/HDRP-Editor-ref.asmref has no target assembly definition
+[Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] Unable to send message (not connected to server process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  1.651 seconds
+Domain Reload Profiling: 2528ms
+	BeginReloadAssembly (273ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (23ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (84ms)
+	RebuildCommonClasses (38ms)
+	RebuildNativeTypeToScriptingClass (12ms)
+	initialDomainReloadingComplete (28ms)
+	LoadAllAssembliesAndSetupDomain (525ms)
+		LoadAssemblies (407ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (236ms)
+			TypeCache.Refresh (10ms)
+				TypeCache.ScanAssembly (0ms)
+			BuildScriptInfoCaches (205ms)
+			ResolveRequiredComponents (14ms)
+	FinalizeReload (1652ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (1339ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (20ms)
+			SetLoadedEditorAssemblies (11ms)
+			BeforeProcessingInitializeOnLoad (181ms)
+			ProcessInitializeOnLoadAttributes (977ms)
+			ProcessInitializeOnLoadMethodAttributes (145ms)
+			AfterProcessingInitializeOnLoad (4ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (32ms)
+Refreshing native plugins compatible for Editor in 1.25 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 28 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 6470 unused Assets / (6.8 MB). Loaded Objects now: 7291.
+Memory consumption went from 180.0 MB to 173.2 MB.
+Total: 18.053400 ms (FindLiveObjects: 0.887900 ms CreateObjectMapping: 1.306300 ms MarkObjects: 9.481700 ms  DeleteObjects: 6.374700 ms)
+
+Prepare: number of updated asset objects reloaded= 0
+========================================================================
+Received Import Request.
+  Time since last request: 112.947618 seconds.
+  path: Assets/Scenes/SampleScene.unity
+  artifactKey: Guid(99c9720ab356a0642a771bea13969a05) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/SampleScene.unity using Guid(99c9720ab356a0642a771bea13969a05) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '044e2d45fbceec9972eb7e086a2d8786') in 0.0124584 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 0
+
+========================================================================
+Received Import Request.
+  Time since last request: 2934.164547 seconds.
+  path: Assets/Prefabs/EdgeType_0.prefab
+  artifactKey: Guid(a41a93edccdfc0b4bab23d06721745df) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Prefabs/EdgeType_0.prefab using Guid(a41a93edccdfc0b4bab23d06721745df) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '4b2eec60f472209520bdc903a6b978e5') in 0.2011675 seconds
+Number of updated asset objects reloaded before import = 1Number of asset objects unloaded after import = 21
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000098 seconds.
+  path: Assets/Prefabs/Vehicle (1) Variant.prefab
+  artifactKey: Guid(e9f6003f8c3f4074794c92f1725f41f7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Prefabs/Vehicle (1) Variant.prefab using Guid(e9f6003f8c3f4074794c92f1725f41f7) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'e207c74f2dbda8a64fc447462a189283') in 1.2461237 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 87
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000056 seconds.
+  path: Assets/Prefabs/Vehicle (2) Variant.prefab
+  artifactKey: Guid(04a69a7f36b429348b490b83bdf82ae7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Prefabs/Vehicle (2) Variant.prefab using Guid(04a69a7f36b429348b490b83bdf82ae7) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '54db96c688e51b611716b7b3c80091e6') in 0.0438549 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 87
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000046 seconds.
+  path: Assets/Prefabs/Materials/Pedestrian.mat
+  artifactKey: Guid(6c3e4547826875148bd9e35ab2e5b112) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Prefabs/Materials/Pedestrian.mat using Guid(6c3e4547826875148bd9e35ab2e5b112) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '38da305605b1468f18568122312a2c01') in 0.0449396 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000034 seconds.
+  path: Assets/Prefabs/Vehicle Variant.prefab
+  artifactKey: Guid(cf9b93ff64c5a3c48925afe5b7f0a8d0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Prefabs/Vehicle Variant.prefab using Guid(cf9b93ff64c5a3c48925afe5b7f0a8d0) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'de33631c28d49922c2daeb32f0466200') in 0.0327244 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 87
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000071 seconds.
+  path: Assets/Prefabs/Materials/Grass.mat
+  artifactKey: Guid(e83ffbee519352c44a576f92fcd8b2f5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Prefabs/Materials/Grass.mat using Guid(e83ffbee519352c44a576f92fcd8b2f5) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '17d36053b81f9f7d36a437d7ccc4078e') in 0.014619 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000046 seconds.
+  path: Assets/Prefabs/Pedestrian.prefab
+  artifactKey: Guid(d35f397c2ea07134696a7a40e79a6b6e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Prefabs/Pedestrian.prefab using Guid(d35f397c2ea07134696a7a40e79a6b6e) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '2f11e525bed81e12d92f211afee9d20e') in 0.0175243 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 11
+
+Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
+AssetImportWorker is now disconnected from the server
+Process exiting
+Exiting without the bug reporter. Application will terminate with return code 0
