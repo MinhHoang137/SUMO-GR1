@@ -1,0 +1,113 @@
+# Ignore Unity project-specific folders
+/HelloWorld/TestGR1.1/[Ll]ibrary/
+/HelloWorld/TestGR1.1/[Tt]emp/
+/HelloWorld/TestGR1.1/[Oo]bj/
+/HelloWorld/TestGR1.1/[Bb]uild/
+/HelloWorld/TestGR1.1/[Bb]uilds/
+/HelloWorld/TestGR1.1/[Ll]ogs/
+/HelloWorld/TestGR1.1/[Uu]ser[Ss]ettings/
+/HelloWorld/TestGR1.1/[Mm]emoryCaptures/
+/HelloWorld/TestGR1.1/[Rr]ecordings/
+
+# Asset Store Tools plugin
+# /HelloWorld/TestGR1.1/[Aa]ssets/AssetStoreTools*
+
+# JetBrains Rider plugin
+/HelloWorld/TestGR1.1/[Aa]ssets/Plugins/Editor/JetBrains*
+
+# IDE / Editor folders
+/HelloWorld/TestGR1.1/.vs/
+/HelloWorld/TestGR1.1/.gradle/
+/HelloWorld/TestGR1.1/ExportedObj/
+/HelloWorld/TestGR1.1/.consulo/
+
+# IDE / Editor generated files
+/HelloWorld/TestGR1.1/**/*.csproj
+/HelloWorld/TestGR1.1/**/*.unityproj
+/HelloWorld/TestGR1.1/**/*.sln
+/HelloWorld/TestGR1.1/**/*.suo
+/HelloWorld/TestGR1.1/**/*.tmp
+/HelloWorld/TestGR1.1/**/*.user
+/HelloWorld/TestGR1.1/**/*.userprefs
+/HelloWorld/TestGR1.1/**/*.pidb
+/HelloWorld/TestGR1.1/**/*.booproj
+/HelloWorld/TestGR1.1/**/*.svd
+/HelloWorld/TestGR1.1/**/*.pdb
+/HelloWorld/TestGR1.1/**/*.mdb
+/HelloWorld/TestGR1.1/**/*.opendb
+/HelloWorld/TestGR1.1/**/*.VC.db
+
+# Unity generated meta files
+/HelloWorld/TestGR1.1/**/*.pidb.meta
+/HelloWorld/TestGR1.1/**/*.pdb.meta
+/HelloWorld/TestGR1.1/**/*.mdb.meta
+
+# Unity crash report
+/HelloWorld/TestGR1.1/sysinfo.txt
+
+# Build files inside Unity project
+/HelloWorld/TestGR1.1/**/*.apk
+/HelloWorld/TestGR1.1/**/*.aab
+/HelloWorld/TestGR1.1/**/*.unitypackage
+/HelloWorld/TestGR1.1/**/*.unitypackage.meta
+/HelloWorld/TestGR1.1/**/*.app
+
+# Crashlytics generated file
+/HelloWorld/TestGR1.1/crashlytics-build.properties
+
+# Addressables built binary
+/HelloWorld/TestGR1.1/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+
+# StreamingAssets generated addressables
+/HelloWorld/TestGR1.1/[Aa]ssets/[Ss]treamingAssets/aa.meta
+/HelloWorld/TestGR1.1/[Aa]ssets/[Ss]treamingAssets/aa/*
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+env/
+venv/
+.venv/
+ENV/
+
+# PyInstaller artifacts
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# dotenv environment variables
+.env
+
+# Editor specific
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Build directories
+build/
+dist/
+
+# Python egg files
+*.egg-info/
+.eggs/
+
+# Logs
+*.log
+
+

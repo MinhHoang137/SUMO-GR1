@@ -1,0 +1,72 @@
+﻿using UnityEngine;
+
+public abstract class Trafficer : MonoBehaviour
+{
+	private string id = "";
+	private Vector3 destination;
+	protected float speed;
+	private Vector3 lastPosition;
+
+	[SerializeField] private Transform cameraHolder;
+
+	public bool isExist = true;
+
+
+	protected virtual void Move()
+	{
+		lastPosition = transform.position;
+		//transform.position = Vector3.Lerp(transform.position, destination, speed * Time.deltaTime);
+		float speedMultiplier = SpeedMultiplier.Instance.Multiplier;
+		transform.position = Vector3.MoveTowards(transform.position, destination, speed * speedMultiplier * Time.deltaTime);
+		if ((transform.position - destination).magnitude < 0.1f)
+		{
+			transform.position = destination;
+		}
+		Vector3 direction = transform.position - lastPosition;
+		if (direction != Vector3.zero)
+		{
+			float multiplier = 5;
+			transform.forward = Vector3.Slerp(transform.forward, direction, speed * Time.deltaTime * multiplier);
+		}
+	}
+
+	public void SetDestination(Vector3 destination)
+	{
+		this.destination = destination;
+	}
+
+	public void SetSpeed(float speed)
+	{
+		this.speed = speed;
+	}
+	public void SetId(string id)
+	{
+		if (string.IsNullOrEmpty(this.id)) this.id = id;
+	}
+
+	public string GetId()
+	{
+		return id;
+	}
+
+	public void Set(TrafficerData trafficerData)
+	{
+		SetId(trafficerData.id);
+		SetDestination(new Vector3(trafficerData.position[0], 0, trafficerData.position[1]));
+		SetSpeed(trafficerData.speed);
+	}
+
+	public Transform GetCameraHolder()
+	{
+		return cameraHolder;
+	}
+
+	protected virtual void OnDestroy()
+	{
+		CameraController cmC = cameraHolder.GetComponentInChildren<CameraController>();
+		if (cmC != null)
+		{
+			cmC.SetRandomTrafficerView();
+		}
+	}
+}

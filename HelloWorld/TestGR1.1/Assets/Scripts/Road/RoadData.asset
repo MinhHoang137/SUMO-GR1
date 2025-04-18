@@ -1,0 +1,1020 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9eb5b1ee4fe5dd4085740e1bdb24ca4, type: 3}
+  m_Name: RoadData
+  m_EditorClassIdentifier: 
+  junctionDatas:
+  - id: J1
+    position:
+    - 0.28
+    - 0.7
+    vertices:
+    - x: -21.42
+      y: 12.44
+    - x: -20.42
+      y: 12.63
+    - x: -20.16
+      y: 12.87
+    - x: -20.07
+      y: 13.21
+    - x: -20.14
+      y: 13.65
+    - x: -20.38
+      y: 14.18
+    - x: -0.06
+      y: 25.37
+    - x: 2.47
+      y: 21.38
+    - x: 5.24
+      y: 18.11
+    - x: 8.28
+      y: 15.57
+    - x: 11.56
+      y: 13.75
+    - x: 15.1
+      y: 12.66
+    - x: 18.89
+      y: 12.3
+    - x: 18.89
+      y: -10.9
+    - x: 17.86
+      y: -11.11
+    - x: 17.57
+      y: -11.37
+    - x: 17.42
+      y: -11.73
+    - x: 17.43
+      y: -12.2
+    - x: 17.58
+      y: -12.78
+    - x: -4.2
+      y: -20.77
+    - x: -5.69
+      y: -17.74
+    - x: -7.75
+      y: -15.25
+    - x: -10.36
+      y: -13.3
+    - x: -13.54
+      y: -11.91
+    - x: -17.28
+      y: -11.06
+    - x: -21.57
+      y: -10.76
+  - id: J2
+    position:
+    - 242.71
+    - 0.7
+    vertices:
+    - x: 222.57
+      y: 12.3
+    - x: 223.59
+      y: 12.5
+    - x: 223.86
+      y: 12.75
+    - x: 223.98
+      y: 13.11
+    - x: 223.93
+      y: 13.56
+    - x: 223.73
+      y: 14.12
+    - x: 244.79
+      y: 23.85
+    - x: 247.77
+      y: 16.28
+    - x: 249.68
+      y: 8.75
+    - x: 250.54
+      y: 1.25
+    - x: 250.34
+      y: -6.22
+    - x: 249.09
+      y: -13.66
+    - x: 246.78
+      y: -21.08
+    - x: 225.12
+      y: -12.77
+    - x: 225.15
+      y: -11.73
+    - x: 224.84
+      y: -11.37
+    - x: 224.31
+      y: -11.11
+    - x: 223.55
+      y: -10.95
+    - x: 222.57
+      y: -10.9
+  - id: J3
+    position:
+    - -79.15
+    - 144.99
+    vertices:
+    - x: -90.88
+      y: 154.93
+    - x: -83.89
+      y: 155.93
+    - x: -78.69
+      y: 156.49
+    - x: -74.38
+      y: 156.73
+    - x: -70.06
+      y: 156.77
+    - x: -64.82
+      y: 156.73
+    - x: -57.74
+      y: 156.73
+    - x: -57.59
+      y: 133.53
+    - x: -58.6
+      y: 133.33
+    - x: -58.85
+      y: 133.08
+    - x: -58.94
+      y: 132.74
+    - x: -58.87
+      y: 132.3
+    - x: -58.63
+      y: 131.76
+    - x: -78.95
+      y: 120.58
+    - x: -80.98
+      y: 124.15
+    - x: -82.76
+      y: 127.06
+    - x: -84.29
+      y: 129.29
+    - x: -85.57
+      y: 130.86
+    - x: -86.6
+      y: 131.76
+    - x: -87.38
+      y: 132
+  - id: J4
+    position:
+    - -266.73
+    - 2.47
+    vertices:
+    - x: -273.3
+      y: 2.23
+    - x: -272.72
+      y: 10.36
+    - x: -270.66
+      y: 18.46
+    - x: -267.13
+      y: 26.55
+    - x: -246.62
+      y: 15.71
+    - x: -246.83
+      y: 14.73
+    - x: -246.62
+      y: 14.38
+    - x: -246.21
+      y: 14.13
+    - x: -245.6
+      y: 13.98
+    - x: -244.78
+      y: 13.92
+    - x: -244.93
+      y: -9.27
+    - x: -245.94
+      y: -9.46
+    - x: -246.19
+      y: -9.7
+    - x: -246.28
+      y: -10.04
+    - x: -246.2
+      y: -10.48
+    - x: -245.96
+      y: -11.01
+    - x: -266.24
+      y: -22.28
+    - x: -270.06
+      y: -14.09
+    - x: -272.42
+      y: -5.92
+  - id: J5
+    position:
+    - 57.81
+    - -156.08
+    vertices:
+    - x: 38.98
+      y: -143.83
+    - x: 40.02
+      y: -143.66
+    - x: 40.31
+      y: -143.41
+    - x: 40.45
+      y: -143.05
+    - x: 40.45
+      y: -142.59
+    - x: 40.29
+      y: -142.02
+    - x: 62.07
+      y: -134.03
+    - x: 63.34
+      y: -137.32
+    - x: 64.49
+      y: -140.02
+    - x: 65.54
+      y: -142.13
+    - x: 66.48
+      y: -143.64
+    - x: 67.31
+      y: -144.56
+    - x: 68.03
+      y: -144.88
+    - x: 67.1
+      y: -168.06
+    - x: 38.19
+      y: -167.01
+  - id: J6
+    position:
+    - 180.66
+    - -161.01
+    vertices:
+    - x: 172.81
+      y: -149.09
+    - x: 194.47
+      y: -157.4
+    - x: 192.19
+      y: -162.13
+    - x: 189.31
+      y: -165.95
+    - x: 185.84
+      y: -168.88
+    - x: 181.78
+      y: -170.91
+    - x: 177.13
+      y: -172.04
+    - x: 171.88
+      y: -172.27
+  - id: J7
+    position:
+    - -183.17
+    - -147.8
+    vertices:
+    - x: -194.18
+      y: -151.22
+    - x: -196.49
+      y: -147.71
+    - x: -176.22
+      y: -136.43
+    - x: -177.02
+      y: -159.62
+    - x: -181.2
+      y: -159.16
+    - x: -185
+      y: -158.09
+    - x: -188.44
+      y: -156.42
+    - x: -191.5
+      y: -154.12
+  - id: J8
+    position:
+    - 175.29
+    - 146.63
+    vertices:
+    - x: 167.74
+      y: 158.18
+    - x: 172.48
+      y: 157.83
+    - x: 176.74
+      y: 156.73
+    - x: 180.52
+      y: 154.86
+    - x: 183.81
+      y: 152.24
+    - x: 186.62
+      y: 148.85
+    - x: 188.95
+      y: 144.71
+    - x: 167.89
+      y: 134.98
+  - id: J9
+    position:
+    - -201.29
+    - 126.34
+    vertices:
+    - x: -209.96
+      y: 132.53
+    - x: -207.29
+      y: 134.78
+    - x: -204.29
+      y: 136.56
+    - x: -200.95
+      y: 137.86
+    - x: -197.26
+      y: 138.69
+    - x: -193.76
+      y: 115.75
+    - x: -214.28
+      y: 126.59
+    - x: -212.29
+      y: 129.8
+  edgeDatas:
+  - id: -E0
+    startRoadLane:
+      x: 222.57
+      y: 2.3
+    endRoadLane:
+      x: 18.89
+      y: 2.3
+    roadNum: 3
+    startWalkingLane:
+      x: 222.57
+      y: 11.3
+    endWalkingLane:
+      x: 18.89
+      y: 11.3
+    walkingNum: 1
+    direction:
+      x: -203.68
+      y: 0
+    position:
+      x: 120.73
+      y: 2.3
+  - id: -E1
+    startRoadLane:
+      x: -70.19
+      y: 125.4
+    endRoadLane:
+      x: -11.62
+      y: 19.01
+    roadNum: 3
+    startWalkingLane:
+      x: -78.08
+      y: 121.06
+    endWalkingLane:
+      x: -19.51
+      y: 14.67
+    walkingNum: 1
+    direction:
+      x: 58.57
+      y: -106.39
+    position:
+      x: -40.905
+      y: 72.205
+  - id: -E10
+    startRoadLane:
+      x: -195.27
+      y: 125.64
+    endRoadLane:
+      x: -88.89
+      y: 141.88
+    roadNum: 3
+    startWalkingLane:
+      x: -193.91
+      y: 116.74
+    endWalkingLane:
+      x: -87.53
+      y: 132.99
+    walkingNum: 1
+    direction:
+      x: 106.38
+      y: 16.24
+    position:
+      x: -142.08
+      y: 133.76
+  - id: -E11
+    startRoadLane:
+      x: -255.46
+      y: 20.38
+    endRoadLane:
+      x: -202.6
+      y: 120.43
+    roadNum: 3
+    startWalkingLane:
+      x: -247.5
+      y: 16.18
+    endWalkingLane:
+      x: -194.65
+      y: 116.22
+    walkingNum: 1
+    direction:
+      x: 52.86
+      y: 100.05
+    position:
+      x: -229.03
+      y: 70.405
+  - id: -E2
+    startRoadLane:
+      x: -244.87
+      y: 0.73
+    endRoadLane:
+      x: -21.51
+      y: -0.76
+    roadNum: 3
+    startWalkingLane:
+      x: -244.93
+      y: -8.27
+    endWalkingLane:
+      x: -21.57
+      y: -9.76
+    walkingNum: 1
+    direction:
+      x: 223.36
+      y: -1.49
+    position:
+      x: -133.19
+      y: -0.015
+  - id: -E3
+    startRoadLane:
+      x: 52.69
+      y: -137.47
+    endRoadLane:
+      x: 8.19
+      y: -16.22
+    roadNum: 3
+    startWalkingLane:
+      x: 61.13
+      y: -134.37
+    endWalkingLane:
+      x: 16.64
+      y: -13.12
+    walkingNum: 1
+    direction:
+      x: -44.5
+      y: 121.25
+    position:
+      x: 30.44
+      y: -76.845
+  - id: -E4
+    startRoadLane:
+      x: 185.13
+      y: -153.81
+    endRoadLane:
+      x: 237.44
+      y: -17.5
+    roadNum: 3
+    startWalkingLane:
+      x: 193.54
+      y: -157.04
+    endWalkingLane:
+      x: 245.84
+      y: -20.72
+    walkingNum: 1
+    direction:
+      x: 52.31
+      y: 136.31
+    position:
+      x: 211.285
+      y: -85.655
+  - id: -E5
+    startRoadLane:
+      x: 67.5
+      y: -158.07
+    endRoadLane:
+      x: 172.28
+      y: -162.28
+    roadNum: 3
+    startWalkingLane:
+      x: 67.14
+      y: -167.06
+    endWalkingLane:
+      x: 171.92
+      y: -171.27
+    walkingNum: 1
+    direction:
+      x: 104.78
+      y: -4.21
+    position:
+      x: 119.89
+      y: -160.175
+  - id: -E6
+    startRoadLane:
+      x: -184.96
+      y: -141.29
+    endRoadLane:
+      x: -254.7
+      y: -15.87
+    roadNum: 3
+    startWalkingLane:
+      x: -177.09
+      y: -136.92
+    endWalkingLane:
+      x: -246.84
+      y: -11.5
+    walkingNum: 1
+    direction:
+      x: -69.74
+      y: 125.42
+    position:
+      x: -219.83
+      y: -78.58
+  - id: -E7
+    startRoadLane:
+      x: 38.64
+      y: -153.82
+    endRoadLane:
+      x: -176.56
+      y: -146.43
+    roadNum: 3
+    startWalkingLane:
+      x: 38.95
+      y: -144.83
+    endWalkingLane:
+      x: -176.25
+      y: -137.43
+    walkingNum: 1
+    direction:
+      x: -215.2
+      y: 7.39
+    position:
+      x: -68.96
+      y: -150.125
+  - id: -E8
+    startRoadLane:
+      x: 167.81
+      y: 148.18
+    endRoadLane:
+      x: -57.68
+      y: 146.73
+    roadNum: 3
+    startWalkingLane:
+      x: 167.75
+      y: 157.18
+    endWalkingLane:
+      x: -57.74
+      y: 155.73
+    walkingNum: 1
+    direction:
+      x: -225.49
+      y: -1.45
+    position:
+      x: 55.065
+      y: 147.455
+  - id: -E9
+    startRoadLane:
+      x: 235.72
+      y: 19.65
+    endRoadLane:
+      x: 179.88
+      y: 140.52
+    roadNum: 3
+    startWalkingLane:
+      x: 243.89
+      y: 23.43
+    endWalkingLane:
+      x: 188.05
+      y: 144.29
+    walkingNum: 1
+    direction:
+      x: -55.84
+      y: 120.87
+    position:
+      x: 207.8
+      y: 80.085
+  - id: E0
+    startRoadLane:
+      x: 18.89
+      y: -0.9
+    endRoadLane:
+      x: 222.57
+      y: -0.9
+    roadNum: 3
+    startWalkingLane:
+      x: 18.89
+      y: -9.9
+    endWalkingLane:
+      x: 222.57
+      y: -9.9
+    walkingNum: 1
+    direction:
+      x: 203.68
+      y: 0
+    position:
+      x: 120.73
+      y: -0.9
+  - id: E1
+    startRoadLane:
+      x: -8.82
+      y: 20.55
+    endRoadLane:
+      x: -67.39
+      y: 126.94
+    roadNum: 3
+    startWalkingLane:
+      x: -0.94
+      y: 24.89
+    endWalkingLane:
+      x: -59.5
+      y: 131.28
+    walkingNum: 1
+    direction:
+      x: -58.57
+      y: 106.39
+    position:
+      x: -38.105
+      y: 73.745
+  - id: E10
+    startRoadLane:
+      x: -89.38
+      y: 145.05
+    endRoadLane:
+      x: -195.76
+      y: 128.8
+    roadNum: 3
+    startWalkingLane:
+      x: -90.73
+      y: 153.94
+    endWalkingLane:
+      x: -197.11
+      y: 137.7
+    walkingNum: 1
+    direction:
+      x: -106.38
+      y: -16.25
+    position:
+      x: -142.57
+      y: 136.925
+  - id: E11
+    startRoadLane:
+      x: -205.43
+      y: 121.92
+    endRoadLane:
+      x: -258.29
+      y: 21.88
+    roadNum: 3
+    startWalkingLane:
+      x: -213.39
+      y: 126.12
+    endWalkingLane:
+      x: -266.24
+      y: 26.08
+    walkingNum: 1
+    direction:
+      x: -52.86
+      y: -100.04
+    position:
+      x: -231.86
+      y: 71.9
+  - id: E2
+    startRoadLane:
+      x: -21.49
+      y: 2.44
+    endRoadLane:
+      x: -244.85
+      y: 3.92
+    roadNum: 3
+    startWalkingLane:
+      x: -21.43
+      y: 11.44
+    endWalkingLane:
+      x: -244.79
+      y: 12.92
+    walkingNum: 1
+    direction:
+      x: -223.36
+      y: 1.48
+    position:
+      x: -133.17
+      y: 3.18
+  - id: E3
+    startRoadLane:
+      x: 5.19
+      y: -17.32
+    endRoadLane:
+      x: 49.68
+      y: -138.57
+    roadNum: 3
+    startWalkingLane:
+      x: -3.26
+      y: -20.43
+    endWalkingLane:
+      x: 41.23
+      y: -141.67
+    walkingNum: 1
+    direction:
+      x: 44.49
+      y: -121.25
+    position:
+      x: 27.435
+      y: -77.945
+  - id: E4
+    startRoadLane:
+      x: 234.45
+      y: -16.35
+    endRoadLane:
+      x: 182.15
+      y: -152.67
+    roadNum: 3
+    startWalkingLane:
+      x: 226.05
+      y: -13.13
+    endWalkingLane:
+      x: 173.74
+      y: -149.44
+    walkingNum: 1
+    direction:
+      x: -52.3
+      y: -136.32
+    position:
+      x: 208.3
+      y: -84.51
+  - id: E5
+    startRoadLane:
+      x: 172.41
+      y: -159.08
+    endRoadLane:
+      x: 67.62
+      y: -154.87
+    roadNum: 3
+    startWalkingLane:
+      x: 172.77
+      y: -150.08
+    endWalkingLane:
+      x: 67.99
+      y: -145.88
+    walkingNum: 1
+    direction:
+      x: -104.79
+      y: 4.21
+    position:
+      x: 120.015
+      y: -156.975
+  - id: E6
+    startRoadLane:
+      x: -257.5
+      y: -17.42
+    endRoadLane:
+      x: -187.75
+      y: -142.85
+    roadNum: 3
+    startWalkingLane:
+      x: -265.36
+      y: -21.8
+    endWalkingLane:
+      x: -195.62
+      y: -147.22
+    walkingNum: 1
+    direction:
+      x: 69.75
+      y: -125.43
+    position:
+      x: -222.625
+      y: -80.135
+  - id: E7
+    startRoadLane:
+      x: -176.67
+      y: -149.62
+    endRoadLane:
+      x: 38.53
+      y: -157.02
+    roadNum: 3
+    startWalkingLane:
+      x: -176.98
+      y: -158.62
+    endWalkingLane:
+      x: 38.22
+      y: -166.01
+    walkingNum: 1
+    direction:
+      x: 215.2
+      y: -7.4
+    position:
+      x: -69.07
+      y: -153.32
+  - id: E8
+    startRoadLane:
+      x: -57.66
+      y: 143.53
+    endRoadLane:
+      x: 167.83
+      y: 144.98
+    roadNum: 3
+    startWalkingLane:
+      x: -57.6
+      y: 134.53
+    endWalkingLane:
+      x: 167.89
+      y: 135.98
+    walkingNum: 1
+    direction:
+      x: 225.49
+      y: 1.45
+    position:
+      x: 55.085
+      y: 144.255
+  - id: E9
+    startRoadLane:
+      x: 176.97
+      y: 139.18
+    endRoadLane:
+      x: 232.81
+      y: 18.31
+    roadNum: 3
+    startWalkingLane:
+      x: 168.8
+      y: 135.4
+    endWalkingLane:
+      x: 224.64
+      y: 14.54
+    walkingNum: 1
+    direction:
+      x: 55.84
+      y: -120.87
+    position:
+      x: 204.89
+      y: 78.745
+  crossingDatas:
+  - id: :J1_c0_0
+    start:
+      x: 16.89
+      y: -8.9
+    end:
+      x: 16.89
+      y: 10.3
+    width: 4
+    length: 19.2
+    direction:
+      x: 0
+      y: 1
+  - id: :J1_c1_0
+    start:
+      x: -3.01
+      y: -18.2
+    end:
+      x: 15.02
+      y: -11.59
+    width: 4
+    length: 19.2
+    direction:
+      x: 0.93889314
+      y: 0.34420875
+  - id: :J1_c2_0
+    start:
+      x: -19.43
+      y: 10.43
+    end:
+      x: -19.56
+      y: -8.77
+    width: 4
+    length: 19.2
+    direction:
+      x: -0.0067706783
+      y: -0.99997705
+  - id: :J1_c3_0
+    start:
+      x: -0.85
+      y: 22.65
+    end:
+      x: -17.67
+      y: 13.4
+    width: 4
+    length: 19.2
+    direction:
+      x: -0.8762379
+      y: -0.48187876
+  - id: :J2_c0_0
+    start:
+      x: 227.7
+      y: -11.62
+    end:
+      x: 245.63
+      y: -18.49
+    width: 4
+    length: 19.2
+    direction:
+      x: 0.93380123
+      y: -0.35779223
+  - id: :J2_c1_0
+    start:
+      x: 224.57
+      y: 10.3
+    end:
+      x: 224.57
+      y: -8.9
+    width: 4
+    length: 19.2
+    direction:
+      x: 0
+      y: -1
+  - id: :J2_c2_0
+    start:
+      x: 243.82
+      y: 21.19
+    end:
+      x: 226.39
+      y: 13.14
+    width: 4
+    length: 19.2
+    direction:
+      x: -0.90785265
+      y: -0.41928938
+  - id: :J3_c0_0
+    start:
+      x: -59.61
+      y: 135.52
+    end:
+      x: -59.73
+      y: 154.72
+    width: 4
+    length: 19.2
+    direction:
+      x: -0.006249878
+      y: 0.99998045
+  - id: :J3_c1_0
+    start:
+      x: -78.16
+      y: 123.29
+    end:
+      x: -61.34
+      y: 132.55
+    width: 4
+    length: 19.2
+    direction:
+      x: 0.8760179
+      y: 0.4822786
+  - id: :J3_c2_0
+    start:
+      x: -88.61
+      y: 153.26
+    end:
+      x: -85.71
+      y: 134.28
+    width: 4
+    length: 19.2
+    direction:
+      x: 0.15103954
+      y: -0.9885277
+  - id: :J4_c0_0
+    start:
+      x: -249.32
+      y: 14.88
+    end:
+      x: -266.29
+      y: 23.85
+    width: 4
+    length: 19.2
+    direction:
+      x: -0.88409185
+      y: 0.46731314
+  - id: :J4_c1_0
+    start:
+      x: -246.92
+      y: -7.26
+    end:
+      x: -246.79
+      y: 11.94
+    width: 4
+    length: 19.2
+    direction:
+      x: 0.0067706783
+      y: 0.99997705
+  - id: :J4_c2_0
+    start:
+      x: -265.46
+      y: -19.56
+    end:
+      x: -248.68
+      y: -10.23
+    width: 4
+    length: 19.2
+    direction:
+      x: 0.87398523
+      y: 0.48595247
+  - id: :J5_c0_0
+    start:
+      x: 65.18
+      y: -165.98
+    end:
+      x: 65.95
+      y: -146.8
+    width: 4
+    length: 19.2
+    direction:
+      x: 0.040113673
+      y: 0.9991951
+  - id: :J5_c1_0
+    start:
+      x: 40.91
+      y: -145.89
+    end:
+      x: 40.25
+      y: -165.08
+    width: 4
+    length: 19.2
+    direction:
+      x: -0.03437259
+      y: -0.9994091
+  - id: :J5_c2_0
+    start:
+      x: 60.88
+      y: -136.59
+    end:
+      x: 42.86
+      y: -143.21
+    width: 4
+    length: 19.2
+    direction:
+      x: -0.9386629
+      y: -0.3448362
