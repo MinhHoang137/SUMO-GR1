@@ -12,7 +12,7 @@ public class TrafficLightManager : MonoBehaviour
 		trafficLightReader.OnReadComplete += (sender, e) =>
 		{
 			//Debug.Log("TrafficLightReader_OnReadComplete");
-			foreach (var data in e.dataArgs)
+			foreach (var data in e.data)
 			{
 				if (trafficLightDict.TryGetValue(data.Id, out TrafficLight light))
 				{

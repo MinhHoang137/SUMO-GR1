@@ -1,19 +1,21 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Net.Sockets;
+using System.Net;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Text;
 
-public class PedestrianReader : MonoBehaviour
+public abstract class TrafficReader<T> : MonoBehaviour
 {
 	public class OnReadCompleteEventArgs : EventArgs
 	{
-		public List<PedestrianData> data;
-		public OnReadCompleteEventArgs(List<PedestrianData> dataArgs)
+		public List<T> data { get; private set; }
+
+		public OnReadCompleteEventArgs(List<T> data)
 		{
-			this.data = dataArgs;
+			this.data = data;
 		}
 	}
 
@@ -22,11 +24,13 @@ public class PedestrianReader : MonoBehaviour
 	private TcpListener listener;
 	private bool isListening = true;
 	private Thread listenerThread;
-	private List<PedestrianData> data;
+	private List<T> data;
 	[SerializeField] private string lastJson;
 
 	private const int BUFFER_SIZE = 4096;
 	private const string END_MARKER = "<END>";
+
+	protected abstract int Port { get; }
 
 	void Start()
 	{
@@ -35,13 +39,15 @@ public class PedestrianReader : MonoBehaviour
 
 	private void StartListening()
 	{
-		int port = 5052;
 		string host = "127.0.0.1";
-		listener = new TcpListener(System.Net.IPAddress.Parse(host), port);
+		listener = new TcpListener(IPAddress.Parse(host), Port);
 		listener.Start();
-		Debug.Log($"PedestrianReader listening on port {port}...");
-		listenerThread = new Thread(ListenForData);
-		listenerThread.IsBackground = true;
+		Debug.Log($"{GetType().Name} listening on port {Port}...");
+
+		listenerThread = new Thread(ListenForData)
+		{
+			IsBackground = true
+		};
 		listenerThread.Start();
 	}
 
@@ -58,20 +64,17 @@ public class PedestrianReader : MonoBehaviour
 					StringBuilder fullMessage = new StringBuilder();
 					int bytesRead;
 
-					// Đọc liên tục cho đến khi gặp "<END>"
 					while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
 					{
 						string chunk = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 						fullMessage.Append(chunk);
 
-						// Nếu phát hiện "<END>" thì dừng đọc
 						if (fullMessage.ToString().Contains(END_MARKER))
 						{
 							break;
 						}
 					}
 
-					// Xử lý dữ liệu sau khi nhận đủ
 					string json = fullMessage.ToString().Replace(END_MARKER, "").Trim();
 
 					if (!string.IsNullOrEmpty(json) && json != lastJson)
@@ -83,11 +86,11 @@ public class PedestrianReader : MonoBehaviour
 			}
 			catch (SocketException socketEx)
 			{
-				Debug.LogError($"Socket error: {socketEx.Message}");
+				Debug.LogError($"Socket error in {GetType().Name}: {socketEx.Message}");
 			}
 			catch (Exception e)
 			{
-				Debug.LogError($"Error reading vehicle data: {e.Message}");
+				Debug.LogError($"Error reading data in {GetType().Name}: {e.Message}");
 			}
 		}
 	}
@@ -96,11 +99,10 @@ public class PedestrianReader : MonoBehaviour
 	{
 		try
 		{
-			data = JsonConvert.DeserializeObject<List<PedestrianData>>(jsonContent);
+			data = JsonConvert.DeserializeObject<List<T>>(jsonContent);
 
 			if (data != null)
 			{
-				// Chuyển về main thread để đảm bảo an toàn khi cập nhật UI hoặc xử lý sự kiện
 				UnityMainThreadDispatcher.Instance().Enqueue(() =>
 				{
 					OnReadComplete?.Invoke(this, new OnReadCompleteEventArgs(data));
@@ -109,7 +111,7 @@ public class PedestrianReader : MonoBehaviour
 		}
 		catch (Exception e)
 		{
-			Debug.LogError($"Error parsing vehicle data: {e.Message}");
+			Debug.LogError($"Error parsing data in {GetType().Name}: {e.Message}");
 		}
 	}
 
@@ -120,7 +122,7 @@ public class PedestrianReader : MonoBehaviour
 
 		if (listenerThread != null && listenerThread.IsAlive)
 		{
-			listenerThread.Abort(); // Kết thúc luồng nếu nó còn chạy
+			listenerThread.Abort();
 		}
 	}
 }
