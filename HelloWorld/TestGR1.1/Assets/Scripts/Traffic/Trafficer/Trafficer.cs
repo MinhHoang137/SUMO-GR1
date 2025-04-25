@@ -15,8 +15,8 @@ public abstract class Trafficer : MonoBehaviour
 	protected virtual void Move()
 	{
 		lastPosition = transform.position;
-		//transform.position = Vector3.Lerp(transform.position, destination, speed * Time.deltaTime);
 		float speedMultiplier = SpeedMultiplier.Instance.Multiplier;
+		//transform.position = Vector3.Lerp(transform.position, destination, speed * speedMultiplier * Time.deltaTime);
 		transform.position = Vector3.MoveTowards(transform.position, destination, speed * speedMultiplier * Time.deltaTime);
 		if ((transform.position - destination).magnitude < 0.1f)
 		{
@@ -27,6 +27,10 @@ public abstract class Trafficer : MonoBehaviour
 		{
 			float multiplier = 5;
 			transform.forward = Vector3.Slerp(transform.forward, direction, speed * Time.deltaTime * multiplier);
+		}
+		if ((transform.position - destination).magnitude > 0.1f && speed == 0) // position error
+		{
+			transform.position = destination;
 		}
 	}
 
@@ -41,7 +45,7 @@ public abstract class Trafficer : MonoBehaviour
 	}
 	public void SetId(string id)
 	{
-		if (string.IsNullOrEmpty(this.id)) this.id = id;
+		this.id = id;
 	}
 
 	public string GetId()
@@ -61,7 +65,7 @@ public abstract class Trafficer : MonoBehaviour
 		return cameraHolder;
 	}
 
-	protected virtual void OnDestroy()
+	protected virtual void OnDisable()
 	{
 		CameraController cmC = cameraHolder.GetComponentInChildren<CameraController>();
 		if (cmC != null)

@@ -7,6 +7,10 @@ public class SpeedMultiplier : MonoBehaviour
     public float Multiplier
 	{
 		get { return speedMultiplier; }
+		set
+		{
+			speedMultiplier = value;
+		}
 	}
 	private void Awake()
 	{
