@@ -57,7 +57,7 @@ def read_and_send_traffic_lights(traci, host='127.0.0.1', port=5050):
             total_size = len(data)
             num_packets = math.ceil(total_size / MAX_PACKET_SIZE)
 
-            # print(f"Sending {num_packets} packets...")
+            print(f"Sending {num_packets} packets...")
 
             # Gửi lần lượt từng gói dữ liệu
             for i in range(num_packets):

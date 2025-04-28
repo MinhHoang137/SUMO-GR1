@@ -68,7 +68,7 @@ def read_and_send_pedestrians(traci, host='127.0.0.1', port=5052):
             total_size = len(data)
             num_packets = math.ceil(total_size / MAX_PACKET_SIZE)
 
-            # print(f"Sending {num_packets} packets of pedestrian data...")
+            print(f"Sending {num_packets} packets of pedestrian data...")
 
             # Gửi từng gói nhỏ
             for i in range(num_packets):

@@ -106,11 +106,12 @@ public class OptionUI : MonoBehaviour
 				}
 				finally
 				{
-					// Ensure the app exits even if something went wrong
-					Application.Quit();
 #if UNITY_EDITOR
 					UnityEditor.EditorApplication.isPlaying = false;
 #endif
+					// Ensure the app exits even if something went wrong
+					Application.Quit();
+
 				}
 			}
 		});

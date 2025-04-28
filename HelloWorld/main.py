@@ -25,7 +25,7 @@ def listen_for_shutdown_command():
     port = 5054
     buffer_size = 1024
     expected_msg = "Simulation end"
-
+    print("Listening for shutdown command on port 5054...")
     while not stop_event.is_set():
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
@@ -34,7 +34,7 @@ def listen_for_shutdown_command():
                 server.listen(1)
                 server.settimeout(3.0)  # Timeout để thử lại liên tục
 
-                print("Listening for shutdown command on port 5054...")
+                # print("Listening for shutdown command on port 5054...")
                 conn, addr = server.accept()
                 with conn:
                     data = b""

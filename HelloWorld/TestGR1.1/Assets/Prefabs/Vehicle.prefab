@@ -400,7 +400,7 @@ MonoBehaviour:
   car: {fileID: 4567807449552475444}
   radius: 0.3456101
   deltaAngle: 0
-  rotateDirection: 0
+  rotateDirection: 1
 --- !u!1 &7910950300195751007 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5356491896567995282, guid: de4d60cef052cf44599a5d782e4a011e, type: 3}

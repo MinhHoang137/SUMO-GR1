@@ -83,7 +83,7 @@ def read_and_send_vehicles(traci, host='127.0.0.1', port=5051):
             total_size = len(data)
             num_packets = math.ceil(total_size / MAX_PACKET_SIZE)
 
-            # print(f"Sending {num_packets} packets of vehicle data...")
+            print(f"Sending {num_packets} packets of vehicle data...")
 
             # Gửi từng gói nhỏ
             for i in range(num_packets):
