@@ -1,9 +1,19 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+	public class OnSetTrafficerEventArgs: EventArgs {
+		private string state;
+		public OnSetTrafficerEventArgs(string state)
+		{
+			this.state = state;
+		}
+		public string State { get { return state; } }
+	}
+	public event EventHandler<OnSetTrafficerEventArgs> OnSetTrafficer;
+
 	public static CameraController Instance { get; private set; }
 	private float speed = 7;
 	private float sensitivity = 10;
@@ -60,6 +70,7 @@ public class CameraController : MonoBehaviour
 		{
 			SetRandomTrafficerView();
 		}
+		OnSetTrafficer?.Invoke(this, new OnSetTrafficerEventArgs(GetState()));
 	}
 	public void SetRandomTrafficerView()
 	{
@@ -110,6 +121,7 @@ public class CameraController : MonoBehaviour
 		currentTrafficer = trafficer;
 		transform.localPosition = Vector3.zero;
 		transform.localEulerAngles = Vector3.zero;
+		OnSetTrafficer?.Invoke(this, new OnSetTrafficerEventArgs(GetState()));
 	}
 	public void SetTrafficerView(string id)
 	{
@@ -132,5 +144,18 @@ public class CameraController : MonoBehaviour
 	{
 		get { return speed; }
 		set { speed = value; }
+	}
+	public string GetState()
+	{
+		string state = "Trạng thái camera: ";
+		if (isFree)
+		{
+			state += "Tự do";
+		}
+		else
+		{
+			state += "gắn vào: " + currentTrafficer.GetId();
+		}
+		return state;
 	}
 }

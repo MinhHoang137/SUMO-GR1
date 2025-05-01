@@ -42,7 +42,7 @@ public class VehicleSender : MonoBehaviour
 		{
 			return;
 		}
-		if (queue.Count < 100) // Giới hạn số lượng dữ liệu trong hàng đợi
+		if (queue.Count < 5) // Giới hạn số lượng dữ liệu trong hàng đợi
 		{
 			queue.Enqueue(vehicleData);
 		}

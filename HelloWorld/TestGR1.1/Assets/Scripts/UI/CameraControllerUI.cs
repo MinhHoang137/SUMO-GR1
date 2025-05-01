@@ -6,6 +6,7 @@ public class CameraControllerUI : MonoBehaviour
 {
 	[SerializeField] private ValueUI senseUI;
 	[SerializeField] private ValueUI speedUI;
+	[SerializeField] private TMP_Text cameraState;
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
     {
@@ -17,6 +18,11 @@ public class CameraControllerUI : MonoBehaviour
 		{
 			CameraController.Instance.Speed = value;
 		});
+		CameraController.Instance.OnSetTrafficer += (sender, args) =>
+		{
+			cameraState.text = args.State;
+		};
+		cameraState.text = CameraController.Instance.GetState();
 	}
 	private void OnDestroy()
 	{
