@@ -3,7 +3,7 @@ using System;
 using Newtonsoft.Json;
 
 [Serializable]
-public class TrafficLightData
+public class TrafficLightData : ObjectData
 {
 	[JsonProperty("id")]
 	[SerializeField] private string id;

@@ -1,3 +1,5 @@
+import json
+import math
 import socket
 import subprocess
 import traci
@@ -6,11 +8,13 @@ import threading
 from crossing import CrossingReader
 from crossRoad import CrossRoadReader
 from edgeType0 import EdgeReader
-from trafficLight import read_and_send_traffic_lights
-from vehicle import read_and_send_vehicles
-from pedestrian import read_and_send_pedestrians
+from trafficLight import read_traffic_lights
+from vehicle import read_vehicles
+from pedestrian import read_pedestrians
 from unity_vehicle import receive, process_vehicle_updates
 
+MAX_PACKET_SIZE = 4096
+MAX_RETRIES = 5
 target_exe = "./UnityBuild/TestGR1.1.exe"
 stop_event = threading.Event()
 
@@ -64,12 +68,67 @@ def run_simulation():
         while traci.simulation.getMinExpectedNumber() > 0 and not stop_event.is_set():
             traci.simulationStep()
             process_vehicle_updates(traci)
-            read_and_send_traffic_lights(traci)
-            read_and_send_vehicles(traci)
-            read_and_send_pedestrians(traci)
+            data = {
+                "trafficLights": read_traffic_lights(traci),
+                "vehicles": read_vehicles(traci),
+                "pedestrians": read_pedestrians(traci)
+            }
+            send(data)
+
     finally:
         traci.close()
         print("SUMO simulation stopped.")
+
+def send(data, host='127.0.0.1', port=5050):
+    """Nhận danh sách dict, chuyển thành JSON string và gửi đi"""
+    try:
+        data_str = json.dumps(data)
+        total_size = len(data_str)
+        num_packets = math.ceil(total_size / MAX_PACKET_SIZE)
+
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((host, port))
+
+            print(f"Sending {num_packets} packets...")
+
+            # Gửi từng gói dữ liệu
+            for i in range(num_packets):
+                start = i * MAX_PACKET_SIZE
+                end = min(start + MAX_PACKET_SIZE, total_size)
+                packet = data_str[start:end]
+                s.sendall(packet.encode('utf-8'))
+
+            # Gửi thông báo kết thúc
+            s.sendall(b"<END>")
+
+            # Nhận phản hồi từ Unity (nếu cần)
+            response = s.recv(1024)
+            print(f"Response from Unity: {response.decode('utf-8')}")
+            return True
+
+    except Exception as e:
+        print(f"Error sending data: {e}")
+        return False
+
+def send_road_data():
+    crossroads = CrossRoadReader.read_all_junctions()
+    edges =  EdgeReader.read_edges()
+    crossings = CrossingReader.read_crossings()
+    road_data = {
+        "junctionDatas": crossroads,
+        "edgeDatas": edges,
+        "crossingDatas": crossings
+    }
+    try:
+        for i in range(MAX_RETRIES):
+            if not send(road_data):
+                print("Retrying to send road data...")
+                time.sleep(1)
+            else:
+                break
+        print("Road data sent successfully.")
+    except Exception as e:
+        print(f"Error sending road data: {e}")
 
 # Hàm chính
 if __name__ == "__main__":
@@ -77,9 +136,7 @@ if __name__ == "__main__":
     async_task(receive)
     async_task(listen_for_shutdown_command)
 
-    CrossRoadReader.read_all_junctions()
-    EdgeReader.read_edges()
-    CrossingReader.read_crossings()
+    send_road_data()
 
     print("Starting simulation...")
     run_simulation()

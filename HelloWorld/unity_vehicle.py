@@ -39,7 +39,10 @@ def receive():
                 except Exception as e:
                     print(f"[Python] Lỗi xử lý dữ liệu: {e}")
 
+
 def process_vehicle_updates(traci):
+    """Cập nhật xe trong SUMO dựa trên dữ liệu từ Unity."""
+
     if ROUTE_ID not in traci.route.getIDList():
         traci.route.add(ROUTE_ID, [EDGE_ID])
         print(f"[Python] Đã tạo route {ROUTE_ID} -> {EDGE_ID}")

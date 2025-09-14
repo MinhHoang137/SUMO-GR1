@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 public class JunctionReader : MonoBehaviour
 {
-	[SerializeField] private RoadData roadData;
+	[SerializeField] private RoadDataSO roadData;
 	private Thread listenerThread;
 	private bool isListening = true;
 	private const int port = 5050;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class JunctionMaker : MonoBehaviour
 {
-	[SerializeField] private RoadData roadData;
+	[SerializeField] private RoadDataSO roadData;
 	[SerializeField] private Junction crossRoadPrefab;
 	private void Start()
 	{

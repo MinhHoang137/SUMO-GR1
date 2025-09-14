@@ -1,10 +1,9 @@
 ﻿using System;
 
 [Serializable]
-public class TrafficerData
+public class TrafficerData: ObjectData
 {
 	public string id;
-	public string type;
 	public float[] position;
 	public float[] forward;
 	public float speed;

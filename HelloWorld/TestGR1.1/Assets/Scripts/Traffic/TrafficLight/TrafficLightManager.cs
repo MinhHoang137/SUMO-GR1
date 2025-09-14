@@ -3,30 +3,45 @@ using UnityEngine;
 
 public class TrafficLightManager : MonoBehaviour
 {
-    public Dictionary<string, TrafficLight> trafficLightDict { get; private set; } = new Dictionary<string, TrafficLight>();
+
+	public static TrafficLightManager Instance { get; private set; }
+
+	public Dictionary<string, TrafficLight> trafficLightDict { get; private set; } = new Dictionary<string, TrafficLight>();
     [SerializeField] private TrafficLight trafficLightPrefab;
-	[SerializeField] private TrafficLightReader trafficLightReader;
-	// Start is called once before the first execution of Update after the MonoBehaviour is created
-	void Start()
+
+	private void Awake()
 	{
-		trafficLightReader.OnReadComplete += (sender, e) =>
+		if (Instance == null)
 		{
-			//Debug.Log("TrafficLightReader_OnReadComplete");
-			foreach (var data in e.data)
+			Instance = this;
+		}
+	}
+
+
+
+	public void ProcessData(List<TrafficLightData> datas)
+	{
+		foreach (var data in datas)
+		{
+			if (trafficLightDict.TryGetValue(data.Id, out TrafficLight light))
 			{
-				if (trafficLightDict.TryGetValue(data.Id, out TrafficLight light))
-				{
-					light.SetState(data.CurrentState);
-					light.SetPosition(new Vector3(data.Position[0], data.Position[1], data.Position[2]));
-				}
-				else
-				{
-					TrafficLight trafficLight = Instantiate(trafficLightPrefab);
-					trafficLight.Create(data);
-					trafficLight.transform.SetParent(transform);
-					trafficLightDict.Add(data.Id, trafficLight);
-				}
+				light.SetState(data.CurrentState);
+				light.SetPosition(new Vector3(data.Position[0], data.Position[1], data.Position[2]));
 			}
-		};
+			else
+			{
+				TrafficLight trafficLight = Instantiate(trafficLightPrefab);
+				trafficLight.Create(data);
+				trafficLight.transform.SetParent(transform);
+				trafficLightDict.Add(data.Id, trafficLight);
+			}
+		}
+	}
+	private void OnDestroy()
+	{
+		if (Instance == this)
+		{
+			Instance = null;
+		}
 	}
 }

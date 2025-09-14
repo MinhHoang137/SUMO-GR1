@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.GPUSort;
 
 public class VehicleManager : MonoBehaviour
 {
 	public static VehicleManager Instance { get; private set; }
-	[SerializeField] private VehicleReader vehicleReader;
 	[SerializeField] private Vehicle[] vehiclePrefabs;
 
 	private Dictionary<string, Vehicle> vehicleDict = new Dictionary<string, Vehicle>();
@@ -25,39 +25,43 @@ public class VehicleManager : MonoBehaviour
 		{
 			vehiclePool[i] = new Queue<Vehicle>();
 		}
+	}
 
-		vehicleReader.OnReadComplete += (sender, args) =>
+	/// <summary>
+	/// Handle incoming vehicle data to update, spawn, or recycle vehicles.
+	/// </summary>
+	/// <param name="datas"></param>
+	public void ProcessData(List<VehicleData> datas)
+	{
+		List<Vehicle> vehicleList = new List<Vehicle>(vehicleDict.Values);
+		foreach (var vehicle in vehicleList)
 		{
-			List<Vehicle> vehicleList = new List<Vehicle>(vehicleDict.Values);
-			foreach (var vehicle in vehicleList)
+			if (vehicle is UnityVehicle) continue;
+			vehicle.isExist = false;
+		}
+
+		foreach (var data in datas)
+		{
+			if (vehicleDict.TryGetValue(data.id, out Vehicle vehicle))
 			{
 				if (vehicle is UnityVehicle) continue;
-				vehicle.isExist = false;
+				vehicle.Set(data);
+				vehicle.isExist = true;
 			}
-
-			foreach (var data in args.data)
+			else
 			{
-				if (vehicleDict.TryGetValue(data.id, out Vehicle vehicle))
-				{
-					if (vehicle is UnityVehicle) continue;
-					vehicle.Set(data);
-					vehicle.isExist = true;
-				}
-				else
-				{
-					SpawnVehicle(data);
-				}
+				SpawnVehicle(data);
 			}
+		}
 
-			foreach (var vehicle in vehicleList)
+		foreach (var vehicle in vehicleList)
+		{
+			if (!vehicle.isExist)
 			{
-				if (!vehicle.isExist)
-				{
-					RecycleVehicle(vehicle);
-					if (vehicle is UnityVehicle) Destroy(vehicle.gameObject);
-				}
+				RecycleVehicle(vehicle);
+				if (vehicle is UnityVehicle) Destroy(vehicle.gameObject);
 			}
-		};
+		}
 	}
 
 	private void SpawnVehicle(VehicleData data)

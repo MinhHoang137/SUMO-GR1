@@ -13,7 +13,7 @@ public class CrossingReader : MonoBehaviour
 	private bool isListening = true;
 	private Thread listenerThread;
 	private List<CrossingData> crossings;
-	[SerializeField] private RoadData roadData;
+	[SerializeField] private RoadDataSO roadData;
 
 	private string lastJson;
 	private const int port = 5051;

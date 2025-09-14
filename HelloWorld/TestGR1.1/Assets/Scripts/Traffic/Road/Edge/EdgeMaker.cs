@@ -4,7 +4,7 @@ public class EdgeMaker : MonoBehaviour
 {
     [SerializeField] private EdgeReader edgeReader;
 	[SerializeField] private Edge edgePrefab;
-	[SerializeField] private RoadData roadData;
+	[SerializeField] private RoadDataSO roadData;
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
     {

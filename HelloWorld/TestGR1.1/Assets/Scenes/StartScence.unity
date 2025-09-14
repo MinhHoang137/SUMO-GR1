@@ -799,9 +799,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1238334764}
-  - component: {fileID: 1238334763}
-  - component: {fileID: 1238334762}
-  - component: {fileID: 1238334761}
+  - component: {fileID: 1238334765}
   m_Layer: 0
   m_Name: Readers
   m_TagString: Untagged
@@ -809,45 +807,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1238334761
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1238334760}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57631427509e1d542a3aaf7de81b89ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  roadData: {fileID: 11400000, guid: 98c754257f84660489d00622e8bfd4fa, type: 2}
---- !u!114 &1238334762
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1238334760}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 942d3a0df5fe2624094b180dd4005d5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  roadData: {fileID: 11400000, guid: 98c754257f84660489d00622e8bfd4fa, type: 2}
---- !u!114 &1238334763
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1238334760}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d10d83bf530b0848bb7d81dcbd99bf2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  roadData: {fileID: 11400000, guid: 98c754257f84660489d00622e8bfd4fa, type: 2}
 --- !u!4 &1238334764
 Transform:
   m_ObjectHideFlags: 0
@@ -863,6 +822,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1238334765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238334760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 671787ba0551c6b448ec10dcffb7bdfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roadDataSO: {fileID: 11400000, guid: 98c754257f84660489d00622e8bfd4fa, type: 2}
 --- !u!1 &1468070917
 GameObject:
   m_ObjectHideFlags: 0
@@ -893,9 +865,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startButton: {fileID: 353217572}
-  junctionReader: {fileID: 1238334762}
-  edgeReader: {fileID: 1238334761}
-  crossingReader: {fileID: 1238334763}
+  roadDataListener: {fileID: 1238334765}
 --- !u!4 &1468070919
 Transform:
   m_ObjectHideFlags: 0

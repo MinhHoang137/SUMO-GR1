@@ -12,7 +12,7 @@ public class UnityVehicleManager : MonoBehaviour
 	[SerializeField] private TMP_Text stateText;
     [SerializeField] private UnityVehicle prefab;
 	[SerializeField] private VehicleSender vehicleSender;
-	[SerializeField] private RoadData roadData;
+	[SerializeField] private RoadDataSO roadData;
 	private List<Vector3> junctionPos = new List<Vector3>();
 
 	private void Start()

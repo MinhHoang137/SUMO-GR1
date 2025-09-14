@@ -3,15 +3,29 @@ using System.Collections.Generic;
 
 public class PedestrianManager : TrafficerObjectManager<Pedestrian, PedestrianData>
 {
-    [SerializeField] private PedestrianReader pedestrianReader;
+
+
+	public static PedestrianManager Instance { get; private set; }
+
+	private void Awake()
+	{
+		if (Instance == null)
+		{
+			Instance = this;
+		}
+	}
+
 	private void Start()
 	{
 		StartManager(() =>
 		{
-			pedestrianReader.OnReadComplete += (sender, args) =>
-			{
-				ProcessData(args.data);
-			};
 		});
+	}
+	private void OnDestroy()
+	{
+		if (Instance == this)
+		{
+			Instance = null;
+		}
 	}
 }

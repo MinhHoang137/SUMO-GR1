@@ -19,14 +19,14 @@ class EdgeReader:
 
     @classmethod
     def read_edges(cls):
+        edges = []
         if not os.path.exists(cls.NET_XML_PATH):
             print(f"Error: {cls.NET_XML_PATH} does not exist.")
-            return
+            return edges
 
         tree = ET.parse(cls.NET_XML_PATH)
         root = tree.getroot()
 
-        edges = []
         for edge in root.findall('edge'):
             if 'function' in edge.attrib:
                 continue
@@ -82,11 +82,10 @@ class EdgeReader:
             }
             edges.append(edge_data)
 
-        if edges:
-            cls.send_edges_in_chunks(edges)
-            print(f"Edges data sent to Unity in chunks on port {cls.SERVER_PORT}")
-        else:
+        if not edges:
             print("No edges found in the file.")
+
+        return edges
 
     @classmethod
     def send_edges_in_chunks(cls, edges):

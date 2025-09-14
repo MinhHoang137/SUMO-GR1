@@ -18,7 +18,7 @@ public abstract class TrafficerObjectManager<T, TData> : MonoBehaviour
 		onInitialized?.Invoke();
 	}
 
-	protected void ProcessData(List<TData> dataList)
+	public void ProcessData(List<TData> dataList)
 	{
 		List<T> currentList = new List<T>(activeDict.Values);
 		foreach (var item in currentList)

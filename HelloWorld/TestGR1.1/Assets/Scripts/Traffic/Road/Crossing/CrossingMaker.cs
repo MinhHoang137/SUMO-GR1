@@ -4,7 +4,7 @@ public class CrossingMaker : MonoBehaviour
 {
 	[SerializeField] private CrossingReader crossingReader;
 	[SerializeField] private Crossing crossingPrefab;
-	[SerializeField] private RoadData roadData;
+	[SerializeField] private RoadDataSO roadData;
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
 	{

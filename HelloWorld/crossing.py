@@ -22,14 +22,15 @@ class CrossingReader:
 
     @classmethod
     def read_crossings(cls):
+        crossings = []
         if not os.path.exists(cls.NET_XML_PATH):
             print(f"Error: {cls.NET_XML_PATH} does not exist.")
-            return
+            return crossings
 
         tree = ET.parse(cls.NET_XML_PATH)
         root = tree.getroot()
 
-        crossings = []
+
         for edge in root.findall('edge'):
             if edge.get('function') == 'crossing':
                 for lane in edge.findall('lane'):
@@ -60,10 +61,10 @@ class CrossingReader:
                             }
                             crossings.append(crossing_data)
 
-        if crossings:
-            cls.send_crossings(crossings)
-        else:
+        if not crossings:
             print("No crossings found in the file.")
+
+        return  crossings
 
     @classmethod
     def send_crossings(cls, crossings):
