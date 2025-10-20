@@ -16,7 +16,7 @@ public class TrafficDataListener : MonoBehaviour
 	private TrafficDataList data = new TrafficDataList();
 	private string lastJson;
 
-	private const int BUFFER_SIZE = 4096;
+	private const int BUFFER_SIZE = 100000;
 	private const string END_MARKER = "<END>";
 
 	protected int port = 5050;

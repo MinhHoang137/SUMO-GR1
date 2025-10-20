@@ -17,7 +17,7 @@ public class RoadDataListener : MonoBehaviour
 	private Thread listenerThread;
 	private string lastJson;
 
-	private const int BUFFER_SIZE = 4096;
+	private const int BUFFER_SIZE = 100000;
 	private const string END_MARKER = "<END>";
 
 	protected int port = 5050;

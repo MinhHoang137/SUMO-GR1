@@ -2,6 +2,8 @@ import json
 import math
 import socket
 import subprocess
+from time import sleep
+
 import traci
 import time
 import threading
@@ -13,10 +15,11 @@ from vehicle import read_vehicles
 from pedestrian import read_pedestrians
 from unity_vehicle import receive, process_vehicle_updates
 
-MAX_PACKET_SIZE = 4096
+MAX_PACKET_SIZE = 100000
 MAX_RETRIES = 5
 target_exe = "./UnityBuild/TestGR1.1.exe"
 stop_event = threading.Event()
+time_step = 0.11  # Giả sử mỗi bước mô phỏng là 0.11 giây
 
 def async_task(target, *args):
     thread = threading.Thread(target=target, args=args)
@@ -67,6 +70,8 @@ def run_simulation():
     try:
         while traci.simulation.getMinExpectedNumber() > 0 and not stop_event.is_set():
             traci.simulationStep()
+            # for person_id in traci.person.getIDList():
+            #     print(f"type: {traci.person.getTypeID(person_id)}, impatient: {traci.person.getImpatience(person_id)}")
             process_vehicle_updates(traci)
             data = {
                 "trafficLights": read_traffic_lights(traci),
@@ -74,6 +79,7 @@ def run_simulation():
                 "pedestrians": read_pedestrians(traci)
             }
             send(data)
+            sleep(time_step)
 
     finally:
         traci.close()
@@ -132,7 +138,7 @@ def send_road_data():
 
 # Hàm chính
 if __name__ == "__main__":
-    subprocess.Popen(target_exe)
+    # subprocess.Popen(target_exe)
     async_task(receive)
     async_task(listen_for_shutdown_command)
 

@@ -7,7 +7,7 @@ HOST = '127.0.0.1'
 PORT = 5053
 END_MARKER = '<END>'
 ROUTE_ID = "unity_temp_route"
-EDGE_ID = "E1"
+EDGE_ID = "E3"
 
 update_queue = Queue()
 
