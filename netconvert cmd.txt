@@ -1,0 +1,2 @@
+Tạo tệp .net.xml từ .nod.xml và .edg.xml 
+netconvert -n example.nod.xml -e example.edg.xml -x example.con.xml  -o example.net.xml --offset.x 0 --offset.y 0

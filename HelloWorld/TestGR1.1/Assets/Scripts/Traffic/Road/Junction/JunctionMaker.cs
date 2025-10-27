@@ -27,10 +27,10 @@ public class JunctionMaker : MonoBehaviour
 			crossRoad.Create(crossRoad.baseVertices.ToArray(), new Vector3(0, -1, 0), crossRoadData.id);
 			crossRoad.transform.SetParent(transform);
 			// Create label
-			JunctionLabel label = Instantiate(junctionLabelPrefab, Vector3.zero, Quaternion.identity);
-			label.SetText(crossRoadData.id);
-			label.transform.SetParent(crossRoad.transform);
-			label.transform.localPosition = Converter.ToVector3(crossRoadData.position);
+			// JunctionLabel label = Instantiate(junctionLabelPrefab, Vector3.zero, Quaternion.identity);
+			// label.SetText(crossRoadData.id);
+			// label.transform.SetParent(crossRoad.transform);
+			// label.transform.localPosition = Converter.ToVector3(crossRoadData.position);
 		}
 	}
 }

@@ -287,7 +287,8 @@ def write_edges_to_xml(grid, pos_map, mH, mW, output_path, numLanes=4, carSpeed=
     if numLanes < 2:
         print("⚠️ Số làn nhỏ hơn 2 — không xuất cạnh nào.")
         return
-
+    if numLanes < 4:
+        numLanes += 2  # thêm 2 làn để dành cho đi bộ
     lanes_per_direction = int(numLanes / 2)
 
     # ✅ Tạo XML cho từng cạnh (2 chiều)
@@ -301,7 +302,8 @@ def write_edges_to_xml(grid, pos_map, mH, mW, output_path, numLanes=4, carSpeed=
         })
 
         # Nếu numLanes/2 >= 2 → có làn đi bộ
-        has_ped_lane = (lanes_per_direction >= 2)
+        # has_ped_lane = (lanes_per_direction >= 2)
+        has_ped_lane = True
         lane_index = 0
 
         if has_ped_lane:
@@ -391,25 +393,91 @@ def visualize_network(nod_file_path, edg_file_path, show_id=True, figsize=(10, 1
     plt.gca().set_aspect("equal", adjustable="box")
     plt.show()
 
+def write_crossings_to_con_xml(nod_xml_path, edg_xml_path, output_path, width=2.0):
+    """
+    Tạo file .con.xml chứa các crossing cho người đi bộ.
 
-def main():
-    # --- Phần 1: Lấy đường dẫn tệp từ câu lệnh CMD ---
-    
-    # sys.argv là một danh sách các tham số dòng lệnh
-    # sys.argv[0] là tên của chính tệp script (ví dụ: read_map.py)
-    # sys.argv[1] là tham số đầu tiên (đường dẫn tệp map)
-    if len(sys.argv) < 3:
-        print("Lỗi: Cần cung cấp đường dẫn tệp bản đồ và số làn.")
-        print("Cách dùng: python mapCreator.py <duong_dan_den_tep.map> <so_lan>")
-        sys.exit(1) # Thoát chương trình với mã lỗi
-        
-    filepath = sys.argv[1]
-    numLanes = int(sys.argv[2])
+    Quy tắc: tại mỗi node, với mỗi cặp cạnh ngược chiều nhau (A->B và B->A)
+    sẽ tạo ra 1 crossing. 
+
+    Tham khảo cấu trúc từ TestNetconvert/example.con.xml.
+
+    Args:
+        nod_xml_path (str): đường dẫn tới file .nod.xml
+        edg_xml_path (str): đường dẫn tới file .edg.xml
+        output_path (str): đường dẫn file .con.xml đầu ra
+        width (float): bề rộng của crossing
+    """
+    # Đọc nodes
+    tree_nod = ET.parse(nod_xml_path)
+    root_nod = tree_nod.getroot()
+    nodes = set()
+    for node in root_nod.findall("node"):
+        nodes.add(node.attrib["id"])
+
+    # Đọc edges và lập tra cứu 2 chiều
+    tree_edg = ET.parse(edg_xml_path)
+    root_edg = tree_edg.getroot()
+
+    # Map (from_id, to_id) -> edge_id
+    dir_edge = {}
+    for edge in root_edg.findall("edge"):
+        e_id = edge.attrib["id"]
+        f = edge.attrib["from"]
+        t = edge.attrib["to"]
+        dir_edge[(f, t)] = e_id
+
+    # Xác định các cặp ngược chiều theo từng node và chỉ tạo crossing
+    # tại node có ít nhất 2 cặp cạnh ngược chiều (2 hàng xóm 2 chiều trở lên)
+    con_root = ET.Element("connections")
+
+    # Xây bảng hàng xóm 2 chiều duy nhất cho từng node: neighbor -> (edge_node_to_neighbor, edge_neighbor_to_node)
+    neighbors_by_node = {n: {} for n in nodes}
+    handled_pairs = set()  # lưu frozenset({a,b}) để không xử lý trùng
+    for (a, b), e_ab in dir_edge.items():
+        rev = (b, a)
+        undirected = frozenset({a, b})
+        if rev in dir_edge and undirected not in handled_pairs:
+            e_ba = dir_edge[rev]
+            handled_pairs.add(undirected)
+            if a in neighbors_by_node:
+                neighbors_by_node[a][b] = (e_ab, e_ba)
+            if b in neighbors_by_node:
+                neighbors_by_node[b][a] = (e_ba, e_ab)
+
+    # Tạo crossing nếu node có >= 2 cặp ngược chiều (ít nhất 2 hàng xóm 2 chiều)
+    for node_id, nb_dict in neighbors_by_node.items():
+        if len(nb_dict) < 2:
+            continue
+        for nb, (e_forward, e_reverse) in nb_dict.items():
+            ET.SubElement(con_root, "crossing", {
+                "node": node_id,
+                "edges": f"{e_forward} {e_reverse}",
+                "width": f"{width:.1f}"
+            })
+
+    # Ghi file .con.xml
+    tree = ET.ElementTree(con_root)
+    ET.indent(tree, space="    ", level=0)
+    tree.write(output_path, encoding="UTF-8", xml_declaration=True)
+    print(f"✅ Đã ghi {len(con_root.findall('crossing'))} crossing vào '{output_path}'.")
+
+def create_map_from_maze_file(filepath, numLanes):
+    """
+    Tạo bản đồ từ tệp lưới (maze file) theo định dạng SUMO.
+
+    Args:
+        filepath (str): Đường dẫn tới tệp lưới.
+        numLanes (int): Số làn đường.
+
+    Returns:
+        None
+    """
     print(f"Đang xử lý tệp: {filepath}\n")
     
     # Gọi hàm để phân tích tệp
     grid, width, height = parse_map_file(filepath)
-    
+
     # Nếu hàm trả về lỗi (grid là None), thì dừng lại
     if grid is None:
         print("Không thể xử lý tệp.")
@@ -421,15 +489,12 @@ def main():
     _nod_xml_path = "HelloWorld.nod.xml"
     _edg_xml_path = "HelloWorld.edg.xml"
     _net_xml_path = "HelloWorld.net.xml"
+    _con_xml_path = "HelloWorld.con.xml"
+
+     # Ghi file .nod.xml và .edg.xml
     write_nodes_to_xml(pos_map, _nod_xml_path)
     write_edges_to_xml(grid, pos_map, height, width, _edg_xml_path, numLanes=numLanes)
-    os.system(f"netconvert -n {_nod_xml_path} -e {_edg_xml_path} -o {_net_xml_path} --offset.x 0 --offset.y 0")
-    # visualize_network(_nod_xml_path, _edg_xml_path, show_id=True)
-    # print(f"Số nút tìm thấy: {len(node_position_list)}")
-    # for idx, pos in enumerate(node_position_list):
-    #     print(f"Nút {idx + 1}: Vị trí ({format_float_to_string(pos[0])}, {format_float_to_string(pos[1])})")
-    # plot_nodes(node_position_list)
-
-# Dòng này đảm bảo hàm main() chỉ chạy khi script được thực thi trực tiếp
-if __name__ == "__main__":
-    main()
+    # Tạo crossings (.con.xml) từ .nod.xml và .edg.xml (dùng width mặc định trong hàm)
+    write_crossings_to_con_xml(_nod_xml_path, _edg_xml_path, _con_xml_path)
+    os.system(f"netconvert -n {_nod_xml_path} -e {_edg_xml_path} -x {_con_xml_path} -o {_net_xml_path} --offset.x 0 --offset.y 0")
+    print(f"\n✅ Bản đồ SUMO đã được tạo thành công tại: {_net_xml_path}\n")

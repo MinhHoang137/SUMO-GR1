@@ -2,6 +2,7 @@ import json
 import math
 import socket
 import subprocess
+import sys
 from time import sleep
 
 import traci
@@ -14,6 +15,7 @@ from trafficLight import read_traffic_lights
 from vehicle import read_vehicles
 from pedestrian import read_pedestrians
 from unity_vehicle import receive, process_vehicle_updates
+from create_map_from_maze import create_map_from_maze_file
 
 MAX_PACKET_SIZE = 100000
 MAX_RETRIES = 5
@@ -138,7 +140,14 @@ def send_road_data():
 
 # Hàm chính
 if __name__ == "__main__":
-    # subprocess.Popen(target_exe)
+    # yêu cầu nhập đường dẫn tệp mê cung và số làn
+    if len(sys.argv) < 3:
+        print("Usage: python main.py <maze_file_path> <num_lanes>")
+        sys.exit(1)
+    maze_file_path = sys.argv[1]
+    num_lanes = int(sys.argv[2])
+    create_map_from_maze_file(maze_file_path, num_lanes)
+    subprocess.Popen(target_exe)
     async_task(receive)
     async_task(listen_for_shutdown_command)
 

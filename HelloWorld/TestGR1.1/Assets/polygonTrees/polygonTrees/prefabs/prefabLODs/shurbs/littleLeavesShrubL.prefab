@@ -53,27 +53,27 @@ PrefabInstance:
       value: littleLeavesShrubL
       objectReference: {fileID: 0}
     - target: {fileID: 6468315140813229716, guid: e16b41a8acca9630a87bc28289a86bb6, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 8a076cc9eaf245ba58f82541573934de, type: 2}
     - target: {fileID: 6468315140813229716, guid: e16b41a8acca9630a87bc28289a86bb6, type: 3}
-      propertyPath: m_Materials.Array.data[1]
+      propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 5feca55090fcf23668cbaaa9effb7602, type: 2}
     - target: {fileID: 8183619555007655220, guid: e16b41a8acca9630a87bc28289a86bb6, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: a13a861bc804bbcc5807627edd198fa4, type: 2}
     - target: {fileID: 8183619555007655220, guid: e16b41a8acca9630a87bc28289a86bb6, type: 3}
-      propertyPath: m_Materials.Array.data[1]
+      propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 1179a907b74c98893b47ab37f4525abd, type: 2}
     - target: {fileID: 8208401209890238670, guid: e16b41a8acca9630a87bc28289a86bb6, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: a13a861bc804bbcc5807627edd198fa4, type: 2}
     - target: {fileID: 8208401209890238670, guid: e16b41a8acca9630a87bc28289a86bb6, type: 3}
-      propertyPath: m_Materials.Array.data[1]
+      propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 1179a907b74c98893b47ab37f4525abd, type: 2}
     m_RemovedComponents: []
@@ -106,11 +106,11 @@ LODGroup:
   m_AnimateCrossFading: 0
   m_LastLODIsBillboard: 0
   m_LODs:
-  - screenRelativeHeight: 0.2934315
+  - screenRelativeHeight: 0.05222432
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 7017917369563336858}
-  - screenRelativeHeight: 0.08521338
+  - screenRelativeHeight: 0.0053152665
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 6997662960786263392}

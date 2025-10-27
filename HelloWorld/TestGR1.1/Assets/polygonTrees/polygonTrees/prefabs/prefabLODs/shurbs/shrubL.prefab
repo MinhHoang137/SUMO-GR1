@@ -49,11 +49,11 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4962147389100365340, guid: 6b56d34470e9c7a05aae3a7434a4e989, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 86f2da28f29e09a3c92902419438417c, type: 2}
     - target: {fileID: -4962147389100365340, guid: 6b56d34470e9c7a05aae3a7434a4e989, type: 3}
-      propertyPath: m_Materials.Array.data[1]
+      propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 4559ae9a879a77bfebd5d259f65d32b8, type: 2}
     - target: {fileID: 919132149155446097, guid: 6b56d34470e9c7a05aae3a7434a4e989, type: 3}
@@ -61,19 +61,19 @@ PrefabInstance:
       value: shrubL
       objectReference: {fileID: 0}
     - target: {fileID: 1545130927430326883, guid: 6b56d34470e9c7a05aae3a7434a4e989, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: c38d20f16b595f9039dfa7f65cb53878, type: 2}
     - target: {fileID: 1545130927430326883, guid: 6b56d34470e9c7a05aae3a7434a4e989, type: 3}
-      propertyPath: m_Materials.Array.data[1]
+      propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 8de23cb77dd52ff8e845e33fa474a757, type: 2}
     - target: {fileID: 4145032211899258365, guid: 6b56d34470e9c7a05aae3a7434a4e989, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: c38d20f16b595f9039dfa7f65cb53878, type: 2}
     - target: {fileID: 4145032211899258365, guid: 6b56d34470e9c7a05aae3a7434a4e989, type: 3}
-      propertyPath: m_Materials.Array.data[1]
+      propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 8de23cb77dd52ff8e845e33fa474a757, type: 2}
     m_RemovedComponents: []
@@ -106,11 +106,11 @@ LODGroup:
   m_AnimateCrossFading: 0
   m_LastLODIsBillboard: 0
   m_LODs:
-  - screenRelativeHeight: 0.25485766
+  - screenRelativeHeight: 0.02952859
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 1533623172035618333}
-  - screenRelativeHeight: 0.063711226
+  - screenRelativeHeight: 0.0038598953
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 4161311314360625539}
