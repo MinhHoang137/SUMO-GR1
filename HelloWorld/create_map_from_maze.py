@@ -1,11 +1,8 @@
+# Chú ý: đây là thuật toán tìm nút tối ưu từ mê cung để tạo bản đồ SUMO,
+# tạm thời không phù hợp với bài toán hiện tại
 import os
-import json
-import socket
 import xml.etree.ElementTree as ET
 import math
-import time
-import matplotlib.pyplot as plt
-import sys
 
 WALL = '@'
 FLOOR = '.'
@@ -336,6 +333,12 @@ def write_edges_to_xml(grid, pos_map, mH, mW, output_path, numLanes=4, carSpeed=
 
 
 def visualize_network(nod_file_path, edg_file_path, show_id=True, figsize=(10, 10)):
+    # Import matplotlib lazily so the rest of the pipeline doesn't require it
+    try:
+        import matplotlib.pyplot as plt # type: ignore
+    except ImportError:
+        print("matplotlib is not installed. Skipping visualization. If you need plots, install matplotlib.")
+        return
     """
     Vẽ đồ thị mạng lưới node–edge từ file .nod.xml và .edg.xml (theo cú pháp SUMO).
 
@@ -462,6 +465,9 @@ def write_crossings_to_con_xml(nod_xml_path, edg_xml_path, output_path, width=2.
     tree.write(output_path, encoding="UTF-8", xml_declaration=True)
     print(f"✅ Đã ghi {len(con_root.findall('crossing'))} crossing vào '{output_path}'.")
 
+# cách dùng hàm: create_map_from_maze_file("duongdan/to/mapfile.map", 2)
+# số làn (numLanes) là tổng số làn (cả 2 chiều), là số cuối cùng trong tên tệp .map
+# cần nhập chính xác, nếu không sẽ không tạo được bản đồ đúng
 def create_map_from_maze_file(filepath, numLanes):
     """
     Tạo bản đồ từ tệp lưới (maze file) theo định dạng SUMO.

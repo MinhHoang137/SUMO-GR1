@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,7 +23,7 @@ public class Test : MonoBehaviour
         Vector3 dir = new Vector3(0, 0, 1f);
         Debug.DrawRay(startPos, dir * 100f, Color.red);
     }
-
+ 
     private void GenerateLine(List<JunctionData> junctions)
     {
         LineRenderer lineRenderer = GetComponent<LineRenderer>();

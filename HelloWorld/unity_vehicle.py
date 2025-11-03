@@ -2,14 +2,68 @@ import socket
 import json
 import math
 from queue import Queue
+import os
+import xml.etree.ElementTree as ET
 
 HOST = '127.0.0.1'
 PORT = 5053
 END_MARKER = '<END>'
 ROUTE_ID = "unity_temp_route"
-EDGE_ID = "E3"
+# Sẽ chọn EDGE_ID động từ .net.xml / TraCI (không hard-code)
+EDGE_ID = None
+
+# Đường dẫn mặc định tới mạng SUMO sinh ra bởi mã
+DEFAULT_NET_PATH = os.path.join(os.path.dirname(__file__), "HelloWorld.net.xml")
 
 update_queue = Queue()
+
+
+def _pick_edge_from_netxml(net_xml_path: str) -> str:
+    """Chọn cạnh mặc định từ .net.xml.
+
+    Ưu tiên cạnh có priority="-1" và có lane dành cho xe (không chỉ pedestrian).
+    Nếu không có, chọn cạnh hợp lệ bất kỳ (không phải cạnh nội bộ bắt đầu bằng ':').
+
+    Trả về: edge id hoặc "" nếu không tìm thấy.
+    """
+    try:
+        if not os.path.isfile(net_xml_path):
+            return ""
+
+        tree = ET.parse(net_xml_path)
+        root = tree.getroot()
+
+        def is_vehicle_lane(lane_elem: ET.Element) -> bool:
+            dis = lane_elem.attrib.get("disallow", "")
+            allow = lane_elem.attrib.get("allow", "")
+            if "pedestrian" in dis:
+                return True
+            if allow.strip() == "pedestrian":
+                return False
+            return True
+
+        # 1) Ưu tiên cạnh priority="-1"
+        for edge in root.findall("edge"):
+            eid = edge.attrib.get("id", "")
+            if not eid or eid.startswith(":"):
+                continue
+            if edge.attrib.get("priority") == "-1":
+                lanes = edge.findall("lane")
+                if any(is_vehicle_lane(ln) for ln in lanes):
+                    return eid
+
+        # 2) Fallback: cạnh hợp lệ bất kỳ
+        for edge in root.findall("edge"):
+            eid = edge.attrib.get("id", "")
+            if not eid or eid.startswith(":"):
+                continue
+            lanes = edge.findall("lane")
+            if any(is_vehicle_lane(ln) for ln in lanes):
+                return eid
+
+        return ""
+    except Exception:
+        return ""
 
 def receive():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
@@ -42,8 +96,24 @@ def receive():
 
 def process_vehicle_updates(traci):
     """Cập nhật xe trong SUMO dựa trên dữ liệu từ Unity."""
+    global EDGE_ID
 
-    if ROUTE_ID not in traci.route.getIDList():
+    # Chọn cạnh mặc định từ .net.xml (ưu tiên priority=-1), nếu không có thì fallback sang danh sách trong TraCI
+    if EDGE_ID is None or EDGE_ID not in traci.edge.getIDList():
+        picked = _pick_edge_from_netxml(DEFAULT_NET_PATH)
+        if picked:
+            EDGE_ID = picked
+        else:
+            all_edges = traci.edge.getIDList()
+            candidate_edges = [e for e in all_edges if not e.startswith(':')]
+            EDGE_ID = candidate_edges[0] if candidate_edges else ""
+
+        if EDGE_ID:
+            print(f"[Python] EDGE_ID mặc định được chọn: {EDGE_ID}")
+        else:
+            print("[Python] Không tìm thấy cạnh hợp lệ trong mạng để tạo route.")
+
+    if ROUTE_ID not in traci.route.getIDList() and EDGE_ID:
         traci.route.add(ROUTE_ID, [EDGE_ID])
         print(f"[Python] Đã tạo route {ROUTE_ID} -> {EDGE_ID}")
 

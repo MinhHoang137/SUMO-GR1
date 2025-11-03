@@ -14,7 +14,7 @@ public class OptionUI : MonoBehaviour
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
 	{
-		QualitySettings.vSyncCount = 1;
+		// QualitySettings.vSyncCount = 1;
 		GameInput.Instance.OnToggleOptions += (sender, args) =>
 		{
 			gameObject.SetActive(!gameObject.activeSelf);

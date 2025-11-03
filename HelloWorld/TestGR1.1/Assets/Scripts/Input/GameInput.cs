@@ -25,6 +25,11 @@ public class GameInput : MonoBehaviour
 
 	private void Awake()
 	{
+		if (Instance != null)
+		{
+			Destroy(gameObject);
+			return;
+		}
 		Instance = this;
 		inputActions = new InputSystem_Actions();
 		inputActions.Enable();
@@ -37,6 +42,7 @@ public class GameInput : MonoBehaviour
 		inputActions.UI.ToggleOptions.performed += ToggleOptions_performed;
 
 		SetMouse(false);
+		DontDestroyOnLoad(this.gameObject);
 	}
 
 	private void ToggleOptions_performed(InputAction.CallbackContext obj)
