@@ -6,7 +6,7 @@ import socket
 
 
 class EdgeReader:
-    NET_XML_PATH = os.path.join(os.path.dirname(__file__), 'HelloWorld.net.xml')
+    NET_XML_PATH = os.path.join(os.path.dirname(__file__), '../SUMO_xml/HelloWorld.net.xml')
     SERVER_HOST = '127.0.0.1'  # Địa chỉ localhost
     SERVER_PORT = 5052  # Cổng 5052
     CHUNK_SIZE = 4096  # Kích thước gói gửi mỗi lần (4096 byte)

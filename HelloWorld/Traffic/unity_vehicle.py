@@ -13,7 +13,7 @@ ROUTE_ID = "unity_temp_route"
 EDGE_ID = None
 
 # Đường dẫn mặc định tới mạng SUMO sinh ra bởi mã
-DEFAULT_NET_PATH = os.path.join(os.path.dirname(__file__), "HelloWorld.net.xml")
+DEFAULT_NET_PATH = os.path.join(os.path.dirname(__file__), '../SUMO_xml/HelloWorld.net.xml')
 
 update_queue = Queue()
 

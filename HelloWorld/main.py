@@ -8,14 +8,20 @@ from time import sleep
 import traci
 import time
 import threading
-from crossing import CrossingReader
-from crossRoad import CrossRoadReader
-from edgeType0 import EdgeReader
-from trafficLight import read_traffic_lights
-from vehicle import read_vehicles
-from pedestrian import read_pedestrians
-from unity_vehicle import receive, process_vehicle_updates
-from create_map_from_maze import create_map_from_maze_file
+from Traffic.crossing import CrossingReader
+from Traffic.crossRoad import CrossRoadReader
+from Traffic.edgeType0 import EdgeReader
+from Traffic.trafficLight import read_traffic_lights
+from Traffic.vehicle import read_vehicles
+from Traffic.pedestrian import read_pedestrians
+from Traffic.unity_vehicle import receive, process_vehicle_updates
+from SUMO_xml.create_map_from_maze import create_map_from_maze_file
+from SUMO_xml.route_gen import create_routes
+
+CS = "CS"
+SS = "SS"
+IO = "IO"
+OI = "OI"
 
 MAX_PACKET_SIZE = 100000
 MAX_RETRIES = 5
@@ -68,7 +74,7 @@ def listen_for_shutdown_command():
 
 # Hàm chạy mô phỏng SUMO và ghi dữ liệu
 def run_simulation():
-    traci.start(["sumo-gui", "-c", "HelloWorld.sumocfg"])
+    traci.start(["sumo-gui", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
     try:
         while traci.simulation.getMinExpectedNumber() > 0 and not stop_event.is_set():
             traci.simulationStep()
@@ -147,6 +153,25 @@ if __name__ == "__main__":
     maze_file_path = sys.argv[1]
     num_lanes = int(sys.argv[2])
     create_map_from_maze_file(maze_file_path, num_lanes)
+
+    # tạo các tuyến đường
+    num_pairs = input("Số lượng cặp nút giao thông cần tạo (mặc định 20): ")
+    num_pairs = int(num_pairs) if num_pairs else 20
+    car_cr_type = input(f"Loại phân chia nút giao thông cho xe ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
+    car_cr_type = car_cr_type if car_cr_type in [CS, SS, IO, OI] else CS
+    ped_option = input("Tạo tuyến đường cho người đi bộ không? (y/n, mặc định y): ")
+    has_ped = ped_option.lower() != 'n'
+
+    if has_ped:
+        ped_cr_type = input(f"Loại phân chia nút giao thông cho người đi bộ ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
+        ped_cr_type = ped_cr_type if ped_cr_type in [CS, SS, IO, OI] else CS
+        ped_impatience = input("Mức độ thiếu kiên nhẫn của người đi bộ (0.0 đến 1.0, mặc định 0.5): ")
+        ped_impatience = float(ped_impatience) if ped_impatience else 0.5
+        create_routes(num_pairs, car_cr_type, has_ped, ped_cr_type, ped_impatience)
+    else:
+        create_routes(num_pairs, car_cr_type, has_ped)
+
+    # khởi chạy Unity và mô phỏng SUMO
     subprocess.Popen(target_exe)
     async_task(receive)
     async_task(listen_for_shutdown_command)

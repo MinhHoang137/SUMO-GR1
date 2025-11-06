@@ -7,7 +7,7 @@ import math
 import time
 
 class CrossingReader:
-    NET_XML_PATH = os.path.join(os.path.dirname(__file__), 'HelloWorld.net.xml')
+    NET_XML_PATH = os.path.join(os.path.dirname(__file__), '../SUMO_xml/HelloWorld.net.xml')
     HOST = '127.0.0.1'
     PORT = 5051
     CHUNK_SIZE = 4096

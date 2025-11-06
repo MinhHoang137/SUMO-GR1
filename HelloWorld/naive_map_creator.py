@@ -1,5 +1,5 @@
 import os
-import write_to_xml
+from SUMO_xml import write_to_xml
 
 WALL = '@'
 FLOOR = '.'
@@ -142,10 +142,10 @@ def create_map_from_maze_file(maze_file_path, num_lanes):
         maze_file_path: Đường dẫn tới tệp mê cung (.map).
         num_lanes: Số làn cho mỗi cạnh.
     """
-    output_nod_path = "HelloWorld.nod.xml"
-    output_edge_path = "HelloWorld.edg.xml"
-    output_con_path = "HelloWorld.con.xml"
-    net_path = "HelloWorld.net.xml"
+    output_nod_path = "SUMO_xml/HelloWorld.nod.xml"
+    output_edge_path = "SUMO_xml/HelloWorld.edg.xml"
+    output_con_path = "SUMO_xml/HelloWorld.con.xml"
+    net_path = "SUMO_xml/HelloWorld.net.xml"
 
     naive_create_map_files(maze_file_path, output_nod_path, output_edge_path, output_con_path, num_lanes)
     os.system(f"netconvert -n {output_nod_path} -e {output_edge_path} -x {output_con_path} -o {net_path} --offset.x 0 --offset.y 0")

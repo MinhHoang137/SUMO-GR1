@@ -3,7 +3,7 @@
 import os
 import xml.etree.ElementTree as ET
 import math
-import write_to_xml
+from SUMO_xml import write_to_xml
 
 WALL = '@'
 FLOOR = '.'
@@ -103,7 +103,7 @@ def parse_map_file(filepath):
         return None, 0, 0
     
 def get_node_degree(grid, x, y, mW, mH):
-    if (grid[y][x] != WALL):
+    if grid[y][x] != WALL:
         return 0 , []
     """
     Lấy bậc (degree) của một điểm tường trong lưới (grid).
@@ -310,10 +310,10 @@ def create_map_from_maze_file(filepath, numLanes):
 
     pos_map = get_node_position_list(grid, width, height, numLanes)
 
-    _nod_xml_path = "HelloWorld.nod.xml"
-    _edg_xml_path = "HelloWorld.edg.xml"
-    _net_xml_path = "HelloWorld.net.xml"
-    _con_xml_path = "HelloWorld.con.xml"
+    _nod_xml_path = "SUMO_xml/HelloWorld.nod.xml"
+    _edg_xml_path = "SUMO_xml/HelloWorld.edg.xml"
+    _net_xml_path = "SUMO_xml/HelloWorld.net.xml"
+    _con_xml_path = "SUMO_xml/HelloWorld.con.xml"
 
      # Ghi file .nod.xml và .edg.xml
     write_to_xml.write_nodes_to_xml(pos_map, _nod_xml_path)
