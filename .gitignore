@@ -112,4 +112,4 @@ dist/
 
 
 # ignore UnityBuilds
-/UnityBuild/
+/HelloWorld/UnityBuild/

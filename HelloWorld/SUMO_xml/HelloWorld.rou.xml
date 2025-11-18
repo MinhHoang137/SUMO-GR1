@@ -1,64 +1,44 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
     <flow id="f_0" begin="0.00" end="3600.00" period="30.00" fromJunction="n_11" toJunction="n_16" />
-    <flow id="f_1" begin="0.00" end="3600.00" period="30.00" fromJunction="n_24" toJunction="n_2" />
-    <flow id="f_2" begin="0.00" end="3600.00" period="30.00" fromJunction="n_38" toJunction="n_41" />
-    <flow id="f_3" begin="0.00" end="3600.00" period="30.00" fromJunction="n_25" toJunction="n_20" />
-    <flow id="f_4" begin="0.00" end="3600.00" period="30.00" fromJunction="n_0" toJunction="n_10" />
-    <flow id="f_5" begin="0.00" end="3600.00" period="30.00" fromJunction="n_23" toJunction="n_19" />
-    <flow id="f_6" begin="0.00" end="3600.00" period="30.00" fromJunction="n_39" toJunction="n_42" />
-    <flow id="f_7" begin="0.00" end="3600.00" period="30.00" fromJunction="n_50" toJunction="n_40" />
-    <flow id="f_8" begin="0.00" end="3600.00" period="30.00" fromJunction="n_44" toJunction="n_51" />
-    <flow id="f_9" begin="0.00" end="3600.00" period="30.00" fromJunction="n_31" toJunction="n_28" />
-    <flow id="f_10" begin="0.00" end="3600.00" period="30.00" fromJunction="n_3" toJunction="n_33" />
-    <flow id="f_11" begin="0.00" end="3600.00" period="30.00" fromJunction="n_22" toJunction="n_14" />
-    <flow id="f_12" begin="0.00" end="3600.00" period="30.00" fromJunction="n_49" toJunction="n_6" />
-    <flow id="f_13" begin="0.00" end="3600.00" period="30.00" fromJunction="n_43" toJunction="n_4" />
-    <flow id="f_14" begin="0.00" end="3600.00" period="30.00" fromJunction="n_45" toJunction="n_52" />
-    <vType id="ped_0" vClass="pedestrian" impatience="0.00" />
-    <personFlow id="pf_0" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_36" toJunction="n_34" />
+    <flow id="f_1" begin="0.00" end="3600.00" period="30.00" fromJunction="n_23" toJunction="n_19" />
+    <flow id="f_2" begin="0.00" end="3600.00" period="30.00" fromJunction="n_12" toJunction="n_17" />
+    <flow id="f_3" begin="0.00" end="3600.00" period="30.00" fromJunction="n_31" toJunction="n_28" />
+    <flow id="f_4" begin="0.00" end="3600.00" period="30.00" fromJunction="n_21" toJunction="n_26" />
+    <flow id="f_5" begin="0.00" end="3600.00" period="30.00" fromJunction="n_22" toJunction="n_14" />
+    <flow id="f_6" begin="0.00" end="3600.00" period="30.00" fromJunction="n_36" toJunction="n_34" />
+    <flow id="f_7" begin="0.00" end="3600.00" period="30.00" fromJunction="n_32" toJunction="n_29" />
+    <flow id="f_8" begin="0.00" end="3600.00" period="30.00" fromJunction="n_39" toJunction="n_42" />
+    <flow id="f_9" begin="0.00" end="3600.00" period="30.00" fromJunction="n_35" toJunction="n_37" />
+    <vType id="ped_0_5" vClass="pedestrian" impatience="0.50" />
+    <personFlow id="pf_0" type="ped_0_5" begin="0.00" end="3600.00" period="30.00">
+        <personTrip fromJunction="n_13" toJunction="n_0" />
     </personFlow>
-    <personFlow id="pf_1" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_14" toJunction="n_1" />
-    </personFlow>
-    <personFlow id="pf_2" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_30" toJunction="n_25" />
-    </personFlow>
-    <personFlow id="pf_3" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_32" toJunction="n_27" />
-    </personFlow>
-    <personFlow id="pf_4" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_23" toJunction="n_17" />
-    </personFlow>
-    <personFlow id="pf_5" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_39" toJunction="n_43" />
-    </personFlow>
-    <personFlow id="pf_6" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_28" toJunction="n_19" />
-    </personFlow>
-    <personFlow id="pf_7" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_15" toJunction="n_10" />
-    </personFlow>
-    <personFlow id="pf_8" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_33" toJunction="n_3" />
-    </personFlow>
-    <personFlow id="pf_9" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_37" toJunction="n_35" />
-    </personFlow>
-    <personFlow id="pf_10" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_41" toJunction="n_45" />
-    </personFlow>
-    <personFlow id="pf_11" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_31" toJunction="n_26" />
-    </personFlow>
-    <personFlow id="pf_12" type="ped_0" begin="0.00" end="3600.00" period="30.00">
+    <personFlow id="pf_1" type="ped_0_5" begin="0.00" end="3600.00" period="30.00">
         <personTrip fromJunction="n_29" toJunction="n_2" />
     </personFlow>
-    <personFlow id="pf_13" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_54" toJunction="n_66" />
+    <personFlow id="pf_2" type="ped_0_5" begin="0.00" end="3600.00" period="30.00">
+        <personTrip fromJunction="n_28" toJunction="n_19" />
     </personFlow>
-    <personFlow id="pf_14" type="ped_0" begin="0.00" end="3600.00" period="30.00">
-        <personTrip fromJunction="n_40" toJunction="n_44" />
+    <personFlow id="pf_3" type="ped_0_5" begin="0.00" end="3600.00" period="30.00">
+        <personTrip fromJunction="n_20" toJunction="n_11" />
+    </personFlow>
+    <personFlow id="pf_4" type="ped_0_5" begin="0.00" end="3600.00" period="30.00">
+        <personTrip fromJunction="n_23" toJunction="n_17" />
+    </personFlow>
+    <personFlow id="pf_5" type="ped_0_5" begin="0.00" end="3600.00" period="30.00">
+        <personTrip fromJunction="n_22" toJunction="n_16" />
+    </personFlow>
+    <personFlow id="pf_6" type="ped_0_5" begin="0.00" end="3600.00" period="30.00">
+        <personTrip fromJunction="n_33" toJunction="n_3" />
+    </personFlow>
+    <personFlow id="pf_7" type="ped_0_5" begin="0.00" end="3600.00" period="30.00">
+        <personTrip fromJunction="n_31" toJunction="n_26" />
+    </personFlow>
+    <personFlow id="pf_8" type="ped_0_5" begin="0.00" end="3600.00" period="30.00">
+        <personTrip fromJunction="n_21" toJunction="n_12" />
+    </personFlow>
+    <personFlow id="pf_9" type="ped_0_5" begin="0.00" end="3600.00" period="30.00">
+        <personTrip fromJunction="n_32" toJunction="n_27" />
     </personFlow>
 </routes>
