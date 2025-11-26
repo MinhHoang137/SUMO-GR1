@@ -58,53 +58,21 @@ def write_nodes_to_xml(pos_map, output_path, scale=10):
     print(f"✅ Đã ghi {len(pos_map)} node vào '{output_path}' thành công.")
 
 
-def write_edges_to_xml(grid, pos_map, mH, mW, output_path, numLanes=4, carSpeed=13.9, pedSpeed=1.4):
+
+def write_edges_to_xml(edges, output_path, has_ped_lane=False, numLanes=4, carSpeed=13.9, pedSpeed=1.4):
     """
     Ghi danh sách các cạnh vào file .edg.xml theo cú pháp SUMO.
 
-    Quy tắc:
-    - numLanes là tổng số làn (cả 2 chiều)
-    - Mỗi hướng chỉ chiếm numLanes / 2 làn
-    - Nếu (numLanes/2) >= 2 thì thêm 1 làn đi bộ (index=0)
-    - Các làn còn lại dành cho xe
-    - ID cạnh dùng định dạng: e0, e1, e2, ...
     Args:
-        grid (list[list[str]]): Lưới mê cung 2D.
-        pos_map (dict): Bản đồ vị trí các node với định dạng {key: (x, y, node_id)}.
-        mH (int): Chiều cao lưới.
-        mW (int): Chiều rộng lưới.
+        edges (list[tuple]): Danh sách các cạnh dưới dạng (from_id, to_id).
         output_path (str): Đường dẫn tới file .edg.xml cần ghi.
+        has_ped_lane (bool): Có tạo làn đi bộ không.
         numLanes (int): Tổng số làn cho mỗi cạnh (cả 2 chiều).
         carSpeed (float): Tốc độ tối đa cho làn xe (m/s).
         pedSpeed (float): Tốc độ tối đa cho làn đi bộ (m/s).
     """
-    import xml.etree.ElementTree as ET
-
     root = ET.Element("edges")
-    edges = []
     e_cnt = 0
-
-    # ✅ Sinh danh sách cạnh 1 chiều (dựa trên node thực)
-    for start_key, (sx, sy, s_id) in pos_map.items():
-        int_x = int(sx)
-        int_y = int(sy)
-        directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]  # phải, xuống, trái, lên
-
-        for dx, dy in directions:
-            for i in range(1, max(mW, mH)):
-                nx, ny = int_x + dx * i, int_y + dy * i
-                if nx < 0 or nx >= mW or ny < 0 or ny >= mH:
-                    break
-                if grid[ny][nx] == WALL:
-                    break
-
-                end_x, end_y = sx + dx * i, sy + dy * i
-                end_key = f"{format_float_to_string(end_x)}_{format_float_to_string(end_y)}"
-
-                if end_key in pos_map:
-                    _, _, t_id = pos_map[end_key]
-                    edges.append((s_id, t_id))
-                    break
 
     # ✅ Không vẽ nếu numLanes < 2
     if numLanes < 2:

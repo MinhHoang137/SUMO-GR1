@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2025-10-27 22:59:05 by Eclipse SUMO netedit Version 1.24.0
+<!-- generated on 2025-11-06 21:45:45 by Eclipse SUMO netedit Version 1.24.0
 -->
 
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <!-- VTypes -->
+    <vType id="imp_ped" vClass="pedestrian" impatience="1"/>
     <!-- Vehicles, persons and containers (sorted by depart) -->
-    <flow id="f_0" begin="0.00" fromJunction="n_58" toJunction="n_26" end="3600.00" period="30.00"/>
+    <flow id="f_0" begin="0.00" fromJunction="J0" toJunction="J2" end="3600.00" period="5.00"/>
+    <flow id="f_1" begin="0.00" fromJunction="J2" toJunction="J0" end="3600.00" period="5.00"/>
+    <personFlow id="pf_0" begin="0.00" end="3600.00" period="30.00">
+        <personTrip fromJunction="J5" toJunction="J3"/>
+    </personFlow>
+    <personFlow id="pf_1" type="imp_ped" begin="0.00" end="3600.00" period="30.00">
+        <personTrip fromJunction="J3" toJunction="J5"/>
+    </personFlow>
 </routes>

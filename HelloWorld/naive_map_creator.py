@@ -130,7 +130,7 @@ def naive_create_map_files(input_map_path, output_nod_path, output_edge_path, ou
     pos_map = get_node_pos_map(grid, width, height)
     
     write_to_xml.write_nodes_to_xml(pos_map, output_nod_path)
-    write_to_xml.write_edges_to_xml(grid, pos_map, height, width, output_edge_path, numLanes)
+    write_to_xml.write_maze_edges_to_xml(grid, pos_map, height, width, output_edge_path, numLanes)
     write_to_xml.write_crossings_to_con_xml(output_nod_path, output_edge_path, output_con_path)
     print("Đã tạo tệp .net.xml, .edg.xml và .con.xml thành công.")
 

@@ -83,7 +83,8 @@ def cross_side_gen(crossroads, num_pairs):
     start = []
     end = []
     for i in range(true_num_pairs):
-        rand_i = random.randint(0, true_num_pairs - 1)
+        upper_bound = min(true_num_pairs - 1, len(left) - 1, len(right) - 1)
+        rand_i = random.randint(0, upper_bound)
         start.append(left[rand_i])
         end.append(right[rand_i])
         left.pop(rand_i)
@@ -104,7 +105,8 @@ def swap_side_gen(crossroads, num_pairs):
     start = []
     end = []
     for i in range(true_num_pairs):
-        rand_i = random.randint(0, true_num_pairs - 1)
+        upper_bound = min(true_num_pairs - 1, len(left) - 1, len(right) - 1)
+        rand_i = random.randint(0, upper_bound)
         if (i % 2) == 0:
             start.append(left[rand_i])
             end.append(right[rand_i])
@@ -121,7 +123,8 @@ def in_out_gen(crossroads, num_pairs):
     start = []
     end = []
     for i in range(true_num_pairs):
-        rand_i = random.randint(0, true_num_pairs - 1)
+        upper_bound = min(true_num_pairs - 1, len(_in) - 1, len(_out) - 1)
+        rand_i = random.randint(0, upper_bound)
         start.append(_in[rand_i])
         end.append(_out[rand_i])
         _in.pop(rand_i)
@@ -134,7 +137,8 @@ def out_in_gen(crossroads, num_pairs):
     start = []
     end = []
     for i in range(true_num_pairs):
-        rand_i = random.randint(0, true_num_pairs - 1)
+        upper_bound = min(true_num_pairs - 1, len(_in) - 1, len(_out) - 1)
+        rand_i = random.randint(0, upper_bound)
         start.append(_out[rand_i])
         end.append(_in[rand_i])
         _in.pop(rand_i)

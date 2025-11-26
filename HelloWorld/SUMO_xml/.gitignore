@@ -1,0 +1,9 @@
+# ignore xml files
+*.xml
+
+#ignore SUMO generated files
+*.sumocfg
+*.net.xml
+*.rou.xml
+
+__init__.py

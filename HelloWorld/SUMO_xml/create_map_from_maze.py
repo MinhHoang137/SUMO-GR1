@@ -1,9 +1,8 @@
-# Chú ý: đây là thuật toán tìm nút tối ưu từ mê cung để tạo bản đồ SUMO,
-# tạm thời không phù hợp với bài toán hiện tại
+
 import os
 import xml.etree.ElementTree as ET
 import math
-from SUMO_xml import write_to_xml
+from SUMO_xml import write_to_xml, map_header
 
 WALL = '@'
 FLOOR = '.'
@@ -31,76 +30,6 @@ def format_float_to_string(number):
   return f"{number:.2f}"
 
 
-
-def parse_map_file(filepath):
-    """
-    Đọc và phân tích tệp .map.
-    
-    Hàm này mở tệp tại 'filepath', đọc header để lấy
-    chiều rộng (width) và chiều cao (height), sau đó
-    đọc ma trận bản đồ vào một mảng 2 chiều.
-    
-    Trả về:
-        Một tuple (grid, width, height) nếu thành công.
-        Một tuple (None, 0, 0) nếu có lỗi.
-    """
-    try:
-        with open(filepath, 'r') as f:
-            lines = f.readlines()
-            
-        header = {}
-        map_data_start_index = -1
-        
-        # --- Phần 2: Đọc header để lấy width và height ---
-        for i, line in enumerate(lines):
-            line = line.strip() # Xóa khoảng trắng thừa hoặc ký tự xuống dòng
-            
-            if line.startswith('height'):
-                header['height'] = int(line.split(' ')[1])
-            elif line.startswith('width'):
-                header['width'] = int(line.split(' ')[1])
-            elif line.startswith('map'):
-                # Đánh dấu vị trí bắt đầu của ma trận
-                map_data_start_index = i + 1
-                break
-        
-        # Kiểm tra xem đã tìm thấy đủ thông tin header chưa
-        if map_data_start_index == -1 or 'width' not in header or 'height' not in header:
-            print(f"Lỗi: Tệp '{filepath}' có định dạng không hợp lệ hoặc thiếu header.")
-            return None, 0, 0
-            
-        width = header['width']
-        height = header['height']
-    
-
-        # --- Phần 3: Đọc ma trận và lưu vào mảng 2 chiều ---
-        grid = []
-        map_lines = lines[map_data_start_index:] # Chỉ lấy các dòng từ 'map' trở đi
-        
-        for y in range(height):
-            if y >= len(map_lines):
-                # Trường hợp tệp bị thiếu dòng so với header
-                print(f"Lỗi: Dữ liệu bản đồ bị thiếu. Mong đợi {height} hàng, chỉ tìm thấy {y}.")
-                return None, 0, 0
-            
-            # Lấy đúng 'width' ký tự và chuyển thành một danh sách (list)
-            row_data = list(map_lines[y].strip()[:width])
-            
-            if len(row_data) != width:
-                print(f"Lỗi: Hàng {y} có chiều rộng không chính xác. Mong đợi {width}, tìm thấy {len(row_data)}.")
-                return None, 0, 0
-                
-            # Thêm hàng (danh sách ký tự) vào ma trận 'grid'
-            grid.append(row_data)
-            
-        return grid, width, height
-
-    except FileNotFoundError:
-        print(f"Lỗi: Không tìm thấy tệp tại đường dẫn '{filepath}'")
-        return None, 0, 0
-    except Exception as e:
-        print(f"Đã xảy ra lỗi khi đọc tệp: {e}")
-        return None, 0, 0
     
 def get_node_degree(grid, x, y, mW, mH):
     if grid[y][x] != WALL:
@@ -149,6 +78,8 @@ def check_node_valid(grid, node_position_map, pos_x, pos_y, mW, mH):
     
     # Hỗ trợ cả danh sách [(x,y)] và dict{"x_y": (x,y)}
     iterable = node_position_map.values() if isinstance(node_position_map, dict) else node_position_map
+    
+    # Kiểm tra khoảng cách với các node đã có
     for node_pos in iterable:
         attitude = math.sqrt((node_pos[0] - pos_x) ** 2 + (node_pos[1] - pos_y) ** 2)
         if attitude < 0.1:
@@ -158,6 +89,9 @@ def check_node_valid(grid, node_position_map, pos_x, pos_y, mW, mH):
 
 
 def get_node_position_list(grid, mW, mH, numLanes=4):
+    """
+    Lấy danh sách vị trí các node từ lưới (grid).
+    """
     n_cnt = 0
     node_position_list = {}
     offset = 0
@@ -214,7 +148,52 @@ def get_node_position_list(grid, mW, mH, numLanes=4):
 
     return node_position_list
 
+def write_maze_edges_to_xml(grid, pos_map, mH, mW, output_path, numLanes=4, carSpeed=13.9, pedSpeed=1.4):
+    """
+    Ghi danh sách các cạnh của mê cung vào file .edg.xml theo cú pháp SUMO.
 
+    Quy tắc:
+    - numLanes là tổng số làn (cả 2 chiều)
+    - Mỗi hướng chỉ chiếm numLanes / 2 làn
+    - Nếu (numLanes/2) >= 2 thì thêm 1 làn đi bộ (index=0)
+    - Các làn còn lại dành cho xe
+    - ID cạnh dùng định dạng: e0, e1, e2, ...
+    Args:
+        grid (list[list[str]]): Lưới mê cung 2D.
+        pos_map (dict): Bản đồ vị trí các node với định dạng {key: (x, y, node_id)}.
+        mH (int): Chiều cao lưới.
+        mW (int): Chiều rộng lưới.
+        output_path (str): Đường dẫn tới file .edg.xml cần ghi.
+        numLanes (int): Tổng số làn cho mỗi cạnh (cả 2 chiều).
+        carSpeed (float): Tốc độ tối đa cho làn xe (m/s).
+        pedSpeed (float): Tốc độ tối đa cho làn đi bộ (m/s).
+    """
+    edges = []
+
+
+    # ✅ Sinh danh sách cạnh 1 chiều (dựa trên node thực)
+    for start_key, (sx, sy, s_id) in pos_map.items():
+        int_x = int(sx)
+        int_y = int(sy)
+        directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]  # phải, xuống, trái, lên
+
+        for dx, dy in directions:
+            for i in range(1, max(mW, mH)):
+                nx, ny = int_x + dx * i, int_y + dy * i
+                if nx < 0 or nx >= mW or ny < 0 or ny >= mH:
+                    break
+                if grid[ny][nx] == WALL:
+                    break
+
+                end_x, end_y = sx + dx * i, sy + dy * i
+                end_key = f"{format_float_to_string(end_x)}_{format_float_to_string(end_y)}"
+
+                if end_key in pos_map:
+                    _, _, t_id = pos_map[end_key]
+                    edges.append((s_id, t_id))
+                    break
+
+    write_to_xml.write_edges_to_xml(edges, output_path, True, numLanes=numLanes, carSpeed=carSpeed, pedSpeed=pedSpeed)
 
 
 def visualize_network(nod_file_path, edg_file_path, show_id=True, figsize=(10, 10)):
@@ -300,7 +279,7 @@ def create_map_from_maze_file(filepath, numLanes):
     print(f"Đang xử lý tệp: {filepath}\n")
     
     # Gọi hàm để phân tích tệp
-    grid, width, height = parse_map_file(filepath)
+    grid, width, height = map_header.parse_map_file(filepath)
 
     # Nếu hàm trả về lỗi (grid là None), thì dừng lại
     if grid is None:
@@ -317,7 +296,7 @@ def create_map_from_maze_file(filepath, numLanes):
 
      # Ghi file .nod.xml và .edg.xml
     write_to_xml.write_nodes_to_xml(pos_map, _nod_xml_path)
-    write_to_xml.write_edges_to_xml(grid, pos_map, height, width, _edg_xml_path, numLanes=numLanes)
+    write_maze_edges_to_xml(grid, pos_map, height, width, _edg_xml_path, numLanes=numLanes)
     # Tạo crossings (.con.xml) từ .nod.xml và .edg.xml (dùng width mặc định trong hàm)
     write_to_xml.write_crossings_to_con_xml(_nod_xml_path, _edg_xml_path, _con_xml_path)
     os.system(f"netconvert -n {_nod_xml_path} -e {_edg_xml_path} -x {_con_xml_path} -o {_net_xml_path} --offset.x 0 --offset.y 0")
