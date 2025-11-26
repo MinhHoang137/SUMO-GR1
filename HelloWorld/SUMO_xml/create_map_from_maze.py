@@ -284,7 +284,7 @@ def create_map_from_maze_file(filepath, numLanes):
     # Nếu hàm trả về lỗi (grid là None), thì dừng lại
     if grid is None:
         print("Không thể xử lý tệp.")
-        return
+        return False
     print(f"Chiều rộng: {width}, Chiều cao: {height}\n")
 
     pos_map = get_node_position_list(grid, width, height, numLanes)
@@ -301,3 +301,4 @@ def create_map_from_maze_file(filepath, numLanes):
     write_to_xml.write_crossings_to_con_xml(_nod_xml_path, _edg_xml_path, _con_xml_path)
     os.system(f"netconvert -n {_nod_xml_path} -e {_edg_xml_path} -x {_con_xml_path} -o {_net_xml_path} --offset.x 0 --offset.y 0")
     print(f"\n✅ Bản đồ SUMO đã được tạo thành công tại: {_net_xml_path}\n")
+    return True

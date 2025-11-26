@@ -297,7 +297,7 @@ def create_map(city_path, numLanes=4, carSpeed=13.9, pedSpeed=1.4):
     grid, mW, mH = map_header.parse_map_file(city_path)
     if grid is None:
         print("Không thể tạo bản đồ do lỗi đọc tệp.")
-        return
+        return False
     
     pos_map = get_node_position_list(grid, mW, mH)
     visualize_nodes(grid, pos_map) # Hiển thị đồ thị
@@ -313,6 +313,7 @@ def create_map(city_path, numLanes=4, carSpeed=13.9, pedSpeed=1.4):
     write_to_xml.write_crossings_to_con_xml(_nod_xml_path, _edg_xml_path, _con_xml_path)
     os.system(f"netconvert -n {_nod_xml_path} -e {_edg_xml_path} -x {_con_xml_path} -o {_net_xml_path} --offset.x 0 --offset.y 0")
     print(f"\n✅ Bản đồ SUMO đã được tạo thành công tại: {_net_xml_path}\n")
+    return True
 
 if __name__ == "__main__":
     # Ví dụ sử dụng

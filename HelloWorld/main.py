@@ -152,7 +152,9 @@ if __name__ == "__main__":
         sys.exit(1)
     maze_file_path = sys.argv[1]
     num_lanes = int(sys.argv[2])
-    create_map_from_maze_file(maze_file_path, num_lanes)
+    if not create_map_from_maze_file(maze_file_path, num_lanes):
+        sys.exit(1)
+        
 
     # tạo các tuyến đường
     num_pairs = input("Số lượng cặp nút giao thông cần tạo (mặc định 20): ")
