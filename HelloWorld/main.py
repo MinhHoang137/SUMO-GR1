@@ -17,6 +17,7 @@ from Traffic.pedestrian import read_pedestrians
 from Traffic.unity_vehicle import receive, process_vehicle_updates
 from SUMO_xml.create_map_from_maze import create_map_from_maze_file
 from SUMO_xml.route_gen import create_routes
+from SUMO_xml.create_city_map import create_map
 
 CS = "CS"
 SS = "SS"
@@ -152,7 +153,11 @@ if __name__ == "__main__":
         sys.exit(1)
     maze_file_path = sys.argv[1]
     num_lanes = int(sys.argv[2])
-    create_map_from_maze_file(maze_file_path, num_lanes)
+    # if not create_map_from_maze_file(maze_file_path, num_lanes):
+    #     sys.exit(1)
+    # tạo bản đồ thành phố từ tệp bản đồ
+    if not create_map(maze_file_path, numLanes=num_lanes):
+        sys.exit(1)
 
     # tạo các tuyến đường
     num_pairs = input("Số lượng cặp nút giao thông cần tạo (mặc định 20): ")

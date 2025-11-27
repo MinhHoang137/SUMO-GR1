@@ -193,7 +193,76 @@ def write_crossings_to_con_xml(nod_xml_path, edg_xml_path, output_path, width=2.
     tree.write(output_path, encoding="UTF-8", xml_declaration=True)
     print(f"✅ Đã ghi {len(con_root.findall('crossing'))} crossing vào '{output_path}'.")
 
-def write_car_route_to_xml(start_list, end_list, rou_path, period=30, begin=0.0, end_time=3600.0):
+def filter_feasible_pairs(start_list, end_list, edge_file_path):
+    """
+    Lọc bỏ các cặp điểm bắt đầu/kết thúc không có đường đi (không liên thông).
+    Sử dụng BFS trên đồ thị được dựng từ file .edg.xml hoặc .net.xml.
+    """
+    if not edge_file_path or not os.path.exists(edge_file_path):
+        return start_list, end_list
+
+    # 1. Parse Edge File to build Adjacency List
+    try:
+        tree = ET.parse(edge_file_path)
+        root = tree.getroot()
+    except Exception as e:
+        print(f"⚠️ Lỗi đọc file {edge_file_path}: {e}")
+        return start_list, end_list
+
+    adj = {}
+    for edge in root.findall(".//edge"):
+        eid = edge.get("id", "")
+        if eid.startswith(":"): continue # Skip internal edges
+        u = edge.get("from")
+        v = edge.get("to")
+        if u and v:
+            if u not in adj: adj[u] = []
+            adj[u].append(v)
+
+    # 2. Filter pairs
+    new_start = []
+    new_end = []
+    
+    # Cache reachability: start_node -> set of reachable nodes
+    reachability_cache = {}
+    
+    skipped = 0
+    
+    for s, e in zip(start_list, end_list):
+        s_id = s["id"] if isinstance(s, dict) else str(s)
+        e_id = e["id"] if isinstance(e, dict) else str(e)
+        
+        # Nếu điểm bắt đầu không có trong đồ thị, coi như không đi được
+        if s_id not in adj:
+            skipped += 1
+            continue
+            
+        if s_id not in reachability_cache:
+            # BFS để tìm tất cả các node có thể đến được từ s_id
+            visited = set()
+            queue = [s_id]
+            visited.add(s_id)
+            while queue:
+                curr = queue.pop(0)
+                if curr in adj:
+                    for neighbor in adj[curr]:
+                        if neighbor not in visited:
+                            visited.add(neighbor)
+                            queue.append(neighbor)
+            reachability_cache[s_id] = visited
+            
+        if e_id in reachability_cache[s_id]:
+            new_start.append(s)
+            new_end.append(e)
+        else:
+            skipped += 1
+            
+    if skipped > 0:
+        print(f"ℹ️ Đã lọc bỏ {skipped} tuyến đường không khả thi (không tìm thấy đường đi).")
+        
+    return new_start, new_end
+
+def write_car_route_to_xml(start_list, end_list, rou_path, period=30, begin=0.0, end_time=3600.0, edge_file_path=None):
     """
     Ghi file .rou.xml chứa các tuyến đường cho xe từ danh sách điểm bắt đầu và kết thúc.
 
@@ -204,10 +273,15 @@ def write_car_route_to_xml(start_list, end_list, rou_path, period=30, begin=0.0,
         end_list (list): Danh sách node kết thúc.
         rou_path (str): Đường dẫn tới file .rou.xml cần ghi.
         period (int): Khoảng thời gian giữa các xe khởi hành (giây) cho mỗi flow.
+        edge_file_path (str): Đường dẫn tới file .edg.xml hoặc .net.xml để kiểm tra tính khả thi.
     """
     # Bảo vệ đầu vào
     if not isinstance(start_list, list) or not isinstance(end_list, list):
         raise ValueError("start_list và end_list phải là list")
+
+    # Lọc các tuyến đường khả thi nếu có file edge
+    if edge_file_path:
+        start_list, end_list = filter_feasible_pairs(start_list, end_list, edge_file_path)
 
     num_pairs = min(len(start_list), len(end_list))
     if num_pairs == 0:
@@ -269,7 +343,7 @@ def write_car_route_to_xml(start_list, end_list, rou_path, period=30, begin=0.0,
     print(f"✅ Đã ghi {num_pairs} flow xe vào '{rou_path}' thành công.")
 
 
-def write_ped_route_to_xml(start_list, end_list, rou_path, period=30, impatience=1.0, vtype_id=None, begin=0.0, end_time=3600.0):
+def write_ped_route_to_xml(start_list, end_list, rou_path, period=30, impatience=1.0, vtype_id=None, begin=0.0, end_time=3600.0, edge_file_path=None):
     """
     Ghi thêm các tuyến đường cho người đi bộ vào file .rou.xml đã tồn tại (không ghi đè nội dung xe ô tô).
 
@@ -287,6 +361,7 @@ def write_ped_route_to_xml(start_list, end_list, rou_path, period=30, impatience
         vtype_id (str|None): Nếu None, tự sinh theo định dạng ped_{impatience}.
         begin (float): Thời điểm bắt đầu.
         end_time (float): Thời điểm kết thúc.
+        edge_file_path (str): Đường dẫn tới file .edg.xml hoặc .net.xml để kiểm tra tính khả thi.
     """
     # Đọc (hoặc tạo mới) cây XML hiện có
     routes_root = None
@@ -313,6 +388,10 @@ def write_ped_route_to_xml(start_list, end_list, rou_path, period=30, impatience
     # Bảo vệ đầu vào
     if not isinstance(start_list, list) or not isinstance(end_list, list):
         raise ValueError("start_list và end_list phải là list")
+
+    # Lọc các tuyến đường khả thi nếu có file edge
+    if edge_file_path:
+        start_list, end_list = filter_feasible_pairs(start_list, end_list, edge_file_path)
 
     num_pairs = min(len(start_list), len(end_list))
     if num_pairs == 0:

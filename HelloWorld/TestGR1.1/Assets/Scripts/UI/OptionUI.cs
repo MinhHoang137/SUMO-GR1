@@ -116,4 +116,9 @@ public class OptionUI : MonoBehaviour
 			}
 		});
 	}
+
+    private void OnApplicationQuit()
+    {
+        CloseSimulation();
+    }
 } 
