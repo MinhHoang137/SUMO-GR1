@@ -72,8 +72,7 @@ public class UnityVehicleManager : MonoBehaviour
 			Debug.Log("Vehicle does not exist");
 		}
 	}
-	private void Update()
-	{
+	private void FixedUpdate() {
 		vehicleSender.SendUnityData(vehicle?.GetVehicleData());
 	}
 }

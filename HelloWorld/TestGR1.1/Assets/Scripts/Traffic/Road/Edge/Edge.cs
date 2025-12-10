@@ -44,7 +44,7 @@ public class Edge : Road // edgeType_0
 		walkingLane.SetParent(transform);
 		float walkingLength = 0;
 		if (edgeData.startWalkingLane != null)
-		walkingLength = Vector3.Distance(new Vector3(edgeData.startWalkingLane.x, 0, edgeData.startWalkingLane.y), new Vector3(edgeData.endWalkingLane.x, 0, edgeData.endWalkingLane.y));
+		walkingLength = Vector3.Distance(new Vector3(edgeData.startWalkingLane.Value.x, 0, edgeData.startWalkingLane.Value.y), new Vector3(edgeData.endWalkingLane.Value.x, 0, edgeData.endWalkingLane.Value.y));
 		float walkingWidth = walkingLaneWidth * edgeData.walkingNum;
 		walkingLane.localScale = new Vector3(walkingWidth, 1, walkingLength);
 		walkingLane.forward = direction;

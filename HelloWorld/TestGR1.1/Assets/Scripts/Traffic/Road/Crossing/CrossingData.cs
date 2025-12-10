@@ -8,5 +8,5 @@ public class CrossingData
     public Coordinate end;
     public float width;
 	public float length;
-    public Coordinate direction;
+    public Coordinate? direction;
 }

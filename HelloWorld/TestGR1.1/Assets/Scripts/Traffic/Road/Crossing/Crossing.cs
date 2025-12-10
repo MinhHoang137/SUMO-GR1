@@ -11,7 +11,7 @@ public class Crossing : MonoBehaviour
 		Vector3 direction = Vector3.zero;
 		if (data.direction != null)
 		{
-			direction = new Vector3(data.direction.x, 0, data.direction.y).normalized;
+			direction = new Vector3(data.direction.Value.x, 0, data.direction.Value.y).normalized;
 		}
 		Vector3 spread = new Vector3(direction.z, 0, -direction.x);
 		float offset = data.width / 2;

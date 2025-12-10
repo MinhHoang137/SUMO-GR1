@@ -1,5 +1,6 @@
 import os
 from SUMO_xml import write_to_xml
+from SUMO_xml.create_map_from_maze import write_maze_edges_to_xml
 
 WALL = '@'
 FLOOR = '.'
@@ -110,7 +111,7 @@ def get_node_pos_map(grid, width, height):
                 
     return pos_map
 
-def naive_create_map_files(input_map_path, output_nod_path, output_edge_path, output_con_path, numLanes=4):
+def naive_create_map_files(input_map_path, output_nod_path, output_edge_path, output_con_path, numLanes=8):
     """
     Tạo tệp .net.xml và .edg.xml từ tệp .map đơn giản.
     
@@ -130,7 +131,7 @@ def naive_create_map_files(input_map_path, output_nod_path, output_edge_path, ou
     pos_map = get_node_pos_map(grid, width, height)
     
     write_to_xml.write_nodes_to_xml(pos_map, output_nod_path)
-    write_to_xml.write_maze_edges_to_xml(grid, pos_map, height, width, output_edge_path, numLanes)
+    write_maze_edges_to_xml(grid, pos_map, height, width, output_edge_path, numLanes = numLanes)
     write_to_xml.write_crossings_to_con_xml(output_nod_path, output_edge_path, output_con_path)
     print("Đã tạo tệp .net.xml, .edg.xml và .con.xml thành công.")
 

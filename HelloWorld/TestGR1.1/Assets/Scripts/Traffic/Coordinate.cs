@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class Coordinate
+public struct Coordinate
 {
 	public float x;
 	public float y;
