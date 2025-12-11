@@ -74,6 +74,7 @@ public class RoadDataListener : MonoBehaviour
 						UnityMainThreadDispatcher.Instance().Enqueue(() =>
 						{
 							HandleData(json);
+							Debug.Log($"{GetType().Name} received and processed data.");
 						});
 					}
 				}

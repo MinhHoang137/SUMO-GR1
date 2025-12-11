@@ -18,6 +18,7 @@ from Traffic.unity_vehicle import receive, process_vehicle_updates
 from SUMO_xml.create_map_from_maze import create_map_from_maze_file
 from SUMO_xml.route_gen import create_routes
 from SUMO_xml.create_city_map import create_map
+from naive_map_creator import naive_create_map
 
 CS = "CS"
 SS = "SS"
@@ -148,33 +149,34 @@ def send_road_data():
 # Hàm chính
 if __name__ == "__main__":
     # yêu cầu nhập đường dẫn tệp mê cung và số làn
-    if len(sys.argv) < 3:
-        print("Usage: python main.py <maze_file_path> <num_lanes>")
-        sys.exit(1)
-    maze_file_path = sys.argv[1]
-    num_lanes = int(sys.argv[2])
+    # if len(sys.argv) < 3:
+    #     print("Usage: python main.py <maze_file_path> <num_lanes>")
+    #     sys.exit(1)
+    # maze_file_path = sys.argv[1]
+    # num_lanes = int(sys.argv[2])
+    # naive_create_map(maze_file_path, num_lanes)
     # if not create_map_from_maze_file(maze_file_path, num_lanes):
     #     sys.exit(1)
     # tạo bản đồ thành phố từ tệp bản đồ
-    if not create_map(maze_file_path, numLanes=num_lanes):
-        sys.exit(1)
+    # if not create_map(maze_file_path, numLanes=num_lanes):
+    #     sys.exit(1)
 
     # tạo các tuyến đường
-    num_pairs = input("Số lượng cặp nút giao thông cần tạo (mặc định 20): ")
-    num_pairs = int(num_pairs) if num_pairs else 20
-    car_cr_type = input(f"Loại phân chia nút giao thông cho xe ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
-    car_cr_type = car_cr_type if car_cr_type in [CS, SS, IO, OI] else CS
-    ped_option = input("Tạo tuyến đường cho người đi bộ không? (y/n, mặc định y): ")
-    has_ped = ped_option.lower() != 'n'
+    # num_pairs = input("Số lượng cặp nút giao thông cần tạo (mặc định 20): ")
+    # num_pairs = int(num_pairs) if num_pairs else 20
+    # car_cr_type = input(f"Loại phân chia nút giao thông cho xe ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
+    # car_cr_type = car_cr_type if car_cr_type in [CS, SS, IO, OI] else CS
+    # ped_option = input("Tạo tuyến đường cho người đi bộ không? (y/n, mặc định y): ")
+    # has_ped = ped_option.lower() != 'n'
 
-    if has_ped:
-        ped_cr_type = input(f"Loại phân chia nút giao thông cho người đi bộ ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
-        ped_cr_type = ped_cr_type if ped_cr_type in [CS, SS, IO, OI] else CS
-        ped_impatience = input("Mức độ thiếu kiên nhẫn của người đi bộ (0.0 đến 1.0, mặc định 0.5): ")
-        ped_impatience = float(ped_impatience) if ped_impatience else 0.5
-        create_routes(num_pairs, car_cr_type, has_ped, ped_cr_type, ped_impatience)
-    else:
-        create_routes(num_pairs, car_cr_type, has_ped)
+    # if has_ped:
+    #     ped_cr_type = input(f"Loại phân chia nút giao thông cho người đi bộ ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
+    #     ped_cr_type = ped_cr_type if ped_cr_type in [CS, SS, IO, OI] else CS
+    #     ped_impatience = input("Mức độ thiếu kiên nhẫn của người đi bộ (0.0 đến 1.0, mặc định 0.5): ")
+    #     ped_impatience = float(ped_impatience) if ped_impatience else 0.5
+    #     create_routes(num_pairs, car_cr_type, has_ped, ped_cr_type, ped_impatience)
+    # else:
+    #     create_routes(num_pairs, car_cr_type, has_ped)
 
     # khởi chạy Unity và mô phỏng SUMO
     # subprocess.Popen(target_exe)

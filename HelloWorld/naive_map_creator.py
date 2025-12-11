@@ -130,12 +130,12 @@ def naive_create_map_files(input_map_path, output_nod_path, output_edge_path, ou
     
     pos_map = get_node_pos_map(grid, width, height)
     
-    write_to_xml.write_nodes_to_xml(pos_map, output_nod_path)
+    write_to_xml.write_nodes_to_xml(pos_map, output_nod_path, scale=40.0)
     write_maze_edges_to_xml(grid, pos_map, height, width, output_edge_path, numLanes = numLanes)
     write_to_xml.write_crossings_to_con_xml(output_nod_path, output_edge_path, output_con_path)
-    print("Đã tạo tệp .net.xml, .edg.xml và .con.xml thành công.")
+    print("Đã tạo tệp .nod.xml, .edg.xml và .con.xml thành công.")
 
-def create_map_from_maze_file(maze_file_path, num_lanes):
+def naive_create_map(maze_file_path, num_lanes):
     """
     Tạo bản đồ SUMO từ tệp mê cung và lưu các tệp cần thiết.
     
@@ -152,8 +152,8 @@ def create_map_from_maze_file(maze_file_path, num_lanes):
     os.system(f"netconvert -n {output_nod_path} -e {output_edge_path} -x {output_con_path} -o {net_path} --offset.x 0 --offset.y 0")
     print(f"Tệp bản đồ đã được lưu tại:\n- {output_nod_path}\n- {output_edge_path}\n- {output_con_path}\n- {net_path}")
 
-if __name__ == "__main__":
-    map_file_path = "maze-32-32-4.map"
-    num_lanes = 4
+# if __name__ == "__main__":
+#     map_file_path = "maze-32-32-4.map"
+#     num_lanes = 4
 
-    create_map_from_maze_file(map_file_path, num_lanes)
+#     create_map_from_maze_file(map_file_path, num_lanes)
