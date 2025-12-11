@@ -53,6 +53,7 @@ public class UnityVehicleManager : MonoBehaviour
 			}, Time.deltaTime));
 			vehicle.transform.SetParent(transform);
 			stateText.text = "Hủy xe Unity";
+			Debug.Log("Vehicle created at " + junctionPos[index]);
 		}
 		else
 		{

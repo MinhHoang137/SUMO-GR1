@@ -14,10 +14,14 @@ public class VehicleSender : MonoBehaviour
 	private AutoResetEvent queueSignal = new AutoResetEvent(false);
 	private bool isRunning = true;
 
+	private TcpClient persistentClient;
+	private NetworkStream persistentStream;
+
 	public string host = "127.0.0.1";
 	public int port = 5053;
 	public int timeoutMillis = 1000;
 	[SerializeField] private string sendJson;
+	public int reconnectDelayMillis = 250; // chờ giữa các lần thử kết nối lại
 
 	void Start()
 	{
@@ -55,35 +59,32 @@ public class VehicleSender : MonoBehaviour
 		{
 			if (queue.TryDequeue(out var vehicleData))
 			{
+				// Đảm bảo có kết nối trước khi gửi
+				if (!EnsureConnected())
+				{
+					// Nếu không kết nối được, đẩy lại dữ liệu vào hàng đợi và chờ một chút
+					queue.Enqueue(vehicleData);
+					queueSignal.WaitOne(reconnectDelayMillis);
+					continue;
+				}
+
 				try
 				{
-					using (TcpClient client = new TcpClient())
-					{
-						var connectTask = client.ConnectAsync(host, port);
-						if (!connectTask.Wait(timeoutMillis))
-						{
-							Debug.LogWarning($"[Unity] Timeout khi kết nối tới {host}:{port}");
-							continue;
-						}
+					List<VehicleData> dataList = new List<VehicleData> { vehicleData };
+					sendJson = JsonConvert.SerializeObject(dataList) + "<END>";
+					byte[] bytesToSend = Encoding.UTF8.GetBytes(sendJson);
 
-						using (NetworkStream stream = client.GetStream())
-						{
-							List<VehicleData> dataList = new List<VehicleData> { vehicleData };
-							sendJson = JsonConvert.SerializeObject(dataList) + "<END>";
-							byte[] bytesToSend = Encoding.UTF8.GetBytes(sendJson);
-
-							stream.Write(bytesToSend, 0, bytesToSend.Length);
-							stream.Flush();
-						}
-					}
-				}
-				catch (SocketException ex)
-				{
-					Debug.LogError($"[Unity] Socket error: {ex.Message}");
+					persistentStream.Write(bytesToSend, 0, bytesToSend.Length);
+					persistentStream.Flush();
 				}
 				catch (Exception ex)
 				{
 					Debug.LogError($"[Unity] Lỗi khi gửi dữ liệu: {ex.Message}");
+					// nếu có lỗi gửi, đóng kết nối để thử reconnect ở lần sau
+					CleanupConnection();
+					// đẩy lại dữ liệu để thử gửi sau khi reconnect
+					queue.Enqueue(vehicleData);
+					queueSignal.WaitOne(reconnectDelayMillis);
 				}
 			}
 			else
@@ -91,6 +92,45 @@ public class VehicleSender : MonoBehaviour
 				queueSignal.WaitOne(); // Đợi đến khi có dữ liệu mới
 			}
 		}
+	}
+
+	private bool EnsureConnected()
+	{
+		try
+		{
+			if (persistentClient != null && persistentClient.Connected && persistentStream != null)
+			{
+				return true;
+			}
+
+			CleanupConnection();
+			persistentClient = new TcpClient();
+			var connectTask = persistentClient.ConnectAsync(host, port);
+			if (!connectTask.Wait(timeoutMillis))
+			{
+				Debug.LogWarning($"[Unity] Timeout khi kết nối tới {host}:{port}");
+				CleanupConnection();
+				return false;
+			}
+			persistentClient.ReceiveTimeout = timeoutMillis;
+			persistentClient.SendTimeout = timeoutMillis;
+			persistentStream = persistentClient.GetStream();
+			return true;
+		}
+		catch (Exception ex)
+		{
+			Debug.LogError($"[Unity] Lỗi khi kết nối: {ex.Message}");
+			CleanupConnection();
+			return false;
+		}
+	}
+
+	private void CleanupConnection()
+	{
+		try { persistentStream?.Close(); } catch { }
+		try { persistentClient?.Close(); } catch { }
+		persistentStream = null;
+		persistentClient = null;
 	}
 }
 

@@ -21,6 +21,7 @@ public class UnityVehicle : Vehicle
         VehicleManager.Instance.AddVehicle(this);
 		idCounter++;
 		lastPos = transform.position;
+		destination = transform.position;
 	}
 
     // Update is called once per frame
@@ -30,6 +31,7 @@ public class UnityVehicle : Vehicle
 		{
 			Move();
 		}
+		destination = transform.position;
 	}
 	protected override void Move()
 	{

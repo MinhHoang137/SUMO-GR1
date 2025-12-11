@@ -105,6 +105,7 @@ public class RoadDataListener : MonoBehaviour
 				//roadDataSO.junctionDatas = newRoadDataSO.junctionDatas;
 				//roadDataSO.crossingDatas = newRoadDataSO.crossingDatas;
 				isListening = false; // Stop listening after processing data
+				listenerThread.Abort();
 			}
 		}
 		catch (Exception e)

@@ -1,6 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+/// <summary>
+/// Quản lý các đối tượng Trafficer (xe cộ) chung cho các loại Trafficer khác nhau, sử dụng hệ thống pooling để tái sử dụng đối tượng.
+/// (Hiện tại khá vô dụng do chỉ có PedestrianManager kế thừa)
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <typeparam name="TData"></typeparam>
 public abstract class TrafficerObjectManager<T, TData> : MonoBehaviour
 	where T : Trafficer 
 	where TData : TrafficerData

@@ -14,6 +14,11 @@ public class TrafficerButton : MonoBehaviour
 	{
 		trafficerId.text = text;
 		trafficer = TrafficerManager.Instance.GetTrafficer(text);
+		if (trafficer == null)
+		{
+			Debug.LogError($"Trafficer with ID {text} not found.");
+			return;
+		}
 		button.onClick.AddListener(() =>
 		{
 			CameraController.Instance.SetTrafficerView(trafficer);

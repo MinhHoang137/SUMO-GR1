@@ -3,7 +3,7 @@
 public abstract class Trafficer : MonoBehaviour
 {
 	private string id = "";
-	private Vector3 destination;
+	protected Vector3 destination;
 	protected float speed;
 	private Vector3 lastPosition;
 
@@ -33,10 +33,23 @@ public abstract class Trafficer : MonoBehaviour
 			transform.position = destination;
 		}
 	}
+	public void Hide()
+	{
+		gameObject.SetActive(false);
+	}
 
+	public void Show()
+	{
+		gameObject.SetActive(true);
+		transform.position = destination;
+	}
 	public void SetDestination(Vector3 destination)
 	{
 		this.destination = destination;
+	}
+	public Vector3 GetDestination()
+	{
+		return destination;
 	}
 
 	public void SetSpeed(float speed)
@@ -65,6 +78,8 @@ public abstract class Trafficer : MonoBehaviour
 		return cameraHolder;
 	}
 
+
+
 	protected virtual void OnDisable()
 	{
 		CameraController cmC = cameraHolder.GetComponentInChildren<CameraController>();
@@ -73,4 +88,5 @@ public abstract class Trafficer : MonoBehaviour
 			cmC.SetRandomTrafficerView();
 		}
 	}
+	
 }
