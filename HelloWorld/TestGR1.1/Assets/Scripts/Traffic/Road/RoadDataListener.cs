@@ -12,15 +12,16 @@ public class RoadDataListener : MonoBehaviour
 	[SerializeField] private RoadDataSO roadDataSO;
 
 	private RoadData roadData;
-	private TcpListener listener;
+	private TcpClient tcpClient;
 	private bool isListening = true;
 	private Thread listenerThread;
 	private string lastJson;
 
-	private const int BUFFER_SIZE = 100000;
+	private const int BUFFER_SIZE = 131072;
 	private const string END_MARKER = "<END>";
 
 	protected int port = 5050;
+	protected string loopbackAddress = "127.0.0.1";
 
 
 	void Start()
@@ -30,62 +31,58 @@ public class RoadDataListener : MonoBehaviour
 
 	private void StartListening()
 	{
-		string host = "127.0.0.1";
-		listener = new TcpListener(IPAddress.Parse(host), port);
-		listener.Start();
-		Debug.Log($"{GetType().Name} listening on port {port}...");
-
-		listenerThread = new Thread(ListenForData)
+		try
 		{
-			IsBackground = true
-		};
-		listenerThread.Start();
+			tcpClient = Network.CreateTcpClient(loopbackAddress, port);
+			Debug.Log($"{GetType().Name} connected to {loopbackAddress}:{port}...");
+
+			listenerThread = new Thread(ListenForData)
+			{
+				IsBackground = true
+			};
+			listenerThread.Start();
+		}
+		catch (Exception e)
+		{
+			Debug.LogError($"Failed to connect in {GetType().Name}: {e.Message}");
+		}
 	}
 
 	private void ListenForData()
 	{
+		Network.SendMessage(tcpClient, "RoadDataRequest", BUFFER_SIZE, END_MARKER);
 		while (isListening)
 		{
 			try
 			{
-				using (TcpClient client = listener.AcceptTcpClient())
-				using (NetworkStream stream = client.GetStream())
+				if (tcpClient == null)
 				{
-					byte[] buffer = new byte[BUFFER_SIZE];
-					StringBuilder fullMessage = new StringBuilder();
-					int bytesRead;
+					Thread.Sleep(100);
+					continue;
+				}
 
-					while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
-					{
-						string chunk = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-						fullMessage.Append(chunk);
+				if (!tcpClient.Connected)
+				{
+					Thread.Sleep(100);
+					continue;
+				}
 
-						if (fullMessage.ToString().Contains(END_MARKER))
-						{
-							break;
-						}
-					}
-
-					string json = fullMessage.ToString().Replace(END_MARKER, "").Trim();
-
-					if (!string.IsNullOrEmpty(json) && json != lastJson)
-					{
-						lastJson = json;
-						UnityMainThreadDispatcher.Instance().Enqueue(() =>
-						{
-							HandleData(json);
-							Debug.Log($"{GetType().Name} received and processed data.");
-						});
-					}
+				string json = Network.ReadMessage(tcpClient, BUFFER_SIZE, END_MARKER);
+				if (!string.IsNullOrEmpty(json) && json != lastJson)
+				{
+					lastJson = json;
+					UnityMainThreadDispatcher.Instance().Enqueue(() => HandleData(json));
 				}
 			}
 			catch (SocketException socketEx)
 			{
 				Debug.LogError($"Socket error in {GetType().Name}: {socketEx.Message}");
+				break;
 			}
 			catch (Exception e)
 			{
 				Debug.LogError($"Error reading data in {GetType().Name}: {e.Message}");
+				break;
 			}
 		}
 	}
@@ -105,6 +102,7 @@ public class RoadDataListener : MonoBehaviour
 				//roadDataSO.junctionDatas = newRoadDataSO.junctionDatas;
 				//roadDataSO.crossingDatas = newRoadDataSO.crossingDatas;
 				isListening = false; // Stop listening after processing data
+				try { tcpClient?.Close(); } catch { }
 				listenerThread.Abort();
 			}
 		}
@@ -117,11 +115,14 @@ public class RoadDataListener : MonoBehaviour
 	void OnDestroy()
 	{
 		isListening = false;
-		listener?.Stop();
+		try { 
+			tcpClient?.Close(); 
+			Debug.Log($"{GetType().Name} TCP client closed."); 
+		} catch { }
 
 		if (listenerThread != null && listenerThread.IsAlive)
 		{
-			listenerThread.Abort();
+			try { listenerThread.Abort(); } catch { }
 		}
 	}
 

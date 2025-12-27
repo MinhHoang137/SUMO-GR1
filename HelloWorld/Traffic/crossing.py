@@ -1,18 +1,10 @@
 
 import os
-import json
-import socket
 import xml.etree.ElementTree as ET
 import math
-import time
 
 class CrossingReader:
     NET_XML_PATH = os.path.join(os.path.dirname(__file__), '../SUMO_xml/HelloWorld.net.xml')
-    HOST = '127.0.0.1'
-    PORT = 5051
-    CHUNK_SIZE = 4096
-    TIMEOUT = 5  # seconds
-    MAX_RETRIES = 5
 
     @classmethod
     def parse_shape(cls, shape):
@@ -65,28 +57,6 @@ class CrossingReader:
             print("No crossings found in the file.")
 
         return  crossings
-
-    @classmethod
-    def send_crossings(cls, crossings):
-        data = json.dumps(crossings, ensure_ascii=False) + "__EOF__"
-        encoded = data.encode('utf-8')
-
-        retries = 0
-        while retries < cls.MAX_RETRIES:
-            try:
-                with socket.create_connection((cls.HOST, cls.PORT), timeout=cls.TIMEOUT) as sock:
-                    print(f"Connected to Unity on port {cls.PORT}")
-                    for i in range(0, len(encoded), cls.CHUNK_SIZE):
-                        chunk = encoded[i:i+cls.CHUNK_SIZE]
-                        sock.sendall(chunk)
-                    print("Crossing data sent successfully.")
-                    break
-            except (socket.timeout, ConnectionRefusedError) as e:
-                retries += 1
-                print(f"Connection failed (attempt {retries}/{cls.MAX_RETRIES}): {e}")
-                time.sleep(1)
-        else:
-            print("Failed to send crossing data after multiple retries.")
 
 if __name__ == "__main__":
     CrossingReader.read_crossings()

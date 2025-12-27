@@ -1,15 +1,10 @@
 
 import os
-import json
 import xml.etree.ElementTree as ET
-import socket
 
 
 class EdgeReader:
     NET_XML_PATH = os.path.join(os.path.dirname(__file__), '../SUMO_xml/HelloWorld.net.xml')
-    SERVER_HOST = '127.0.0.1'  # Địa chỉ localhost
-    SERVER_PORT = 5052  # Cổng 5052
-    CHUNK_SIZE = 4096  # Kích thước gói gửi mỗi lần (4096 byte)
 
     @staticmethod
     def parse_shape(shape):
@@ -86,26 +81,6 @@ class EdgeReader:
             print("No edges found in the file.")
 
         return edges
-
-    @classmethod
-    def send_edges_in_chunks(cls, edges):
-        try:
-            # Kết nối đến server Unity qua cổng 5052
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.connect((cls.SERVER_HOST, cls.SERVER_PORT))
-
-                # Chuyển đổi dữ liệu edges thành JSON
-                json_data = json.dumps(edges, ensure_ascii=False)
-
-                # Chia dữ liệu thành các gói nhỏ 4096 byte
-                for i in range(0, len(json_data), cls.CHUNK_SIZE):
-                    chunk = json_data[i:i + cls.CHUNK_SIZE]
-                    s.sendall(chunk.encode('utf-8'))
-
-                # Gửi dấu kết thúc khi gửi xong tất cả dữ liệu
-                s.sendall(b"__EOF__")
-        except Exception as e:
-            print(f"Error sending data to Unity: {e}")
 
 
 # Kiểm tra hoạt động của class

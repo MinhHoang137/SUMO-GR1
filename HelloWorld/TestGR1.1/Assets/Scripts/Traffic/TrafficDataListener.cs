@@ -10,16 +10,17 @@ using Newtonsoft.Json.Linq;
 
 public class TrafficDataListener : MonoBehaviour
 {
-	private TcpListener listener;
+	private TcpClient tcpClient;
 	private bool isListening = true;
 	private Thread listenerThread;
 	private TrafficDataList data = new TrafficDataList();
 	private string lastJson;
 
-	private const int BUFFER_SIZE = 100000;
+	private const int BUFFER_SIZE = 131072;
 	private const string END_MARKER = "<END>";
 
 	protected int port = 5050;
+	private string loopbackAddress = "127.0.0.1";
 
 	void Start()
 	{
@@ -28,9 +29,7 @@ public class TrafficDataListener : MonoBehaviour
 
 	private void StartListening()
 	{
-		string host = "127.0.0.1";
-		listener = new TcpListener(IPAddress.Parse(host), port);
-		listener.Start();
+		tcpClient = Network.CreateTcpClient(loopbackAddress, port);
 		Debug.Log($"{GetType().Name} listening on port {port}...");
 
 		listenerThread = new Thread(ListenForData)
@@ -42,35 +41,16 @@ public class TrafficDataListener : MonoBehaviour
 
 	private void ListenForData()
 	{
+		Network.SendMessage(tcpClient, "SimulationReady", BUFFER_SIZE, END_MARKER);
 		while (isListening)
 		{
 			try
 			{
-				using (TcpClient client = listener.AcceptTcpClient())
-				using (NetworkStream stream = client.GetStream())
+				string jsonContent = Network.ReadMessage(tcpClient, BUFFER_SIZE, END_MARKER);
+				if (!string.IsNullOrEmpty(jsonContent) && jsonContent != lastJson)
 				{
-					byte[] buffer = new byte[BUFFER_SIZE];
-					StringBuilder fullMessage = new StringBuilder();
-					int bytesRead;
-
-					while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
-					{
-						string chunk = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-						fullMessage.Append(chunk);
-
-						if (fullMessage.ToString().Contains(END_MARKER))
-						{
-							break;
-						}
-					}
-
-					string json = fullMessage.ToString().Replace(END_MARKER, "").Trim();
-
-					if (!string.IsNullOrEmpty(json) && json != lastJson)
-					{
-						lastJson = json;
-						HandleData(json);
-					}
+					lastJson = jsonContent;
+					HandleData(jsonContent);
 				}
 			}
 			catch (SocketException socketEx)
@@ -106,12 +86,11 @@ public class TrafficDataListener : MonoBehaviour
 
 	void OnDestroy()
 	{
+		Network.CloseTcpClient(tcpClient);
 		isListening = false;
-		listener?.Stop();
-
 		if (listenerThread != null && listenerThread.IsAlive)
 		{
-			listenerThread.Abort();
+			listenerThread.Join();
 		}
 	}
 }

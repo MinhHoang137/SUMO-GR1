@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class EdgeMaker : MonoBehaviour
 {
-    [SerializeField] private EdgeReader edgeReader;
 	[SerializeField] private Edge edgePrefab;
 	[SerializeField] private RoadDataSO roadData;
 	private Dictionary<string, Edge> edgeMap = new Dictionary<string, Edge>();

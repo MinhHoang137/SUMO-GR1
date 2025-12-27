@@ -4,6 +4,7 @@ import math
 from queue import Queue
 import os
 import xml.etree.ElementTree as ET
+import network
 
 HOST = '127.0.0.1'
 PORT = 5053
@@ -65,49 +66,24 @@ def _pick_edge_from_netxml(net_xml_path: str) -> str:
     except Exception:
         return ""
 
-def receive():
-    # Accept only one connection from Unity, handle it until the client closes,
-    # then stop listening (one-shot server).
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-        server_socket.bind((HOST, PORT))
-        server_socket.listen()
-        print(f"[Python] (one-shot) Đang lắng nghe một kết nối từ Unity tại {HOST}:{PORT}...")
+def client_handler(client_socket : socket.socket):
+    print(f"[Python] Kết nối từ: {client_socket.getpeername()}")
+    with client_socket:
+        while True:
+            data_str = network.receive_data(client_socket)
+            if not data_str:
+                break
+            try:
+                vehicles = json.loads(data_str)
+                update_queue.put(vehicles)
+            except json.JSONDecodeError as e:
+                print(f"[Python] Lỗi phân tích JSON: {e}")
+            except Exception as e:
+                print(f"[Python] Lỗi xử lý dữ liệu: {e}")
+    print("[Python] Client đã đóng kết nối.")
 
-        try:
-            conn, addr = server_socket.accept()
-        except Exception as e:
-            print(f"[Python] Lỗi khi chấp nhận kết nối: {e}")
-            return
-
-        with conn:
-            print(f"[Python] Kết nối từ: {addr} (chấp nhận 1 lần)")
-            full_data = ''
-            while True:
-                try:
-                    data = conn.recv(4096)
-                    if not data:
-                        # client closed connection
-                        break
-                    text = data.decode('utf-8')
-                except Exception as e:
-                    print(f"[Python] Lỗi nhận dữ liệu: {e}")
-                    break
-
-                full_data += text
-                # Process one or multiple messages separated by END_MARKER
-                while END_MARKER in full_data:
-                    raw, _, rest = full_data.partition(END_MARKER)
-                    full_data = rest
-                    try:
-                        json_data = raw.strip()
-                        vehicles = json.loads(json_data)
-                        update_queue.put(vehicles)  # Đẩy vào hàng đợi để xử lý sau
-                    except json.JSONDecodeError as e:
-                        print(f"[Python] Lỗi phân tích JSON: {e}")
-                    except Exception as e:
-                        print(f"[Python] Lỗi xử lý dữ liệu: {e}")
-
-            print("[Python] Client đã đóng kết nối. Server one-shot kết thúc.")
+def receive(vehicle_socket):
+    network.server_thread(vehicle_socket, client_handler)
 
 
 def process_vehicle_updates(traci):

@@ -126,7 +126,7 @@ def naive_create_map_files(input_map_path, output_nod_path, output_edge_path, ou
     
     if grid is None:
         print("Không thể tạo bản đồ do lỗi đọc tệp .map.")
-        return
+        return False
     
     pos_map = get_node_pos_map(grid, width, height)
     
@@ -134,6 +134,7 @@ def naive_create_map_files(input_map_path, output_nod_path, output_edge_path, ou
     write_maze_edges_to_xml(grid, pos_map, height, width, output_edge_path, numLanes = numLanes)
     write_to_xml.write_crossings_to_con_xml(output_nod_path, output_edge_path, output_con_path)
     print("Đã tạo tệp .nod.xml, .edg.xml và .con.xml thành công.")
+    return True
 
 def naive_create_map(maze_file_path, num_lanes):
     """
@@ -148,9 +149,14 @@ def naive_create_map(maze_file_path, num_lanes):
     output_con_path = "SUMO_xml/HelloWorld.con.xml"
     net_path = "SUMO_xml/HelloWorld.net.xml"
 
-    naive_create_map_files(maze_file_path, output_nod_path, output_edge_path, output_con_path, num_lanes)
-    os.system(f"netconvert -n {output_nod_path} -e {output_edge_path} -x {output_con_path} -o {net_path} --offset.x 0 --offset.y 0")
-    print(f"Tệp bản đồ đã được lưu tại:\n- {output_nod_path}\n- {output_edge_path}\n- {output_con_path}\n- {net_path}")
+    if  naive_create_map_files(maze_file_path, output_nod_path, output_edge_path, output_con_path, num_lanes):
+        os.system(f"netconvert -n {output_nod_path} -e {output_edge_path} -x {output_con_path} -o {net_path} --offset.x 0 --offset.y 0")
+        print(f"Tệp bản đồ đã được lưu tại:\n- {output_nod_path}\n- {output_edge_path}\n- {output_con_path}\n- {net_path}")
+        return True
+    else:
+        print("Tạo bản đồ thất bại.")
+        return False
+
 
 # if __name__ == "__main__":
 #     map_file_path = "maze-32-32-4.map"

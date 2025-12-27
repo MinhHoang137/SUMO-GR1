@@ -15,7 +15,6 @@ public class VehicleSender : MonoBehaviour
 	private bool isRunning = true;
 
 	private TcpClient persistentClient;
-	private NetworkStream persistentStream;
 
 	public string host = "127.0.0.1";
 	public int port = 5053;
@@ -71,11 +70,12 @@ public class VehicleSender : MonoBehaviour
 				try
 				{
 					List<VehicleData> dataList = new List<VehicleData> { vehicleData };
-					sendJson = JsonConvert.SerializeObject(dataList) + "<END>";
-					byte[] bytesToSend = Encoding.UTF8.GetBytes(sendJson);
-
-					persistentStream.Write(bytesToSend, 0, bytesToSend.Length);
-					persistentStream.Flush();
+					sendJson = JsonConvert.SerializeObject(dataList);
+					
+					if (!Network.SendMessage(persistentClient, sendJson, 1024, "<END>"))
+					{
+						throw new Exception("Failed to send message");
+					}
 				}
 				catch (Exception ex)
 				{
@@ -98,23 +98,15 @@ public class VehicleSender : MonoBehaviour
 	{
 		try
 		{
-			if (persistentClient != null && persistentClient.Connected && persistentStream != null)
+			if (persistentClient != null && persistentClient.Connected)
 			{
 				return true;
 			}
 
 			CleanupConnection();
-			persistentClient = new TcpClient();
-			var connectTask = persistentClient.ConnectAsync(host, port);
-			if (!connectTask.Wait(timeoutMillis))
-			{
-				Debug.LogWarning($"[Unity] Timeout khi kết nối tới {host}:{port}");
-				CleanupConnection();
-				return false;
-			}
+			persistentClient = Network.CreateTcpClient(host, port);
 			persistentClient.ReceiveTimeout = timeoutMillis;
 			persistentClient.SendTimeout = timeoutMillis;
-			persistentStream = persistentClient.GetStream();
 			return true;
 		}
 		catch (Exception ex)
@@ -127,9 +119,7 @@ public class VehicleSender : MonoBehaviour
 
 	private void CleanupConnection()
 	{
-		try { persistentStream?.Close(); } catch { }
-		try { persistentClient?.Close(); } catch { }
-		persistentStream = null;
+		Network.CloseTcpClient(persistentClient);
 		persistentClient = null;
 	}
 }

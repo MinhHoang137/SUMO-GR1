@@ -8,6 +8,8 @@ from time import sleep
 import traci
 import time
 import threading
+import network
+
 from Traffic.crossing import CrossingReader
 from Traffic.crossRoad import CrossRoadReader
 from Traffic.edgeType0 import EdgeReader
@@ -25,108 +27,79 @@ SS = "SS"
 IO = "IO"
 OI = "OI"
 
-MAX_PACKET_SIZE = 100000
+MAX_PACKET_SIZE = 131072 # 128 KB
 MAX_RETRIES = 5
+END_MARKER = '<END>'
+
 target_exe = "./UnityBuild/TestGR1.1.exe"
 stop_event = threading.Event()
-time_step = 0.11  # Giả sử mỗi bước mô phỏng là 0.11 giây
+time_step = 0.05  # Giả sử mỗi bước mô phỏng là 0.11 giây
+pause_sim = False
 
-def async_task(target, *args):
+HOST = '0.0.0.0'
+MAIN_PORT = 5050
+
+def async_task(target, *args, join=False, daemon=False):
     thread = threading.Thread(target=target, args=args)
-    thread.daemon = True  # Tự động dừng khi main kết thúc
+    thread.daemon = daemon  # nếu True thì thread không ngăn tiến trình chính thoát
     thread.start()
+    if join:
+        thread.join()
+    return thread
+
+
+
+def client_thread_function(socket: socket.socket):
+    first_msg = socket.recv(1024).decode('utf-8')
+    print(f"Received first message from Unity client: {first_msg}")
+    if "RoadDataRequest" in first_msg:
+        send_road_data(socket)
+        socket.close()
+    if ("SimulationReady" in first_msg):
+        print("Starting simulation...")
+        run_simulation(client_socket=socket)
+        print("Simulation completed!")
+    return 0
+
+
+def shutdown_client_handler(client_socket: socket.socket):
+    expected_msg = "Simulation end"
+    try:
+       msg = network.receive_message(client_socket)
+       if msg == expected_msg:
+           print("[Info] Received shutdown command from Unity.")
+           stop_event.set()
+       client_socket.close()
+    except Exception as e:
+        print(f"[Error] Socket exception: {e}")
 
 # Nhận lệnh từ Unity để dừng mô phỏng
-def listen_for_shutdown_command():
-    host = "127.0.0.1"
-    port = 5054
-    buffer_size = 1024
-    expected_msg = "Simulation end"
-    print("Listening for shutdown command on port 5054...")
-    while not stop_event.is_set():
-        try:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
-                server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                server.bind((host, port))
-                server.listen(1)
-                server.settimeout(3.0)  # Timeout để thử lại liên tục
-
-                # print("Listening for shutdown command on port 5054...")
-                conn, addr = server.accept()
-                with conn:
-                    data = b""
-                    while True:
-                        chunk = conn.recv(buffer_size)
-                        if not chunk:
-                            break
-                        data += chunk
-                        if b"<END>" in data:
-                            break
-
-                    message = data.decode("utf-8").replace("<END>", "").strip()
-                    print(f"Received message: {message}")
-                    if expected_msg in message:
-                        stop_event.set()
-                        break
-        except socket.timeout:
-            continue
-        except Exception as e:
-            print(f"[Error] Socket exception: {e}")
-            time.sleep(1)
+def listen_for_shutdown_command(shutdown_socket):
+    network.server_thread(shutdown_socket, shutdown_client_handler)
 
 # Hàm chạy mô phỏng SUMO và ghi dữ liệu
-def run_simulation():
-    traci.start(["sumo-gui", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
+def run_simulation(client_socket: socket.socket):
+    traci.start(["sumo", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
     try:
         while traci.simulation.getMinExpectedNumber() > 0 and not stop_event.is_set():
+            if pause_sim:
+                sleep(0.5)
+                continue
             traci.simulationStep()
-            # for person_id in traci.person.getIDList():
-            #     print(f"type: {traci.person.getTypeID(person_id)}, impatient: {traci.person.getImpatience(person_id)}")
             process_vehicle_updates(traci)
             data = {
                 "trafficLights": read_traffic_lights(traci),
                 "vehicles": read_vehicles(traci),
                 "pedestrians": read_pedestrians(traci)
             }
-            send(data)
+            async_task(network.send_data, client_socket, data, join=False)
             sleep(time_step)
 
     finally:
         traci.close()
         print("SUMO simulation stopped.")
 
-def send(data, host='127.0.0.1', port=5050):
-    """Nhận danh sách dict, chuyển thành JSON string và gửi đi"""
-    try:
-        data_str = json.dumps(data)
-        total_size = len(data_str)
-        num_packets = math.ceil(total_size / MAX_PACKET_SIZE)
-
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((host, port))
-
-            print(f"Sending {num_packets} packets...")
-
-            # Gửi từng gói dữ liệu
-            for i in range(num_packets):
-                start = i * MAX_PACKET_SIZE
-                end = min(start + MAX_PACKET_SIZE, total_size)
-                packet = data_str[start:end]
-                s.sendall(packet.encode('utf-8'))
-
-            # Gửi thông báo kết thúc
-            s.sendall(b"<END>")
-
-            # Nhận phản hồi từ Unity (nếu cần)
-            response = s.recv(1024)
-            print(f"Response from Unity: {response.decode('utf-8')}")
-            return True
-
-    except Exception as e:
-        print(f"Error sending data: {e}")
-        return False
-
-def send_road_data():
+def send_road_data(client_socket: socket.socket):
     crossroads = CrossRoadReader.read_all_junctions()
     edges =  EdgeReader.read_edges()
     crossings = CrossingReader.read_crossings()
@@ -137,7 +110,7 @@ def send_road_data():
     }
     try:
         for i in range(MAX_RETRIES):
-            if not send(road_data):
+            if not network.send_data(client_socket, road_data):
                 print("Retrying to send road data...")
                 time.sleep(1)
             else:
@@ -154,7 +127,8 @@ if __name__ == "__main__":
         sys.exit(1)
     maze_file_path = sys.argv[1]
     num_lanes = int(sys.argv[2])
-    naive_create_map(maze_file_path, num_lanes)
+    if not naive_create_map(maze_file_path, num_lanes):
+        sys.exit(1)
     # if not create_map_from_maze_file(maze_file_path, num_lanes):
     #     sys.exit(1)
     # tạo bản đồ thành phố từ tệp bản đồ
@@ -178,13 +152,41 @@ if __name__ == "__main__":
     else:
         create_routes(num_pairs, car_cr_type, has_ped)
 
+
     # khởi chạy Unity và mô phỏng SUMO
+    server_socket = network.create_server_socket(HOST, MAIN_PORT)
+    receive_socket = network.create_server_socket("0.0.0.0", 5053)
+    shutdown_socket = network.create_server_socket("0.0.0.0", 5054)
+
+    # Khởi server thread non-daemon và lưu handle để join khi shutdown
+    server_thread = async_task(network.server_thread, server_socket, client_thread_function, daemon=False)
     subprocess.Popen(target_exe)
-    async_task(receive)
-    async_task(listen_for_shutdown_command)
 
-    send_road_data()
+    # Khởi các thread nền khác non-daemon để có thể shutdown gọn
+    receive_thread = async_task(receive, receive_socket, daemon=False)
+    listen_thread = async_task(listen_for_shutdown_command, shutdown_socket, daemon=False)
 
-    print("Starting simulation...")
-    run_simulation()
-    print("Simulation completed!")
+    try:
+        # Chờ đến khi có yêu cầu dừng (được set bởi listen_for_shutdown_command hoặc KeyboardInterrupt)
+        while not stop_event.is_set():
+            time.sleep(0.5)
+    except KeyboardInterrupt:
+        stop_event.set()
+    finally:
+        # Bắt đầu đóng gọn
+        for s in [server_socket, receive_socket, shutdown_socket]:
+            try:
+                s.close()
+            except Exception:
+                pass
+
+        for t, name in ((receive_thread, 'receive'), (listen_thread, 'listen'), (server_thread, 'server')):
+            try:
+                if t is not None:
+                    t.join(timeout=5)
+            except Exception as e:
+                print(f"Error joining {name} thread: {e}")
+
+        time.sleep(0.1)
+
+
