@@ -37,6 +37,18 @@ public class ValueUI
 			}
 		});
 	}
+
+	public void SetValue(float value)
+	{
+		slider.value = value;
+		this.setter?.Invoke(value);
+		inputField.text = value.ToString("0.00");
+	}
+
+	public float GetValue()
+	{
+		return slider.value;
+	}
 	public void Destroy()
 	{
 		slider.onValueChanged.RemoveAllListeners();

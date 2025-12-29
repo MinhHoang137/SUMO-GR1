@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 public class OptionUI : MonoBehaviour
 {
 	private bool previousMouseEnabled = false;
-	[SerializeField] private Button closeSimulationButton;
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
 	{
@@ -29,10 +28,6 @@ public class OptionUI : MonoBehaviour
 			};
 			
 		};
-		closeSimulationButton.onClick.AddListener(() =>
-		{
-			CloseSimulation();
-		});
 		StartCoroutine(ManipulateAction.Delay(() =>
 		{
 			gameObject.SetActive(false);

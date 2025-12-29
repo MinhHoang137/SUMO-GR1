@@ -69,7 +69,7 @@ def receive_message(client_socket: socket.socket) :
         return full_data
     except Exception as e:
         print(f"Error receiving data: {e}")
-        return ""
+        return None 
 
 def async_task(target, *args, join=False, daemon=False):
     thread = threading.Thread(target=target, args=args)

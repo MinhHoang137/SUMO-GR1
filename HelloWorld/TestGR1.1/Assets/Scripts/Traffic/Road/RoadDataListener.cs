@@ -102,7 +102,7 @@ public class RoadDataListener : MonoBehaviour
 				//roadDataSO.junctionDatas = newRoadDataSO.junctionDatas;
 				//roadDataSO.crossingDatas = newRoadDataSO.crossingDatas;
 				isListening = false; // Stop listening after processing data
-				try { tcpClient?.Close(); } catch { }
+				try { Network.CloseTcpClient(tcpClient); } catch { }
 				listenerThread.Abort();
 			}
 		}
@@ -116,7 +116,7 @@ public class RoadDataListener : MonoBehaviour
 	{
 		isListening = false;
 		try { 
-			tcpClient?.Close(); 
+			Network.CloseTcpClient(tcpClient);
 			Debug.Log($"{GetType().Name} TCP client closed."); 
 		} catch { }
 
