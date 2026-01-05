@@ -248,9 +248,13 @@ if __name__ == "__main__":
         ped_cr_type = ped_cr_type if ped_cr_type in [CS, SS, IO, OI] else CS
         ped_impatience = input("Mức độ thiếu kiên nhẫn của người đi bộ (0.0 đến 1.0, mặc định 0.5): ")
         ped_impatience = float(ped_impatience) if ped_impatience else 0.5
-        create_routes(num_pairs, car_cr_type, has_ped, ped_cr_type, ped_impatience)
+        use_custom_nav = input("Dùng Custom Navigation (A*) cho xe? (y/n, mặc định n): ")
+        use_custom_nav = use_custom_nav.strip().lower() == 'y'
+        create_routes(num_pairs, car_cr_type, has_ped, ped_cr_type, ped_impatience, use_custom_navigation=use_custom_nav)
     else:
-        create_routes(num_pairs, car_cr_type, has_ped)
+        use_custom_nav = input("Dùng Custom Navigation (A*) cho xe? (y/n, mặc định n): ")
+        use_custom_nav = use_custom_nav.strip().lower() == 'y'
+        create_routes(num_pairs, car_cr_type, has_ped, use_custom_navigation=use_custom_nav)
 
 
     # khởi chạy Unity và mô phỏng SUMO

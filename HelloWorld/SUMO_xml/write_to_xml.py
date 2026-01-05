@@ -262,7 +262,17 @@ def filter_feasible_pairs(start_list, end_list, edge_file_path):
         
     return new_start, new_end
 
-def write_car_route_to_xml(start_list, end_list, rou_path, period=30, begin=0.0, end_time=3600.0, edge_file_path=None):
+def write_car_route_to_xml(
+    start_list,
+    end_list,
+    rou_path,
+    period=30,
+    begin=0.0,
+    end_time=3600.0,
+    edge_file_path=None,
+    use_custom_navigation: bool = False,
+    net_file_path: str = "SUMO_xml/HelloWorld.net.xml",
+):
     """
     Ghi file .rou.xml chứa các tuyến đường cho xe từ danh sách điểm bắt đầu và kết thúc.
 
@@ -311,8 +321,16 @@ def write_car_route_to_xml(start_list, end_list, rou_path, period=30, begin=0.0,
     # Bạn có thể khai báo vType cho ô tô nếu muốn tuỳ chỉnh; mặc định SUMO dùng passenger
     # ET.SubElement(routes_root, "vType", {"id": "car", "vClass": "passenger"})
 
-    # Tạo các flow giữa các nút giao (junction) tương ứng
-    # Yêu cầu các phần tử trong start_list / end_list có thuộc tính 'id' là id của junction trong net
+    # Nếu dùng Custom Navigation: tạo route edges tường minh (SUMO sẽ không tự tìm đường).
+    navigator = None
+    if use_custom_navigation:
+        try:
+            from custom_navigation import CustomNavigator
+
+            navigator = CustomNavigator(net_file_path, enable_parallel=False)
+        except Exception as e:
+            print(f"⚠️ Không thể khởi tạo CustomNavigator ({e}). Fallback sang fromJunction/toJunction.")
+            navigator = None
 
     for i in range(num_pairs):
         s = start_list[i]
@@ -321,7 +339,82 @@ def write_car_route_to_xml(start_list, end_list, rou_path, period=30, begin=0.0,
         s_id = s["id"] if isinstance(s, dict) else str(s)
         e_id = e["id"] if isinstance(e, dict) else str(e)
 
-        ET.SubElement(
+        if navigator is None:
+            ET.SubElement(
+                routes_root,
+                "flow",
+                {
+                    "id": f"f_{i}",
+                    "begin": f"{begin:.2f}",
+                    "end": f"{end_time:.2f}",
+                    "period": f"{float(period):.2f}",
+                    "fromJunction": s_id,
+                    "toJunction": e_id,
+                },
+            )
+            continue
+
+        # Map junction -> edge để chạy A* trên edge graph
+        try:
+            s_node = navigator.net.getNode(s_id)
+            e_node = navigator.net.getNode(e_id)
+        except Exception:
+            # Nếu junction id không có trong net, fallback
+            ET.SubElement(
+                routes_root,
+                "flow",
+                {
+                    "id": f"f_{i}",
+                    "begin": f"{begin:.2f}",
+                    "end": f"{end_time:.2f}",
+                    "period": f"{float(period):.2f}",
+                    "fromJunction": s_id,
+                    "toJunction": e_id,
+                },
+            )
+            continue
+
+        # Chọn 1 outgoing edge từ start junction và 1 incoming edge vào end junction
+        start_edges = [ed for ed in s_node.getOutgoing() if not ed.getID().startswith(":")]
+        end_edges = [ed for ed in e_node.getIncoming() if not ed.getID().startswith(":")]
+
+        if not start_edges or not end_edges:
+            # Không tìm thấy edge hợp lệ, fallback
+            ET.SubElement(
+                routes_root,
+                "flow",
+                {
+                    "id": f"f_{i}",
+                    "begin": f"{begin:.2f}",
+                    "end": f"{end_time:.2f}",
+                    "period": f"{float(period):.2f}",
+                    "fromJunction": s_id,
+                    "toJunction": e_id,
+                },
+            )
+            continue
+
+        start_edge_id = start_edges[0].getID()
+        end_edge_id = end_edges[0].getID()
+
+        path = navigator.find_path(start_edge_id, end_edge_id)
+        if not path:
+            # Không tìm được đường, fallback
+            ET.SubElement(
+                routes_root,
+                "flow",
+                {
+                    "id": f"f_{i}",
+                    "begin": f"{begin:.2f}",
+                    "end": f"{end_time:.2f}",
+                    "period": f"{float(period):.2f}",
+                    "fromJunction": s_id,
+                    "toJunction": e_id,
+                },
+            )
+            continue
+
+        flow = ET.SubElement(
             routes_root,
             "flow",
             {
@@ -329,10 +422,9 @@ def write_car_route_to_xml(start_list, end_list, rou_path, period=30, begin=0.0,
                 "begin": f"{begin:.2f}",
                 "end": f"{end_time:.2f}",
                 "period": f"{float(period):.2f}",
-                "fromJunction": s_id,
-                "toJunction": e_id,
             },
         )
+        ET.SubElement(flow, "route", {"edges": " ".join(path)})
 
     # Ghi file
     tree = ET.ElementTree(routes_root)
@@ -341,6 +433,12 @@ def write_car_route_to_xml(start_list, end_list, rou_path, period=30, begin=0.0,
     os.makedirs(os.path.dirname(rou_path), exist_ok=True) if os.path.dirname(rou_path) else None
     tree.write(rou_path, encoding="UTF-8", xml_declaration=True)
     print(f"✅ Đã ghi {num_pairs} flow xe vào '{rou_path}' thành công.")
+
+    if navigator is not None:
+        try:
+            navigator.close()
+        except Exception:
+            pass
 
 
 def write_ped_route_to_xml(start_list, end_list, rou_path, period=30, impatience=1.0, vtype_id=None, begin=0.0, end_time=3600.0, edge_file_path=None):

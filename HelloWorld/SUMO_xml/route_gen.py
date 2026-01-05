@@ -145,7 +145,14 @@ def out_in_gen(crossroads, num_pairs):
         _out.pop(rand_i)
     return start, end
 
-def create_routes(num_pairs, car_cr_type, has_ped=True, ped_cr_type="CS", ped_impatience=0.5):
+def create_routes(
+    num_pairs,
+    car_cr_type,
+    has_ped=True,
+    ped_cr_type="CS",
+    ped_impatience=0.5,
+    use_custom_navigation: bool = False,
+):
     """
     Tạo file .rou.xml chứa các tuyến đường cho xe và người đi bộ dựa trên loại phân chia nút giao thông.
     Args:
@@ -173,7 +180,14 @@ def create_routes(num_pairs, car_cr_type, has_ped=True, ped_cr_type="CS", ped_im
     else:
         print(f"không xác định car_cr_type: {car_cr_type}. Sử dụng cross_side_gen làm mặc định.")
         start_list, end_list = cross_side_gen(crossroads, num_pairs)
-    write_to_xml.write_car_route_to_xml(start_list, end_list, rou_path, edge_file_path=edge_path)
+    write_to_xml.write_car_route_to_xml(
+        start_list,
+        end_list,
+        rou_path,
+        edge_file_path=edge_path,
+        use_custom_navigation=use_custom_navigation,
+        net_file_path="SUMO_xml/HelloWorld.net.xml",
+    )
     if has_ped:
         if ped_cr_type == CS:
             start_list, end_list = cross_side_gen(crossroads, num_pairs)
