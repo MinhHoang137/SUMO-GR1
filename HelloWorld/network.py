@@ -11,6 +11,49 @@ import threading
 END_MARKER = '<END>'
 BUFFER_SIZE = 131072  # 128 KB
 
+# Per-socket receive buffers to handle TCP stream framing.
+# TCP can coalesce multiple application messages into one recv, so we must
+# split on END_MARKER and keep any remainder for the next call.
+_recv_buffers = {}
+_recv_buffers_lock = threading.Lock()
+
+
+def _socket_key(sock: socket.socket) -> int:
+    try:
+        return sock.fileno()
+    except Exception:
+        return id(sock)
+
+
+def _recv_next_message(client_socket: socket.socket) -> str:
+    """Receive exactly one END_MARKER-terminated message from a TCP stream.
+
+    Returns:
+        The message string (without END_MARKER), or "" if the connection was closed.
+    """
+    key = _socket_key(client_socket)
+    with _recv_buffers_lock:
+        buffer = _recv_buffers.get(key, "")
+
+    while True:
+        marker_index = buffer.find(END_MARKER)
+        if marker_index >= 0:
+            message = buffer[:marker_index]
+            remainder = buffer[marker_index + len(END_MARKER):]
+            with _recv_buffers_lock:
+                _recv_buffers[key] = remainder
+            return message
+
+        data = client_socket.recv(BUFFER_SIZE)
+        if not data:
+            with _recv_buffers_lock:
+                _recv_buffers.pop(key, None)
+            return ""
+
+        # Use strict UTF-8 decode; if your payload can contain arbitrary bytes,
+        # consider errors='replace'. For JSON/control messages, strict is preferred.
+        buffer += data.decode('utf-8')
+
 def send_data(client_socket: socket.socket, data) -> bool:
     """Gửi dữ liệu theo cụm"""
     try:
@@ -37,18 +80,7 @@ def send_data(client_socket: socket.socket, data) -> bool:
 def receive_data(client_socket: socket.socket) :
     """Nhận dữ liệu theo cụm"""
     try:
-        full_data = ''
-        while True:
-            data = client_socket.recv(BUFFER_SIZE)
-            if not data:
-                break
-            text = data.decode('utf-8')
-            full_data += text
-            if END_MARKER in full_data:
-                full_data = full_data.replace(END_MARKER, '')
-                break
-        data = json.loads(full_data)
-        return full_data
+        return _recv_next_message(client_socket)
     except Exception as e:
         print(f"Error receiving data: {e}")
         return ""
@@ -56,17 +88,7 @@ def receive_data(client_socket: socket.socket) :
 def receive_message(client_socket: socket.socket) :
     """Nhận dữ liệu thô theo cụm"""
     try:
-        full_data = ''
-        while True:
-            data = client_socket.recv(BUFFER_SIZE)
-            if not data:
-                break
-            text = data.decode('utf-8')
-            full_data += text
-            if END_MARKER in full_data:
-                full_data = full_data.replace(END_MARKER, '')
-                break
-        return full_data
+        return _recv_next_message(client_socket)
     except Exception as e:
         print(f"Error receiving data: {e}")
         return None 
@@ -92,6 +114,12 @@ def server_thread(server_socket: socket.socket, client_handler):
     while True:
         try:
             client_socket, addr = server_socket.accept()
+            if not client_socket:
+                try:
+                    print(f"Error accepting connection on server socket: {server_socket} | Address: {server_socket.getsockname()}")
+                except Exception as e:
+                    print(f"Error accepting connection on server socket: {server_socket} | Could not get address: {e}")
+                continue
             # tạo luồng client handler không phải daemon để cho phép shutdown gọn
             async_task(client_handler, client_socket, daemon=False)
         except Exception as e:

@@ -147,47 +147,48 @@ def can_2_points_connect(grid, p1, p2, target_type=WALL, ignore_endpoints=False)
     Returns:
         True nếu hai điểm có thể kết nối trực tiếp, False nếu không thể.
     """
-    x1, y1 = p1
-    x2, y2 = p2
+    x1, y1 = p1 # Lấy tọa độ x, y của điểm đầu
+    x2, y2 = p2 # Lấy tọa độ x, y của điểm cuối
     
-    # Chuyển đổi sang tọa độ nguyên
-    start_x, start_y = int(round(x1)), int(round(y1))
-    end_x, end_y = int(round(x2)), int(round(y2))
+    # Chuyển đổi sang tọa độ nguyên (làm tròn để khớp với ô lưới)
+    start_x, start_y = int(round(x1)), int(round(y1)) # Tọa độ nguyên điểm đầu
+    end_x, end_y = int(round(x2)), int(round(y2)) # Tọa độ nguyên điểm cuối
     
-    x1, y1 = start_x, start_y
-    x2, y2 = end_x, end_y
+    x1, y1 = start_x, start_y # Gán lại x1, y1 để bắt đầu chạy thuật toán
+    x2, y2 = end_x, end_y # Gán lại x2, y2 để làm đích đến
     
-    dx = abs(x2 - x1)
-    dy = abs(y2 - y1)
-    sx = 1 if x1 < x2 else -1
-    sy = 1 if y1 < y2 else -1
-    err = dx - dy
+    dx = abs(x2 - x1) # Tính khoảng cách tuyệt đối theo trục x
+    dy = abs(y2 - y1) # Tính khoảng cách tuyệt đối theo trục y
+    sx = 1 if x1 < x2 else -1 # Xác định hướng di chuyển theo trục x (1: tăng, -1: giảm)
+    sy = 1 if y1 < y2 else -1 # Xác định hướng di chuyển theo trục y (1: tăng, -1: giảm)
+    err = dx - dy # Khởi tạo biến lỗi cho thuật toán Bresenham
     
-    mH = len(grid)
-    mW = len(grid[0])
+    mH = len(grid) # Lấy chiều cao của lưới (số hàng)
+    mW = len(grid[0]) # Lấy chiều rộng của lưới (số cột)
 
-    while True:
+    while True: # Vòng lặp chạy dọc theo đường thẳng nối hai điểm
         # Kiểm tra giới hạn bản đồ
-        if not (0 <= x1 < mW and 0 <= y1 < mH):
-            return False
+        if not (0 <= x1 < mW and 0 <= y1 < mH): # Nếu điểm hiện tại nằm ngoài lưới
+            return False # Trả về False (không kết nối được)
 
         # Kiểm tra chướng ngại vật
+        # Nếu ignore_endpoints là True, bỏ qua kiểm tra tại điểm đầu và điểm cuối
         if not (ignore_endpoints and ((x1 == start_x and y1 == start_y) or (x1 == end_x and y1 == end_y))):
-            if grid[y1][x1] != target_type:
-                return False
+            if grid[y1][x1] != target_type: # Nếu ô hiện tại không phải là loại cho phép (target_type)
+                return False # Trả về False (bị chặn)
             
-        if x1 == x2 and y1 == y2:
-            break
+        if x1 == x2 and y1 == y2: # Nếu đã đến điểm đích
+            break # Thoát vòng lặp
             
-        e2 = 2 * err
-        if e2 > -dy:
-            err -= dy
-            x1 += sx
-        if e2 < dx:
-            err += dx
-            y1 += sy
+        e2 = 2 * err # Tính biến lỗi gấp đôi để so sánh
+        if e2 > -dy: # Nếu lỗi lớn hơn -dy (di chuyển theo trục x)
+            err -= dy # Cập nhật lỗi
+            x1 += sx # Di chuyển x thêm 1 bước theo hướng sx
+        if e2 < dx: # Nếu lỗi nhỏ hơn dx (di chuyển theo trục y)
+            err += dx # Cập nhật lỗi
+            y1 += sy # Di chuyển y thêm 1 bước theo hướng sy
     
-    return True
+    return True # Nếu chạy hết vòng lặp mà không bị chặn, trả về True
 
 def check_node_valid(grid, node_position_map, pos_x, pos_y, mW, mH):
     if pos_x <= 0 or pos_x >= mW or pos_y <= 0 or pos_y >= mH:
