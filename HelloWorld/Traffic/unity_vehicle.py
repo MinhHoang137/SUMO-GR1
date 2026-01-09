@@ -18,6 +18,39 @@ DEFAULT_NET_PATH = os.path.join(os.path.dirname(__file__), '../SUMO_xml/HelloWor
 
 update_queue = Queue()
 
+# Keep the latest received Unity frame so throttling (unityEvery) doesn't drop it.
+_latest_frame = None
+
+# Cache to reduce TraCI round-trips (which are usually the main cost).
+# last_state[veh_id] = (x, y, angle, speed, signals)
+_last_state = {}
+
+# Tuning knobs (can be controlled from main via setters)
+_apply_every_n_steps = 1
+_step_counter = 0
+_apply_speed = True
+_apply_signals = True
+
+
+def set_apply_every(n_steps: int) -> None:
+    """Apply Unity updates every N simulation steps (>=1)."""
+    global _apply_every_n_steps
+    try:
+        n = int(n_steps)
+    except Exception:
+        return
+    _apply_every_n_steps = max(1, n)
+
+
+def set_apply_speed(enabled: bool) -> None:
+    global _apply_speed
+    _apply_speed = bool(enabled)
+
+
+def set_apply_signals(enabled: bool) -> None:
+    global _apply_signals
+    _apply_signals = bool(enabled)
+
 
 def _pick_edge_from_netxml(net_xml_path: str) -> str:
     """Chọn cạnh mặc định từ .net.xml.
@@ -90,82 +123,131 @@ def process_vehicle_updates(traci):
     """Cập nhật xe trong SUMO dựa trên dữ liệu từ Unity."""
     global EDGE_ID
 
-    # Chọn cạnh mặc định từ .net.xml (ưu tiên priority=-1), nếu không có thì fallback sang danh sách trong TraCI
-    if EDGE_ID is None or EDGE_ID not in traci.edge.getIDList():
+    global _step_counter
+    global _latest_frame
+    _step_counter += 1
+    if (_step_counter % _apply_every_n_steps) != 0:
+        # Drain backlog but keep the newest frame for the next apply step.
+        while not update_queue.empty():
+            try:
+                _latest_frame = update_queue.get_nowait()
+            except Exception:
+                break
+        return
+
+    # Chọn cạnh mặc định 1 lần (tránh gọi traci.edge.getIDList() mỗi step)
+    if EDGE_ID is None:
         picked = _pick_edge_from_netxml(DEFAULT_NET_PATH)
         if picked:
             EDGE_ID = picked
         else:
-            all_edges = traci.edge.getIDList()
-            candidate_edges = [e for e in all_edges if not e.startswith(':')]
-            EDGE_ID = candidate_edges[0] if candidate_edges else ""
+            try:
+                all_edges = traci.edge.getIDList()
+                candidate_edges = [e for e in all_edges if not e.startswith(':')]
+                EDGE_ID = candidate_edges[0] if candidate_edges else ""
+            except Exception:
+                EDGE_ID = ""
 
-        if EDGE_ID:
-            print(f"[Python] EDGE_ID mặc định được chọn: {EDGE_ID}")
-        else:
+        if not EDGE_ID:
             print("[Python] Không tìm thấy cạnh hợp lệ trong mạng để tạo route.")
 
     if ROUTE_ID not in traci.route.getIDList() and EDGE_ID:
         traci.route.add(ROUTE_ID, [EDGE_ID])
-        print(f"[Python] Đã tạo route {ROUTE_ID} -> {EDGE_ID}")
 
+    # Pull newest frame from queue (if any); otherwise reuse last stored frame.
+    vehicles = None
     while not update_queue.empty():
-        vehicles = update_queue.get()
-        print(f"[Python] Đang cập nhật {len(vehicles)} xe:")
+        try:
+            vehicles = update_queue.get_nowait()
+        except Exception:
+            break
+    if vehicles is not None:
+        _latest_frame = vehicles
+    else:
+        vehicles = _latest_frame
 
-        for v in vehicles:
-            try:
-                veh_id = v['id']
-                is_exist = v.get('isExist', True)
+    if not vehicles:
+        return
 
-                # Nếu Unity đã xoá xe, thì remove khỏi SUMO
-                if not is_exist:
-                    if veh_id in traci.vehicle.getIDList():
-                        try:
-                            traci.vehicle.remove(veh_id)
-                            print(f"  [-] Xoá xe {veh_id} khỏi SUMO")
-                        except Exception as e:
-                            print(f"  [!] Lỗi khi xoá xe {veh_id}: {e}")
-                    continue  # Không xử lý thêm
+    # One TraCI call per step (not per vehicle)
+    try:
+        sumo_vehicle_ids = set(traci.vehicle.getIDList())
+    except Exception:
+        sumo_vehicle_ids = set()
 
-                pos = v['position']
-                forward = v['forward']
-                speed = v['speed']
-                angle = math.degrees(math.atan2(forward[0], forward[1]))
+    for v in vehicles:
+        try:
+            veh_id = v['id']
+            is_exist = v.get('isExist', True)
 
-                if veh_id not in traci.vehicle.getIDList():
+            # Nếu Unity đã xoá xe, thì remove khỏi SUMO
+            if not is_exist:
+                if veh_id in sumo_vehicle_ids:
                     try:
-                        traci.vehicle.add(vehID=veh_id, routeID="", typeID="DEFAULT_VEHTYPE")
-                        traci.vehicle.setColor(veh_id, (255, 0, 0, 255))
-                        traci.vehicle.setLaneChangeMode(veh_id, 0b000000000000)
-                        print(f"  [+] Thêm xe mới: {veh_id}")
+                        traci.vehicle.remove(veh_id)
+                        sumo_vehicle_ids.discard(veh_id)
+                        _last_state.pop(veh_id, None)
                     except Exception as e:
-                        print(f"  [!] Lỗi khi thêm xe {veh_id}: {e}")
-                        continue
+                        print(f"  [!] Lỗi khi xoá xe {veh_id}: {e}")
+                continue  # Không xử lý thêm
 
-                traci.vehicle.moveToXY(vehID=veh_id,
-                                       edgeID="", laneIndex=0,
-                                       x=pos[0], y=pos[1],
-                                       angle=angle, keepRoute=0)
+            pos = v['position']
+            forward = v['forward']
+            speed = v.get('speed', 0.0)
+            angle = math.degrees(math.atan2(forward[0], forward[1]))
 
-                traci.vehicle.setSpeed(veh_id, speed)
+            if veh_id not in sumo_vehicle_ids:
+                try:
+                    # Prefer a valid route if we have one; SUMO can reject vehicles without a route.
+                    route_id = ROUTE_ID if (EDGE_ID and ROUTE_ID in traci.route.getIDList()) else ""
+                    traci.vehicle.add(vehID=veh_id, routeID=route_id, typeID="DEFAULT_VEHTYPE")
+                    traci.vehicle.setColor(veh_id, (255, 0, 0, 255))
+                    traci.vehicle.setLaneChangeMode(veh_id, 0b000000000000)
+                    sumo_vehicle_ids.add(veh_id)
+                except Exception as e:
+                    print(f"  [!] Lỗi khi thêm xe {veh_id}: {e}")
+                    continue
 
-                # Cập nhật tín hiệu rẽ trái / rẽ phải / phanh
-                turn_left = v.get("turnLeft", False)
-                turn_right = v.get("turnRight", False)
-                is_braking = v.get("isBraking", False)
+            # Cập nhật tín hiệu rẽ trái / rẽ phải / phanh
+            turn_left = v.get("turnLeft", False)
+            turn_right = v.get("turnRight", False)
+            is_braking = v.get("isBraking", False)
 
-                signal_value = 0
-                if turn_left:
-                    signal_value |= 0b00000001
-                if turn_right:
-                    signal_value |= 0b00000010
-                if is_braking:
-                    signal_value |= 0b00000100
+            signal_value = 0
+            if turn_left:
+                signal_value |= 0b00000001
+            if turn_right:
+                signal_value |= 0b00000010
+            if is_braking:
+                signal_value |= 0b00000100
 
-                traci.vehicle.setSignals(veh_id, signal_value)
+            # Skip commands if nothing changed (reduces TraCI calls a lot)
+            prev = _last_state.get(veh_id)
+            x, y = float(pos[0]), float(pos[1])
+            a = float(angle)
+            s = float(speed)
+            sig = int(signal_value)
 
-                print(f"  [>] Di chuyển {veh_id} đến {pos} | góc {angle:.2f} | tốc độ {speed} | tín hiệu: {bin(signal_value)}")
+            # NOTE: moveToXY is usually the heaviest call. We only call it when pose changed.
+            if prev is None or (abs(prev[0] - x) > 1e-4 or abs(prev[1] - y) > 1e-4 or abs(prev[2] - a) > 1e-3):
+                traci.vehicle.moveToXY(
+                    vehID=veh_id,
+                    edgeID="",
+                    laneIndex=0,
+                    x=x,
+                    y=y,
+                    angle=a,
+                    keepRoute=0,
+                )
 
-            except Exception as e:
-                print(f"  [!] Lỗi khi cập nhật xe {v.get('id', '?')}: {e}")
+            if _apply_speed and (prev is None or abs(prev[3] - s) > 1e-3):
+                traci.vehicle.setSpeed(veh_id, s)
+
+            if _apply_signals and (prev is None or prev[4] != sig):
+                traci.vehicle.setSignals(veh_id, sig)
+
+            # Store full state even if speed/signals disabled so pose dedupe still works.
+            _last_state[veh_id] = (x, y, a, s, sig)
+
+        except Exception as e:
+            print(f"  [!] Lỗi khi cập nhật xe {v.get('id', '?')}: {e}")

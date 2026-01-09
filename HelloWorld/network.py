@@ -57,11 +57,13 @@ def _recv_next_message(client_socket: socket.socket) -> str:
 def send_data(client_socket: socket.socket, data) -> bool:
     """Gửi dữ liệu theo cụm"""
     try:
-        data_str = json.dumps(data)
+        # Allow callers to pre-serialize JSON for performance.
+        if isinstance(data, str):
+            data_str = data
+        else:
+            data_str = json.dumps(data)
         total_size = len(data_str)
         num_packets = math.ceil(total_size / BUFFER_SIZE)
-
-        print(f"Sending {num_packets} packets...")
 
         for i in range(num_packets):
             start = i * BUFFER_SIZE
