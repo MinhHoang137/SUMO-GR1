@@ -68,8 +68,11 @@ public class VehicleManager : MonoBehaviour
 	{
 		int index = Random.Range(0, vehiclePrefabs.Length);
 		Vehicle vehicle = GetVehicleFromPool(index);
-		vehicle.transform.position = new Vector3(data.position[0], 0, data.position[1]);
-		vehicle.transform.forward = new Vector3(data.forward[0], 0, data.forward[1]);
+		vehicle.transform.position = Converter.ToVector3(data.position);
+		Vector3 forward = Converter.ToVector3(data.forward);
+		Vector3 planarForward = new Vector3(forward.x, 0f, forward.z);
+		if (planarForward.sqrMagnitude < 1e-6f) planarForward = Vector3.forward;
+		vehicle.transform.forward = planarForward.normalized;
 		vehicle.Set(data);
 		vehicle.isExist = true;
 		vehicle.transform.SetParent(transform);

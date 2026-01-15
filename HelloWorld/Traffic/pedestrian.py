@@ -4,6 +4,23 @@ import socket
 
 MAX_PACKET_SIZE = 4096  # 4KB để tránh lỗi tràn bộ đệm
 
+
+def _get_pedestrian_position_xyz(traci, pedestrian_id: str) -> list[float]:
+    """Return raw SUMO person position as [x, y, z].
+
+    Prefers TraCI 3D position when available; otherwise defaults z=0.
+    """
+    getter3d = getattr(getattr(traci, 'person', None), 'getPosition3D', None)
+    if callable(getter3d):
+        try:
+            x, y, z = getter3d(pedestrian_id)
+            return [float(x), float(y), float(z)]
+        except Exception:
+            pass
+
+    x, y = traci.person.getPosition(pedestrian_id)
+    return [float(x), float(y), 0.0]
+
 class PedestrianData:
     def __init__(self, id, position, forward, speed, lane):
         self.id = id
@@ -30,7 +47,7 @@ def read_pedestrians(traci):
     for pedestrian_id in pedestrian_ids:
         try:
             # Lấy dữ liệu từ SUMO
-            position = traci.person.getPosition(pedestrian_id)  # Lấy vị trí [x, y]
+            position = _get_pedestrian_position_xyz(traci, pedestrian_id)  # [x, y, z]
             speed = traci.person.getSpeed(pedestrian_id)        # Lấy tốc độ
             lane = traci.person.getLaneID(pedestrian_id)        # Lấy làn đường
 
@@ -39,12 +56,12 @@ def read_pedestrians(traci):
 
             # Chuyển hướng từ góc độ thành vector đơn vị [x, y]
             radian = math.radians(angle)
-            forward = [math.cos(radian), math.sin(radian)]
+            forward = [math.cos(radian), math.sin(radian), 0.0]
 
             pedestrian = PedestrianData(
                 pedestrian_id,
                 position,  # Giữ nguyên vị trí [x, y] của SUMO
-                forward,   # Giữ nguyên hướng [x, y] dưới dạng vector đơn vị
+                forward,   # Hướng [x, y, z] (z mặc định 0)
                 speed,
                 lane
             )

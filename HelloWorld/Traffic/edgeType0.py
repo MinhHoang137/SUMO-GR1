@@ -5,21 +5,75 @@ import xml.etree.ElementTree as ET
 
 class EdgeReader:
     NET_XML_PATH = os.path.join(os.path.dirname(__file__), '../SUMO_xml/HelloWorld.net.xml')
+    DEFAULT_LANE_WIDTH = 3.2
 
     @staticmethod
-    def parse_shape(shape):
-        points = shape.strip().split(' ')
-        vertices = [(float(p.split(',')[0]), float(p.split(',')[1])) for p in points]
-        return vertices
+    def _to_coord(x: float, y: float, z: float = 0.0):
+        return {"x": float(x), "y": float(y), "z": float(z)}
 
     @classmethod
-    def read_edges(cls):
+    def parse_shape(cls, shape: str):
+        """Parse SUMO lane shape into a list of Coordinate dicts compatible with Unity."""
+        points = shape.strip().split()
+        coords = []
+        for point in points:
+            parts = point.split(',')
+            if len(parts) < 2:
+                continue
+
+            x_str = parts[0]
+            y_str = parts[1]
+            # Some SUMO networks include elevation: "x,y,z". If absent, default z=0.
+            z_str = parts[2] if len(parts) >= 3 and parts[2] != '' else '0'
+            coords.append(cls._to_coord(float(x_str), float(y_str), float(z_str)))
+        return coords
+
+    @staticmethod
+    def _lane_type_from_attrib(lane_attrib: dict) -> str:
+        allow = (lane_attrib.get('allow') or '').strip()
+        disallow = (lane_attrib.get('disallow') or '').strip()
+
+        # Common SUMO convention: pedestrian lanes have allow containing 'pedestrian'.
+        if allow:
+            tokens = allow.split()
+            if 'pedestrian' in tokens:
+                return 'pedestrian'
+            # If SUMO specifies a single class, use it (bus, bicycle, etc.).
+            return tokens[0]
+
+        # If pedestrians are explicitly disallowed, treat as generic road lane.
+        if disallow and 'pedestrian' in disallow.split():
+            return 'generic'
+
+        return 'generic'
+
+    @staticmethod
+    def _compute_edge_position(lanes: list) -> dict:
+        """Compute an approximate centroid for the edge from all lane points."""
+        sum_x = 0.0
+        sum_y = 0.0
+        sum_z = 0.0
+        count = 0
+        for lane in lanes:
+            for p in lane.get('points', []):
+                sum_x += float(p.get('x', 0.0))
+                sum_y += float(p.get('y', 0.0))
+                sum_z += float(p.get('z', 0.0))
+                count += 1
+
+        if count == 0:
+            return {"x": 0.0, "y": 0.0, "z": 0.0}
+        return {"x": sum_x / count, "y": sum_y / count, "z": sum_z / count}
+
+    @classmethod
+    def read_edges(cls, net_xml_path: str | None = None):
         edges = []
-        if not os.path.exists(cls.NET_XML_PATH):
-            print(f"Error: {cls.NET_XML_PATH} does not exist.")
+        net_path = net_xml_path or cls.NET_XML_PATH
+        if not os.path.exists(net_path):
+            print(f"Error: {net_path} does not exist.")
             return edges
 
-        tree = ET.parse(cls.NET_XML_PATH)
+        tree = ET.parse(net_path)
         root = tree.getroot()
 
         for edge in root.findall('edge'):
@@ -27,53 +81,30 @@ class EdgeReader:
                 continue
 
             edge_id = edge.get('id')
-            road_lanes = {}
-            walking_lanes = {}
-
+            lanes_by_index = {}
             for lane in edge.findall('lane'):
                 shape = lane.get('shape')
                 if not shape:
                     continue
 
-                index = int(lane.get('index'))
-                vertices = cls.parse_shape(shape)
+                try:
+                    index = int(lane.get('index'))
+                except (TypeError, ValueError):
+                    # Fallback: keep stable ordering even if index missing/invalid
+                    index = len(lanes_by_index)
 
-                if 'allow' in lane.attrib and 'pedestrian' in lane.get('allow'):
-                    walking_lanes[index] = vertices
-                elif 'disallow' in lane.attrib and 'pedestrian' in lane.get('disallow'):
-                    road_lanes[index] = vertices
-                else:
-                    road_lanes[index] = vertices
-
-            start_road_lane = road_lanes[max(road_lanes.keys())][0] if road_lanes else None
-            end_road_lane = road_lanes[max(road_lanes.keys())][-1] if road_lanes else None
-            start_walking_lane = walking_lanes[max(walking_lanes.keys())][0] if walking_lanes else None
-            end_walking_lane = walking_lanes[max(walking_lanes.keys())][-1] if walking_lanes else None
-
-            if start_road_lane and end_road_lane:
-                direction = {
-                    "x": end_road_lane[0] - start_road_lane[0],
-                    "y": end_road_lane[1] - start_road_lane[1]
+                lane_data = {
+                    "type": cls._lane_type_from_attrib(lane.attrib),
+                    "points": cls.parse_shape(shape),
+                    "width": float(lane.get('width') or cls.DEFAULT_LANE_WIDTH),
                 }
-                position = {
-                    "x": (start_road_lane[0] + end_road_lane[0]) / 2,
-                    "y": (start_road_lane[1] + end_road_lane[1]) / 2
-                }
-            else:
-                direction = None
-                position = None
+                lanes_by_index[index] = lane_data
 
+            lanes = [lanes_by_index[i] for i in sorted(lanes_by_index.keys())]
             edge_data = {
                 "id": edge_id,
-                "startRoadLane": {"x": start_road_lane[0], "y": start_road_lane[1]} if start_road_lane else None,
-                "endRoadLane": {"x": end_road_lane[0], "y": end_road_lane[1]} if end_road_lane else None,
-                "roadNum": len(road_lanes),
-                "startWalkingLane": {"x": start_walking_lane[0],
-                                     "y": start_walking_lane[1]} if start_walking_lane else None,
-                "endWalkingLane": {"x": end_walking_lane[0], "y": end_walking_lane[1]} if end_walking_lane else None,
-                "walkingNum": len(walking_lanes),
-                "direction": direction,
-                "position": position
+                "lanes": lanes,
+                "position": cls._compute_edge_position(lanes),
             }
             edges.append(edge_data)
 

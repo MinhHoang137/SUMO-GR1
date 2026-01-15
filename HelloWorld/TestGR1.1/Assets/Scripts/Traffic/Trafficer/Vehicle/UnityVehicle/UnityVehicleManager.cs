@@ -37,7 +37,7 @@ public class UnityVehicleManager : MonoBehaviour
 			junctionPos.Clear();
 			foreach (var data in roadData.junctionDatas)
 			{
-				junctionPos.Add(new Vector3(data.position[0], 0, data.position[1]));
+				junctionPos.Add(new Vector3(data.position.x, 0, data.position.y));
 			}
 		}));
 	}

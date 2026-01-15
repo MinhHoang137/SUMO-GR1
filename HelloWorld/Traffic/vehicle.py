@@ -5,6 +5,23 @@ from typing import Any
 
 MAX_PACKET_SIZE = 4096  # 4KB để tránh lỗi tràn bộ đệm
 
+
+def _get_vehicle_position_xyz(traci, vehicle_id: str) -> list[float]:
+    """Return raw SUMO position as [x, y, z].
+
+    Prefers TraCI 3D position when available; otherwise defaults z=0.
+    """
+    getter3d = getattr(getattr(traci, 'vehicle', None), 'getPosition3D', None)
+    if callable(getter3d):
+        try:
+            x, y, z = getter3d(vehicle_id)
+            return [float(x), float(y), float(z)]
+        except Exception:
+            pass
+
+    x, y = traci.vehicle.getPosition(vehicle_id)
+    return [float(x), float(y), 0.0]
+
 class VehicleData:
     def __init__(self, id, position, forward, speed, lane,
                  turn_left, turn_right, is_braking):
@@ -39,7 +56,7 @@ def read_vehicles(traci):
         for vehicle_id in vehicle_ids:
             try:
                 # Lấy dữ liệu từ SUMO
-                position = traci.vehicle.getPosition(vehicle_id)  # Lấy vị trí [x, y]
+                position = _get_vehicle_position_xyz(traci, vehicle_id)  # [x, y, z]
                 speed = traci.vehicle.getSpeed(vehicle_id)        # Lấy tốc độ
                 lane = traci.vehicle.getLaneID(vehicle_id)        # Lấy làn đường
 
@@ -54,12 +71,12 @@ def read_vehicles(traci):
 
                 # Chuyển hướng từ góc độ thành vector đơn vị [x, y]
                 radian = math.radians(angle)
-                forward = [math.cos(radian), math.sin(radian)]
+                forward = [math.cos(radian), math.sin(radian), 0.0]
 
                 vehicle = VehicleData(
                     vehicle_id,
                     position,  # Giữ nguyên vị trí [x, y] của SUMO
-                    forward,   # Giữ nguyên hướng [x, y] dưới dạng vector đơn vị
+                    forward,   # Hướng [x, y, z] (z mặc định 0)
                     speed,
                     lane,
                     turn_left,

@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class Edge : Road // edgeType_0
@@ -6,63 +9,123 @@ public class Edge : Road // edgeType_0
     [SerializeField] private Transform walkingLanePrefab;
 	[SerializeField] private Transform[] treePrefabs;
 	[SerializeField] private RoadLane roadLanePrefab;
-	private float roadLaneWidth = 3.2f;
-	private float roadOffset;
-	private float walkingLaneWidth = 2f;
-	private float walkingOffset;
-    private EdgeData edgeData;
-    public void Create(EdgeData edgeData)
+	[SerializeField] private MeshFilter meshFilter;
+
+	[SerializeField] private EdgeData data;
+
+    public List<Vector3> BuildVertices(EdgeData edgeData)
     {
-		//Debug.Log("Create Edge" + edgeData.id);
-		if (id == null)
+		List<Vector3> vertices = new List<Vector3>();
+		Lane baseLane = edgeData.lanes[0];	
+		int laneCount = edgeData.lanes.Count;
+		int pointCnt = baseLane.points.Count;
+		float laneWidth = baseLane.width;
+
+		Vector3 right;
+		Vector3 left;
+		Vector3 vertex;
+		float openWidth;
+
+		for (int i = 0; i < pointCnt; i++)
 		{
-			id = edgeData.id;
+			// first point
+			if (i == 0 && pointCnt > 1)
+			{ 
+				// get direction vector
+				Vector3 dir = Converter.ToVector3(baseLane.points[i + 1]) - Converter.ToVector3(baseLane.points[i]);
+				
+				// open to the right side
+				right = Vector3.Cross(dir.normalized, -Vector3.up);
+				vertex = Converter.ToVector3(baseLane.points[i]) + right * laneWidth / 2;
+				vertices.Add(vertex);
+
+				// open to the left side
+				left = -right;
+                openWidth = laneWidth * ((float)laneCount - 0.5f);
+				vertex = Converter.ToVector3(baseLane.points[i]) + left * openWidth;
+				vertices.Add(vertex);
+				continue;
+			}
+
+			// last point
+			if (i == pointCnt - 1)
+			{
+				// get direction vector
+				Vector3 dir = Converter.ToVector3(baseLane.points[i]) - Converter.ToVector3(baseLane.points[i - 1]);
+
+				// open to the right side
+				right = Vector3.Cross(dir.normalized, -Vector3.up);
+				vertex = Converter.ToVector3(baseLane.points[i]) + right * laneWidth / 2;
+				vertices.Add(vertex);
+
+				// open to the left side
+				left = -right;
+				openWidth = laneWidth * ((float)laneCount - 0.5f);
+				vertex = Converter.ToVector3(baseLane.points[i]) + left * openWidth;
+				vertices.Add(vertex);
+				continue;
+			}
+
+			// middle points
+			Vector3 toMid = Converter.ToVector3(baseLane.points[i]) - Converter.ToVector3(baseLane.points[i - 1]);
+			Vector3 fromMid = Converter.ToVector3(baseLane.points[i + 1]) - Converter.ToVector3(baseLane.points[i]);
+			Vector3 midDir = ((toMid.normalized + fromMid.normalized)/2).normalized;
+			Vector3 openDir = Vector3.Cross(midDir, -Vector3.up);
+			float angleRad = Vector3.Angle(toMid, fromMid) / 2f * Mathf.Deg2Rad;
+			float openUnit = laneWidth / Mathf.Cos(angleRad);
+			
+			// open to the right side
+			right = openDir;
+			vertex = Converter.ToVector3(baseLane.points[i]) + right * openUnit / 2;
+			vertices.Add(vertex);
+
+			// open to the left side
+			left = -openDir;
+			openWidth = laneWidth * ((float)laneCount - 0.5f);
+			vertex = Converter.ToVector3(baseLane.points[i]) + left * openWidth;	
+			vertices.Add(vertex);
 		}
-		roadOffset = roadLaneWidth / 2;
-		this.edgeData = edgeData;
-		transform.position = new Vector3(edgeData.position.x, 0, edgeData.position.y);
-        Vector3 spread = new Vector3(edgeData.direction.y, 0, -edgeData.direction.x);
-        spread.Normalize(); 
-		transform.position -= roadOffset * spread;
+		return vertices;
+	}
 
-		// Create road lanes
-		RoadLane roadLane = Instantiate(roadLanePrefab, transform.position, Quaternion.identity);
-		roadLane.transform.SetParent(transform);
-		float roadLength = Vector3.Distance(new Vector3(edgeData.startRoadLane.x, 0, edgeData.startRoadLane.y), new Vector3(edgeData.endRoadLane.x, 0, edgeData.endRoadLane.y));
-		float roadWidth = roadLaneWidth * edgeData.roadNum;
-		roadLane.GetLane().localScale = new Vector3(roadWidth, 1, roadLength);
-		roadLane.GetLaneMarking().localScale = new Vector3(roadLane.GetLaneMarking().localScale.x * roadLaneWidth, 1 , roadLength);
-		Vector3 direction = new Vector3(edgeData.direction.x, 0, edgeData.direction.y).normalized;
-		roadLane.transform.forward = direction;
-		float divider = 10;
-		SetMaterialTiling(roadLane.GetLane(), edgeData.roadNum, roadLength/divider);
-
-		// Create walking lanes
-		Transform walkingLane = Instantiate(walkingLanePrefab);
-		walkingOffset = 0;
-		walkingLane.position = transform.position + spread * (edgeData.roadNum * roadLaneWidth - walkingOffset);
-		walkingLane.SetParent(transform);
-		float walkingLength = 0;
-		if (edgeData.startWalkingLane != null)
-		walkingLength = Vector3.Distance(new Vector3(edgeData.startWalkingLane.Value.x, 0, edgeData.startWalkingLane.Value.y), new Vector3(edgeData.endWalkingLane.Value.x, 0, edgeData.endWalkingLane.Value.y));
-		float walkingWidth = walkingLaneWidth * edgeData.walkingNum;
-		walkingLane.localScale = new Vector3(walkingWidth, 1, walkingLength);
-		walkingLane.forward = direction;
-		SetMaterialTiling(walkingLane, walkingWidth, walkingLength);
-
-		// Create trees
-		float laneWidth = roadWidth + walkingWidth;
-		float treeOffset = laneWidth + 1;
-		float treeSpacing = 10;
-		int treeCount = (int)(roadLength / treeSpacing);
-		Vector3 startPos = new Vector3(edgeData.startRoadLane.x, 0, edgeData.startRoadLane.y);
-		for (int i = 0; i < treeCount; i++)
+	public List<int> BuildTriangles(int pointCnt)
+	{
+		List<int> triangles = new List<int>();
+		for (int i = 0; i < pointCnt - 1; i++)
 		{
-			Vector3 treePos = startPos + spread * treeOffset + direction * treeSpacing * i;
-			Transform treePrefab = treePrefabs[Random.Range(0, treePrefabs.Length)];
-			Transform tree = Instantiate(treePrefab, treePos, Quaternion.identity);
-			tree.SetParent(transform);
+			triangles.Add(2*i);
+			triangles.Add(2*i + 1);
+			triangles.Add(2*i + 2);
+
+			triangles.Add(2*i + 1);
+			triangles.Add(2*i + 3);
+			triangles.Add(2*i + 2);
 		}
+		return triangles;
+	}
+
+	public void Create (EdgeData edgeData)
+	{
+		this.id = edgeData.id;
+		data = edgeData;
+		List<Vector3> vertices = BuildVertices(edgeData);
+		List<int> triangles = BuildTriangles(edgeData.lanes[0].points.Count);
+
+		Mesh mesh = new Mesh();
+		mesh.SetVertices(vertices);
+		mesh.SetTriangles(triangles, 0);
+		mesh.RecalculateNormals();
+		meshFilter.mesh = mesh;
+
+		// Set material tiling
+		// float length = 0f;
+		// for (int i = 0; i < edgeData.lanes[0].points.Count - 1; i++)
+		// {
+		// 	Vector3 p1 = Converter.ToVector3(edgeData.lanes[0].points[i]);
+		// 	Vector3 p2 = Converter.ToVector3(edgeData.lanes[0].points[i + 1]);
+		// 	length += Vector3.Distance(p1, p2);
+		// }
+		// SetMaterialTiling(this.transform, length / 5f, (edgeData.lanes.Count * edgeData.lanes[0].width) / 5f);
 	}
 	public string GetId()
 	{

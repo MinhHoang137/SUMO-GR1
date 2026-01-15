@@ -222,35 +222,35 @@ def send_road_data(client_socket: socket.socket):
 # Hàm chính
 if __name__ == "__main__":
     # yêu cầu nhập đường dẫn tệp mê cung và số làn
-    if len(sys.argv) < 3:
-        print("Usage: python main.py <maze_file_path> <num_lanes>")
-        sys.exit(1)
-    maze_file_path = sys.argv[1]
-    num_lanes = int(sys.argv[2])
-    if not naive_create_map(maze_file_path, num_lanes):
-        sys.exit(1)
-    # if not create_map_from_maze_file(maze_file_path, num_lanes):
+    # if len(sys.argv) < 3:
+    #     print("Usage: python main.py <maze_file_path> <num_lanes>")
     #     sys.exit(1)
-    # tạo bản đồ thành phố từ tệp bản đồ
-    # if not create_map(maze_file_path, numLanes=num_lanes):
+    # maze_file_path = sys.argv[1]
+    # num_lanes = int(sys.argv[2])
+    # if not naive_create_map(maze_file_path, num_lanes):
     #     sys.exit(1)
+    # # if not create_map_from_maze_file(maze_file_path, num_lanes):
+    # #     sys.exit(1)
+    # # tạo bản đồ thành phố từ tệp bản đồ
+    # # if not create_map(maze_file_path, numLanes=num_lanes):
+    # #     sys.exit(1)
 
-    # tạo các tuyến đường
-    num_pairs = input("Số lượng cặp nút giao thông cần tạo (mặc định 20): ")
-    num_pairs = int(num_pairs) if num_pairs else 20
-    car_cr_type = input(f"Loại phân chia nút giao thông cho xe ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
-    car_cr_type = car_cr_type if car_cr_type in [CS, SS, IO, OI] else CS
-    ped_option = input("Tạo tuyến đường cho người đi bộ không? (y/n, mặc định y): ")
-    has_ped = ped_option.lower() != 'n'
+    # # tạo các tuyến đường
+    # num_pairs = input("Số lượng cặp nút giao thông cần tạo (mặc định 20): ")
+    # num_pairs = int(num_pairs) if num_pairs else 20
+    # car_cr_type = input(f"Loại phân chia nút giao thông cho xe ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
+    # car_cr_type = car_cr_type if car_cr_type in [CS, SS, IO, OI] else CS
+    # ped_option = input("Tạo tuyến đường cho người đi bộ không? (y/n, mặc định y): ")
+    # has_ped = ped_option.lower() != 'n'
 
-    if has_ped:
-        ped_cr_type = input(f"Loại phân chia nút giao thông cho người đi bộ ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
-        ped_cr_type = ped_cr_type if ped_cr_type in [CS, SS, IO, OI] else CS
-        ped_impatience = input("Mức độ thiếu kiên nhẫn của người đi bộ (0.0 đến 1.0, mặc định 0.5): ")
-        ped_impatience = float(ped_impatience) if ped_impatience else 0.5
-        create_routes(num_pairs, car_cr_type, has_ped, ped_cr_type, ped_impatience)
-    else:
-        create_routes(num_pairs, car_cr_type, has_ped)
+    # if has_ped:
+    #     ped_cr_type = input(f"Loại phân chia nút giao thông cho người đi bộ ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
+    #     ped_cr_type = ped_cr_type if ped_cr_type in [CS, SS, IO, OI] else CS
+    #     ped_impatience = input("Mức độ thiếu kiên nhẫn của người đi bộ (0.0 đến 1.0, mặc định 0.5): ")
+    #     ped_impatience = float(ped_impatience) if ped_impatience else 0.5
+    #     create_routes(num_pairs, car_cr_type, has_ped, ped_cr_type, ped_impatience)
+    # else:
+    #     create_routes(num_pairs, car_cr_type, has_ped)
 
 
     # khởi chạy Unity và mô phỏng SUMO
@@ -260,7 +260,7 @@ if __name__ == "__main__":
 
     # Khởi server thread non-daemon và lưu handle để join khi shutdown
     server_thread = async_task(network.server_thread, server_socket, client_thread_function, daemon=False)
-    subprocess.Popen(target_exe)
+    # subprocess.Popen(target_exe)
 
     # Khởi các thread nền khác non-daemon để có thể shutdown gọn
     receive_thread = async_task(receive, receive_socket, daemon=False)

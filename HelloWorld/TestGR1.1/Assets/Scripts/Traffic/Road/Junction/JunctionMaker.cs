@@ -55,13 +55,8 @@ public class JunctionMaker : MonoBehaviour
 				if (debugLog) Debug.LogWarning($"[JunctionMaker] junctionData is null in list");
 				continue;
 			}
-			if (junctionData.position == null || junctionData.position.Length < 2)
-			{
-				if (debugLog) Debug.LogWarning($"[JunctionMaker] malformed position for junction '{junctionData?.id ?? "(null)"}'");
-				continue;
-			}
 			bool inRange = true;
-			Vector3 junctionPos = new Vector3(junctionData.position[0], 0, junctionData.position[1]);
+			Vector3 junctionPos = new Vector3(junctionData.position.x, 0, junctionData.position.y);
 			inRange &= junctionPos.x >= centerPos.x - range;
 			inRange &= (junctionPos.x <= centerPos.x + range);
 			inRange &= (junctionPos.z >= centerPos.z - range);
@@ -101,12 +96,19 @@ public class JunctionMaker : MonoBehaviour
 	private Junction CreateJunction(JunctionData junctionData)
 	{
 		Junction junction = Instantiate(crossRoadPrefab, Vector3.zero, Quaternion.identity);
-		junction.baseVertices = new List<Vector3>();
+		junction.data = junctionData;
+		List<Vector3> baseVertices = new List<Vector3>();
 		foreach (var vertex in junctionData.vertices)
 		{
-			junction.baseVertices.Add(new Vector3(vertex.x, 0, vertex.y));
+			baseVertices.Add(Converter.ToVector3(vertex));
 		}
-		junction.Create(junction.baseVertices.ToArray(), new Vector3(0, -1, 0), junctionData.id);
+		junction.Create(baseVertices.ToArray(), new Vector3(0, -0.1f, 0), junctionData.id);
+		// junction.baseVertices = new List<Vector3>();
+		// foreach (var vertex in junctionData.vertices)
+		// {
+		// 	junction.baseVertices.Add(new Vector3(vertex.x, 0, vertex.y));
+		// }
+		// junction.Create(junction.baseVertices.ToArray(), new Vector3(0, -1, 0), junctionData.id);
 		junction.transform.SetParent(transform);
 		return junction;
     }

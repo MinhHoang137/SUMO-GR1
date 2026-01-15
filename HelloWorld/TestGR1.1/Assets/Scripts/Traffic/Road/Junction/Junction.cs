@@ -1,14 +1,17 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class Junction : Road
 {
-	private string id = null;
+	[SerializeField] private string id = null;
 	private Mesh mesh;
     [SerializeField] private MeshFilter meshFilter;
-	public List<Vector3> baseVertices;
-	[SerializeField] private MeshCollider meshCollider;
+	[SerializeField] private BoxCollider boxCollider;
+	[SerializeField] private bool boxColliderIsTrigger = true;
+
+	public JunctionData data;
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
     {
@@ -21,14 +24,17 @@ public class Junction : Road
 		List<Vector3> vertices = new List<Vector3>();
 		float avgX = 0;
 		float avgZ = 0;
+		float avgY = 0;
 		foreach (Vector3 baseVertex in baseVertices)
 		{
 			avgX += baseVertex.x;
 			avgZ += baseVertex.z;
+			avgY += baseVertex.y;
 		}
 		avgX /= baseVertices.Count;
 		avgZ /= baseVertices.Count;
-		Vector3 center = new Vector3(avgX, 0, avgZ);
+		avgY /= baseVertices.Count;
+		Vector3 center = new Vector3(avgX, avgY, avgZ);
 		vertices.Add(center);
 		foreach (Vector3 baseVertex in baseVertices)
 		{
@@ -88,10 +94,12 @@ public class Junction : Road
 	}
 	public void Create(Vector3[] baseVertices, Vector3 heightVec, string id)
 	{
-		if (this.id == null)
+		this.id = id;
+		if (baseVertices == null || baseVertices.Length < 3)
 		{
-			this.id = id;
+			return;
 		}
+
 		mesh = new Mesh();
 		meshFilter.mesh = mesh;
 		List<Vector3> vertices = CreatePrismVertices(new List<Vector3>(baseVertices), heightVec);
@@ -100,7 +108,25 @@ public class Junction : Road
 		mesh.vertices = vertices.ToArray();
 		mesh.triangles = triangles.ToArray();
 		mesh.RecalculateNormals();
-		meshCollider.sharedMesh = mesh;
+
+		// Use a simple convex collider to support Rigidbody/trigger use-cases without PhysX QuickHull failures.
+		if (boxCollider == null)
+		{
+			boxCollider = GetComponent<BoxCollider>();
+			if (boxCollider == null)
+			{
+				boxCollider = gameObject.AddComponent<BoxCollider>();
+			}
+		}
+
+		Bounds b = mesh.bounds;
+		boxCollider.center = b.center;
+		boxCollider.size = new Vector3(
+			Mathf.Max(b.size.x, 0.01f),
+			Mathf.Max(b.size.y, 0.01f),
+			Mathf.Max(b.size.z, 0.01f)
+		);
+		boxCollider.isTrigger = boxColliderIsTrigger;
 	}
 	public string GetId()
 	{

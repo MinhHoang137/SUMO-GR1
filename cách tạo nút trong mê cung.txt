@@ -9,3 +9,7 @@ bậc của điểm @ = số điểm @ bao quanh nó
 số làn tối đa = số bước tìm thấy điểm chéo hoặc nằm trên 1 cạnh vuông góc
 
 cách tạo cạnh: lan truyền về 4 phía, tìm nút gần nhất mà không bị tường cản cho mỗi phía
+
+netconvert --osm-files map.osm -o HelloWorld.net.xml --osm.layer-elevation 5 --proj.utm --geometry.remove --ramps.guess --junctions.join --tls.guess-signals --remove-edges.isolated
+
+netconvert --osm-files map.osm -o HelloWorld.net.xml --osm.layer-elevation 5 --proj.utm --geometry.remove --ramps.guess  --tls.guess-signals --remove-edges.isolated

@@ -57,8 +57,8 @@ public class CameraController : MonoBehaviour
 		lastPosition = transform.position;
 		foreach (var junction in roadData.junctionDatas)
 		{
-			medianX += junction.position[0];
-			medianZ += junction.position[1];
+			medianX += junction.position.x;
+			medianZ += junction.position.y;
 		}
 		medianX /= roadData.junctionDatas.Count;
 		medianZ /= roadData.junctionDatas.Count;

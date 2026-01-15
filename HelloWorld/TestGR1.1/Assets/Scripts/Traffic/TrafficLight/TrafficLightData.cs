@@ -9,15 +9,15 @@ public class TrafficLightData : ObjectData
 	[SerializeField] private string id;
 
 	[JsonProperty("position")]
-	[SerializeField] private float[] position;
+	[SerializeField] private Coordinate position;
 
 	[JsonProperty("direction")]
-	[SerializeField] private float[] direction;
+	[SerializeField] private Coordinate direction;
 
 	[JsonProperty("state")]
 	[SerializeField] private int state; // 0: Red, 1: Yellow, 2: Green
 	public string Id => id;
-	public float[] Position => position;
+	public Coordinate Position => position;
 	public int CurrentState => state;
-	public float[] Direction => direction;
+	public Coordinate Direction => direction;
 }

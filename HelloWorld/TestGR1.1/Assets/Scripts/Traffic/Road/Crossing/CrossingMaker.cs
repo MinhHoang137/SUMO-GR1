@@ -47,8 +47,8 @@ public class CrossingMaker : MonoBehaviour
 		foreach (var crossingData in roadData.crossingDatas)
 		{
 			bool inRange = true;
-			Vector3 start = new Vector3(crossingData.start.x, 0, crossingData.start.y);
-			Vector3 end = new Vector3(crossingData.end.x, 0, crossingData.end.y);
+			Vector3 start = Converter.ToVector3(crossingData.start);
+			Vector3 end = Converter.ToVector3(crossingData.end);
 			Vector3 mid = (start + end) / 2f;
 			inRange &= mid.x >= centerPos.x - range;
 			inRange &= mid.x <= centerPos.x + range;

@@ -31,7 +31,7 @@ public class Vehicle: Trafficer
 	public void Set(VehicleData vehicleData)
 	{
 		SetId(vehicleData.id);
-		SetDestination(new Vector3(vehicleData.position[0], 0, vehicleData.position[1]));
+		SetDestination(Converter.ToVector3(vehicleData.position));
 		SetSpeed(vehicleData.speed);
 	}
 	protected void InvokeMove()

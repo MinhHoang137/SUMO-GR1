@@ -69,7 +69,7 @@ public abstract class Trafficer : MonoBehaviour
 	public void Set(TrafficerData trafficerData)
 	{
 		SetId(trafficerData.id);
-		SetDestination(new Vector3(trafficerData.position[0], 0, trafficerData.position[1]));
+		SetDestination(Converter.ToVector3(trafficerData.position));
 		SetSpeed(trafficerData.speed);
 	}
 

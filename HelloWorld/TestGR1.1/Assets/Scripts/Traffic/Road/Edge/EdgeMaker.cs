@@ -54,7 +54,7 @@ public class EdgeMaker : MonoBehaviour
 		foreach (var edgeData in roadData.edgeDatas)
 		{
 			bool inRange = true;
-			Vector3 edgePos = new Vector3(edgeData.position.x, 0, edgeData.position.y);
+			Vector3 edgePos = Converter.ToVector3(edgeData.position);
 			inRange &= edgePos.x >= centerPos.x - range;
 			inRange &= edgePos.x <= centerPos.x + range;
 			inRange &= edgePos.z >= centerPos.z - range;

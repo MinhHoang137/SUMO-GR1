@@ -58,8 +58,11 @@ public abstract class TrafficerObjectManager<T, TData> : MonoBehaviour
 	{
 		int index = Random.Range(0, prefabs.Length);
 		T obj = GetFromPool(index);
-		obj.transform.position = new Vector3(data.position[0], 0, data.position[1]);
-		obj.transform.forward = new Vector3(data.forward[0], 0, data.forward[1]);
+		obj.transform.position = Converter.ToVector3(data.position);
+		Vector3 forward = Converter.ToVector3(data.forward);
+		Vector3 planarForward = new Vector3(forward.x, 0f, forward.z);
+		if (planarForward.sqrMagnitude < 1e-6f) planarForward = Vector3.forward;
+		obj.transform.forward = planarForward.normalized;
 		obj.Set(data);
 		obj.isExist = true;
 		obj.gameObject.SetActive(true);
