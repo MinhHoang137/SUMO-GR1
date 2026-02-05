@@ -1,0 +1,5 @@
+
+# Local outputs / generated results
+# Keep the folder but ignore all files inside it.
+/result/**
+!/result/.gitkeep

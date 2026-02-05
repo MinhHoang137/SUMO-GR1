@@ -9,6 +9,12 @@ import traci
 import time
 import threading
 import network
+from result import (
+    VehicleTripCsvLogger,
+    build_simulation_csv_path,
+    build_simulation_summary_json_path,
+    write_simulation_summary_json,
+)
 
 from Traffic.crossing import CrossingReader
 from Traffic.crossRoad import CrossRoadReader
@@ -37,7 +43,11 @@ time_step = 0.05  # Giả sử mỗi bước mô phỏng là 0.11 giây
 time_step_lock = threading.Lock()
 # Pause/resume simulation (thread-safe). Unity should control this via commands.
 pause_event = threading.Event()  # set => paused, clear => running
-
+run_with_gui = False
+has_ped = False
+sim_count = 1
+ped_impatience = None
+maze_file_path = ""
 
 def set_pause_sim(is_paused: bool) -> None:
     """Set pause state in a thread-safe way."""
@@ -175,29 +185,74 @@ def listen_for_control_commands(shutdown_socket):
 
 # Hàm chạy mô phỏng SUMO và ghi dữ liệu
 def run_simulation(client_socket: socket.socket):
-    traci.start(["sumo", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
+    # Our route generator writes flows using fromJunction/toJunction.
+    # SUMO requires --junction-taz to treat junction IDs as valid trip endpoints.
+    traci.start(["sumo", "--junction-taz", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
+    step_index = 0
+    trip_logger = VehicleTripCsvLogger(build_simulation_csv_path("result", has_ped))
+    ped_seen: set[str] = set()
+    trip_logger.open()
     try:
         while traci.simulation.getMinExpectedNumber() > 0 and not stop_event.is_set():
             if pause_event.is_set():
                 sleep(0.5)
                 continue
             traci.simulationStep()
-            process_vehicle_updates(traci)
+
+            # Log vehicle depart/arrival information by step.
+            trip_logger.on_step(
+                step_index,
+                traci.simulation.getDepartedIDList(),
+                traci.simulation.getArrivedIDList(),
+            )
+            step_index += 1
+            # process_vehicle_updates(traci)
             data = {
                 "trafficLights": read_traffic_lights(traci),
                 "vehicles": read_vehicles(traci),
                 "pedestrians": read_pedestrians(traci)
             }
-            async_task(network.send_data, client_socket, data, join=False)
+
+            try:
+                for p in data.get("pedestrians") or []:
+                    ped_id = p.get("id") if isinstance(p, dict) else None
+                    if ped_id:
+                        ped_seen.add(str(ped_id))
+            except Exception:
+                # Best-effort pedestrian counting; do not break simulation.
+                pass
+            if run_with_gui: async_task(network.send_data, client_socket, data, join=False)
             
             current_time_step = 0.05
             with time_step_lock:
                 current_time_step = time_step
-            sleep(current_time_step)
+            if run_with_gui: sleep(current_time_step)
+    except Exception as e:
+        print(f"Error during simulation: {e}")
 
     finally:
+        try:
+            trip_logger.close()
+        except Exception as e:
+            print(f"Error closing trip logger: {e}")
+
+        try:
+            summary_path = build_simulation_summary_json_path(trip_logger.csv_path)
+            write_simulation_summary_json(
+                summary_path,
+                vehicle_count=trip_logger.vehicle_trip_count,
+                pedestrian_count=len(ped_seen),
+                avg_vehicle_travel_steps=trip_logger.avg_travel_steps,
+                pedestrian_impatience=ped_impatience,
+                map_name=maze_file_path
+            )
+            print(f"Simulation summary written: {summary_path}")
+        except Exception as e:
+            print(f"Error writing simulation summary: {e}")
         traci.close()
         print("SUMO simulation stopped.")
+        # If the simulation ended naturally, also stop the app main-loop.
+        stop_event.set()
 
 def send_road_data(client_socket: socket.socket):
     crossroads = CrossRoadReader.read_all_junctions()
@@ -246,12 +301,17 @@ if __name__ == "__main__":
     if has_ped:
         ped_cr_type = input(f"Loại phân chia nút giao thông cho người đi bộ ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
         ped_cr_type = ped_cr_type if ped_cr_type in [CS, SS, IO, OI] else CS
-        ped_impatience = input("Mức độ thiếu kiên nhẫn của người đi bộ (0.0 đến 1.0, mặc định 0.5): ")
-        ped_impatience = float(ped_impatience) if ped_impatience else 0.5
-        create_routes(num_pairs, car_cr_type, has_ped, ped_cr_type, ped_impatience)
+        _ped_imp = input("Mức độ thiếu kiên nhẫn của người đi bộ (0.0 đến 1.0, mặc định 0.5): ")
+        _ped_imp = float(_ped_imp) if _ped_imp else 0.5
+        ped_impatience = _ped_imp
+        create_routes(num_pairs, car_cr_type, has_ped, ped_cr_type, _ped_imp)
     else:
         create_routes(num_pairs, car_cr_type, has_ped)
-
+    
+    gui_option = input("Chạy với giao diện đồ họa Unity không? (y/n, mặc định n): ")
+    run_with_gui = gui_option.lower() == 'y'
+    if not run_with_gui:
+        time_step = 0
 
     # khởi chạy Unity và mô phỏng SUMO
     server_socket = network.create_server_socket(HOST, MAIN_PORT)
@@ -260,7 +320,9 @@ if __name__ == "__main__":
 
     # Khởi server thread non-daemon và lưu handle để join khi shutdown
     server_thread = async_task(network.server_thread, server_socket, client_thread_function, daemon=False)
-    subprocess.Popen(target_exe)
+    if run_with_gui: subprocess.Popen(target_exe)
+    else:
+        run_simulation_thread = async_task(run_simulation, None, daemon=False)
 
     # Khởi các thread nền khác non-daemon để có thể shutdown gọn
     receive_thread = async_task(receive, receive_socket, daemon=False)
@@ -268,7 +330,7 @@ if __name__ == "__main__":
 
     try:
         # Chờ đến khi có yêu cầu dừng (được set bởi listen_for_control_commands hoặc KeyboardInterrupt)
-        while not stop_event.is_set():
+        while not stop_event.is_set() :
             time.sleep(0.5)
     except KeyboardInterrupt:
         stop_event.set()

@@ -61,7 +61,7 @@ def send_data(client_socket: socket.socket, data) -> bool:
         total_size = len(data_str)
         num_packets = math.ceil(total_size / BUFFER_SIZE)
 
-        print(f"Sending {num_packets} packets...")
+        # print(f"Sending {num_packets} packets...")
 
         for i in range(num_packets):
             start = i * BUFFER_SIZE
