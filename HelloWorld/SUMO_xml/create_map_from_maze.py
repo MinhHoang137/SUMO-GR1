@@ -265,13 +265,14 @@ def visualize_network(nod_file_path, edg_file_path, show_id=True, figsize=(10, 1
 # cách dùng hàm: create_map_from_maze_file("duongdan/to/mapfile.map", 2)
 # số làn (numLanes) là tổng số làn (cả 2 chiều), là số cuối cùng trong tên tệp .map
 # cần nhập chính xác, nếu không sẽ không tạo được bản đồ đúng
-def create_map_from_maze_file(filepath, numLanes):
+def create_map_from_maze_file(filepath, numLanes, practiceNumLanes=8):
     """
     Tạo bản đồ từ tệp lưới (maze file) theo định dạng SUMO.
 
     Args:
         filepath (str): Đường dẫn tới tệp lưới.
-        numLanes (int): Số làn đường.
+        numLanes (int): Số làn đường dùng để phân tích tệp .map.
+        practiceNumLanes (int): Số làn đường cho mục đích dựng bản đồ thực tế (mặc định là 8).
 
     Returns:
         None
@@ -296,7 +297,7 @@ def create_map_from_maze_file(filepath, numLanes):
 
      # Ghi file .nod.xml và .edg.xml
     write_to_xml.write_nodes_to_xml(pos_map, _nod_xml_path)
-    write_maze_edges_to_xml(grid, pos_map, height, width, _edg_xml_path, numLanes=numLanes)
+    write_maze_edges_to_xml(grid, pos_map, height, width, _edg_xml_path, numLanes=practiceNumLanes)
     # Tạo crossings (.con.xml) từ .nod.xml và .edg.xml (dùng width mặc định trong hàm)
     write_to_xml.write_crossings_to_con_xml(_nod_xml_path, _edg_xml_path, _con_xml_path)
     os.system(f"netconvert -n {_nod_xml_path} -e {_edg_xml_path} -x {_con_xml_path} -o {_net_xml_path} --offset.x 0 --offset.y 0")

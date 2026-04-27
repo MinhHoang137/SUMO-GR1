@@ -1,0 +1,173 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+
+% Chương này có độ dài tối thiểu 5 trang, tối đa không giới hạn.\footnote{Trong trường hợp phần này dưới 5 trang thì sinh viên nên gộp vào phần kết luận, không tách ra một chương riêng rẽ nữa.} Sinh viên cần trình bày tất cả những nội dung đóng góp mà mình thấy tâm đắc nhất trong suốt quá trình làm ĐATN. Đó có thể là một loạt các vấn đề khó khăn mà sinh viên đã từng bước giải quyết được, là giải thuật cho một bài toán cụ thể, là giải pháp tổng quát cho một lớp bài toán, hoặc là mô hình/kiến trúc hữu hiệu nào đó được sinh viên thiết kế.
+
+% Chương này \textbf{là cơ sở quan trọng} để các thầy cô đánh giá sinh viên. Vì vậy, sinh viên cần phát huy tính sáng tạo, khả năng phân tích, phản biện, lập luận, tổng quát hóa vấn đề và tập trung viết cho thật tốt.
+% Mỗi giải pháp hoặc đóng góp của sinh viên cần được trình bày trong một mục độc lập bao gồm ba mục con: (i) dẫn dắt/giới thiệu về bài toán/vấn đề, (ii) giải pháp, và (iii) kết quả đạt được (nếu có).
+
+% Sinh viên lưu ý \textbf{không trình bày lặp lại nội dung}. Những nội dung đã trình bày chi tiết trong các chương trước không được trình bày lại trong chương này. Vì vậy, với nội dung hay, mang tính đóng góp/giải pháp, sinh viên chỉ nên tóm lược/mô tả sơ bộ trong các chương trước, đồng thời tạo tham chiếu chéo tới đề mục tương ứng trong Chương 5 này. Chi tiết thông tin về đóng góp/giải pháp được trình bày trong mục đó.
+
+% Ví dụ, trong Chương 4, sinh viên có thiết kế được kiến trúc đáng lưu ý gì đó, là sự kết hợp của các kiến trúc MVC, MVP, SOA, v.v. Khi đó, sinh viên sẽ chỉ mô tả ngắn gọn kiến trúc đó ở Chương 4, rồi thêm các câu có dạng: ``Chi tiết về kiến trúc này sẽ được trình bày trong phần 5.1". 
+
+Chương này trình bày các giải pháp kỹ thuật và đóng góp nổi bật của đồ án trong quá trình xây dựng hệ thống hiển thị giao thông 3D từ dữ liệu mô phỏng SUMO. Các nội dung về kiến trúc và kết quả minh họa đã được trình bày ở chương trước (xem Hình \ref{fig:arch_overview}); trong chương này, báo cáo tập trung vào những điểm mang tính ``giải quyết vấn đề'' và ``đóng gói thành giải pháp'' để có thể áp dụng lại cho các kịch bản khác.
+
+\section{Giải pháp giao tiếp thời gian thực qua TCP: tách khung thông điệp bằng marker \texttt{<END>}}\label{sec:tcp_framing}
+\subsection{Bài toán/vấn đề}
+Trong hệ thống, Unity cần nhận dữ liệu trạng thái theo từng bước mô phỏng (xe, đèn giao thông, người đi bộ) từ phía Python điều khiển SUMO. Một lựa chọn đơn giản là dùng TCP socket và gửi chuỗi JSON. Tuy nhiên, TCP là giao thức hướng luồng (stream-oriented), không bảo đảm ranh giới ``mỗi lần gửi'' tương ứng với ``mỗi lần nhận''. Vì vậy, trong thực tế có thể xảy ra các tình huống:
+\begin{itemize}[leftmargin=2em]
+	\item Một lần \texttt{recv} nhận được \textbf{một phần} thông điệp JSON (thiếu dữ liệu, JSON không parse được).
+	\item Một lần \texttt{recv} nhận được \textbf{nhiều} thông điệp JSON gộp lại (Unity không biết tách ở đâu).
+\end{itemize}
+
+Ngoài ra, ứng dụng cần hỗ trợ các lệnh điều khiển từ Unity (Pause/Resume/End) và có thể cập nhật một số tham số chạy mô phỏng (ví dụ \texttt{timeStep}). Điều này đòi hỏi cơ chế nhận thông điệp điều khiển ổn định, tránh ``kẹt'' luồng nhận và đảm bảo đóng kết nối gọn.
+
+\subsection{Giải pháp}
+Đồ án sử dụng TCP socket để truyền thông điệp dạng JSON giữa Python và Unity, đồng thời bổ sung cơ chế \textbf{tách khung} (message framing) bằng marker \texttt{<END>}.
+
+\textbf{Nguyên tắc đóng gói.} Mỗi payload JSON được gửi như một chuỗi UTF-8, sau đó gửi thêm marker \texttt{<END>} để biểu thị kết thúc bản tin. Khi payload lớn, hàm \texttt{send\_data} trong \texttt{network.py} chia chuỗi JSON thành các đoạn (chunk) theo kích thước bộ đệm và \texttt{sendall} tuần tự; marker luôn được gửi ở cuối để phía nhận biết điểm kết thúc.
+
+\textbf{Nguyên tắc bóc tách ở phía nhận.} Phía nhận không parse theo từng \texttt{recv} mà duy trì một \emph{receive buffer} cho mỗi socket. Hàm \texttt{receive\_message}/\texttt{receive\_data} đọc thêm dữ liệu cho tới khi gặp marker \texttt{<END>}, sau đó tách ra đúng \textbf{một} thông điệp hoàn chỉnh và giữ lại phần dư cho lần nhận tiếp theo. Thiết kế buffer theo socket giải quyết đúng bản chất ``TCP là stream'', tránh cả hai lỗi: JSON bị cắt giữa chừng và nhiều JSON bị dính lại.
+
+\textbf{Tích hợp điều khiển mô phỏng.} Trên nền giao thức này, chương trình hỗ trợ hai nhóm bản tin:
+\begin{itemize}[leftmargin=2em]
+	\item \textbf{Bản tin dữ liệu}: trạng thái theo step gồm \texttt{vehicles}, \texttt{trafficLights}, \texttt{pedestrians}.
+	\item \textbf{Bản tin điều khiển}: các lệnh \texttt{Pause}, \texttt{Resume}, \texttt{Simulation end} và (tuỳ chọn) một JSON cấu hình đơn giản để cập nhật \texttt{timeStep}.
+\end{itemize}
+
+\subsection{Kết quả đạt được}
+Giải pháp tách khung bản tin giúp kênh giao tiếp Unity--Python ổn định và dễ mở rộng hơn trong quá trình mô phỏng thời gian thực. Cụ thể:
+\begin{itemize}[leftmargin=2em]
+	\item Giảm lỗi parse JSON do phân mảnh/gộp gói trên TCP stream.
+	\item Cho phép truyền đồng thời dữ liệu trạng thái và lệnh điều khiển theo một cơ chế nhận thống nhất.
+	\item Hỗ trợ tạm dừng/tiếp tục và kết thúc mô phỏng an toàn từ Unity, tạo trải nghiệm vận hành ổn định khi thử nghiệm.
+\end{itemize}
+
+\section{Giải pháp điều phối vòng lặp mô phỏng, đa cổng kết nối và dừng hệ thống an toàn}
+\subsection{Bài toán/vấn đề}
+Hệ thống mô phỏng--hiển thị gồm nhiều tác vụ chạy song song: (i) chạy mô phỏng SUMO theo step, (ii) gửi dữ liệu trạng thái cho Unity theo thời gian thực, (iii) nhận lệnh điều khiển (Pause/Resume/End), và (iv) (tuỳ chọn) nhận cập nhật đối tượng từ Unity. Trong bối cảnh này, hai nhóm vấn đề chính cần giải quyết là:
+\begin{itemize}[leftmargin=2em]
+	\item \textbf{Tránh treo (deadlock) do I/O chặn}: các lời gọi \texttt{accept}/\texttt{recv} có thể chặn vô thời hạn, khiến chương trình không phản ứng khi cần dừng.
+	\item \textbf{Dừng hệ thống gọn}: khi kết thúc mô phỏng cần đảm bảo đóng socket, dừng thread và ghi kết quả (CSV/JSON) đầy đủ; tránh trạng thái dở dang hoặc rò rỉ tài nguyên.
+\end{itemize}
+
+\subsection{Giải pháp}
+Đồ án điều phối chương trình theo hướng đa luồng (multi-threading) và tách kênh kết nối theo mục đích, bám sát cách triển khai trong \texttt{main.py}:
+\begin{itemize}[leftmargin=2em]
+	\item \textbf{Tách cổng theo kênh dữ liệu}: hệ thống khởi tạo ba server socket: port 5050 cho dữ liệu chính (RoadData/TrafficData), port 5053 cho kênh nhận cập nhật xe từ Unity (nếu dùng), và port 5054 cho kênh lệnh điều khiển (shutdown/pause/resume).
+	\item \textbf{Cơ chế dừng tập trung}: sử dụng cờ \texttt{stop\_event} để báo dừng cho toàn hệ thống; khi Unity gửi \texttt{Simulation end} hoặc khi mô phỏng kết thúc tự nhiên, cờ này được set và vòng lặp chờ ở tiến trình chính thoát.
+	\item \textbf{Tạm dừng/tiếp tục an toàn}: dùng \texttt{pause\_event} kết hợp với \texttt{sleep} để tạm dừng vòng lặp \texttt{simulationStep} mà không phá trạng thái TraCI.
+	\item \textbf{Cập nhật tham số thời gian chạy}: \texttt{time\_step} được bảo vệ bởi \texttt{time\_step\_lock} để cập nhật từ lệnh điều khiển, tránh race condition khi thread mô phỏng đang đọc giá trị này.
+	\item \textbf{Shutdown gọn}: khi dừng, chương trình đóng các socket server, sau đó \texttt{join} các thread nền với timeout; luồng server trong \texttt{network.py} cũng có xử lý trường hợp socket đã bị đóng (trên Windows thường gặp \texttt{winerror 10038}) để thoát vòng \texttt{accept}.
+\end{itemize}
+
+\subsection{Kết quả đạt được}
+Giải pháp điều phối giúp chương trình vận hành ổn định hơn trong quá trình thử nghiệm, đặc biệt ở các thao tác thường gặp như dừng mô phỏng hoặc tạm dừng để quan sát. Việc dừng gọn cũng đảm bảo các bước hậu xử lý (đóng TraCI, ghi file CSV/JSON tổng hợp) được thực hiện đầy đủ, qua đó tăng tính lặp lại của thực nghiệm.
+
+\section{Giải pháp sinh mạng SUMO để benchmark theo phương pháp vét cạn từ lưới \texttt{.}}\label{sec:naive_map_generation}
+\subsection{Bài toán/vấn đề}
+Trong bối cảnh kiểm thử và đo đạc hiệu năng (benchmark), bài toán quan trọng không chỉ là ``có bản đồ để chạy'' mà còn là tạo được một mạng có cấu trúc \textbf{dễ điều khiển và có thể mở rộng kích thước} nhằm quan sát tải hệ thống (số lượng node/edge tăng theo kích thước bản đồ). Nếu phụ thuộc vào bản đồ thật (OpenStreetMap) hoặc dựng thủ công, việc đảm bảo tính lặp lại và điều chỉnh độ phức tạp của mạng sẽ khó và tốn thời gian.
+
+Đồ án sử dụng đầu vào dạng lưới ký tự (\texttt{@} là tường, \texttt{.} là lối đi). Tuy nhiên, thay vì chỉ sinh node tại các ``nút giao'' suy ra từ hình học mê cung, dự án hiện tại chọn cách \textbf{vét cạn}: \emph{mỗi ô \texttt{.} được coi là một node} để tạo ra mạng dày (dense) phục vụ benchmark.
+
+Từ biểu diễn này, cần tạo được các tệp đầu vào chuẩn của SUMO:
+\begin{itemize}[leftmargin=2em]
+	\item Vị trí các nút (junction) hợp lệ để tạo \texttt{.nod.xml}.
+	\item Các cạnh có hướng (edge) kết nối các nút để tạo \texttt{.edg.xml}.
+	\item Tệp kết nối/crossing (\texttt{.con.xml}) để hỗ trợ người đi bộ và các điểm qua đường.
+	\item Quy tắc làn (lane) cho xe và người đi bộ để phục vụ hiển thị đa đối tượng.
+\end{itemize}
+
+\subsection{Giải pháp}
+Trong dự án hiện tại, giải pháp sinh bản đồ benchmark được hiện thực trong \texttt{naive\_map\_creator.py} và dùng các hàm ghi XML trong thư mục \texttt{SUMO\_xml}. Quy trình chính:
+
+\textbf{(1) Đọc lưới và vét cạn node.} Hàm \texttt{parse\_map\_file} đọc phần header (\texttt{width}, \texttt{height}) và ma trận \texttt{grid}. Sau đó \texttt{get\_node\_pos\_map} duyệt toàn bộ lưới; với mỗi ô \texttt{.}, tạo một node \texttt{n\_i} và lưu vào \texttt{pos\_map} theo khoá tọa độ làm tròn 2 chữ số (ổn định khi so khớp).
+
+\textbf{(2) Sinh cạnh theo 4 hướng.} Để tạo \texttt{.edg.xml}, hàm \texttt{write\_maze\_edges\_to\_xml} (trong \texttt{SUMO\_xml/create\_map\_from\_maze.py}) duyệt từng node và quét theo 4 hướng (phải, xuống, trái, lên) cho tới khi gặp tường \texttt{@}. Node đầu tiên gặp được theo hướng đó sẽ được nối bằng một cạnh có hướng. Khi mọi ô \texttt{.} đều là node, phép quét này tương đương với việc nối các ô lối đi kề nhau, tạo ra một mạng dày để benchmark.
+
+\textbf{(3) Ghi file node/crossing và chuẩn hóa làn.} \texttt{write\_nodes\_to\_xml} ghi \texttt{.nod.xml} và sử dụng hệ số tỉ lệ (ví dụ \texttt{scale=40.0}) để chuyển tọa độ lưới sang đơn vị mét trong SUMO. Đồng thời \texttt{write\_crossings\_to\_con\_xml} sinh \texttt{.con.xml} để hỗ trợ người đi bộ. Khi ghi edge, cấu trúc làn được chuẩn hóa theo hướng có làn đi bộ (\texttt{allow="pedestrian"}) và các làn xe (\texttt{disallow="pedestrian"}) nhằm phục vụ hiển thị đa đối tượng.
+
+\textbf{Ghi chú về các phương án không vét cạn.} Trong thư mục \texttt{SUMO\_xml} còn có các thuật toán sinh bản đồ khác như \texttt{create\_map\_from\_maze.py} (suy luận node từ hình học tường/độ bậc để tạo mạng thưa hơn) và \texttt{create\_city\_map.py} (sinh bản đồ theo kiểu ``thành phố'' với các heuristic kiểm tra kết nối). Các phương án này có mã nguồn và có thể dùng cho kịch bản thực tế hơn, nhưng \textbf{không được sử dụng trong pipeline benchmark hiện tại} (xem cách gọi trong \texttt{main.py}).
+
+\subsection{Kết quả đạt được}
+Giải pháp vét cạn giúp sinh nhanh các mạng benchmark có độ phức tạp điều chỉnh được theo kích thước lưới, nhờ đó:
+\begin{itemize}[leftmargin=2em]
+	\item Tạo mạng dày và có tính lặp lại cao để đo tải hệ thống (số lượng node/edge tăng theo kích thước bản đồ).
+	\item Duy trì cú pháp dữ liệu SUMO chuẩn (node/edge/connection) để tiếp tục dùng \texttt{netconvert} và các công cụ chuẩn.
+	\item Bảo đảm có làn người đi bộ và cấu trúc dữ liệu phù hợp để hệ thống hiển thị 3D biểu diễn đa đối tượng.
+\end{itemize}
+
+\section{Giải pháp sinh tuyến đường (route) và lọc cặp điểm không liên thông}
+\subsection{Bài toán/vấn đề}
+Sau khi có mạng đường, để tạo mô phỏng cần sinh tệp tuyến đường \texttt{.rou.xml}. Nếu chọn cặp điểm đầu--cuối (OD pair) ngẫu nhiên mà không kiểm tra tính liên thông, SUMO có thể không tìm thấy đường đi, dẫn tới lỗi hoặc làm giảm chất lượng kịch bản thử nghiệm. Bên cạnh đó, cần tạo kịch bản đa dạng (đi ngang mạng, đi từ trong ra ngoài, v.v.) để quan sát các tình huống giao thông khác nhau.
+
+\subsection{Giải pháp}
+Đồ án xây dựng bộ sinh tuyến trong \texttt{SUMO\_xml/route\_gen.py} theo hai ý chính:
+\begin{itemize}[leftmargin=2em]
+	\item \textbf{Chiến lược chọn OD pair}: các hàm \texttt{cross\_side\_gen}, \texttt{swap\_side\_gen}, \texttt{in\_out\_gen}, \texttt{out\_in\_gen} chia tập junction theo thống kê tọa độ (theo trục $x$ hoặc theo bán kính so với tâm) để tạo các cặp OD có đặc trưng mong muốn.
+	\item \textbf{Lọc tính khả thi}: trước khi ghi flow, hàm \texttt{filter\_feasible\_pairs} xây dựng đồ thị kề từ file edge và dùng BFS để kiểm tra từ điểm xuất phát có thể tới điểm đích hay không. Những cặp không khả thi được loại bỏ.
+\end{itemize}
+Với người đi bộ, hệ thống có thể sinh flow riêng và gán tham số \texttt{impatience} để thay đổi hành vi chờ đợi tại crossing.
+
+Trong quá trình chạy mô phỏng, đồ án sử dụng tuỳ chọn \texttt{--junction-taz} khi khởi chạy SUMO để cho phép coi ID của junction là điểm đầu/điểm cuối hợp lệ của chuyến đi. Thiết lập này phù hợp với cách sinh tuyến dựa trên cặp nút giao trong file route.
+
+\subsection{Kết quả đạt được}
+Giải pháp giúp giảm đáng kể tình huống ``không tìm được đường đi'' khi sinh tuyến tự động, đồng thời tạo được nhiều kiểu kịch bản (đi chéo mạng, đi xuyên tâm, v.v.) phục vụ kiểm thử hiển thị. Việc lọc khả thi cũng làm cho quá trình thử nghiệm có tính lặp lại cao hơn vì tránh phụ thuộc vào may rủi của chọn ngẫu nhiên.
+
+\section{Giải pháp chuẩn hóa dữ liệu TraCI cho hiển thị 3D (xe, đèn giao thông, người đi bộ)}
+\subsection{Bài toán/vấn đề}
+TraCI cung cấp trạng thái mô phỏng theo thời gian (vị trí, tốc độ, góc hướng, trạng thái đèn, \,\ldots). Tuy nhiên, dữ liệu thô từ SUMO cần được chuẩn hóa để Unity có thể sử dụng nhất quán trong cập nhật 3D. Các vấn đề chính gồm:
+\begin{itemize}[leftmargin=2em]
+	\item Dữ liệu của các loại đối tượng khác nhau cần được đưa về một ``hợp đồng dữ liệu'' thống nhất (ID, type, position, direction/forward, state).
+	\item Với xe, cần suy ra vector hướng từ góc phương vị để xoay mô hình 3D đúng chiều.
+	\item Với đèn giao thông, cần xác định vị trí đại diện của tín hiệu dựa trên hình học làn đường (lane shape).
+\end{itemize}
+
+\subsection{Giải pháp}
+Đồ án xây dựng các hàm đọc dữ liệu trong thư mục \texttt{HelloWorld/Traffic} và đóng gói lại thành JSON theo cấu trúc rõ ràng:
+\begin{itemize}[leftmargin=2em]
+	\item \textbf{Xe}: \texttt{read\_vehicles} đọc vị trí $(x, y)$, tốc độ, lane ID và trạng thái xi-nhan/phanh. Góc hướng $\theta$ (độ) được chuyển sang vector đơn vị $\vec{f} = (\cos\theta, \sin\theta)$ (sau khi đổi về radian) để Unity có thể xoay xe.
+	\item \textbf{Đèn giao thông}: \texttt{read\_traffic\_lights} đọc chuỗi trạng thái RYG của từng traffic light và danh sách lane được điều khiển. Với mỗi lane, lấy \texttt{shape} và chọn điểm cuối làm vị trí đặt đèn (ở mức trừu tượng). Trạng thái tín hiệu được chuyển thành 3 biến boolean tương ứng \texttt{isRed}, \texttt{isYellow}, \texttt{isGreen} (trong đó \texttt{g} và \texttt{G} đều được coi là xanh) để Unity hiển thị.
+	\item \textbf{Người đi bộ}: \texttt{read\_pedestrians} (tương tự) đọc danh sách ID và vị trí, phục vụ hiển thị.
+\end{itemize}
+Tại vòng lặp mô phỏng, dữ liệu được nhóm thành một payload gồm \texttt{trafficLights}, \texttt{vehicles}, \texttt{pedestrians} và gửi sang Unity theo cơ chế ở Mục~\ref{sec:tcp_framing}.
+
+% Chỗ này sau này cần viết lại mã nguồn để python chỉ gửi dữ liệu chuẩn, không ánh xạ dữ liệu phù hợp với bất kì máy khách nào, việc chuẩn hóa dữ liệu là nhiệm vụ của máy khách. Hiện tại thì vẫn giữ nguyên vì code đã hoàn thành và chạy ổn định.
+Về ánh xạ hệ tọa độ, SUMO biểu diễn vị trí trên mặt phẳng $(x, y)$. Khi đưa sang Unity 3D, dữ liệu thường được chuyển thành $(x, y_{unity}, z)$, trong đó $z$ lấy từ $y$ của SUMO và $y_{unity}$ là độ cao (ví dụ một hằng số để đặt đối tượng lên mặt đường). Cách đặt này cũng phù hợp với cách xuất dữ liệu đèn giao thông trong \texttt{read\_traffic\_lights} khi sử dụng \texttt{position=[x, 5, y]}.
+
+\subsection{Kết quả đạt được}
+Giải pháp giúp Unity nhận dữ liệu có cấu trúc thống nhất và đủ thông tin để:
+\begin{itemize}[leftmargin=2em]
+	\item Tạo/cập nhật đối tượng theo ID (vòng đời: xuất hiện--cập nhật--biến mất).
+	\item Cập nhật chuyển động phương tiện theo vị trí và hướng.
+	\item Hiển thị trạng thái đèn giao thông theo thời gian.
+\end{itemize}
+Đây là bước trung gian quan trọng để biến dữ liệu mô phỏng (mang tính kỹ thuật) thành dữ liệu hiển thị (mang tính trực quan) mà không phụ thuộc chặt vào cấu trúc nội bộ của SUMO.
+
+\section{Giải pháp ghi log và tổng hợp kết quả tự động theo lần chạy}
+\subsection{Bài toán/vấn đề}
+Để đánh giá kịch bản mô phỏng và so sánh các cấu hình, hệ thống cần cơ chế ghi nhận kết quả theo từng lần chạy. Nếu chỉ quan sát trực quan, việc kết luận dễ mang tính cảm nhận và khó lặp lại. Mặt khác, dữ liệu đầu ra của SUMO có thể rất lớn; đồ án cần một cách ghi log gọn, tập trung vào chỉ số cơ bản phù hợp với phạm vi thử nghiệm.
+
+\subsection{Giải pháp}
+Đồ án xây dựng lớp \texttt{VehicleTripCsvLogger} trong \texttt{result.py} để ghi thông tin hành trình của xe theo đơn vị step mô phỏng. Ý tưởng:
+\begin{itemize}[leftmargin=2em]
+	\item Ở mỗi step, lấy danh sách xe khởi hành và xe đến đích từ TraCI.
+	\item Lưu lại \texttt{depart\_step} theo \texttt{vehicle\_id}; khi xe đến đích, tính \texttt{travel\_steps} và ghi ra CSV.
+	\item Kết thúc mô phỏng, tự động ghi một dòng tổng hợp (trung bình số step) và xuất thêm một file JSON tóm tắt (số xe, số người đi bộ quan sát được, \texttt{avg\_vehicle\_travel\_steps}, thông tin map và tham số \texttt{pedestrian\_impatience} nếu có).
+\end{itemize}
+Tên file kết quả được gắn timestamp để tránh ghi đè và thuận tiện truy vết theo lần chạy.
+
+Để hạn chế mất dữ liệu khi dừng đột ngột, logger thực hiện \texttt{flush} sau khi ghi mỗi step và ghi thêm một dòng tổng hợp ở cuối file (\texttt{avg}). Đồng thời, file JSON tổng hợp được ghi riêng để Unity hoặc các công cụ phân tích có thể đọc nhanh mà không cần duyệt toàn bộ CSV.
+
+\subsection{Kết quả đạt được}
+Giải pháp tạo ra bộ dữ liệu đầu ra nhẹ, dễ dùng cho phân tích sau mô phỏng:
+\begin{itemize}[leftmargin=2em]
+	\item CSV phục vụ kiểm tra theo từng xe (depart/arrive/travel).
+	\item JSON phục vụ tổng hợp nhanh hoặc dùng làm đầu vào cho các công cụ thống kê.
+\end{itemize}
+Nhờ đó, hệ thống không chỉ ``hiển thị được'' mà còn hỗ trợ đánh giá định lượng ở mức cơ bản, tạo nền tảng cho các hướng phát triển về sau (ví dụ phân tích theo tuyến, theo thời gian, hoặc theo khu vực).
+
+\section{Kết chương}
+Chương này đã trình bày các giải pháp và đóng góp nổi bật mang tính kỹ thuật của đồ án, tập trung vào các điểm then chốt để hiện thực hệ thống mô phỏng--hiển thị: (i) giao tiếp TCP đáng tin cậy bằng cơ chế tách khung bản tin, (ii) sinh mạng SUMO từ mê cung và chuẩn hóa làn cho đa đối tượng, (iii) sinh tuyến và lọc cặp OD không khả thi, (iv) chuẩn hóa dữ liệu TraCI cho Unity, và (v) ghi log/tổng hợp kết quả theo lần chạy. Các giải pháp này giúp hệ thống vận hành ổn định hơn và giảm đáng kể công sức chuẩn bị dữ liệu, đồng thời là cơ sở để mở rộng thêm chức năng trong phần hướng phát triển.
+
+\end{document}

@@ -38,6 +38,32 @@ def build_simulation_summary_json_path(csv_path: str) -> str:
 	return f"{root}.json"
 
 
+def finish_simulation_logging(
+	trip_logger: VehicleTripCsvLogger,
+	ped_count: int,
+	ped_impatience: float | None,
+	map_name: str | None
+) -> None:
+	"""Closes the CSV logger and writes the simulation summary JSON file."""
+	try:
+		trip_logger.close()
+	except Exception as e:
+		print(f"Error closing CSV trip logger: {e}")
+
+	try:
+		summary_path = build_simulation_summary_json_path(trip_logger.csv_path)
+		write_simulation_summary_json(
+			summary_path,
+			vehicle_count=trip_logger.vehicle_trip_count,
+			pedestrian_count=ped_count,
+			avg_vehicle_travel_steps=trip_logger.avg_travel_steps,
+			pedestrian_impatience=ped_impatience,
+			map_name=map_name
+		)
+		print(f"Simulation summary written: {summary_path}")
+	except Exception as e:
+		print(f"Error writing simulation summary JSON: {e}")
+
 def write_simulation_summary_json(
 	json_path: str,
 	*,
@@ -141,6 +167,14 @@ class VehicleTripCsvLogger:
 
 	def __exit__(self, exc_type, exc, tb) -> None:
 		self.close()
+
+	def log_step(self, traci, step_index: int) -> list[VehicleTripRow]:
+		"""Convenience method to log a simulation step using the traci module directly."""
+		return self.on_step(
+			step_index,
+			traci.simulation.getDepartedIDList(),
+			traci.simulation.getArrivedIDList()
+		)
 
 	def on_step(self, step_index: int, departed_ids: Iterable[str], arrived_ids: Iterable[str]) -> list[VehicleTripRow]:
 		"""Update logger for a simulation step.

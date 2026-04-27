@@ -125,7 +125,6 @@ def cmd_handler(client_socket: socket.socket):
     This keeps reading messages from the same client until the client
     closes the connection or sends `Simulation end`.
     """
-    expected_msg = "Simulation end"
     try:
         # Set timeout để recv không chặn mãi mãi, cho phép thread kiểm tra điều kiện khác hoặc nhường CPU
         while True:
@@ -144,7 +143,7 @@ def cmd_handler(client_socket: socket.socket):
             msg = msg.strip()
             print(f"Received command: {msg}")
             
-            if msg == expected_msg:
+            if msg == "Simulation end":
                 print("Shutting down simulation as per client request.")
                 stop_event.set()
                 break
@@ -200,11 +199,7 @@ def run_simulation(client_socket: socket.socket):
             traci.simulationStep()
 
             # Log vehicle depart/arrival information by step.
-            trip_logger.on_step(
-                step_index,
-                traci.simulation.getDepartedIDList(),
-                traci.simulation.getArrivedIDList(),
-            )
+            trip_logger.log_step(traci, step_index)
             step_index += 1
             # process_vehicle_updates(traci)
             data = {
@@ -231,24 +226,9 @@ def run_simulation(client_socket: socket.socket):
         print(f"Error during simulation: {e}")
 
     finally:
-        try:
-            trip_logger.close()
-        except Exception as e:
-            print(f"Error closing trip logger: {e}")
-
-        try:
-            summary_path = build_simulation_summary_json_path(trip_logger.csv_path)
-            write_simulation_summary_json(
-                summary_path,
-                vehicle_count=trip_logger.vehicle_trip_count,
-                pedestrian_count=len(ped_seen),
-                avg_vehicle_travel_steps=trip_logger.avg_travel_steps,
-                pedestrian_impatience=ped_impatience,
-                map_name=maze_file_path
-            )
-            print(f"Simulation summary written: {summary_path}")
-        except Exception as e:
-            print(f"Error writing simulation summary: {e}")
+        # When simulation ends (naturally or by command), write summary JSON and close resources.
+        from result import finish_simulation_logging
+        finish_simulation_logging(trip_logger, len(ped_seen), ped_impatience, maze_file_path)
         traci.close()
         print("SUMO simulation stopped.")
         # If the simulation ended naturally, also stop the app main-loop.
@@ -282,10 +262,10 @@ if __name__ == "__main__":
         sys.exit(1)
     maze_file_path = sys.argv[1]
     num_lanes = int(sys.argv[2])
-    if not naive_create_map(maze_file_path, num_lanes):
-        sys.exit(1)
-    # if not create_map_from_maze_file(maze_file_path, num_lanes):
+    # if not naive_create_map(maze_file_path, num_lanes):
     #     sys.exit(1)
+    if not create_map_from_maze_file(maze_file_path, num_lanes):
+        sys.exit(1)
     # tạo bản đồ thành phố từ tệp bản đồ
     # if not create_map(maze_file_path, numLanes=num_lanes):
     #     sys.exit(1)
