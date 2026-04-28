@@ -435,7 +435,7 @@ def create_map(city_path, numLanes=8, carSpeed=13.9, pedSpeed=1.4):
     write_city_edges_to_xml(grid, pos_map, _edg_xml_path, min_angle=45, numLanes=numLanes, carSpeed=carSpeed, pedSpeed=pedSpeed)
     # Tạo crossings (.con.xml) từ .nod.xml và .edg.xml (dùng width mặc định trong hàm)
     write_to_xml.write_crossings_to_con_xml(_nod_xml_path, _edg_xml_path, _con_xml_path)
-    os.system(f"netconvert -n {_nod_xml_path} -e {_edg_xml_path} -x {_con_xml_path} -o {_net_xml_path} --offset.x 0 --offset.y 0")
+    os.system(f"netconvert -n {_nod_xml_path} -e {_edg_xml_path} -x {_con_xml_path} -o {_net_xml_path} --offset.x 0 --offset.y 0 --no-turnarounds.geometry false --no-turnarounds false")
     print(f"\n✅ Bản đồ SUMO đã được tạo thành công tại: {_net_xml_path}\n")
     return True
 

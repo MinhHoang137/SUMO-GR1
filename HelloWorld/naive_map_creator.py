@@ -150,7 +150,7 @@ def naive_create_map(maze_file_path, num_lanes):
     net_path = "SUMO_xml/HelloWorld.net.xml"
 
     if  naive_create_map_files(maze_file_path, output_nod_path, output_edge_path, output_con_path, num_lanes):
-        os.system(f"netconvert -n {output_nod_path} -e {output_edge_path} -x {output_con_path} -o {net_path} --offset.x 0 --offset.y 0")
+        os.system(f"netconvert -n {output_nod_path} -e {output_edge_path} -x {output_con_path} -o {net_path} --offset.x 0 --offset.y 0 --no-turnarounds.geometry false --no-turnarounds false")
         print(f"Tệp bản đồ đã được lưu tại:\n- {output_nod_path}\n- {output_edge_path}\n- {output_con_path}\n- {net_path}")
         return True
     else:

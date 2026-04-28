@@ -300,6 +300,6 @@ def create_map_from_maze_file(filepath, numLanes, practiceNumLanes=8):
     write_maze_edges_to_xml(grid, pos_map, height, width, _edg_xml_path, numLanes=practiceNumLanes)
     # Tạo crossings (.con.xml) từ .nod.xml và .edg.xml (dùng width mặc định trong hàm)
     write_to_xml.write_crossings_to_con_xml(_nod_xml_path, _edg_xml_path, _con_xml_path)
-    os.system(f"netconvert -n {_nod_xml_path} -e {_edg_xml_path} -x {_con_xml_path} -o {_net_xml_path} --offset.x 0 --offset.y 0")
+    os.system(f"netconvert -n {_nod_xml_path} -e {_edg_xml_path} -x {_con_xml_path} -o {_net_xml_path} --offset.x 0 --offset.y 0 --no-turnarounds.geometry false --no-turnarounds false")
     print(f"\n✅ Bản đồ SUMO đã được tạo thành công tại: {_net_xml_path}\n")
     return True

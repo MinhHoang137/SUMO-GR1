@@ -1,5 +1,6 @@
 import json
 import math
+import os
 import socket
 import subprocess
 import sys
@@ -254,75 +255,193 @@ def send_road_data(client_socket: socket.socket):
     except Exception as e:
         print(f"Error sending road data: {e}")
 
-# Hàm chính
-if __name__ == "__main__":
-    # yêu cầu nhập đường dẫn tệp mê cung và số làn
+def parse_arguments():
+    """Lấy danh sách tham số đường dẫn file mê cung và số làn đường từ command-line."""
     if len(sys.argv) < 3:
         print("Usage: python main.py <maze_file_path> <num_lanes>")
         sys.exit(1)
-    maze_file_path = sys.argv[1]
-    num_lanes = int(sys.argv[2])
-    # if not naive_create_map(maze_file_path, num_lanes):
-    #     sys.exit(1)
-    if not create_map_from_maze_file(maze_file_path, num_lanes):
-        sys.exit(1)
-    # tạo bản đồ thành phố từ tệp bản đồ
-    # if not create_map(maze_file_path, numLanes=num_lanes):
-    #     sys.exit(1)
+    
+    maze_file = sys.argv[1]
+    lanes = int(sys.argv[2])
+    return maze_file, lanes
 
-    # tạo các tuyến đường
-    num_pairs = input("Số lượng cặp nút giao thông cần tạo (mặc định 20): ")
-    num_pairs = int(num_pairs) if num_pairs else 20
-    car_cr_type = input(f"Loại phân chia nút giao thông cho xe ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
-    car_cr_type = car_cr_type if car_cr_type in [CS, SS, IO, OI] else CS
-    ped_option = input("Tạo tuyến đường cho người đi bộ không? (y/n, mặc định y): ")
-    has_ped = ped_option.lower() != 'n'
+def setup_simulation_config():
+    """Tương tác CLI với user nhằm khởi tạo thông số Traffic và GUI."""
+    mode_option = input("Chạy ở chế độ nào? (1: Benchmark, 2: VRP) (mặc định 1): ")
+    sim_mode = "vrp" if mode_option == "2" else "benchmark"
 
-    if has_ped:
-        ped_cr_type = input(f"Loại phân chia nút giao thông cho người đi bộ ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
-        ped_cr_type = ped_cr_type if ped_cr_type in [CS, SS, IO, OI] else CS
-        _ped_imp = input("Mức độ thiếu kiên nhẫn của người đi bộ (0.0 đến 1.0, mặc định 0.5): ")
-        _ped_imp = float(_ped_imp) if _ped_imp else 0.5
-        ped_impatience = _ped_imp
-        create_routes(num_pairs, car_cr_type, has_ped, ped_cr_type, _ped_imp)
+    config = {
+        "mode": sim_mode,
+    }
+
+    if sim_mode == "benchmark":
+        num_pairs_input = input("Số lượng cặp nút giao thông cần tạo (mặc định 20): ")
+        config["num_pairs"] = int(num_pairs_input) if num_pairs_input else 20
+        config["car_cr_type"] = input(f"Loại phân chia nút giao thông cho xe ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ") or CS
+        
+        if config["car_cr_type"] not in [CS, SS, IO, OI]:
+            config["car_cr_type"] = CS
+
+        ped_option = input("Tạo tuyến đường cho người đi bộ không? (y/n, mặc định y): ")
+        config["has_ped"] = ped_option.lower() != 'n'
+
+        if config["has_ped"]:
+            ped_cr_type = input(f"Loại phân chia cho người đi bộ ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
+            config["ped_cr_type"] = ped_cr_type if ped_cr_type in [CS, SS, IO, OI] else CS
+            
+            _ped_imp = input("Mức độ thiếu kiên nhẫn của người đi bộ (0.0 đến 1.0, mặc định 0.5): ")
+            config["ped_impatience"] = float(_ped_imp) if _ped_imp else 0.5
+        else:
+            config["ped_impatience"] = None
     else:
-        create_routes(num_pairs, car_cr_type, has_ped)
+        # VRP mode không mặc định sinh người đi bộ
+        config["has_ped"] = False
+        config["ped_impatience"] = None
+        
+        num_nodes_input = input("Số lượng điểm khách hàng (nút) cần phục vụ (mặc định 10): ")
+        config["vrp_num_clients"] = int(num_nodes_input) if num_nodes_input else 10
+        
+        num_staff_input = input("Số lượng nhân viên giao hàng (mặc định 3): ")
+        config["vrp_num_staff"] = int(num_staff_input) if num_staff_input else 3
     
     gui_option = input("Chạy với giao diện đồ họa Unity không? (y/n, mặc định n): ")
-    run_with_gui = gui_option.lower() == 'y'
-    if not run_with_gui:
-        time_step = 0
+    config["run_with_gui"] = gui_option.lower() == 'y'
+    
+    return config
 
-    # khởi chạy Unity và mô phỏng SUMO
+def initialize_map_and_routes(maze_file, num_lanes, config):
+    """Tạo mới cấu trúc bản đồ SUMO và nạp lộ trình di chuyển."""
+    if not create_map_from_maze_file(maze_file, num_lanes):
+        print("[Error] Failed to create map from maze file.")
+        sys.exit(1)
+        
+    if config["mode"] == "benchmark":
+        if config["has_ped"]:
+            create_routes(
+                config["num_pairs"], 
+                config["car_cr_type"], 
+                config["has_ped"], 
+                config["ped_cr_type"], 
+                config["ped_impatience"]
+            )
+        else:
+            create_routes(
+                config["num_pairs"], 
+                config["car_cr_type"], 
+                config["has_ped"]
+            )
+    elif config["mode"] == "vrp":
+        # Đẩy folder VRP vào sys.path để các module Python bên trong nó có thể import lẫn nhau
+        # thay vì bị lỗi ModuleNotFoundError: No module named 'location'
+        vrp_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "VRP")
+        if vrp_path not in sys.path:
+            sys.path.insert(0, vrp_path)
+
+        from VRP.network_graph import NetworkGraph
+        from VRP.company import Company
+        from VRP.client import Client
+        from VRP.staff import Staff
+        from VRP.controller import Controller
+        from VRP.xml_exporter import export_to_rou_xml
+        
+        print("[Info] Đang khởi tạo lộ trình VRP...")
+        # VRP sử dụng .nod.xml và .edg.xml sinh ra từ create_map_from_maze_file
+        node_file = "./SUMO_xml/HelloWorld.nod.xml"
+        edge_file = "./SUMO_xml/HelloWorld.edg.xml"
+        graph = NetworkGraph(node_file, edge_file)
+        
+        nodes_list = list(graph.graph.keys())
+        company_node = nodes_list[0]
+        start_point = Company(company_node, graph)
+        
+        num_requested_clients = config.get("vrp_num_clients", 10)
+        # Giới hạn client nodes không vượt quá số node hiện có
+        client_nodes = nodes_list[1:min(num_requested_clients + 1, len(nodes_list))]
+        all_clients = [Client(node_id, graph, 10.0) for node_id in client_nodes]
+        
+        num_staff = config.get("vrp_num_staff", 3)
+        my_staff = [Staff(i + 1, start_point) for i in range(num_staff)]
+        
+        assignment = Controller()
+        assignment.base_case(start_point, all_clients, my_staff)
+        assignment.swap_case(start_point, all_clients, my_staff)
+        
+        print("\n================ LỘ TRÌNH VRP DỰ KIẾN ================")
+        for staff in my_staff:
+            print(f"Nhân viên {staff.get_id()}:")
+            print(f"  - Lộ trình (Nodes): {' -> '.join(staff.get_route())}")
+            # Chi phí trên đồ thị là Thời gian di chuyển
+            print(f"  - Thời gian dự kiến (s): {staff.get_total_route():.2f}")
+        print("======================================================\n")
+
+        # Ghi trực tiếp đè vào HelloWorld.rou.xml để hàm run_simulation đọc được
+        output_xml = "./SUMO_xml/HelloWorld.rou.xml"
+        export_to_rou_xml(my_staff, graph, output_xml)
+        print("[Info] Đã tạo lộ trình VRP thành công tại", output_xml)
+
+def start_network_services(config):
+    """Khởi chạy TCP Socket Server và các background threads liên kết với Unity / SUMO."""
     server_socket = network.create_server_socket(HOST, MAIN_PORT)
     receive_socket = network.create_server_socket("0.0.0.0", 5053)
     shutdown_socket = network.create_server_socket("0.0.0.0", 5054)
 
-    # Khởi server thread non-daemon và lưu handle để join khi shutdown
     server_thread = async_task(network.server_thread, server_socket, client_thread_function, daemon=False)
-    if run_with_gui: subprocess.Popen(target_exe)
+    
+    if config["run_with_gui"]: 
+        subprocess.Popen(target_exe)
     else:
         run_simulation_thread = async_task(run_simulation, None, daemon=False)
 
-    # Khởi các thread nền khác non-daemon để có thể shutdown gọn
     receive_thread = async_task(receive, receive_socket, daemon=False)
     listen_thread = async_task(listen_for_control_commands, shutdown_socket, daemon=False)
+    
+    return {
+        "sockets": [server_socket, receive_socket, shutdown_socket],
+        "threads": [
+            (receive_thread, 'receive'), 
+            (listen_thread, 'listen'), 
+            (server_thread, 'server')
+        ]
+    }
 
+def main():
+    global has_ped, ped_impatience, maze_file_path, run_with_gui, time_step
+
+    # 1. Parse command-line args
+    maze_file_path, num_lanes = parse_arguments()
+
+    # 2. Get user input / Setup configuration
+    config = setup_simulation_config()
+    
+    # Đồng bộ biến Global cũ
+    has_ped = config["has_ped"]
+    ped_impatience = config["ped_impatience"]
+    run_with_gui = config["run_with_gui"]
+    if not run_with_gui:
+        time_step = 0
+
+    # 3. Create Simulation Map & Routes
+    initialize_map_and_routes(maze_file_path, num_lanes, config)
+
+    # 4. Start Network and Backend processes
+    network_context = start_network_services(config)
+
+    # 5. Block the main thread / Wait for termination signals
     try:
-        # Chờ đến khi có yêu cầu dừng (được set bởi listen_for_control_commands hoặc KeyboardInterrupt)
-        while not stop_event.is_set() :
+        while not stop_event.is_set():
             time.sleep(0.5)
     except KeyboardInterrupt:
+        print("Interrupted by user. Shutting down...")
         stop_event.set()
     finally:
-        # Bắt đầu đóng gọn
-        for s in [server_socket, receive_socket, shutdown_socket]:
+        # 6. Cleanup Sockets and Threads
+        for s in network_context["sockets"]:
             try:
                 s.close()
             except Exception:
                 pass
 
-        for t, name in ((receive_thread, 'receive'), (listen_thread, 'listen'), (server_thread, 'server')):
+        for t, name in network_context["threads"]:
             try:
                 if t is not None:
                     t.join(timeout=5)
@@ -330,5 +449,9 @@ if __name__ == "__main__":
                 print(f"Error joining {name} thread: {e}")
 
         time.sleep(0.1)
+        print("Shutdown complete.")
+
+if __name__ == "__main__":
+    main()
 
 
