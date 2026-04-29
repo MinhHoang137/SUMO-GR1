@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 4567807449552475444}
   - component: {fileID: 2700546884202445460}
   - component: {fileID: 285036897663424413}
+  - component: {fileID: -5100463501642876994}
   m_Layer: 0
   m_Name: Vehicle
   m_TagString: Untagged
@@ -176,6 +177,19 @@ LODGroup:
     fadeTransitionWidth: 0
     renderers: []
   m_Enabled: 1
+--- !u!114 &-5100463501642876994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3077825237559346182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16df52e08e341284a853794677f43b22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FilterTransform
+  filterSO: {fileID: 11400000, guid: 77f96688b6234e84eaab3e8d0f1846cf, type: 2}
 --- !u!1 &6310070450350086086
 GameObject:
   m_ObjectHideFlags: 0

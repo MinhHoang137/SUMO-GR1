@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1021885126749754752}
   - component: {fileID: 4974529103670524088}
   - component: {fileID: -3107462158446698600}
+  - component: {fileID: 7793644617040161427}
   m_Layer: 0
   m_Name: Pedestrian
   m_TagString: Untagged
@@ -97,6 +98,19 @@ LODGroup:
     fadeTransitionWidth: 0
     renderers: []
   m_Enabled: 1
+--- !u!114 &7793644617040161427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2600958320849638124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16df52e08e341284a853794677f43b22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FilterTransform
+  filterSO: {fileID: 11400000, guid: 77f96688b6234e84eaab3e8d0f1846cf, type: 2}
 --- !u!1 &6576246963323543466
 GameObject:
   m_ObjectHideFlags: 0
@@ -185,6 +199,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &9122191807026154100
 GameObject:

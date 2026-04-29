@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1158903533594358703}
   - component: {fileID: 4179208052205541913}
   - component: {fileID: 2767744798624931249}
+  - component: {fileID: 8186603551382773797}
   m_Layer: 0
   m_Name: EdgeType_0
   m_TagString: Untagged
@@ -73,3 +74,16 @@ LODGroup:
     fadeTransitionWidth: 0
     renderers: []
   m_Enabled: 1
+--- !u!114 &8186603551382773797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2265830923726708677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16df52e08e341284a853794677f43b22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FilterTransform
+  filterSO: {fileID: 11400000, guid: 77f96688b6234e84eaab3e8d0f1846cf, type: 2}

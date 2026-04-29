@@ -38,7 +38,7 @@ MAX_PACKET_SIZE = 131072 # 128 KB
 MAX_RETRIES = 5
 END_MARKER = '<END>'
 
-target_exe = "./UnityBuild/TestGR1.1.exe"
+target_exe = "../UnityBuild/TestGR1.1.exe"
 stop_event = threading.Event()
 time_step = 0.05  # Giả sử mỗi bước mô phỏng là 0.11 giây
 time_step_lock = threading.Lock()
@@ -351,6 +351,9 @@ def initialize_map_and_routes(maze_file, num_lanes, config):
         graph = NetworkGraph(node_file, edge_file)
         
         nodes_list = list(graph.graph.keys())
+        import random
+        random.shuffle(nodes_list)
+        
         company_node = nodes_list[0]
         start_point = Company(company_node, graph)
         

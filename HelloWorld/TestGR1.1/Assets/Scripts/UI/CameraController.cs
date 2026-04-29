@@ -14,31 +14,18 @@ public class CameraController : MonoBehaviour
 		public string State { get { return state; } }
 	}
 	public event EventHandler<OnSetTrafficerEventArgs> OnSetTrafficer;
-
-	public class OnCameraMoveEventArgs : EventArgs
-	{
-		private Vector3 position;
-		private float moveThreshold;
-        public OnCameraMoveEventArgs(Vector3 position, float moveThreshold)
-        {
-            this.position = position;
-            this.moveThreshold = moveThreshold;
-        }
-        public Vector3 Position { get { return position; } }
-		public float MoveThreshold { get { return moveThreshold; } }
-    }
-
-	public event EventHandler<OnCameraMoveEventArgs> OnCameraMove;
-	
+	public event EventHandler OnCameraMove;
 
 	public static CameraController Instance { get; private set; }
 	private float speed = 7;
 	private float sensitivity = 10;
 	private bool isFree = true;
 	private Trafficer currentTrafficer;
-	private Vector3 lastPosition;
-	private float moveThreshold = 50f;
 	[SerializeField] private RoadDataSO roadData;
+
+	[Header("Optimization")]
+	private Vector3 lastPosition;
+	[SerializeField] private float moveThreshold = 100f;
 	private void Awake()
 	{
 		Instance = this;
@@ -54,7 +41,6 @@ public class CameraController : MonoBehaviour
 		float medianX = 0f;
 		float medianZ = 0f;
 		float y = 30f;
-		lastPosition = transform.position;
 		foreach (var junction in roadData.junctionDatas)
 		{
 			medianX += junction.position[0];
@@ -63,10 +49,7 @@ public class CameraController : MonoBehaviour
 		medianX /= roadData.junctionDatas.Count;
 		medianZ /= roadData.junctionDatas.Count;
 		transform.position = new Vector3(medianX, y, medianZ);
-		ManipulateAction.Delay(() =>
-		{
-			OnCameraMove?.Invoke(this, new OnCameraMoveEventArgs(transform.position, moveThreshold));
-		}, Time.deltaTime);
+		lastPosition = transform.position;
 	}
 
 	// Update is called once per frame
@@ -74,14 +57,14 @@ public class CameraController : MonoBehaviour
 	{
 		Move();
 		Rotate();
-		if (Vector3.Distance(lastPosition, transform.position) > moveThreshold)
-		{
-			lastPosition = transform.position;
-			OnCameraMove?.Invoke(this, new OnCameraMoveEventArgs(transform.position, moveThreshold));
-		}
 	}
 	private void Move()
 	{
+		if (Vector3.Distance(transform.position, lastPosition) > moveThreshold)
+		{
+			lastPosition = transform.position;
+			OnCameraMove?.Invoke(this, EventArgs.Empty);
+		}
 		if (!isFree) return;
 		Vector3 input = GameInput.Instance.GetMovementInput();
 		Vector3 move = transform.right * input.x + transform.forward * input.z;
@@ -200,9 +183,5 @@ public class CameraController : MonoBehaviour
 			state += "gắn vào: " + currentTrafficer.GetId();
 		}
 		return state;
-	}
-	public float GetFarDistance()
-	{
-		return moveThreshold;
 	}
 }

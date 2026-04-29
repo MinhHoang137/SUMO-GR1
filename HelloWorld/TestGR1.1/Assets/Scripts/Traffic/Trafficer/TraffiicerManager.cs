@@ -27,25 +27,6 @@ public class TrafficerManager : MonoBehaviour
 		Instance = this;
 	}
 
-    private void Update()
-    {
-        foreach (var trafficer in trafficerDict.Values)
-		{
-
-			float scaleRange = 10f;
-			float range = CameraController.Instance != null ? CameraController.Instance.GetFarDistance() * scaleRange : 1000f;
-			bool isNear = IsTrafficerNearCamera(trafficer, range);
-			if (isNear && !trafficer.gameObject.activeSelf)
-			{
-				trafficer.Show();
-			}
-			else if (!isNear && trafficer.gameObject.activeSelf)
-			{
-				trafficer.Hide();
-			}
-		}
-    }
-
     public void AddTrafficer(Trafficer trafficer)
 	{
 		if (!trafficerDict.ContainsKey(trafficer.GetId()))
@@ -69,20 +50,6 @@ public class TrafficerManager : MonoBehaviour
 		{
 			Debug.LogError($"Trafficer with ID {trafficer.GetId()} does not exist.");
 		}
-	}
-	private bool IsTrafficerNearCamera(Trafficer trafficer, float threshold)
-	{
-		if (CameraController.Instance == null)
-		{
-			return true; // Nếu không có CameraController, luôn trả về true
-		}
-
-		Vector3 cameraPosition = CameraController.Instance.transform.position;
-		Vector3 pos = trafficer.GetDestination();
-		float dx = Mathf.Abs(pos.x - cameraPosition.x);
-		float dz = Mathf.Abs(pos.z - cameraPosition.z);
-		// Square (axis-aligned) filter on X and Z axes
-		return dx <= threshold && dz <= threshold;
 	}
 	public List<Trafficer> GetTrafficers()
 	{

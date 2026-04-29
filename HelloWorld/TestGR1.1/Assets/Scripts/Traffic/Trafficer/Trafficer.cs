@@ -88,5 +88,8 @@ public abstract class Trafficer : MonoBehaviour
 			cmC.SetRandomTrafficerView();
 		}
 	}
+	protected virtual void OnEnable() {
+		transform.position = destination;
+	}
 	
 }

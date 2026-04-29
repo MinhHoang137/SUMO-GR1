@@ -296,7 +296,7 @@ def create_map_from_maze_file(filepath, numLanes, practiceNumLanes=8):
     _con_xml_path = "SUMO_xml/HelloWorld.con.xml"
 
      # Ghi file .nod.xml và .edg.xml
-    write_to_xml.write_nodes_to_xml(pos_map, _nod_xml_path)
+    write_to_xml.write_nodes_to_xml(pos_map, _nod_xml_path, scale = 20)
     write_maze_edges_to_xml(grid, pos_map, height, width, _edg_xml_path, numLanes=practiceNumLanes)
     # Tạo crossings (.con.xml) từ .nod.xml và .edg.xml (dùng width mặc định trong hàm)
     write_to_xml.write_crossings_to_con_xml(_nod_xml_path, _edg_xml_path, _con_xml_path)
