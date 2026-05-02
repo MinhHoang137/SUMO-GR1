@@ -2,7 +2,7 @@
 *.xml
 
 #ignore SUMO generated files
-*.sumocfg
+#*.sumocfg
 *.net.xml
 *.rou.xml
 
