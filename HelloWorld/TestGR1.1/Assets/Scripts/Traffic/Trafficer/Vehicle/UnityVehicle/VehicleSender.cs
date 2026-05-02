@@ -16,10 +16,9 @@ public class VehicleSender : MonoBehaviour
 
 	private TcpClient persistentClient;
 
-	public string host = "127.0.0.1";
-	public int port = 5053;
 	public int timeoutMillis = 1000;
 	[SerializeField] private string sendJson;
+	[SerializeField] private NetworkSO networkSO;
 	public int reconnectDelayMillis = 250; // chờ giữa các lần thử kết nối lại
 
 	void Start()
@@ -104,7 +103,7 @@ public class VehicleSender : MonoBehaviour
 			}
 
 			CleanupConnection();
-			persistentClient = Network.CreateTcpClient(host, port);
+			persistentClient = Network.CreateTcpClient(networkSO.Host, Constant.SEND_DATA_PORT);
 			persistentClient.ReceiveTimeout = timeoutMillis;
 			persistentClient.SendTimeout = timeoutMillis;
 			return true;

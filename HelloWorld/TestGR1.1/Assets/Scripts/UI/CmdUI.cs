@@ -8,17 +8,16 @@ public class CmdUI : MonoBehaviour
 {
     [SerializeField] private Button pauseButton;
     [SerializeField] private Button closeButton;
+    [SerializeField] private NetworkSO networkSO;
 
     private TcpClient cmdClient;
-    private const string SERVER_IP = "127.0.0.1";
-    private const int PORT = 5054;
     private const int BUFFER_SIZE = 1024;
 
     private bool isPaused;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        cmdClient = Network.CreateTcpClient(SERVER_IP, PORT);
+        cmdClient = Network.CreateTcpClient(networkSO.Host, Constant.CMD_PORT);
         if (pauseButton != null)
         {
             pauseButton.onClick.AddListener(OnPauseClicked);
@@ -37,7 +36,7 @@ public class CmdUI : MonoBehaviour
             if (cmdClient == null || !cmdClient.Connected)
             {
                 Network.CloseTcpClient(cmdClient);
-                cmdClient = Network.CreateTcpClient(SERVER_IP, PORT);
+                cmdClient = Network.CreateTcpClient(networkSO.Host, Constant.CMD_PORT);
             }
 
             bool ok = Network.SendMessage(cmdClient, command, BUFFER_SIZE, "<END>");

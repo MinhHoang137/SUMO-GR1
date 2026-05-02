@@ -19,11 +19,13 @@ public class JunctionMaker : MonoBehaviour
 
 	private Junction CreateJunction(JunctionData junctionData)
 	{
-		Junction junction = Instantiate(crossRoadPrefab, Vector3.zero, Quaternion.identity);
+		Vector3 position = Converter.ToVector3(junctionData.position);
+		Junction junction = Instantiate(crossRoadPrefab, position, Quaternion.identity);
 		junction.baseVertices = new List<Vector3>();
 		foreach (var vertex in junctionData.vertices)
 		{
-			junction.baseVertices.Add(new Vector3(vertex.x, 0, vertex.y));
+			Vector3 worldVertex = new Vector3(vertex.x, 0, vertex.y) - position;
+			junction.baseVertices.Add(worldVertex);
 		}
 		junction.Create(junction.baseVertices.ToArray(), new Vector3(0, -1, 0), junctionData.id);
 		junction.transform.SetParent(transform);

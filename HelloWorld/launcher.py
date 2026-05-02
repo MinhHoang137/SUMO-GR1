@@ -31,7 +31,12 @@ class AppLauncher:
         
         self.server_process = None
         
-        self.base_dir = os.path.abspath(os.path.dirname(__file__))
+        # Sửa lỗi đường dẫn khi build file .exe bằng PyInstaller
+        if getattr(sys, 'frozen', False):
+            self.base_dir = os.path.dirname(sys.executable)
+        else:
+            self.base_dir = os.path.abspath(os.path.dirname(__file__))
+            
         self.server_dir = os.path.join(self.base_dir, "Server")
         
         self.build_ui()
@@ -161,8 +166,11 @@ class AppLauncher:
         input_str = "\n".join(inputs) + "\n"
         
         try:
+            # Sửa lỗi gọi lại executable khi chạy file .exe
+            python_cmd = "python" if getattr(sys, 'frozen', False) else sys.executable
+            
             # run command: python main.py <maze_file_path> <num_lanes>
-            cmd = [sys.executable, "main.py", self.map_file.get(), str(self.num_lanes.get())]
+            cmd = [python_cmd, "main.py", self.map_file.get(), str(self.num_lanes.get())]
             self.server_process = subprocess.Popen(
                 cmd, 
                 cwd=self.server_dir, 

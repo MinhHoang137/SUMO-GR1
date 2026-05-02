@@ -27,12 +27,12 @@ public class FilterTransform : MonoBehaviour
     }
     private void Filter()
     {
-        float distance = Vector3.Distance(transform.position, CameraController.Instance.transform.position);
-        if (distance > filterSO.FilterDistance)
+        float disX = Mathf.Abs(transform.position.x - CameraController.Instance.transform.position.x);
+        float disZ = Mathf.Abs(transform.position.z - CameraController.Instance.transform.position.z);
+        if (disX > filterSO.FilterDistance || disZ > filterSO.FilterDistance)
         {
             gameObject.SetActive(false);
-        }
-        else
+        } else
         {
             gameObject.SetActive(true);
         }

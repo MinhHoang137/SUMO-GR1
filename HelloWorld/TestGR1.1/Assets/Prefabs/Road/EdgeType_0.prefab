@@ -10,14 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 1158903533594358703}
   - component: {fileID: 4179208052205541913}
-  - component: {fileID: 2767744798624931249}
   - component: {fileID: 8186603551382773797}
+  - component: {fileID: 3594810302568264122}
   m_Layer: 0
   m_Name: EdgeType_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1158903533594358703
 Transform:
@@ -47,33 +47,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkingLanePrefab: {fileID: 4485491658048713596, guid: b40a9bf4353004447af4d5929ca5afac, type: 3}
+  roadLanePrefab: {fileID: 7793645527786302433, guid: b2c43e3b40b300e4ba4e6419938972a0, type: 3}
   treePrefabs:
   - {fileID: 554883108905982869, guid: d46694807bb21ec4c905c44d402326b8, type: 3}
-  roadLanePrefab: {fileID: 7793645527786302433, guid: b2c43e3b40b300e4ba4e6419938972a0, type: 3}
---- !u!205 &2767744798624931249
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2265830923726708677}
-  serializedVersion: 2
-  m_LocalReferencePoint: {x: 0, y: 0, z: 0}
-  m_Size: 1
-  m_FadeMode: 0
-  m_AnimateCrossFading: 0
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.0013
-    fadeTransitionWidth: 0
-    renderers: []
-  - screenRelativeHeight: 0
-    fadeTransitionWidth: 0
-    renderers: []
-  - screenRelativeHeight: 0
-    fadeTransitionWidth: 0
-    renderers: []
-  m_Enabled: 1
+  treeSpacing: 10
+  housePrefabs:
+  - {fileID: 3247689602908937768, guid: 0b508cad1e2a5c149b814ad7f5d68670, type: 3}
+  - {fileID: 344527604188846462, guid: 15ab5a93510388f458068e8913469353, type: 3}
+  - {fileID: 443937931978584900, guid: d6ccf0e7d0f2cac46901aecfcc1b9d59, type: 3}
+  houseMargin: 0.2
 --- !u!114 &8186603551382773797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87,3 +69,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FilterTransform
   filterSO: {fileID: 11400000, guid: 77f96688b6234e84eaab3e8d0f1846cf, type: 2}
+--- !u!114 &3594810302568264122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2265830923726708677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 756d462419a4e754ab5463ccdd5be92e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DisableAllCollider
+  delay: 0.5

@@ -16,11 +16,10 @@ public class TrafficDataListener : MonoBehaviour
 	private TrafficDataList data = new TrafficDataList();
 	private string lastJson;
 
+	[SerializeField] private NetworkSO networkSO;
+	
 	private const int BUFFER_SIZE = 131072;
 	private const string END_MARKER = "<END>";
-
-	protected int port = 5050;
-	private string loopbackAddress = "127.0.0.1";
 
 	void Start()
 	{
@@ -29,8 +28,8 @@ public class TrafficDataListener : MonoBehaviour
 
 	private void StartListening()
 	{
-		tcpClient = Network.CreateTcpClient(loopbackAddress, port);
-		Debug.Log($"{GetType().Name} listening on port {port}...");
+		tcpClient = Network.CreateTcpClient(networkSO.Host, Constant.DEFAULT_PORT);
+		Debug.Log($"{GetType().Name} listening on {networkSO.Host}:{Constant.DEFAULT_PORT}...");
 
 		listenerThread = new Thread(ListenForData)
 		{

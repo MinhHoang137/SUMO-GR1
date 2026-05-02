@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 public class OptionUI : MonoBehaviour
 {
 	private bool previousMouseEnabled = false;
+	[SerializeField] private NetworkSO networkSO;
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
 	{
@@ -37,8 +38,8 @@ public class OptionUI : MonoBehaviour
 	private void CloseSimulation()
 	{
 		string message = "Simulation end";
-		string ip = "127.0.0.1";
-		int port = 5054;
+		string ip = networkSO.Host;
+		int port = Constant.CMD_PORT;
 		int packetSize = 1024; // bytes per packet
 
 		Task.Run(() =>

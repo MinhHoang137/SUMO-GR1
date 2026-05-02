@@ -145,8 +145,7 @@ def cmd_handler(client_socket: socket.socket):
             print(f"Received command: {msg}")
             
             if msg == "Simulation end":
-                print("Shutting down simulation as per client request.")
-                stop_event.set()
+                print("Client disconnected from simulation command listener.")
                 break
             elif msg == "Pause":
                 set_pause_sim(True)
@@ -179,8 +178,8 @@ def cmd_handler(client_socket: socket.socket):
         client_socket.close()
 
 # Nhận lệnh điều khiển từ Unity (dừng, tạm dừng, tiếp tục, cập nhật cấu hình)
-def listen_for_control_commands(shutdown_socket):
-    network.server_thread(shutdown_socket, cmd_handler)
+def listen_for_control_commands(cmd_socket):
+    network.server_thread(cmd_socket, cmd_handler)
     return 0
 
 # Hàm chạy mô phỏng SUMO và ghi dữ liệu
@@ -385,21 +384,22 @@ def initialize_map_and_routes(maze_file, num_lanes, config):
 def start_network_services(config):
     """Khởi chạy TCP Socket Server và các background threads liên kết với Unity / SUMO."""
     server_socket = network.create_server_socket(HOST, MAIN_PORT)
-    receive_socket = network.create_server_socket("0.0.0.0", 5053)
-    shutdown_socket = network.create_server_socket("0.0.0.0", 5054)
+    receive_socket = network.create_server_socket(HOST, 5053) # Socket riêng để nhận dữ liệu cập nhật từ Unity (nếu cần thiết)
+    cmd_socket = network.create_server_socket(HOST, 5054) # Socket riêng để lắng nghe lệnh từ Unity (nếu cần thiết)
 
     server_thread = async_task(network.server_thread, server_socket, client_thread_function, daemon=False)
     
     if config["run_with_gui"]: 
-        subprocess.Popen(target_exe)
+        # subprocess.Popen(target_exe)
+        pass
     else:
         run_simulation_thread = async_task(run_simulation, None, daemon=False)
 
     receive_thread = async_task(receive, receive_socket, daemon=False)
-    listen_thread = async_task(listen_for_control_commands, shutdown_socket, daemon=False)
+    listen_thread = async_task(listen_for_control_commands, cmd_socket, daemon=False)
     
     return {
-        "sockets": [server_socket, receive_socket, shutdown_socket],
+        "sockets": [server_socket, receive_socket, cmd_socket],
         "threads": [
             (receive_thread, 'receive'), 
             (listen_thread, 'listen'), 

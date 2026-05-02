@@ -5,11 +5,15 @@ using System.Text;
 using System.Threading;
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class RoadDataListener : MonoBehaviour
 {
 
 	[SerializeField] private RoadDataSO roadDataSO;
+	[SerializeField] private NetworkSO networkSO;
+	public UnityEvent OnRoadDataReceived;
+	public UnityEvent OnConnectedFailed;
 
 	private RoadData roadData;
 	private TcpClient tcpClient;
@@ -20,21 +24,18 @@ public class RoadDataListener : MonoBehaviour
 	private const int BUFFER_SIZE = 131072;
 	private const string END_MARKER = "<END>";
 
-	protected int port = 5050;
-	protected string loopbackAddress = "127.0.0.1";
 
 
 	void Start()
 	{
-		StartListening();
 	}
 
-	private void StartListening()
+	public void StartListening()
 	{
 		try
 		{
-			tcpClient = Network.CreateTcpClient(loopbackAddress, port);
-			Debug.Log($"{GetType().Name} connected to {loopbackAddress}:{port}...");
+			tcpClient = Network.CreateTcpClient(networkSO.Host, Constant.DEFAULT_PORT);
+			Debug.Log($"{GetType().Name} connected to {networkSO.Host}:{Constant.DEFAULT_PORT}...");
 
 			listenerThread = new Thread(ListenForData)
 			{
@@ -45,6 +46,7 @@ public class RoadDataListener : MonoBehaviour
 		catch (Exception e)
 		{
 			Debug.LogError($"Failed to connect in {GetType().Name}: {e.Message}");
+			OnConnectedFailed?.Invoke();
 		}
 	}
 
@@ -104,6 +106,7 @@ public class RoadDataListener : MonoBehaviour
 				isListening = false; // Stop listening after processing data
 				try { Network.CloseTcpClient(tcpClient); } catch { }
 				listenerThread.Abort();
+				OnRoadDataReceived?.Invoke();
 			}
 		}
 		catch (Exception e)
