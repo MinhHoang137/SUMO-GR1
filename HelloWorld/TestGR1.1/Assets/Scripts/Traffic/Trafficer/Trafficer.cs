@@ -8,6 +8,7 @@ public abstract class Trafficer : MonoBehaviour
 	private Vector3 lastPosition;
 
 	[SerializeField] private Transform cameraHolder;
+	[SerializeField] private AudioSource audioSource;
 
 	public bool isExist = true;
 
@@ -76,6 +77,14 @@ public abstract class Trafficer : MonoBehaviour
 	public Transform GetCameraHolder()
 	{
 		return cameraHolder;
+	}
+	public AudioSource GetAudioSource()
+	{
+		if (audioSource == null)
+		{
+			audioSource = GetComponent<AudioSource>();
+		}
+		return audioSource;
 	}
 
 

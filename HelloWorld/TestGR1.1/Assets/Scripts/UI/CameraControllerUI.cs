@@ -20,7 +20,7 @@ public class CameraControllerUI : MonoBehaviour
 		});
 		CameraController.Instance.OnSetTrafficer += (sender, args) =>
 		{
-			cameraState.text = args.State;
+			cameraState.text = args.state;
 		};
 		cameraState.text = CameraController.Instance.GetState();
 	}

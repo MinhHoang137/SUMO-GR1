@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6de0642aeeec9334396f9227d60e6917, type: 3}
+  m_Name: EngineSoundSO
+  m_EditorClassIdentifier: Assembly-CSharp::EngineSoundSO
+  idleSound: {fileID: 8300000, guid: 48e52d53402a3a84899dbc04dfe9fbdf, type: 3}
+  accelerationSound: {fileID: 8300000, guid: c1eb31233e270c2418663eedee236aa8, type: 3}
+  stableSound: {fileID: 8300000, guid: 58439330a2f3e334883c52235a3c7e9c, type: 3}

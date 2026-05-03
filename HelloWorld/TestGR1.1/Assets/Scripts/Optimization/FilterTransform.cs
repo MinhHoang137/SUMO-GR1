@@ -39,6 +39,9 @@ public class FilterTransform : MonoBehaviour
     }
     private void OnDestroy()
     {
-        CameraController.Instance.OnCameraMove -= CameraController_OnCameraMove;
+        if (CameraController.Instance != null)
+        {
+            CameraController.Instance.OnCameraMove -= CameraController_OnCameraMove;
+        }
     }
 }

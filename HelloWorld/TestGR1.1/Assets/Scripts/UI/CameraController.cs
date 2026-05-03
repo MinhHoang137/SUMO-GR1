@@ -5,13 +5,11 @@ using UnityEngine.Rendering;
 
 public class CameraController : MonoBehaviour
 {
-	public class OnSetTrafficerEventArgs: EventArgs {
-		private string state;
-		public OnSetTrafficerEventArgs(string state)
-		{
-			this.state = state;
-		}
-		public string State { get { return state; } }
+	public class OnSetTrafficerEventArgs: EventArgs
+	{
+		public string state;
+		public Trafficer preTrafficer;
+		public Trafficer newTrafficer;
 	}
 	public event EventHandler<OnSetTrafficerEventArgs> OnSetTrafficer;
 	public event EventHandler OnCameraMove;
@@ -87,16 +85,19 @@ public class CameraController : MonoBehaviour
 	{
 		if (!isFree)
 		{
-			transform.SetParent(null);
-			currentTrafficer = null;
-			isFree = true;
+			SetTrafficerView((Trafficer)null);
 			//GameInput.Instance.EnableMove(true);
 		}
 		else
 		{
 			SetRandomTrafficerView();
 		}
-		OnSetTrafficer?.Invoke(this, new OnSetTrafficerEventArgs(GetState()));
+		OnSetTrafficer?.Invoke(this, new OnSetTrafficerEventArgs()
+		{
+			state = GetState(),
+			preTrafficer = currentTrafficer,
+			newTrafficer = null
+		});
 	}
 	public void SetRandomTrafficerView()
 	{
@@ -133,21 +134,41 @@ public class CameraController : MonoBehaviour
 	}
 	private void OnDestroy()
 	{
-		Instance = null;
+		if (Instance == this)
+		{
+			Instance = null;
+		}
 	}
 	public Trafficer CurrentTrafficer
 	{
 		get { return currentTrafficer; }
 	}
-	public void SetTrafficerView(Trafficer trafficer)
+	public void SetTrafficerView(Trafficer newTrafficer)
 	{
-		if (trafficer == null) return;
+		if (newTrafficer == null) {
+			transform.SetParent(null);
+			currentTrafficer = null;
+			isFree = true;
+			OnSetTrafficer?.Invoke(this, new OnSetTrafficerEventArgs()
+			{
+				state = GetState(),
+				preTrafficer = currentTrafficer,
+				newTrafficer = null
+			});
+			return;
+		}
 		isFree = false;
-		transform.SetParent(trafficer.GetCameraHolder());
-		currentTrafficer = trafficer;
+		transform.SetParent(newTrafficer.GetCameraHolder());
+		Trafficer preTrafficer = currentTrafficer;
+		currentTrafficer = newTrafficer;
 		transform.localPosition = Vector3.zero;
 		transform.localEulerAngles = Vector3.zero;
-		OnSetTrafficer?.Invoke(this, new OnSetTrafficerEventArgs(GetState()));
+		OnSetTrafficer?.Invoke(this, new OnSetTrafficerEventArgs()
+		{
+			state = GetState(),
+			preTrafficer = preTrafficer,
+			newTrafficer = newTrafficer
+		});
 	}
 	public void SetTrafficerView(string id)
 	{
@@ -184,4 +205,5 @@ public class CameraController : MonoBehaviour
 		}
 		return state;
 	}
+
 }
