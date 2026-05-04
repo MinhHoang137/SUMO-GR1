@@ -146,6 +146,7 @@ def cmd_handler(client_socket: socket.socket):
             
             if msg == "Simulation end":
                 print("Client disconnected from simulation command listener.")
+                stop_event.set()  # Signal the main loop to stop if simulation ended
                 break
             elif msg == "Pause":
                 set_pause_sim(True)
@@ -216,7 +217,11 @@ def run_simulation(client_socket: socket.socket):
             except Exception:
                 # Best-effort pedestrian counting; do not break simulation.
                 pass
-            if run_with_gui: async_task(network.send_data, client_socket, data, join=False)
+            
+            if run_with_gui: 
+                # Chạy gửi dữ liệu cùng luồng với traci để tránh lỗi de-sync
+                # async_task(network.send_data, client_socket, data, join=False)
+                network.send_data(client_socket, data)
             
             current_time_step = 0.05
             with time_step_lock:
@@ -453,6 +458,7 @@ def main():
 
         time.sleep(0.1)
         print("Shutdown complete.")
+        os._exit(0)
 
 if __name__ == "__main__":
     main()

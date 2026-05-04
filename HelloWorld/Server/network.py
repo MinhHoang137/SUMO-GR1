@@ -57,20 +57,18 @@ def _recv_next_message(client_socket: socket.socket) -> str:
 def send_data(client_socket: socket.socket, data) -> bool:
     """Gửi dữ liệu theo cụm"""
     try:
-        data_str = json.dumps(data)
+        # Ghép END_MARKER vào payload để tránh phải gửi một gói rời
+        data_str = json.dumps(data) + END_MARKER
         total_size = len(data_str)
         num_packets = math.ceil(total_size / BUFFER_SIZE)
-
-        # print(f"Sending {num_packets} packets...")
 
         for i in range(num_packets):
             start = i * BUFFER_SIZE
             end = min(start + BUFFER_SIZE, total_size)
             packet = data_str[start:end]
             client_socket.sendall(packet.encode('utf-8'))
-
-        # Gửi thông báo kết thúc
-        client_socket.sendall(END_MARKER.encode('utf-8'))
+        
+        print(f"Sent data in {num_packets} packet(s), total size: {total_size} bytes")
 
         return True
     except Exception as e:
