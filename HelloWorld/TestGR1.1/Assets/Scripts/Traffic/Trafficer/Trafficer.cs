@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class Trafficer : MonoBehaviour
+public class Trafficer : MonoBehaviour
 {
 	private string id = "";
 	protected Vector3 destination;
@@ -8,12 +8,15 @@ public abstract class Trafficer : MonoBehaviour
 	private Vector3 lastPosition;
 
 	[SerializeField] private Transform cameraHolder;
-	[SerializeField] private AudioSource audioSource;
 
 	public bool isExist = true;
 
+	protected virtual void Update()
+	{
+		Move();
+	}
 
-	protected virtual void Move()
+	public virtual void Move()
 	{
 		lastPosition = transform.position;
 		float speedMultiplier = SpeedMultiplier.Instance.Multiplier;
@@ -53,9 +56,18 @@ public abstract class Trafficer : MonoBehaviour
 		return destination;
 	}
 
+	public bool IsReachedDestination()
+	{
+		return (transform.position - destination).magnitude < 0.1f;
+	}
+
 	public void SetSpeed(float speed)
 	{
 		this.speed = speed;
+	}
+	public float GetSpeed()
+	{
+		return speed;
 	}
 	public void SetId(string id)
 	{
@@ -78,16 +90,6 @@ public abstract class Trafficer : MonoBehaviour
 	{
 		return cameraHolder;
 	}
-	public AudioSource GetAudioSource()
-	{
-		if (audioSource == null)
-		{
-			audioSource = GetComponent<AudioSource>();
-		}
-		return audioSource;
-	}
-
-
 
 	protected virtual void OnDisable()
 	{

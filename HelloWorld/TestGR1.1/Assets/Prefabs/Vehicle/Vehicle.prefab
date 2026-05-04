@@ -217,6 +217,7 @@ GameObject:
   - component: {fileID: 2700546884202445460}
   - component: {fileID: 285036897663424413}
   - component: {fileID: -5100463501642876994}
+  - component: {fileID: 8764365839439465824}
   m_Layer: 0
   m_Name: Vehicle
   m_TagString: Untagged
@@ -256,9 +257,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71e28e57a23d93f439a0bc64dca08171, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraHolder: {fileID: 2682539058478838558}
-  audioSource: {fileID: 0}
-  isExist: 1
 --- !u!65 &2700546884202445460
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -322,6 +320,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FilterTransform
   filterSO: {fileID: 11400000, guid: 77f96688b6234e84eaab3e8d0f1846cf, type: 2}
+--- !u!114 &8764365839439465824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3077825237559346182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c9675cce2597144e8e32a8ca8c46740, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Trafficer
+  cameraHolder: {fileID: 2682539058478838558}
+  isExist: 1
 --- !u!1 &4673168158081722249
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,8 +21,7 @@ from Traffic.crossing import CrossingReader
 from Traffic.crossRoad import CrossRoadReader
 from Traffic.edgeType0 import EdgeReader
 from Traffic.trafficLight import read_traffic_lights
-from Traffic.vehicle import read_vehicles
-from Traffic.pedestrian import read_pedestrians
+from Traffic.trafficer import read_trafficers
 from Traffic.unity_vehicle import receive, process_vehicle_updates
 from SUMO_xml.create_map_from_maze import create_map_from_maze_file
 from SUMO_xml.route_gen import create_routes
@@ -205,15 +204,15 @@ def run_simulation(client_socket: socket.socket):
             # process_vehicle_updates(traci)
             data = {
                 "trafficLights": read_traffic_lights(traci),
-                "vehicles": read_vehicles(traci),
-                "pedestrians": read_pedestrians(traci)
+                "trafficers": read_trafficers(traci)
             }
 
             try:
-                for p in data.get("pedestrians") or []:
-                    ped_id = p.get("id") if isinstance(p, dict) else None
-                    if ped_id:
-                        ped_seen.add(str(ped_id))
+                for t in data.get("trafficers") or []:
+                    if t.get("type") == "pedestrian":
+                        ped_id = t.get("id")
+                        if ped_id:
+                            ped_seen.add(str(ped_id))
             except Exception:
                 # Best-effort pedestrian counting; do not break simulation.
                 pass

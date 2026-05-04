@@ -2247,7 +2247,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 343275832}
-  - component: {fileID: 343275834}
   m_Layer: 0
   m_Name: PedestrianManager
   m_TagString: Untagged
@@ -2270,20 +2269,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 333427408}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &343275834
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 343275831}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b7fbb82fb957ea4ca9afaf764e03bf2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefabs:
-  - {fileID: 1021885126749754752, guid: d35f397c2ea07134696a7a40e79a6b6e, type: 3}
 --- !u!1 &362338575
 GameObject:
   m_ObjectHideFlags: 0
@@ -6322,6 +6307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 229311ced7d9f3e4884a3c098313c033, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  trafficerKeyPrefabSO: {fileID: 11400000, guid: fa0d879d47fc7164a99f1383f22f3db1, type: 2}
 --- !u!1 &978272474
 GameObject:
   m_ObjectHideFlags: 0
@@ -7747,7 +7733,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1319548175}
-  - component: {fileID: 1319548177}
   - component: {fileID: 1319548178}
   m_Layer: 0
   m_Name: VehicleManager
@@ -7771,23 +7756,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 333427408}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1319548177
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1319548174}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ca0a7c36c2b3a046b77f4b479f5a817, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  vehiclePrefabs:
-  - {fileID: 4567807449552475444, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
-  - {fileID: 4880156742443029297, guid: e9f6003f8c3f4074794c92f1725f41f7, type: 3}
-  - {fileID: 7712355561463779124, guid: 04a69a7f36b429348b490b83bdf82ae7, type: 3}
-  - {fileID: 2493124750871285505, guid: cf9b93ff64c5a3c48925afe5b7f0a8d0, type: 3}
 --- !u!114 &1319548178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11085,7 +11053,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1970016986
 RectTransform:
   m_ObjectHideFlags: 0

@@ -1,8 +1,11 @@
 using System;
 using UnityEngine;
 
-public class Vehicle: Trafficer
+[RequireComponent(typeof(Trafficer))]
+public class Vehicle : MonoBehaviour
 {
+	protected Trafficer trafficer;
+
 	public class OnMoveArgs : EventArgs
 	{
 		public float speed;
@@ -14,25 +17,26 @@ public class Vehicle: Trafficer
 	public event EventHandler<OnMoveArgs> OnMove;
 	protected Vector3 lastPos;
 
+	private void Awake()
+	{
+		trafficer = GetComponent<Trafficer>();
+	}
+
 	private void Start()
 	{
 		lastPos = transform.position;
 	}
 	// Update is called once per frame
-	void Update()
-    {
-        Move();
-	}
-	protected override void Move()
+	void LateUpdate()
 	{
-		base.Move();
 		InvokeMove();
 	}
+
 	public void Set(VehicleData vehicleData)
 	{
-		SetId(vehicleData.id);
-		SetDestination(new Vector3(vehicleData.position[0], 0, vehicleData.position[1]));
-		SetSpeed(vehicleData.speed);
+		trafficer.SetId(vehicleData.id);
+		trafficer.SetDestination(new Vector3(vehicleData.position[0], 0, vehicleData.position[1]));
+		trafficer.SetSpeed(vehicleData.speed);
 	}
 	protected void InvokeMove()
 	{

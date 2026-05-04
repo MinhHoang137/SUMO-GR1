@@ -10,9 +10,7 @@ using System.Collections.Generic;
 public class TrafficDataList
 {
     [SerializeField] private List<TrafficLightData> trafficLights = new ();
-	[SerializeField] private List<VehicleData> vehicles = new ();
-	[SerializeField] private List<PedestrianData> pedestrians = new();
+	[SerializeField] private List<TrafficerData> trafficers = new ();
 	public List<TrafficLightData> TrafficLights => trafficLights;
-	public List<VehicleData> Vehicles => vehicles;
-	public List<PedestrianData> Pedestrians => pedestrians;
+	public List<TrafficerData> Trafficers => trafficers;
 }
