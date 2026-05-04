@@ -1,10 +1,12 @@
 using UnityEngine;
 
-public class Pedestrian : Trafficer
+[RequireComponent(typeof(Trafficer))]
+public class Pedestrian : MonoBehaviour
 {
-    // Update is called once per frame
-    void Update()
+    public Trafficer Trafficer { get; private set; }
+
+    private void Awake()
     {
-        Move();
+        Trafficer = GetComponent<Trafficer>();
     }
 }

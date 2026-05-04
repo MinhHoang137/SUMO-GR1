@@ -72,8 +72,7 @@ public class TrafficDataListener : MonoBehaviour
 				UnityMainThreadDispatcher.Instance().Enqueue(() =>
 				{
 					TrafficLightManager.Instance.ProcessData(data.TrafficLights);
-					VehicleManager.Instance.ProcessData(data.Vehicles);
-					PedestrianManager.Instance.ProcessData(data.Pedestrians);
+					TrafficerManager.Instance.ProcessData(data.Trafficers);
 				});
 			}
 		}

@@ -64,7 +64,7 @@ public class UnityVehicleManager : MonoBehaviour
 	{
 		if (vehicle != null)
 		{
-			vehicle.isExist = false;
+			vehicle.SetIsExist(false);
 			vehicle = null;
 			stateText.text = CMD_CREATE;
 		}

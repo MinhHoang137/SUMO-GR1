@@ -16,24 +16,24 @@ public class UnityVehicle : Vehicle
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
     {
-		speed = 10;
-        SetId( $"{ID_PREFIX} {idCounter}" );
-        VehicleManager.Instance.AddVehicle(this);
+		trafficer.SetSpeed(10);
+        trafficer.SetId( $"{ID_PREFIX} {idCounter}" );
+        TrafficerManager.Instance.AddTrafficer(trafficer);
 		idCounter++;
 		lastPos = transform.position;
-		destination = transform.position;
+		trafficer.SetDestination(transform.position);
 	}
 
     // Update is called once per frame
     void Update()
     {
-        if (CameraController.Instance.CurrentTrafficer == this)
+        if (CameraController.Instance.CurrentTrafficer == trafficer)
 		{
-			Move();
+			CustomMove();
 		}
-		destination = transform.position;
+		trafficer.SetDestination(transform.position);
 	}
-	protected override void Move()
+	private void CustomMove()
 	{
 		InvokeMove();
 		Vector3 input = GameInput.Instance.GetMovementInput();
@@ -57,7 +57,7 @@ public class UnityVehicle : Vehicle
 		if (Mathf.Abs(moving.z) >= 0.01f)
 		{
 			float multiplier = 1.5f;
-			transform.position += moving.z * speed * speedMultiplier * Time.deltaTime * transform.forward;
+			transform.position += moving.z * trafficer.GetSpeed() * speedMultiplier * Time.deltaTime * transform.forward;
 			transform.forward = Vector3.Slerp(transform.forward, moving.x * transform.right, Time.deltaTime * multiplier);
 		}
 	}
@@ -105,6 +105,10 @@ public class UnityVehicle : Vehicle
 		}
 		return true;
 	}
+	public void SetIsExist(bool isExist)
+	{
+		trafficer.isExist = isExist;
+	}
 	public UnityVehicleData GetVehicleData()
 	{
 		float[] position = { transform.position.x, transform.position.z };
@@ -113,16 +117,16 @@ public class UnityVehicle : Vehicle
 		bool turnRight = moving.x < 0;
 		bool isBraking = moving.z <= 0;
 		return new UnityVehicleData(
-			GetId(),
+			trafficer.GetId(),
 			"vehicle",
 			position,
 			forward,
-			speed,
+			trafficer.GetSpeed(),
 			"E1",
 			turnLeft,
 			turnRight,
 			isBraking,
-			isExist
+			trafficer.isExist
 		);
 	}
 }
