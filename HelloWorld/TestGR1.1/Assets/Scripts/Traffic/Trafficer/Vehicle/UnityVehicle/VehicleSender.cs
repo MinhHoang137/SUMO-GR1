@@ -68,7 +68,7 @@ public class VehicleSender : MonoBehaviour
 
 				try
 				{
-					List<VehicleData> dataList = new List<VehicleData> { vehicleData };
+					List<UnityVehicleData> dataList = new List<UnityVehicleData> { vehicleData };
 					sendJson = JsonConvert.SerializeObject(dataList);
 					
 					if (!Network.SendMessage(persistentClient, sendJson, 1024, "<END>"))

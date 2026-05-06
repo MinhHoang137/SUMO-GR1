@@ -24,7 +24,6 @@ public class TrafficerManager : MonoBehaviour
 	
 	private Dictionary<string, Trafficer> trafficerDict = new Dictionary<string, Trafficer>();
 	private Dictionary<string, Queue<Trafficer>> trafficerPool = new Dictionary<string, Queue<Trafficer>>();
-	private Queue<List<TrafficerData>> dataQueue = new Queue<List<TrafficerData>>();
 
 	private void Awake()
 	{
@@ -34,38 +33,10 @@ public class TrafficerManager : MonoBehaviour
 		}
 	}
 
-	private void Update()
-	{
-		if (dataQueue.Count > 0)
-		{
-			bool allReached = true;
-			foreach (var trafficer in trafficerDict.Values)
-			{
-				if (trafficer.gameObject.activeSelf && trafficer.GetComponent<UnityVehicle>() == null)
-				{
-					if (!trafficer.IsReachedDestination())
-					{
-						allReached = false;
-						break;
-					}
-				}
-			}
-
-			if (allReached)
-			{
-				ProcessNextData(dataQueue.Dequeue());
-			}
-		}
-	}
-
 	public void ProcessData(List<TrafficerData> datas)
 	{
 		if (datas == null) return;
-		dataQueue.Enqueue(datas);
-	}
 
-	private void ProcessNextData(List<TrafficerData> datas)
-	{
 		List<Trafficer> trafficerList = new List<Trafficer>(trafficerDict.Values);
 		foreach (var trafficer in trafficerList)
 		{

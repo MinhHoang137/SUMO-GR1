@@ -8,7 +8,7 @@ public class RoadSensor : Sensor
 	private void OnTriggerEnter(Collider other)
 	{
 		//Debug.Log("RoadSensor: OnTriggerEnter");
-		if (other.transform.TryGetComponent<Road>(out Road road))
+		if (other.transform.GetComponentInParent<Road>() is Road road)
 		{
 			roads.Add(road);
 			if (roads.Count > 0)
@@ -19,7 +19,7 @@ public class RoadSensor : Sensor
 	}
 	private void OnTriggerExit(Collider other)
 	{
-		if (other.transform.TryGetComponent<Road>(out Road road))
+		if (other.transform.GetComponentInParent<Road>() is Road road)
 		{
 			roads.Remove(road);
 			if (roads.Count == 0)

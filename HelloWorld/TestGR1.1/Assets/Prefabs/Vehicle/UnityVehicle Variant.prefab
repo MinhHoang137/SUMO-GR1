@@ -1378,7 +1378,7 @@ PrefabInstance:
     - target: {fileID: 1437787002996106768, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
       propertyPath: car
       value: 
-      objectReference: {fileID: 5919597149920569336}
+      objectReference: {fileID: 8433197193114723820}
     - target: {fileID: 2565131361169718903, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
       value: 
@@ -1386,7 +1386,7 @@ PrefabInstance:
     - target: {fileID: 2919808729962971948, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
       propertyPath: car
       value: 
-      objectReference: {fileID: 5919597149920569336}
+      objectReference: {fileID: 8433197193114723820}
     - target: {fileID: 3077825237559346182, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
       propertyPath: m_Name
       value: UnityVehicle Variant
@@ -1434,7 +1434,7 @@ PrefabInstance:
     - target: {fileID: 6806567414952262428, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
       propertyPath: car
       value: 
-      objectReference: {fileID: 5919597149920569336}
+      objectReference: {fileID: 8433197193114723820}
     - target: {fileID: 7129167391712347135, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -1446,7 +1446,7 @@ PrefabInstance:
     - target: {fileID: 7705597371190623959, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
       propertyPath: car
       value: 
-      objectReference: {fileID: 5919597149920569336}
+      objectReference: {fileID: 8433197193114723820}
     m_RemovedComponents:
     - {fileID: 4567807449552475444, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
     - {fileID: 285036897663424413, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
@@ -1459,12 +1459,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3077825237559346182, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5919597149920569336}
+    - targetCorrespondingSourceObject: {fileID: 3077825237559346182, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8433197193114723820}
   m_SourcePrefab: {fileID: 100100000, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
---- !u!4 &2679477334244495070 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2682539058478838558, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
-  m_PrefabInstance: {fileID: 5947808148848064}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3072440936720136646 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3077825237559346182, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
@@ -1482,8 +1480,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d3339bea34ce343beac2bf92947520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraHolder: {fileID: 2679477334244495070}
-  isExist: 1
   speedMultiplier: 5
   forwardSensor:
   - {fileID: 6163636238778864602}
@@ -1501,6 +1497,18 @@ MonoBehaviour:
   - {fileID: 4109165433595954405}
   - {fileID: 943681074646803485}
   - {fileID: 1580495067117337372}
+--- !u!114 &8433197193114723820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3072440936720136646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71e28e57a23d93f439a0bc64dca08171, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicle
 --- !u!4 &3280138955684661469 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3283199443497006365, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}

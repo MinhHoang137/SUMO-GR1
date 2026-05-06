@@ -7,7 +7,7 @@ public class TrafficerData: ObjectData
 	public float[] position;
 	public float speed;
 	public float[] forward;
-	public TrafficerData(string id, string type, float[] position, float[] forward, float speed, string lane)
+	public TrafficerData(string id, string type, float[] position, float[] forward, float speed)
 	{
 		this.id = id;
 		this.type = type;

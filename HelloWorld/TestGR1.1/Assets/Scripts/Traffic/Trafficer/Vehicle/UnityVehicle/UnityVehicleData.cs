@@ -1,14 +1,20 @@
-using UnityEngine;
+using System;
 
-public class UnityVehicleData : VehicleData
+[Serializable]
+public class UnityVehicleData
 {
-    public bool isExist;
-	public UnityVehicleData(string id, string type,
-		float[] position, float[] forward, float speed,
-		string lane, bool turnLeft, bool turnRight, 
-		bool isBraking, bool isExist) : base(id, type, 
-			position, forward, speed, lane, turnLeft, turnRight, isBraking)
+	public string id;
+	public float[] position;
+	public float[] forward;
+	public float speed;
+	public bool isExist;
+
+	public UnityVehicleData(string id, float[] position, float[] forward, float speed, bool isExist = true)
 	{
+		this.id = id;
+		this.position = position;
+		this.forward = forward;
+		this.speed = speed;
 		this.isExist = isExist;
 	}
 }

@@ -68,7 +68,7 @@ def send_data(client_socket: socket.socket, data) -> bool:
             packet = data_str[start:end]
             client_socket.sendall(packet.encode('utf-8'))
         
-        print(f"Sent data in {num_packets} packet(s), total size: {total_size} bytes")
+        # print(f"Sent data in {num_packets} packet(s), total size: {total_size} bytes")
 
         return True
     except Exception as e:

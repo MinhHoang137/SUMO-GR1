@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Trafficer))]
 public class Vehicle : MonoBehaviour
 {
-	protected Trafficer trafficer;
+	private Trafficer trafficer;
 
 	public class OnMoveArgs : EventArgs
 	{
@@ -32,7 +32,7 @@ public class Vehicle : MonoBehaviour
 		InvokeMove();
 	}
 
-	public void Set(VehicleData vehicleData)
+	public void Set(TrafficerData vehicleData)
 	{
 		trafficer.SetId(vehicleData.id);
 		trafficer.SetDestination(new Vector3(vehicleData.position[0], 0, vehicleData.position[1]));

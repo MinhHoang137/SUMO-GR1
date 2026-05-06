@@ -53,7 +53,7 @@ public class Network
 
         if (client.Client.RemoteEndPoint != null)
         {
-            Debug.Log($"[Network] Đã nhận gói tin từ {client.Client.RemoteEndPoint} - Kích thước: {Encoding.UTF8.GetByteCount(message)} bytes");
+            // Debug.Log($"[Network] Đã nhận gói tin từ {client.Client.RemoteEndPoint} - Kích thước: {Encoding.UTF8.GetByteCount(message)} bytes");
         }
 
         return message;

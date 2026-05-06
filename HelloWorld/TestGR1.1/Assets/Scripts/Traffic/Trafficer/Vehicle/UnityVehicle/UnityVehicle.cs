@@ -1,11 +1,15 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class UnityVehicle : Vehicle
+[RequireComponent(typeof(Trafficer))]
+public class UnityVehicle : MonoBehaviour
 {
+	private Trafficer trafficer;
+
     private static int idCounter = 0;
 	private const string ID_PREFIX = "UnityVehicle_";
 	[SerializeField] private float speedMultiplier = 1;
+	[SerializeField] private float speed = 14;
 
 	[SerializeField] private List<Sensor> forwardSensor;
 	[SerializeField] private List<Sensor> leftSensor;
@@ -13,14 +17,18 @@ public class UnityVehicle : Vehicle
 	[SerializeField] private List<Sensor> backSensor;
 	private Vector3 moving;
 
+	private void Awake()
+	{
+		trafficer = GetComponent<Trafficer>();
+	}
+
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
     {
-		trafficer.SetSpeed(10);
+		trafficer.SetSpeed(speed);
         trafficer.SetId( $"{ID_PREFIX} {idCounter}" );
         TrafficerManager.Instance.AddTrafficer(trafficer);
 		idCounter++;
-		lastPos = transform.position;
 		trafficer.SetDestination(transform.position);
 	}
 
@@ -29,13 +37,15 @@ public class UnityVehicle : Vehicle
     {
         if (CameraController.Instance.CurrentTrafficer == trafficer)
 		{
-			CustomMove();
+			trafficer.SetDestination(CustomMove());
 		}
-		trafficer.SetDestination(transform.position);
+		else
+		{
+			trafficer.SetDestination(transform.position);
+		}
 	}
-	private void CustomMove()
+	private Vector3 CustomMove()
 	{
-		InvokeMove();
 		Vector3 input = GameInput.Instance.GetMovementInput();
 		moving = Vector3.zero;
 		if (input.z > 0.01f && CanMoveForward())
@@ -54,12 +64,15 @@ public class UnityVehicle : Vehicle
 		{
 			moving = new Vector3(moving.x, 0, input.z);
 		}
+		Vector3 nextPosition = transform.position;
 		if (Mathf.Abs(moving.z) >= 0.01f)
 		{
 			float multiplier = 1.5f;
-			transform.position += moving.z * trafficer.GetSpeed() * speedMultiplier * Time.deltaTime * transform.forward;
+			nextPosition += moving.z * trafficer.GetSpeed() * speedMultiplier * Time.deltaTime * transform.forward;
 			transform.forward = Vector3.Slerp(transform.forward, moving.x * transform.right, Time.deltaTime * multiplier);
 		}
+		Debug.Log($"Moving: {moving}, Next Position: {nextPosition}, Speed: {trafficer.GetSpeed()}");
+		return nextPosition;
 	}
 	private bool CanMoveForward()
 	{
@@ -109,23 +122,15 @@ public class UnityVehicle : Vehicle
 	{
 		trafficer.isExist = isExist;
 	}
-	public UnityVehicleData GetVehicleData()
+	public UnityVehicleData GetUnityVehicleData()
 	{
 		float[] position = { transform.position.x, transform.position.z };
 		float[] forward = { transform.forward.x, transform.forward.z };
-		bool turnLeft = moving.x > 0;
-		bool turnRight = moving.x < 0;
-		bool isBraking = moving.z <= 0;
 		return new UnityVehicleData(
 			trafficer.GetId(),
-			"vehicle",
 			position,
 			forward,
 			trafficer.GetSpeed(),
-			"E1",
-			turnLeft,
-			turnRight,
-			isBraking,
 			trafficer.isExist
 		);
 	}

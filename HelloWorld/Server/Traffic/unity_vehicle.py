@@ -1,7 +1,7 @@
 import socket
 import json
 import math
-from queue import Queue
+import threading
 import os
 import xml.etree.ElementTree as ET
 import network
@@ -16,7 +16,8 @@ EDGE_ID = None
 # Đường dẫn mặc định tới mạng SUMO sinh ra bởi mã
 DEFAULT_NET_PATH = os.path.join(os.path.dirname(__file__), '../SUMO_xml/HelloWorld.net.xml')
 
-update_queue = Queue()
+latest_vehicles = None
+vehicles_lock = threading.Lock()
 
 
 def _pick_edge_from_netxml(net_xml_path: str) -> str:
@@ -66,7 +67,8 @@ def _pick_edge_from_netxml(net_xml_path: str) -> str:
     except Exception:
         return ""
 
-def client_handler(client_socket : socket.socket):
+def client_handler(client_socket: socket.socket):
+    global latest_vehicles
     print(f"[Python] Kết nối từ: {client_socket.getpeername()}")
     with client_socket:
         while True:
@@ -75,7 +77,8 @@ def client_handler(client_socket : socket.socket):
                 break
             try:
                 vehicles = json.loads(data_str)
-                update_queue.put(vehicles)
+                with vehicles_lock:
+                    latest_vehicles = vehicles
             except json.JSONDecodeError as e:
                 print(f"[Python] Lỗi phân tích JSON: {e}")
             except Exception as e:
@@ -109,8 +112,14 @@ def process_vehicle_updates(traci):
         traci.route.add(ROUTE_ID, [EDGE_ID])
         print(f"[Python] Đã tạo route {ROUTE_ID} -> {EDGE_ID}")
 
-    while not update_queue.empty():
-        vehicles = update_queue.get()
+    global latest_vehicles
+    vehicles = None
+    with vehicles_lock:
+        if latest_vehicles is not None:
+            vehicles = latest_vehicles
+            latest_vehicles = None  # Consume the latest data
+
+    if vehicles:
         print(f"[Python] Đang cập nhật {len(vehicles)} xe:")
 
         for v in vehicles:
@@ -151,21 +160,21 @@ def process_vehicle_updates(traci):
                 traci.vehicle.setSpeed(veh_id, speed)
 
                 # Cập nhật tín hiệu rẽ trái / rẽ phải / phanh
-                turn_left = v.get("turnLeft", False)
-                turn_right = v.get("turnRight", False)
-                is_braking = v.get("isBraking", False)
+                # turn_left = v.get("turnLeft", False)
+                # turn_right = v.get("turnRight", False)
+                # is_braking = v.get("isBraking", False)
 
-                signal_value = 0
-                if turn_left:
-                    signal_value |= 0b00000001
-                if turn_right:
-                    signal_value |= 0b00000010
-                if is_braking:
-                    signal_value |= 0b00000100
+                # signal_value = 0
+                # if turn_left:
+                #     signal_value |= 0b00000001
+                # if turn_right:
+                #     signal_value |= 0b00000010
+                # if is_braking:
+                #     signal_value |= 0b00000100
 
-                traci.vehicle.setSignals(veh_id, signal_value)
+                # traci.vehicle.setSignals(veh_id, signal_value)
 
-                print(f"  [>] Di chuyển {veh_id} đến {pos} | góc {angle:.2f} | tốc độ {speed} | tín hiệu: {bin(signal_value)}")
+                print(f"  [>] Di chuyển {veh_id} đến {pos} | góc {angle:.2f} | tốc độ {speed}")
 
             except Exception as e:
                 print(f"  [!] Lỗi khi cập nhật xe {v.get('id', '?')}: {e}")

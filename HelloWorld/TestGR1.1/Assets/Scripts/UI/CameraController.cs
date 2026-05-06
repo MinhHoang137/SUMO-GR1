@@ -147,7 +147,6 @@ public class CameraController : MonoBehaviour
 	{
 		if (newTrafficer == null) {
 			transform.SetParent(null);
-			currentTrafficer = null;
 			isFree = true;
 			OnSetTrafficer?.Invoke(this, new OnSetTrafficerEventArgs()
 			{
@@ -155,6 +154,7 @@ public class CameraController : MonoBehaviour
 				preTrafficer = currentTrafficer,
 				newTrafficer = null
 			});
+			currentTrafficer = null;
 			return;
 		}
 		isFree = false;

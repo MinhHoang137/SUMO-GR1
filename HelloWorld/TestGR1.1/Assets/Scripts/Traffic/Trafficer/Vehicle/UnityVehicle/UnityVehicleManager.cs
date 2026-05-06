@@ -13,7 +13,7 @@ public class UnityVehicleManager : MonoBehaviour
     [SerializeField] private UnityVehicle prefab;
 	[SerializeField] private VehicleSender vehicleSender;
 	[SerializeField] private RoadDataSO roadData;
-	private List<Vector3> junctionPos = new List<Vector3>();
+	[SerializeField] private List<Vector3> junctionPos = new List<Vector3>();
 
 	private void Start()
 	{
@@ -46,12 +46,13 @@ public class UnityVehicleManager : MonoBehaviour
 		if (vehicle == null)
 		{
 			int index = Random.Range(0, junctionPos.Count);
-			GameObject vehicle = Instantiate(prefab.gameObject, junctionPos[index], Quaternion.identity);
-			StartCoroutine(ManipulateAction.Delay(() =>
-			{
-				this.vehicle = vehicle.GetComponent<UnityVehicle>();
-			}, Time.deltaTime));
+			vehicle = Instantiate(prefab, junctionPos[index], Quaternion.identity);
 			vehicle.transform.SetParent(transform);
+			if (vehicle.TryGetComponent<Trafficer>(out var trafficer))
+			{
+				trafficer.SetDestination(junctionPos[index]);
+			}
+			vehicle.transform.position = junctionPos[index];
 			stateText.text = "Hủy xe Unity";
 			Debug.Log("Vehicle created at " + junctionPos[index]);
 		}
@@ -65,6 +66,7 @@ public class UnityVehicleManager : MonoBehaviour
 		if (vehicle != null)
 		{
 			vehicle.SetIsExist(false);
+			vehicleSender.SendUnityData(vehicle.GetUnityVehicleData());
 			vehicle = null;
 			stateText.text = CMD_CREATE;
 		}
@@ -74,6 +76,9 @@ public class UnityVehicleManager : MonoBehaviour
 		}
 	}
 	private void FixedUpdate() {
-		vehicleSender.SendUnityData(vehicle?.GetVehicleData());
+		if (vehicle != null)
+		{
+			vehicleSender.SendUnityData(vehicle.GetUnityVehicleData());
+		}
 	}
 }

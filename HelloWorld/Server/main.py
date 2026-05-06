@@ -201,7 +201,7 @@ def run_simulation(client_socket: socket.socket):
             # Log vehicle depart/arrival information by step.
             trip_logger.log_step(traci, step_index)
             step_index += 1
-            # process_vehicle_updates(traci)
+            process_vehicle_updates(traci)
             data = {
                 "trafficLights": read_traffic_lights(traci),
                 "trafficers": read_trafficers(traci)
