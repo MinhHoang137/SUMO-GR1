@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Newtonsoft.Json;
+using UnityEngine;
 public class Network
 {
     private static Dictionary<string, TcpClient> _connectedClients = new Dictionary<string, TcpClient>();
@@ -42,12 +43,17 @@ public class Network
                 break;
             }
         }
-
+        
         string message = fullMessage.ToString();
         int endIndex = message.IndexOf(endMarker);
         if (endIndex >= 0)
         {
             message = message.Substring(0, endIndex);
+        }
+
+        if (client.Client.RemoteEndPoint != null)
+        {
+            Debug.Log($"[Network] Đã nhận gói tin từ {client.Client.RemoteEndPoint} - Kích thước: {Encoding.UTF8.GetByteCount(message)} bytes");
         }
 
         return message;
