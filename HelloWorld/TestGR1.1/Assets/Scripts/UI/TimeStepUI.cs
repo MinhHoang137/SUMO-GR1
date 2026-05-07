@@ -10,6 +10,7 @@ public class TimeStepUI : MonoBehaviour
     [SerializeField] private SpeedMultiplierUI speedMultiplierUI;
     private int currentTimeStep = 1000;
     private bool isEditable = false;
+    [SerializeField] private NetworkSO networkSO;
     private CancellationTokenSource _debounceCts;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -66,8 +67,7 @@ public class TimeStepUI : MonoBehaviour
     {
         Parameters parameters = new Parameters();
         parameters.timeStep = timeStep;
-        TcpClient paramClient = Network.CreateTcpClient
-            (Constant.LOOPBACK_ADDRESS, Constant.CMD_PORT);
+        TcpClient paramClient = Network.CreateTcpClient(networkSO.Host, Constant.CMD_PORT);
         bool result = Network.SendData(paramClient, parameters, Constant.BUFFER_SIZE);
         return result;
     }

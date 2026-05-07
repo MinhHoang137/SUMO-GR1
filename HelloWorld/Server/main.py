@@ -109,13 +109,16 @@ def process_config_update(data: dict):
 def client_thread_function(socket: socket.socket):
     first_msg = socket.recv(1024).decode('utf-8')
     print(f"Received first message from Unity client: {first_msg}")
+    print("[MONITOR] CLIENT_CONNECTED", flush=True)
     if "RoadDataRequest" in first_msg:
         send_road_data(socket)
         socket.close()
     if ("SimulationReady" in first_msg):
         print("Starting simulation...")
+        print("[MONITOR] STATE: PLAYING", flush=True)
         run_simulation(client_socket=socket)
         print("Simulation completed!")
+        print("[MONITOR] STATE: STOPPED", flush=True)
     return 0
 
 
@@ -150,9 +153,11 @@ def cmd_handler(client_socket: socket.socket):
             elif msg == "Pause":
                 set_pause_sim(True)
                 print("Simulation paused.")
+                print("[MONITOR] STATE: PAUSED", flush=True)
             elif msg == "Resume":
                 set_pause_sim(False)
                 print("Simulation resumed.")
+                print("[MONITOR] STATE: PLAYING", flush=True)
             elif msg.startswith("{") and msg.endswith("}"):
                 # Xử lý cấu hình JSON đơn giản
                 try:
@@ -164,6 +169,7 @@ def cmd_handler(client_socket: socket.socket):
                                 global time_step
                                 time_step = val/1000.0  # Chuyển từ ms sang giây
                             print(f"[Info] Updated time_step to {time_step}")
+                            print(f"[MONITOR] TIME_STEP: {time_step}", flush=True)
                 except Exception as e:
                     print(f"[Error] Failed to process JSON config: {e}")
             else:

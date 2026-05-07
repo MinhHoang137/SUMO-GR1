@@ -9811,6 +9811,7 @@ MonoBehaviour:
   prefab: {fileID: 5919597149920569336, guid: 941742bd01effd1469c0bb314aa9f614, type: 3}
   vehicleSender: {fileID: 1319548178}
   roadData: {fileID: 11400000, guid: 98c754257f84660489d00622e8bfd4fa, type: 2}
+  junctionPos: []
 --- !u!1 &1786627654
 GameObject:
   m_ObjectHideFlags: 0
@@ -10624,6 +10625,7 @@ MonoBehaviour:
     slider: {fileID: 1993034891}
     inputField: {fileID: 131661320}
   speedMultiplierUI: {fileID: 307771629}
+  networkSO: {fileID: 11400000, guid: 7a3054cfa94a8e341861d89798db945a, type: 2}
 --- !u!1 &1943322177
 GameObject:
   m_ObjectHideFlags: 0

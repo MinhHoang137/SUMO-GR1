@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 using System.Collections.Generic;
 
 public class UnityVehicleManager : MonoBehaviour
@@ -40,6 +41,8 @@ public class UnityVehicleManager : MonoBehaviour
 				junctionPos.Add(new Vector3(data.position[0], 0, data.position[1]));
 			}
 		}));
+
+		StartCoroutine(SendVehicleDataRoutine());
 	}
 	private void Create()
 	{
@@ -75,10 +78,17 @@ public class UnityVehicleManager : MonoBehaviour
 			Debug.Log("Vehicle does not exist");
 		}
 	}
-	private void FixedUpdate() {
-		if (vehicle != null)
+
+	private IEnumerator SendVehicleDataRoutine() 
+	{
+		var wait = new WaitForSeconds(0.1f);
+		while (true) 
 		{
-			vehicleSender.SendUnityData(vehicle.GetUnityVehicleData());
+			if (vehicle != null)
+			{
+				vehicleSender.SendUnityData(vehicle.GetUnityVehicleData());
+			}
+			yield return wait;
 		}
 	}
 }

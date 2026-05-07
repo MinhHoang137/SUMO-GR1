@@ -25,6 +25,7 @@ public class UnityVehicle : MonoBehaviour
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
     {
+		trafficer.SetRotateBySelf(false);
 		trafficer.SetSpeed(speed);
         trafficer.SetId( $"{ID_PREFIX} {idCounter}" );
         TrafficerManager.Instance.AddTrafficer(trafficer);
@@ -71,7 +72,7 @@ public class UnityVehicle : MonoBehaviour
 			nextPosition += moving.z * trafficer.GetSpeed() * speedMultiplier * Time.deltaTime * transform.forward;
 			transform.forward = Vector3.Slerp(transform.forward, moving.x * transform.right, Time.deltaTime * multiplier);
 		}
-		Debug.Log($"Moving: {moving}, Next Position: {nextPosition}, Speed: {trafficer.GetSpeed()}");
+		// Debug.Log($"Moving: {moving}, Next Position: {nextPosition}, Speed: {trafficer.GetSpeed()}");
 		return nextPosition;
 	}
 	private bool CanMoveForward()

@@ -3,12 +3,13 @@ from tkinter import ttk, messagebox, filedialog
 import subprocess
 import os
 import sys
+import threading
 
 class AppLauncher:
     def __init__(self, root):
         self.root = root
         self.root.title("SUMO-Unity System Launcher")
-        self.root.geometry("500x550")
+        self.root.geometry("500x650")
         self.root.resizable(True, True)
         
         # Variables
@@ -97,9 +98,19 @@ class AppLauncher:
         # --- Common Options ---
         ttk.Checkbutton(main_frame, text="Run with GUI (Start Unity Client Automatically)", variable=self.run_with_gui).grid(row=5, column=0, columnspan=3, sticky=tk.W, pady=10)
         
+        # --- Monitor Frame ---
+        self.monitor_frame = ttk.LabelFrame(main_frame, text="Simulation Monitor", padding=10)
+        self.monitor_frame.grid(row=6, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=5)
+        
+        self.status_lbl = ttk.Label(self.monitor_frame, text="Status: IDLE", font=("Segoe UI", 10, "bold"), foreground="blue")
+        self.status_lbl.grid(row=0, column=0, sticky=tk.W, pady=2)
+        
+        self.timestep_lbl = ttk.Label(self.monitor_frame, text="Time Step: N/A", font=("Segoe UI", 10))
+        self.timestep_lbl.grid(row=1, column=0, sticky=tk.W, pady=2)
+        
         # Buttons
         btn_frame = tk.Frame(main_frame)
-        btn_frame.grid(row=6, column=0, columnspan=3, pady=15)
+        btn_frame.grid(row=7, column=0, columnspan=3, pady=15)
         
         tk.Button(btn_frame, text="Start Server", font=("Segoe UI", 11, "bold"), bg="#4CAF50", fg="white", width=15, command=self.start_server).pack(side=tk.LEFT, padx=10)
         tk.Button(btn_frame, text="Stop All", font=("Segoe UI", 11, "bold"), bg="#f44336", fg="white", width=15, command=self.stop_all).pack(side=tk.LEFT, padx=10)
@@ -169,21 +180,63 @@ class AppLauncher:
             # Sửa lỗi gọi lại executable khi chạy file .exe
             python_cmd = "python" if getattr(sys, 'frozen', False) else sys.executable
             
+            env = os.environ.copy()
+            env["PYTHONIOENCODING"] = "utf-8"
+            
             # run command: python main.py <maze_file_path> <num_lanes>
             cmd = [python_cmd, "main.py", self.map_file.get(), str(self.num_lanes.get())]
             self.server_process = subprocess.Popen(
                 cmd, 
                 cwd=self.server_dir, 
-                stdin=subprocess.PIPE, 
-                text=True
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+                encoding='utf-8',
+                errors='replace',
+                env=env
             )
             
             # Send inputs instantly directly to the console program
             self.server_process.stdin.write(input_str)
             self.server_process.stdin.flush()
             
+            # Start monitor thread
+            self.status_lbl.configure(text="Status: STARTING SERVER...", foreground="orange")
+            threading.Thread(target=self.monitor_process, daemon=True).start()
+            
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start Server:\n{e}")
+
+    def monitor_process(self):
+        if not self.server_process:
+            return
+            
+        try:
+            for line in iter(self.server_process.stdout.readline, ''):
+                line = line.strip()
+                if not line:
+                    continue
+                
+                # Print server output to launcher's console for debugging
+                print(f"[Server] {line}")
+                
+                if "[MONITOR] STATE:" in line:
+                    state = line.split("STATE:")[1].strip()
+                    color = "green" if state == "PLAYING" else ("red" if state == "STOPPED" else "orange")
+                    self.root.after(0, lambda s=state, c=color: self.status_lbl.configure(text=f"Status: {s}", foreground=c))
+                elif "[MONITOR] TIME_STEP:" in line:
+                    ts = line.split("TIME_STEP:")[1].strip()
+                    self.root.after(0, lambda t=ts: self.timestep_lbl.configure(text=f"Time Step: {t}s"))
+                elif "[MONITOR] CLIENT_CONNECTED" in line:
+                    self.root.after(0, lambda: self.status_lbl.configure(text="Status: CLIENT CONNECTED, WAITING...", foreground="blue"))
+
+        except Exception as e:
+            print(f"Monitor thread error: {e}")
+        
+        self.root.after(0, lambda: self.status_lbl.configure(text="Status: STOPPED", foreground="red"))
+        self.root.after(0, lambda: self.timestep_lbl.configure(text="Time Step: N/A"))
 
     def stop_all(self):
         if self.server_process and self.server_process.poll() is None:

@@ -6,6 +6,7 @@ public class Trafficer : MonoBehaviour
 	protected Vector3 destination;
 	protected float speed;
 	private Vector3 lastPosition;
+	private bool rotateBySelf = true;
 
 	[SerializeField] private Transform cameraHolder;
 
@@ -27,7 +28,7 @@ public class Trafficer : MonoBehaviour
 			transform.position = destination;
 		}
 		Vector3 direction = transform.position - lastPosition;
-		if (direction != Vector3.zero)
+		if (direction != Vector3.zero && rotateBySelf)
 		{
 			float multiplier = 5;
 			transform.forward = Vector3.Slerp(transform.forward, direction, speed * Time.deltaTime * multiplier);
@@ -36,6 +37,10 @@ public class Trafficer : MonoBehaviour
 		{
 			transform.position = destination;
 		}
+	}
+	public void SetRotateBySelf(bool rotateBySelf)
+	{
+		this.rotateBySelf = rotateBySelf;
 	}
 	public void Hide()
 	{
