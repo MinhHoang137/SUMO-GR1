@@ -5,16 +5,16 @@ using Newtonsoft.Json;
 [Serializable]
 public class TrafficLightData : ObjectData
 {
-	[JsonProperty("id")]
+	[JsonProperty("i")]
 	[SerializeField] private string id;
 
-	[JsonProperty("position")]
+	[JsonProperty("p")]
 	[SerializeField] private float[] position;
 
-	[JsonProperty("direction")]
+	[JsonProperty("d")]
 	[SerializeField] private float[] direction;
 
-	[JsonProperty("state")]
+	[JsonProperty("s")]
 	[SerializeField] private int state; // 0: Red, 1: Yellow, 2: Green
 	public string Id => id;
 	public float[] Position => position;

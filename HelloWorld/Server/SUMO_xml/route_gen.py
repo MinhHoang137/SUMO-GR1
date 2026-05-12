@@ -26,10 +26,10 @@ def split_side(crossroads):
     if not crossroads:
         return left, right
     for cr in crossroads:
-        median_x += cr["position"][0]
+        median_x += cr["p"][0]
     median_x /= len(crossroads)
     for cr in crossroads:
-        if cr["position"][0] < median_x:
+        if cr["p"][0] < median_x:
             left.append(cr)
         else:
             right.append(cr)
@@ -51,17 +51,17 @@ def split_in_out(crossroads):
     if not crossroads:
         return _in, _out
     for cr in crossroads:
-        x, y = cr["position"]
+        x, y = cr["p"]
         center_x += x
         center_y += y
     center_x /= len(crossroads)
     center_y /= len(crossroads)
     for cr in crossroads:
-        x, y = cr["position"]
+        x, y = cr["p"]
         median_rad += ((x - center_x) ** 2 + (y - center_y) ** 2) ** 0.5
     median_rad /= len(crossroads)
     for cr in crossroads:
-        x, y = cr["position"]
+        x, y = cr["p"]
         rad = ((x - center_x) ** 2 + (y - center_y) ** 2) ** 0.5
         if rad < median_rad:
             _in.append(cr)

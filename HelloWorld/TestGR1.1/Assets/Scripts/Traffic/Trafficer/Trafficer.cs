@@ -2,13 +2,27 @@
 
 public class Trafficer : MonoBehaviour
 {
+	public enum InterpolationPositionType
+	{
+		Linear,
+		SLerp
+	}
+	public enum InterpolationRotationType
+	{
+		Overwrite,
+		Slerp
+	}
+	[SerializeField] private InterpolationPositionType interpolationPositionType = InterpolationPositionType.Linear;
+	[SerializeField] private InterpolationRotationType interpolationRotationType = InterpolationRotationType.Slerp;
+	
 	private string id = "";
 	protected Vector3 destination;
+	private Vector3 nextForward;
 	protected float speed;
-	private Vector3 lastPosition;
-	private bool rotateBySelf = true;
+
 
 	[SerializeField] private Transform cameraHolder;
+	[SerializeField] private float rotateMultiplier = 5f;
 
 	public bool isExist = true;
 
@@ -19,28 +33,37 @@ public class Trafficer : MonoBehaviour
 
 	public virtual void Move()
 	{
-		lastPosition = transform.position;
 		float speedMultiplier = SpeedMultiplier.Instance.Multiplier;
-		//transform.position = Vector3.Lerp(transform.position, destination, speed * speedMultiplier * Time.deltaTime);
-		transform.position = Vector3.MoveTowards(transform.position, destination, speed * speedMultiplier * Time.deltaTime);
+
+		// Interpolate position
+		switch (interpolationPositionType)
+		{
+			case InterpolationPositionType.Linear:
+				transform.position = Vector3.MoveTowards(transform.position, destination, speed * speedMultiplier * Time.deltaTime);
+				break;
+			case InterpolationPositionType.SLerp:
+				transform.position = Vector3.Slerp(transform.position, destination, speed * speedMultiplier * Time.deltaTime);
+				break;
+		}
 		if ((transform.position - destination).magnitude < 0.1f)
 		{
 			transform.position = destination;
 		}
-		Vector3 direction = transform.position - lastPosition;
-		if (direction != Vector3.zero && rotateBySelf)
-		{
-			float multiplier = 5;
-			transform.forward = Vector3.Slerp(transform.forward, direction, speed * Time.deltaTime * multiplier);
+
+		// Interpolate rotation
+		switch (interpolationRotationType)		{
+			case InterpolationRotationType.Overwrite:
+				transform.forward = nextForward;
+				break;
+			case InterpolationRotationType.Slerp:
+				transform.forward = Vector3.Slerp(transform.forward, nextForward, rotateMultiplier * Time.deltaTime);
+				break;
 		}
-		if ((transform.position - destination).magnitude > 0.1f && speed == 0) // position error
+
+		if ((transform.position - destination).magnitude > 0.1f && speed <= 0.1f) // position error
 		{
 			transform.position = destination;
 		}
-	}
-	public void SetRotateBySelf(bool rotateBySelf)
-	{
-		this.rotateBySelf = rotateBySelf;
 	}
 	public void Hide()
 	{
@@ -83,12 +106,21 @@ public class Trafficer : MonoBehaviour
 	{
 		return id;
 	}
+	public void SetNextForward(Vector3 forward)
+	{
+		this.nextForward = forward;
+	}
+	public Vector3 GetNextForward()
+	{
+		return nextForward;
+	}
 
 	public void Set(TrafficerData trafficerData)
 	{
 		SetId(trafficerData.id);
 		SetDestination(new Vector3(trafficerData.position[0], 0, trafficerData.position[1]));
 		SetSpeed(trafficerData.speed);
+		SetNextForward(new Vector3(trafficerData.forward[1], 0, trafficerData.forward[0]));
 	}
 
 	public Transform GetCameraHolder()

@@ -8,7 +8,7 @@ public class EngineSound : MonoBehaviour
     [SerializeField] private EngineSoundSO engineSoundSO;
     [SerializeField] private float slowSpeedThreshold = 0.1f;
     [Range(0f, 100f)]
-    [SerializeField] private float accelerationThreshold = 0.5f;
+    // [SerializeField] private float accelerationThreshold = 0.5f;
 
     private Vector3 previousPosition;
     private float previousSpeed = 0f;

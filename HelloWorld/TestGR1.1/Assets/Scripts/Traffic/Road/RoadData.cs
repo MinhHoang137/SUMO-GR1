@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 using UnityEngine;
+using Newtonsoft.Json;
 
 /*
 	Class lưu trữ dữ liệu của toàn bộ hệ thống đường bao gồm:
@@ -12,8 +13,11 @@ using UnityEngine;
 [Serializable]
 public class RoadData
 {
+	[JsonProperty("jd")]
 	public List<JunctionData> junctionDatas;
+	[JsonProperty("ed")]
 	public List<EdgeData> edgeDatas;
+	[JsonProperty("cd")]
 	public List<CrossingData> crossingDatas;
 
 	public List<JunctionData> JunctionDatas => junctionDatas;

@@ -333,6 +333,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Trafficer
   cameraHolder: {fileID: 2682539058478838558}
+  rotateMultiplier: 15
   isExist: 1
 --- !u!1 &4673168158081722249
 GameObject:

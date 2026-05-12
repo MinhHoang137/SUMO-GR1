@@ -43,9 +43,9 @@ class CrossRoadReader:
                 vertices = cls.parse_shape(shape)
                 sorted_vertices = cls.sort_clockwise(vertices)
                 crossroad = {
-                    "id": junction_id,
-                    "position": [x, y],
-                    "vertices": [{"x": v[0], "y": v[1]} for v in sorted_vertices]
+                    "i": junction_id,
+                    "p": [round(x, 3), round(y, 3)],
+                    "v": [{"x": round(v[0], 3), "y": round(v[1], 3)} for v in sorted_vertices]
                 }
                 crossroads.append(crossroad)
 

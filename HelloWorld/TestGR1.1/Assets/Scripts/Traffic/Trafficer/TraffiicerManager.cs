@@ -104,10 +104,10 @@ public class TrafficerManager : MonoBehaviour
 		if (trafficer.GetComponent<UnityVehicle>() == null)
 		{
 			// Pool by type
-			string poolKey = "vehicle";
-			if (trafficer.name.ToLower().Contains("pedestrian"))
+			string poolKey = "v";
+			if (trafficer.name.ToLower().Contains("p"))
 			{
-				poolKey = "pedestrian";
+				poolKey = "p";
 			}
 
 			if (!trafficerPool.ContainsKey(poolKey))

@@ -124,8 +124,8 @@ def process_vehicle_updates(traci):
 
         for v in vehicles:
             try:
-                veh_id = v['id']
-                is_exist = v.get('isExist', True)
+                veh_id = v['i']
+                is_exist = v.get('e', True)
 
                 # Nếu Unity đã xoá xe, thì remove khỏi SUMO
                 if not is_exist:
@@ -137,9 +137,9 @@ def process_vehicle_updates(traci):
                             print(f"  [!] Lỗi khi xoá xe {veh_id}: {e}")
                     continue  # Không xử lý thêm
 
-                pos = v['position']
-                forward = v['forward']
-                speed = v['speed']
+                pos = v['p']
+                forward = v['f']
+                speed = v['sp']
                 angle = math.degrees(math.atan2(forward[0], forward[1]))
 
                 if veh_id not in traci.vehicle.getIDList():

@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: TrafficerKeyPrefabSO
   m_EditorClassIdentifier: Assembly-CSharp::TrafficerKeyPrefabSO
   trafficerKeyPrefabs:
-  - type: vehicle
+  - type: v
     trafficers:
     - {fileID: 8764365839439465824, guid: 69f708c86ece9b442862e3d84cab7337, type: 3}
     - {fileID: 395358355795053413, guid: e9f6003f8c3f4074794c92f1725f41f7, type: 3}
     - {fileID: 3297372022998325088, guid: 04a69a7f36b429348b490b83bdf82ae7, type: 3}
     - {fileID: 7231671763871209301, guid: cf9b93ff64c5a3c48925afe5b7f0a8d0, type: 3}
-  - type: pedestrian
+  - type: p
     trafficers:
     - {fileID: 6917291490814554156, guid: d35f397c2ea07134696a7a40e79a6b6e, type: 3}

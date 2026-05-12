@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class StartScene : MonoBehaviour
+public class RealtimePreparer : MonoBehaviour
 {
     [SerializeField] private Button startButton;
 	[SerializeField] private Button getRoadDataButton;
@@ -19,6 +19,7 @@ public class StartScene : MonoBehaviour
 		{
 			if (!roadDataListener.IsListening())
 			{
+				// cảnh kết nối thời gian thực có index 1 trong Build Settings
 				SceneManager.LoadScene(1);
 			}
 				

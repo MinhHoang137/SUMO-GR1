@@ -122,7 +122,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c9675cce2597144e8e32a8ca8c46740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Trafficer
+  interpolationPositionType: 1
+  interpolationRotationType: 1
   cameraHolder: {fileID: 4319770399364026720}
+  rotateMultiplier: 15
   isExist: 1
 --- !u!1 &6576246963323543466
 GameObject:

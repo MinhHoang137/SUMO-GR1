@@ -14,11 +14,11 @@ class TrafficLightData:
 
     def to_dict(self):
         return {
-            "id": self.id,
-            "type": self.type,
-            "position": self.position,    # Sử dụng mảng [x, y, z]
-            "direction": self.direction,  # Sử dụng mảng [x, y, z]
-            "state": self.state
+            "i": self.id,
+            "t": "tl",
+            "p": [round(self.position[0], 2), round(self.position[1], 2), round(self.position[2], 2)],
+            "d": [round(self.direction[0], 2), round(self.direction[1], 2), round(self.direction[2], 2)],
+            "s": self.state
         }
 
 def read_traffic_lights(traci):

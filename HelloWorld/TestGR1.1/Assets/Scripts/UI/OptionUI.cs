@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 public class OptionUI : MonoBehaviour
 {
-	private bool previousMouseEnabled = false;
+	// private bool previousMouseEnabled = false;
 	[SerializeField] private NetworkSO networkSO;
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
@@ -20,12 +20,12 @@ public class OptionUI : MonoBehaviour
 			gameObject.SetActive(!gameObject.activeSelf);
 			if (gameObject.activeSelf)
 			{
-				previousMouseEnabled = GameInput.Instance.MouseEnabled;
-				GameInput.Instance.SetMouse(true);
+				// previousMouseEnabled = GameInput.Instance.MouseEnabled;
+				// GameInput.Instance.SetMouse(true);
 			}
 			else
 			{
-				GameInput.Instance.SetMouse(previousMouseEnabled);
+				// GameInput.Instance.SetMouse(previousMouseEnabled);
 			};
 			
 		};

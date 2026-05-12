@@ -229,8 +229,8 @@ def filter_feasible_pairs(start_list, end_list, edge_file_path):
     skipped = 0
     
     for s, e in zip(start_list, end_list):
-        s_id = s["id"] if isinstance(s, dict) else str(s)
-        e_id = e["id"] if isinstance(e, dict) else str(e)
+        s_id = s.get("i") or s.get("id") if isinstance(s, dict) else str(s)
+        e_id = e.get("i") or e.get("id") if isinstance(e, dict) else str(e)
         
         # Nếu điểm bắt đầu không có trong đồ thị, coi như không đi được
         if s_id not in adj:
@@ -318,8 +318,8 @@ def write_car_route_to_xml(start_list, end_list, rou_path, period=30, begin=0.0,
         s = start_list[i]
         e = end_list[i]
 
-        s_id = s["id"] if isinstance(s, dict) else str(s)
-        e_id = e["id"] if isinstance(e, dict) else str(e)
+        s_id = s.get("i") or s.get("id") if isinstance(s, dict) else str(s)
+        e_id = e.get("i") or e.get("id") if isinstance(e, dict) else str(e)
 
         ET.SubElement(
             routes_root,
@@ -447,8 +447,8 @@ def write_ped_route_to_xml(start_list, end_list, rou_path, period=30, impatience
     for i in range(num_pairs):
         s = start_list[i]
         e = end_list[i]
-        s_id = s["id"] if isinstance(s, dict) else str(s)
-        e_id = e["id"] if isinstance(e, dict) else str(e)
+        s_id = s.get("i") or s.get("id") if isinstance(s, dict) else str(s)
+        e_id = e.get("i") or e.get("id") if isinstance(e, dict) else str(e)
 
         pf_id = next_pf_id("pf_")
         pf = ET.SubElement(

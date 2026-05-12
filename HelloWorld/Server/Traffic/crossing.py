@@ -41,15 +41,15 @@ class CrossingReader:
                             dy = end[1] - start[1]
                             magnitude = math.sqrt(dx**2 + dy**2)
 
-                            direction = {"x": dx / magnitude, "y": dy / magnitude} if magnitude != 0 else {"x": 0, "y": 0}
+                            direction = {"x": round(dx / magnitude, 3), "y": round(dy / magnitude, 3)} if magnitude != 0 else {"x": 0, "y": 0}
 
                             crossing_data = {
-                                "id": crossing_id,
-                                "start": {"x": start[0], "y": start[1]},
-                                "end": {"x": end[0], "y": end[1]},
-                                "width": width,
-                                "length": length,
-                                "direction": direction
+                                "i": crossing_id,
+                                "st": {"x": round(start[0], 3), "y": round(start[1], 3)},
+                                "ed": {"x": round(end[0], 3), "y": round(end[1], 3)},
+                                "w": round(width, 3),
+                                "l": round(length, 3),
+                                "d": direction
                             }
                             crossings.append(crossing_data)
 

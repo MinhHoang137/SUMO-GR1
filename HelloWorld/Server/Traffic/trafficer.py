@@ -10,12 +10,13 @@ class TrafficerData:
         self.forward = forward
 
     def to_dict(self):
+        short_type = "v" if self.type == "vehicle" else "p" if self.type == "pedestrian" else self.type
         return {
-            "id": self.id,
-            "type": self.type,
-            "speed": self.speed,
-            "position": self.position,
-            "forward": self.forward
+            "i": self.id,
+            "t": short_type,
+            "sp": round(self.speed, 2),
+            "p": [round(self.position[0], 2), round(self.position[1], 2)],
+            "f": [round(self.forward[0], 2), round(self.forward[1], 2)]
         }
 
 def read_trafficers(traci):

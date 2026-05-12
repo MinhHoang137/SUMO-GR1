@@ -10,6 +10,7 @@ public class UnityVehicle : MonoBehaviour
 	private const string ID_PREFIX = "UnityVehicle_";
 	[SerializeField] private float speedMultiplier = 1;
 	[SerializeField] private float speed = 14;
+	[SerializeField] private float rotateMultiplier = 5f;
 
 	[SerializeField] private List<Sensor> forwardSensor;
 	[SerializeField] private List<Sensor> leftSensor;
@@ -25,7 +26,6 @@ public class UnityVehicle : MonoBehaviour
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
     {
-		trafficer.SetRotateBySelf(false);
 		trafficer.SetSpeed(speed);
         trafficer.SetId( $"{ID_PREFIX} {idCounter}" );
         TrafficerManager.Instance.AddTrafficer(trafficer);
@@ -68,9 +68,8 @@ public class UnityVehicle : MonoBehaviour
 		Vector3 nextPosition = transform.position;
 		if (Mathf.Abs(moving.z) >= 0.01f)
 		{
-			float multiplier = 1.5f;
 			nextPosition += moving.z * trafficer.GetSpeed() * speedMultiplier * Time.deltaTime * transform.forward;
-			transform.forward = Vector3.Slerp(transform.forward, moving.x * transform.right, Time.deltaTime * multiplier);
+			trafficer.SetNextForward(Vector3.Slerp(trafficer.GetNextForward(), moving.x * transform.right, Time.deltaTime * rotateMultiplier));
 		}
 		// Debug.Log($"Moving: {moving}, Next Position: {nextPosition}, Speed: {trafficer.GetSpeed()}");
 		return nextPosition;

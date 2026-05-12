@@ -70,7 +70,11 @@ public class CameraController : MonoBehaviour
 	}
 	private void Rotate()
 	{
-		if (GameInput.Instance.MouseEnabled) return;
+		// if (GameInput.Instance.MouseEnabled) return;
+		if (CursorManager.Instance != null && !CursorManager.Instance.IsCursorLocked())
+		{
+			return;
+		}
 		Vector2 delta = GameInput.Instance.GetMouseDelta();
 		float mouseX = delta.x * sensitivity * Time.deltaTime;
 		float mouseY = delta.y * sensitivity * Time.deltaTime;

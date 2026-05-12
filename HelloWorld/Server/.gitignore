@@ -3,3 +3,6 @@
 # Keep the folder but ignore all files inside it.
 /result/**
 !/result/.gitkeep
+
+/map_json/**
+!/map_json/.gitkeep

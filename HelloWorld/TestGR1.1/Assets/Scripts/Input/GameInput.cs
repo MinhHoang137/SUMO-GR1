@@ -19,6 +19,7 @@ public class GameInput : MonoBehaviour
 
 	public event EventHandler OnToggleController;
 	public event EventHandler OnToggleOptions;
+	public event EventHandler OnMouseToggle;
 
 	private InputSystem_Actions inputActions;
 	private bool mouseEnabled = false;
@@ -41,7 +42,7 @@ public class GameInput : MonoBehaviour
 		inputActions.UI.ToggleController.performed += ToggleController_performed;
 		inputActions.UI.ToggleOptions.performed += ToggleOptions_performed;
 
-		SetMouse(false);
+		// SetMouse(false);
 		DontDestroyOnLoad(this.gameObject);
 	}
 
@@ -67,7 +68,8 @@ public class GameInput : MonoBehaviour
 
 	private void MouseToggle_performed(InputAction.CallbackContext obj)
 	{
-		SetMouse(!mouseEnabled);
+		// SetMouse(!mouseEnabled);
+		OnMouseToggle?.Invoke(this, EventArgs.Empty);
 	}
 
 	private void SetFreeToggle_performed(InputAction.CallbackContext obj)
@@ -85,7 +87,7 @@ public class GameInput : MonoBehaviour
 		Cursor.lockState = enabled ? CursorLockMode.None : CursorLockMode.Locked;
 		Cursor.visible = enabled;
 	}
-	public bool MouseEnabled { get { return mouseEnabled; } }
+	// public bool MouseEnabled { get { return mouseEnabled; } }
 	public Vector2 GetMouseDelta()
 	{
 		return inputActions.CameraMap.Look.ReadValue<Vector2>();

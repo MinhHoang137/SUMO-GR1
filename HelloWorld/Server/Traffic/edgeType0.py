@@ -52,28 +52,28 @@ class EdgeReader:
 
             if start_road_lane and end_road_lane:
                 direction = {
-                    "x": end_road_lane[0] - start_road_lane[0],
-                    "y": end_road_lane[1] - start_road_lane[1]
+                    "x": round(end_road_lane[0] - start_road_lane[0], 3),
+                    "y": round(end_road_lane[1] - start_road_lane[1], 3)
                 }
                 position = {
-                    "x": (start_road_lane[0] + end_road_lane[0]) / 2,
-                    "y": (start_road_lane[1] + end_road_lane[1]) / 2
+                    "x": round((start_road_lane[0] + end_road_lane[0]) / 2, 3),
+                    "y": round((start_road_lane[1] + end_road_lane[1]) / 2, 3)
                 }
             else:
                 direction = None
                 position = None
 
             edge_data = {
-                "id": edge_id,
-                "startRoadLane": {"x": start_road_lane[0], "y": start_road_lane[1]} if start_road_lane else None,
-                "endRoadLane": {"x": end_road_lane[0], "y": end_road_lane[1]} if end_road_lane else None,
-                "roadNum": len(road_lanes),
-                "startWalkingLane": {"x": start_walking_lane[0],
-                                     "y": start_walking_lane[1]} if start_walking_lane else None,
-                "endWalkingLane": {"x": end_walking_lane[0], "y": end_walking_lane[1]} if end_walking_lane else None,
-                "walkingNum": len(walking_lanes),
-                "direction": direction,
-                "position": position
+                "i": edge_id,
+                "sr": {"x": round(start_road_lane[0], 3), "y": round(start_road_lane[1], 3)} if start_road_lane else None,
+                "er": {"x": round(end_road_lane[0], 3), "y": round(end_road_lane[1], 3)} if end_road_lane else None,
+                "rn": len(road_lanes),
+                "sw": {"x": round(start_walking_lane[0], 3),
+                       "y": round(start_walking_lane[1], 3)} if start_walking_lane else None,
+                "ew": {"x": round(end_walking_lane[0], 3), "y": round(end_walking_lane[1], 3)} if end_walking_lane else None,
+                "wn": len(walking_lanes),
+                "d": direction,
+                "p": position
             }
             edges.append(edge_data)
 
