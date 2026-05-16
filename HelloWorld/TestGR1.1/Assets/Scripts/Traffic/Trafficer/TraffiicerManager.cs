@@ -33,10 +33,14 @@ public class TrafficerManager : MonoBehaviour
 		}
 	}
 
-	public void ProcessData(List<TrafficerData> datas)
+	public void ProcessData(List<TrafficerData> datas, bool isReplay = false)
 	{
 		if (datas == null) return;
-
+		if (isReplay)
+		{
+			// Nếu là replay, xóa hết trafficer hiện tại trước khi tạo mới
+			DisposeAllTrafficers();
+		}
 		List<Trafficer> trafficerList = new List<Trafficer>(trafficerDict.Values);
 		foreach (var trafficer in trafficerList)
 		{
@@ -46,15 +50,21 @@ public class TrafficerManager : MonoBehaviour
 
 		foreach (var data in datas)
 		{
+			Trafficer currentTrafficer = null;
 			if (trafficerDict.TryGetValue(data.id, out Trafficer trafficer))
 			{
 				if (trafficer.GetComponent<UnityVehicle>() != null) continue;
 				trafficer.Set(data);
 				trafficer.isExist = true;
+				currentTrafficer = trafficer;
 			}
 			else
 			{
-				SpawnTrafficer(data);
+				currentTrafficer = SpawnTrafficer(data);
+			}
+			if (isReplay && currentTrafficer != null)
+			{
+				currentTrafficer.transform.position = new Vector3(data.position[0], 0, data.position[1]);
 			}
 		}
 
@@ -68,10 +78,10 @@ public class TrafficerManager : MonoBehaviour
 		}
 	}
 
-	private void SpawnTrafficer(TrafficerData data)
+	private Trafficer SpawnTrafficer(TrafficerData data)
 	{
 		Trafficer prefab = trafficerKeyPrefabSO.GetRandomTrafficer(data.Type);
-		if (prefab == null) return;
+		if (prefab == null) return null;
 
 		Trafficer trafficer = GetTrafficerFromPool(data.Type, prefab);
 		trafficer.transform.position = new Vector3(data.position[0], 0, data.position[1]);
@@ -93,6 +103,7 @@ public class TrafficerManager : MonoBehaviour
 			trafficerDict.Add(trafficer.GetId(), trafficer);
 			OnAddTrafficer?.Invoke(this, new TrafficerEventArgs(trafficer));
 		}
+		return trafficer;
 	}
 
 	private void RecycleTrafficer(Trafficer trafficer)
@@ -145,6 +156,17 @@ public class TrafficerManager : MonoBehaviour
 		else
 		{
 			Debug.LogError($"Trafficer with ID {trafficer.GetId()} already exists.");
+		}
+	}
+	// chỉ dùng ở chế độ replay để đảm bảo không ảnh hưởng pool
+	private void DisposeAllTrafficers()
+	{
+		List<Trafficer> trafficerList = new List<Trafficer>(trafficerDict.Values);
+		foreach (var trafficer in trafficerList)
+		{
+			if (trafficer.GetComponent<UnityVehicle>() != null) continue;
+			RecycleTrafficer(trafficer);
+			if (trafficer.GetComponent<UnityVehicle>() != null) Destroy(trafficer.gameObject);
 		}
 	}
 

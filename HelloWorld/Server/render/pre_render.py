@@ -1,7 +1,6 @@
 import sys
 import os
 import json
-import gzip
 import traci
 from datetime import datetime
 
@@ -109,12 +108,12 @@ def run_prerender(maze_file, num_lanes, config):
     os.makedirs("map_json", exist_ok=True)
     map_base_name = os.path.splitext(os.path.basename(maze_file))[0]
     
-    prerender_file_path = f"result/PreRender-{map_base_name}-{timestamp}.json.gz"
+    prerender_file_path = f"result/PreRender-{map_base_name}-{timestamp}.json"
     road_data_file_path = f"map_json/RoadData-{map_base_name}-{timestamp}.json"
     
     prerender_buffer = []
     buffer_size = 0
-    MAX_BUFFER_SIZE = 1024 * 1024 # 1 MB
+    MAX_BUFFER_SIZE = 10 * 1024 * 1024 # 10 MB buffer in memory before flushing
     first_item = True
 
     try:
@@ -131,45 +130,45 @@ def run_prerender(maze_file, num_lanes, config):
             json.dump(road_data, rdf, ensure_ascii=False, separators=(',', ':'))
         print(f"Road data saved to: {road_data_file_path}")
 
-        with gzip.open(prerender_file_path, "wt", encoding="utf-8") as out_file:
+        with open(prerender_file_path, "w", encoding="utf-8") as out_file:
             out_file.write("[\n")
             try:
                 while traci.simulation.getMinExpectedNumber() > 0:
                     traci.simulationStep()
 
-                trip_logger.log_step(traci, step_index)
-                step_index += 1
-                process_vehicle_updates(traci)
-                
-                data = {
-                    "tl": read_traffic_lights(traci),
-                    "tr": read_trafficers(traci)
-                }
-                
-                # Use compact separators to remove spaces after comma and colon
-                data_str = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
-                data_size = len(data_str.encode('utf-8'))
-                
-                prerender_buffer.append(data_str)
-                buffer_size += data_size
-                
-                if buffer_size >= MAX_BUFFER_SIZE:
-                    for item_str in prerender_buffer:
-                        if not first_item:
-                            out_file.write(",\n")
-                        out_file.write(item_str)
-                        first_item = False
-                    prerender_buffer.clear()
-                    buffer_size = 0
+                    trip_logger.log_step(traci, step_index)
+                    step_index += 1
+                    process_vehicle_updates(traci)
+                    
+                    data = {
+                        "tl": read_traffic_lights(traci),
+                        "tr": read_trafficers(traci)
+                    }
+                    
+                    # Use compact separators to remove spaces after comma and colon
+                    data_str = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
+                    data_size = len(data_str.encode('utf-8'))
+                    
+                    prerender_buffer.append(data_str)
+                    buffer_size += data_size
+                    
+                    if buffer_size >= MAX_BUFFER_SIZE:
+                        for item_str in prerender_buffer:
+                            if not first_item:
+                                out_file.write(",\n")
+                            out_file.write(item_str)
+                            first_item = False
+                        prerender_buffer.clear()
+                        buffer_size = 0
 
-                try:
-                    for t in data.get("tr") or []:
-                        if t.get("t") == "p":
-                            ped_id = t.get("i")
-                            if ped_id:
-                                ped_seen.add(str(ped_id))
-                except Exception:
-                    pass
+                    try:
+                        for t in data.get("tr") or []:
+                            if t.get("t") == "p":
+                                ped_id = t.get("i")
+                                if ped_id:
+                                    ped_seen.add(str(ped_id))
+                    except Exception:
+                        pass
             except KeyboardInterrupt:
                 print("\n[Cảnh báo] Pre-render bị ngắt bởi người dùng. Đang lưu dữ liệu hiện tại...")
             except Exception as loop_e:

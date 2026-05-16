@@ -39,7 +39,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 42211525799220011}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -332,6 +332,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c9675cce2597144e8e32a8ca8c46740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Trafficer
+  interpolationPositionType: 0
+  interpolationRotationType: 1
   cameraHolder: {fileID: 2682539058478838558}
   rotateMultiplier: 15
   isExist: 1

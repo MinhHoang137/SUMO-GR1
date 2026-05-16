@@ -48,7 +48,7 @@ public class UIManager : MonoBehaviour
         {
             menuStack.Peek().SetActive(false); 
         }
-
+        CursorManager.Instance.UnlockCursor(); // Mở khóa con trỏ chuột khi mở menu
         // Đẩy menu mới lên đỉnh Stack và bật nó lên
         menuStack.Push(menuToOpen);
         menuToOpen.SetActive(true);

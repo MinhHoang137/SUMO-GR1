@@ -768,6 +768,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 126639602}
   m_CullTransparentMesh: 1
+--- !u!1 &127920502
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 127920503}
+  - component: {fileID: 127920504}
+  m_Layer: 0
+  m_Name: ReplayManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &127920503
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127920502}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 333427408}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &127920504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127920502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d07a5166ae4ef49459269548222c4017, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReplayManager
+  scriptPathSO: {fileID: 11400000, guid: 8a9ba974bb4797c488a6651326ec7cea, type: 2}
+  timeSlider: {fileID: 240650422}
+  timeStep: 0.1
+  currentStep: 0
 --- !u!1 &131661318
 GameObject:
   m_ObjectHideFlags: 0
@@ -2372,6 +2420,7 @@ Transform:
   - {fileID: 1773358996}
   - {fileID: 229733028}
   - {fileID: 189923939}
+  - {fileID: 127920503}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &343275831
@@ -2944,6 +2993,7 @@ GameObject:
   - component: {fileID: 436368405}
   - component: {fileID: 436368404}
   - component: {fileID: 436368403}
+  - component: {fileID: 436368407}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -3035,6 +3085,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &436368407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 436368402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62a3d6ef6ce309f48ad7e7474a2550f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIManager
+  mainMenuPanel: {fileID: 1803916606}
 --- !u!1 &440060787
 GameObject:
   m_ObjectHideFlags: 0
@@ -10416,6 +10479,7 @@ GameObject:
   - component: {fileID: 1803916610}
   - component: {fileID: 1803916609}
   - component: {fileID: 1803916608}
+  - component: {fileID: 1803916611}
   m_Layer: 5
   m_Name: OptionUI
   m_TagString: Untagged
@@ -10500,6 +10564,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1803916606}
   m_CullTransparentMesh: 1
+--- !u!114 &1803916611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803916606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55861ef3c9d4b4849a66c69150f9e9f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnableOnStart
+  enableOnStart: 0
 --- !u!1 &1820933621
 GameObject:
   m_ObjectHideFlags: 0
@@ -11051,15 +11128,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1910135259}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a81023e7ee113440a454020b7d2636a, type: 3}
+  m_Script: {fileID: 11500000, guid: 73232bbe8646cf642b1ce7cee8d4b7c1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TimeStepUI
+  m_EditorClassIdentifier: Assembly-CSharp::PreRenderTimeStepUI
   timeStepValueUI:
     key: TimeStep
     slider: {fileID: 1993034891}
     inputField: {fileID: 131661320}
   speedMultiplierUI: {fileID: 307771629}
-  networkSO: {fileID: 11400000, guid: 7a3054cfa94a8e341861d89798db945a, type: 2}
+  replayManager: {fileID: 127920504}
 --- !u!1 &1943322177
 GameObject:
   m_ObjectHideFlags: 0
