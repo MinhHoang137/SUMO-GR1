@@ -1,14 +1,24 @@
 using System.Collections;
 using System.Threading;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ReplayManager : MonoBehaviour
 {
+    [Header("Đường dẫn đến file replay")]
     [SerializeField] private ScriptPathSO scriptPathSO;
+    [Header("UI Components")]
     [SerializeField] private Slider timeSlider;
+    [SerializeField] private TMP_Text stepText;
+    [SerializeField] private Button playButton;
+    [SerializeField] private TMP_Text playButtonText;
+    private bool isPlaying = true;
+
+    [Header("Replay Settings")]
     [SerializeField] private float timeStep = 0.1f;
     [SerializeField, Min(0)] private int currentStep = 0;
+    private int maxSteps = 0;
 
     private bool isCodeUpdatingSlider = false;
     private ReplayDataReader dataReader;
@@ -21,9 +31,10 @@ public class ReplayManager : MonoBehaviour
         dataReader = new ReplayDataReader(scriptPathSO.scriptPath);
         
         timeSlider.maxValue = dataReader.TotalSteps - 1;
+        maxSteps = dataReader.TotalSteps - 1;
         timeSlider.value = currentStep;
         timeSlider.onValueChanged.AddListener(OnSliderValueChanged);
-        
+        playButton.onClick.AddListener(() => OnPlayButtonClicked(!isPlaying));
         StartCoroutine(ReplayCoroutine());
     }
 
@@ -58,6 +69,8 @@ public class ReplayManager : MonoBehaviour
         {
             yield return new WaitForSeconds(timeStep);
             
+            if (!isPlaying) continue;
+
             if (currentStep < dataReader.TotalSteps)
             {
                 // Gọi async và đợi update để không đóng băng UI
@@ -92,11 +105,17 @@ public class ReplayManager : MonoBehaviour
         {
             TrafficerManager.Instance.ProcessData(dataFrame.Trafficers, isReplay);
             TrafficLightManager.Instance.ProcessData(dataFrame.TrafficLights);
+            stepText.text = $"{currentStep}/{maxSteps}";
         }
     }
     public void SetTimeStep(float newTimeStep)
     {
         timeStep = newTimeStep;
+    }
+    private void OnPlayButtonClicked(bool isPlaying)
+    {
+        playButtonText.text = isPlaying ? "Tạm dừng" : "Phát lại";
+        this.isPlaying = isPlaying;
     }
 
     private void OnDestroy()

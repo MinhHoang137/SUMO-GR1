@@ -675,6 +675,8 @@ MonoBehaviour:
   buttonPanels:
   - button: {fileID: 168053710}
     panel: {fileID: 1968876012}
+  - button: {fileID: 644531763}
+    panel: {fileID: 2114173891}
 --- !u!1 &218033164
 GameObject:
   m_ObjectHideFlags: 0

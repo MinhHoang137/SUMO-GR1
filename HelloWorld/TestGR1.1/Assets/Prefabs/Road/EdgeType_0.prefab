@@ -55,6 +55,7 @@ MonoBehaviour:
   - {fileID: 3247689602908937768, guid: 0b508cad1e2a5c149b814ad7f5d68670, type: 3}
   - {fileID: 344527604188846462, guid: 15ab5a93510388f458068e8913469353, type: 3}
   - {fileID: 443937931978584900, guid: d6ccf0e7d0f2cac46901aecfcc1b9d59, type: 3}
+  - {fileID: 6073746375507158739, guid: 94a4b2db1b875c34cb60cbed28f5cebf, type: 3}
   houseMargin: 0.2
 --- !u!114 &8186603551382773797
 MonoBehaviour:
@@ -76,7 +77,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2265830923726708677}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 756d462419a4e754ab5463ccdd5be92e, type: 3}
   m_Name: 

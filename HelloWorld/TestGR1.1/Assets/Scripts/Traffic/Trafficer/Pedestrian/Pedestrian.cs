@@ -9,4 +9,12 @@ public class Pedestrian : MonoBehaviour
     {
         Trafficer = GetComponent<Trafficer>();
     }
+    public float GetFullSpeed()
+    {
+        return Trafficer.GetFullSpeed();
+    }
+    public float GetBaseSpeed()
+    {
+        return Trafficer.GetBaseSpeed();
+    }
 }

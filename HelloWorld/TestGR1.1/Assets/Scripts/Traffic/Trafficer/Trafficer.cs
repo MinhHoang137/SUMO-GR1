@@ -127,6 +127,14 @@ public class Trafficer : MonoBehaviour
 	{
 		return cameraHolder;
 	}
+	public float GetFullSpeed()
+	{
+		return speed * SpeedMultiplier.Instance.Multiplier;
+	}
+	public float GetBaseSpeed()
+	{
+		return speed;
+	}
 
 	protected virtual void OnDisable()
 	{
