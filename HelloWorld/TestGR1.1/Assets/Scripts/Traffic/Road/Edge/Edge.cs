@@ -42,7 +42,7 @@ public class Edge : Road // edgeType_0
 		CreateRoadLanes(roadLength, roadWidth, direction);
 		CreateWalkingLanes(spread, walkingWidth, direction);
 		// CreateTrees(spread, direction, roadLength, roadWidth, walkingWidth);
-		CreateHouses(spread, direction, roadLength, roadWidth, walkingWidth);
+		// CreateHouses(spread, direction, roadLength, roadWidth, walkingWidth);
 	}
 
 	private void CreateRoadLanes(float roadLength, float roadWidth, Vector3 direction)

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 344527604188846462}
   - component: {fileID: 4266710981552833360}
   - component: {fileID: -5979593819145682122}
+  - component: {fileID: 5912953243505906269}
   m_Layer: 0
   m_Name: House 1
   m_TagString: Untagged
@@ -68,6 +69,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FilterTransform
   filterSO: {fileID: 11400000, guid: 77f96688b6234e84eaab3e8d0f1846cf, type: 2}
+--- !u!114 &5912953243505906269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4407337285538484217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 756d462419a4e754ab5463ccdd5be92e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DisableAllCollider
+  delay: 0.5
 --- !u!1 &6533564981457724793
 GameObject:
   m_ObjectHideFlags: 0
