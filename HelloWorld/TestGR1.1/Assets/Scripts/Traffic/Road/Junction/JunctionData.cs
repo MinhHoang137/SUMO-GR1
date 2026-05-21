@@ -13,6 +13,8 @@ public class JunctionData
 		public float x;
 		[JsonProperty("y")]
 		public float y;
+		[JsonProperty("z")]
+		public float z;
 	}
 	[JsonProperty("i")]
 	public string id;

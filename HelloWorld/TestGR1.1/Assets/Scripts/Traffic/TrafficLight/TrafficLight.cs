@@ -14,8 +14,9 @@ public class TrafficLight : MonoBehaviour
     public void Create(TrafficLightData data)
 	{
 		id = data.Id;
-		transform.position = new Vector3(data.Position[0], data.Position[1], data.Position[2]);
-		transform.forward = -new Vector3(data.Direction[0], data.Direction[1], data.Direction[2]);
+		transform.position = Converter.ToVector3(data.Position);
+		// Đèn quay về hướng đối diện với hướng đi của làn (đối diện dòng xe tới).
+		transform.forward = -Converter.ToVector3(data.Direction);
 		SetState(data.CurrentState);
 	}
     public void SetState(int state)

@@ -13,6 +13,7 @@ class AppLauncher:
         self.root.resizable(True, True)
         
         # Variables
+        self.map_type = tk.StringVar(value="map")  # "map" | "osm"
         self.map_file = tk.StringVar()
         self.num_lanes = tk.IntVar(value=2)
         self.sim_mode = tk.IntVar(value=1) # 1: Benchmark, 2: VRP
@@ -47,33 +48,43 @@ class AppLauncher:
     def build_ui(self):
         main_frame = ttk.Frame(self.root, padding=15)
         main_frame.pack(fill=tk.BOTH, expand=True)
-        
+
+        # Map Type
+        ttk.Label(main_frame, text="Map Type:").grid(row=0, column=0, sticky=tk.W, pady=5)
+        type_frame = ttk.Frame(main_frame)
+        type_frame.grid(row=0, column=1, columnspan=2, sticky=tk.W)
+        ttk.Radiobutton(type_frame, text="Maze (.map)", variable=self.map_type, value="map", command=self.toggle_map_type).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(type_frame, text="OSM (.osm)", variable=self.map_type, value="osm", command=self.toggle_map_type).pack(side=tk.LEFT, padx=5)
+
         # Map Selection
-        ttk.Label(main_frame, text="Map File (.map):").grid(row=0, column=0, sticky=tk.W, pady=5)
-        ttk.Entry(main_frame, textvariable=self.map_file, width=40).grid(row=0, column=1, padx=5, pady=5)
-        ttk.Button(main_frame, text="Browse", command=self.browse_map).grid(row=0, column=2, pady=5)
-        
-        # Lanes
-        ttk.Label(main_frame, text="Num Lanes:").grid(row=1, column=0, sticky=tk.W, pady=5)
-        ttk.Spinbox(main_frame, from_=1, to=10, textvariable=self.num_lanes, width=10).grid(row=1, column=1, sticky=tk.W, padx=5, pady=5)
-        
+        self.map_file_lbl = ttk.Label(main_frame, text="Map File (.map):")
+        self.map_file_lbl.grid(row=1, column=0, sticky=tk.W, pady=5)
+        ttk.Entry(main_frame, textvariable=self.map_file, width=40).grid(row=1, column=1, padx=5, pady=5)
+        ttk.Button(main_frame, text="Browse", command=self.browse_map).grid(row=1, column=2, pady=5)
+
+        # Lanes (chỉ áp dụng cho .map; .osm tự định nghĩa số làn)
+        self.lanes_lbl = ttk.Label(main_frame, text="Num Lanes:")
+        self.lanes_lbl.grid(row=2, column=0, sticky=tk.W, pady=5)
+        self.lanes_sb = ttk.Spinbox(main_frame, from_=1, to=10, textvariable=self.num_lanes, width=10)
+        self.lanes_sb.grid(row=2, column=1, sticky=tk.W, padx=5, pady=5)
+
         # Mode
-        ttk.Label(main_frame, text="Simulation Mode:").grid(row=2, column=0, sticky=tk.W, pady=5)
+        ttk.Label(main_frame, text="Simulation Mode:").grid(row=3, column=0, sticky=tk.W, pady=5)
         mode_frame = ttk.Frame(main_frame)
-        mode_frame.grid(row=2, column=1, sticky=tk.W)
+        mode_frame.grid(row=3, column=1, sticky=tk.W)
         ttk.Radiobutton(mode_frame, text="1. Benchmark", variable=self.sim_mode, value=1, command=self.toggle_mode).pack(side=tk.LEFT, padx=5)
         ttk.Radiobutton(mode_frame, text="2. VRP", variable=self.sim_mode, value=2, command=self.toggle_mode).pack(side=tk.LEFT, padx=5)
-        
+
         # Render Mode
-        ttk.Label(main_frame, text="Render Mode:").grid(row=3, column=0, sticky=tk.W, pady=5)
+        ttk.Label(main_frame, text="Render Mode:").grid(row=4, column=0, sticky=tk.W, pady=5)
         render_frame = ttk.Frame(main_frame)
-        render_frame.grid(row=3, column=1, sticky=tk.W)
+        render_frame.grid(row=4, column=1, sticky=tk.W)
         ttk.Radiobutton(render_frame, text="Realtime", variable=self.render_mode, value=1).pack(side=tk.LEFT, padx=5)
         ttk.Radiobutton(render_frame, text="Pre-render", variable=self.render_mode, value=2).pack(side=tk.LEFT, padx=5)
-        
+
         # --- Benchmark Frame ---
         self.bench_frame = ttk.LabelFrame(main_frame, text="Benchmark Mode Options", padding=10)
-        self.bench_frame.grid(row=4, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=10)
+        self.bench_frame.grid(row=5, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=10)
         
         ttk.Label(self.bench_frame, text="Number of Pairs:").grid(row=0, column=0, sticky=tk.W, pady=2)
         ttk.Spinbox(self.bench_frame, from_=1, to=1000, textvariable=self.num_pairs, width=10).grid(row=0, column=1, sticky=tk.W, pady=2)
@@ -95,30 +106,30 @@ class AppLauncher:
         
         # --- VRP Frame ---
         self.vrp_frame = ttk.LabelFrame(main_frame, text="VRP Mode Options", padding=10)
-        self.vrp_frame.grid(row=5, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=5)
-        
+        self.vrp_frame.grid(row=6, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=5)
+
         ttk.Label(self.vrp_frame, text="Number of Clients:").grid(row=0, column=0, sticky=tk.W, pady=2)
         ttk.Spinbox(self.vrp_frame, from_=1, to=1000, textvariable=self.num_clients, width=10).grid(row=0, column=1, sticky=tk.W, pady=2)
-        
+
         ttk.Label(self.vrp_frame, text="Number of Staff:").grid(row=1, column=0, sticky=tk.W, pady=2)
         ttk.Spinbox(self.vrp_frame, from_=1, to=100, textvariable=self.num_staff, width=10).grid(row=1, column=1, sticky=tk.W, pady=2)
-        
+
         # --- Common Options ---
-        ttk.Checkbutton(main_frame, text="Run with GUI (Start Unity Client Automatically)", variable=self.run_with_gui).grid(row=6, column=0, columnspan=3, sticky=tk.W, pady=10)
-        
+        ttk.Checkbutton(main_frame, text="Run with GUI (Start Unity Client Automatically)", variable=self.run_with_gui).grid(row=7, column=0, columnspan=3, sticky=tk.W, pady=10)
+
         # --- Monitor Frame ---
         self.monitor_frame = ttk.LabelFrame(main_frame, text="Simulation Monitor", padding=10)
-        self.monitor_frame.grid(row=7, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=5)
-        
+        self.monitor_frame.grid(row=8, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=5)
+
         self.status_lbl = ttk.Label(self.monitor_frame, text="Status: IDLE", font=("Segoe UI", 10, "bold"), foreground="blue")
         self.status_lbl.grid(row=0, column=0, sticky=tk.W, pady=2)
-        
+
         self.timestep_lbl = ttk.Label(self.monitor_frame, text="Time Step: N/A", font=("Segoe UI", 10))
         self.timestep_lbl.grid(row=1, column=0, sticky=tk.W, pady=2)
-        
+
         # Buttons
         btn_frame = tk.Frame(main_frame)
-        btn_frame.grid(row=8, column=0, columnspan=3, pady=15)
+        btn_frame.grid(row=9, column=0, columnspan=3, pady=15)
         
         tk.Button(btn_frame, text="Start Server", font=("Segoe UI", 11, "bold"), bg="#4CAF50", fg="white", width=15, command=self.start_server).pack(side=tk.LEFT, padx=10)
         tk.Button(btn_frame, text="Stop All", font=("Segoe UI", 11, "bold"), bg="#f44336", fg="white", width=15, command=self.stop_all).pack(side=tk.LEFT, padx=10)
@@ -129,10 +140,29 @@ class AppLauncher:
         init_dir = os.path.join(self.server_dir, "map")
         if not os.path.exists(init_dir):
             init_dir = self.base_dir
-        path = filedialog.askopenfilename(initialdir=init_dir, title="Select Map File", filetypes=[("Map Files", "*.map"), ("All Files", "*.*")])
+        if self.map_type.get() == "osm":
+            filetypes = [("OSM Files", "*.osm"), ("All Files", "*.*")]
+            title = "Select OSM File"
+        else:
+            filetypes = [("Map Files", "*.map"), ("All Files", "*.*")]
+            title = "Select Map File"
+        path = filedialog.askopenfilename(initialdir=init_dir, title=title, filetypes=filetypes)
         if path:
             # Save absolute path
             self.map_file.set(path)
+
+    def toggle_map_type(self):
+        """Cập nhật label + bật/tắt Num Lanes theo loại map đang chọn (.osm tự định nghĩa số làn)."""
+        if self.map_type.get() == "osm":
+            self.map_file_lbl.configure(text="Map File (.osm):")
+            self.lanes_lbl.configure(state="disabled")
+            self.lanes_sb.configure(state="disabled")
+        else:
+            self.map_file_lbl.configure(text="Map File (.map):")
+            self.lanes_lbl.configure(state="normal")
+            self.lanes_sb.configure(state="normal")
+        # Xoá đường dẫn cũ để tránh dùng nhầm file sai loại
+        self.map_file.set("")
 
     def toggle_mode(self):
         if self.sim_mode.get() == 1: # Benchmark

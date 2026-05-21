@@ -10,7 +10,13 @@ class CrossRoadReader:
     @classmethod
     def parse_shape(cls, shape):
         points = shape.strip().split(' ')
-        vertices = [(float(p.split(',')[0]), float(p.split(',')[1])) for p in points]
+        vertices = []
+        for p in points:
+            coords = p.split(',')
+            x = float(coords[0])
+            y = float(coords[1])
+            z = float(coords[2]) if len(coords) > 2 else 0.0
+            vertices.append((x, y, z))
         return vertices
 
     @classmethod
@@ -37,6 +43,7 @@ class CrossRoadReader:
             # junction_type = junction.get('type', 'unknown')
             x = float(junction.get('x'))
             y = float(junction.get('y'))
+            z = float(junction.get('z', 0.0))
             shape = junction.get('shape')
 
             if shape:
@@ -44,8 +51,8 @@ class CrossRoadReader:
                 sorted_vertices = cls.sort_clockwise(vertices)
                 crossroad = {
                     "i": junction_id,
-                    "p": [round(x, 3), round(y, 3)],
-                    "v": [{"x": round(v[0], 3), "y": round(v[1], 3)} for v in sorted_vertices]
+                    "p": [round(x, 3), round(y, 3), round(z, 3)],
+                    "v": [{"x": round(v[0], 3), "y": round(v[1], 3), "z": round(v[2], 3)} for v in sorted_vertices]
                 }
                 crossroads.append(crossroad)
 

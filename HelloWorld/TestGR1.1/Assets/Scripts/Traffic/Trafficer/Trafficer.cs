@@ -118,8 +118,10 @@ public class Trafficer : MonoBehaviour
 	public void Set(TrafficerData trafficerData)
 	{
 		SetId(trafficerData.id);
-		SetDestination(new Vector3(trafficerData.position[0], 0, trafficerData.position[1]));
+		SetDestination(Converter.ToVector3(trafficerData.position));
 		SetSpeed(trafficerData.speed);
+		// Forward giữ swap thủ công: SUMO emit forward = [cos(angle_rad), sin(angle_rad)]
+		// với angle theo convention compass (0° = bắc = +y SUMO). Cần forward[1] → Unity z.
 		SetNextForward(new Vector3(trafficerData.forward[1], 0, trafficerData.forward[0]));
 	}
 

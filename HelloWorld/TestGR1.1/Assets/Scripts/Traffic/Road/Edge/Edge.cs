@@ -1,176 +1,129 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Edge : Road // edgeType_0
+public class Edge : Road
 {
+	[Serializable]
+	public class LaneMaterialEntry
+	{
+		public string type;
+		public Material material;
+	}
+
 	private string id;
-    [SerializeField] private Transform walkingLanePrefab;
-	[SerializeField] private RoadLane roadLanePrefab;
-	private float roadLaneWidth = 3.2f;
-	private float roadOffset;
-	private float walkingLaneWidth = 2f;
-	private float walkingOffset;
-    private EdgeData edgeData;
+	private EdgeData data;
 
-	[Header("Decoration")]
-	[Header("Tree settings")]
-	[SerializeField] private Transform[] treePrefabs;
-	[SerializeField] private float treeSpacing = 10f;
-	
-	[Header("House settings")]
-	[SerializeField] private Transform[] housePrefabs;
-	[SerializeField] private float houseMargin = 0.2f;
-	
-    public void Create(EdgeData edgeData)
-    {
-		//Debug.Log("Create Edge" + edgeData.id);
-		if (id == null)
+	[Header("Lane materials")]
+	[SerializeField] private LaneMaterialEntry[] laneMaterials;
+	[SerializeField] private Material fallbackMaterial;
+
+	public string GetId() => id;
+	public EdgeData GetData() => data;
+
+	public void Create(EdgeData edgeData)
+	{
+		if (edgeData == null || edgeData.lanes == null || edgeData.lanes.Count == 0)
 		{
-			id = edgeData.id;
+			return;
 		}
-		roadOffset = roadLaneWidth / 2;
-		this.edgeData = edgeData;
-		transform.position = new Vector3(edgeData.position.x, 0, edgeData.position.y);
-        Vector3 spread = new Vector3(edgeData.direction.y, 0, -edgeData.direction.x);
-        spread.Normalize(); 
-		transform.position -= roadOffset * spread;
 
-		float roadLength = Vector3.Distance(new Vector3(edgeData.startRoadLane.x, 0, edgeData.startRoadLane.y), new Vector3(edgeData.endRoadLane.x, 0, edgeData.endRoadLane.y));
-		float roadWidth = roadLaneWidth * edgeData.roadNum;
-		float walkingWidth = walkingLaneWidth * edgeData.walkingNum;
-		Vector3 direction = new Vector3(edgeData.direction.x, 0, edgeData.direction.y).normalized;
+		id = edgeData.id;
+		data = edgeData;
 
-		CreateRoadLanes(roadLength, roadWidth, direction);
-		CreateWalkingLanes(spread, walkingWidth, direction);
-		// CreateTrees(spread, direction, roadLength, roadWidth, walkingWidth);
-		// CreateHouses(spread, direction, roadLength, roadWidth, walkingWidth);
-	}
-
-	private void CreateRoadLanes(float roadLength, float roadWidth, Vector3 direction)
-	{
-		RoadLane roadLane = Instantiate(roadLanePrefab, transform.position, Quaternion.identity);
-		roadLane.transform.SetParent(transform);
-		roadLane.GetLane().localScale = new Vector3(roadWidth, 1, roadLength);
-		roadLane.GetLaneMarking().localScale = new Vector3(roadLane.GetLaneMarking().localScale.x * roadLaneWidth, 1 , roadLength);
-		roadLane.transform.forward = direction;
-		float divider = 10;
-		SetMaterialTiling(roadLane.GetLane(), edgeData.roadNum, roadLength / divider);
-	}
-
-	private void CreateWalkingLanes(Vector3 spread, float walkingWidth, Vector3 direction)
-	{
-		Transform walkingLane = Instantiate(walkingLanePrefab);
-		walkingOffset = 0;
-		walkingLane.position = transform.position + spread * (edgeData.roadNum * roadLaneWidth - walkingOffset);
-		walkingLane.SetParent(transform);
-		float walkingLength = 0;
-		if (edgeData.startWalkingLane != null)
-			walkingLength = Vector3.Distance(new Vector3(edgeData.startWalkingLane.Value.x, 0, edgeData.startWalkingLane.Value.y), new Vector3(edgeData.endWalkingLane.Value.x, 0, edgeData.endWalkingLane.Value.y));
-		walkingLane.localScale = new Vector3(walkingWidth, 1, walkingLength);
-		walkingLane.forward = direction;
-		SetMaterialTiling(walkingLane, walkingWidth, walkingLength);
-	}
-
-	private void CreateTrees(Vector3 spread, Vector3 direction, float roadLength, float roadWidth, float walkingWidth)
-	{
-		float laneWidth = roadWidth + walkingWidth;
-		float treeOffset = laneWidth + 1;
-		float treeSpacing = this.treeSpacing;
-		int treeCount = (int)(roadLength / treeSpacing);
-		Vector3 startPos = new Vector3(edgeData.startRoadLane.x, 0, edgeData.startRoadLane.y);
-		for (int i = 0; i < treeCount; i++)
+		for (int i = 0; i < edgeData.lanes.Count; i++)
 		{
-			Vector3 treePos = startPos + spread * treeOffset + direction * treeSpacing * i;
-			Transform treePrefab = treePrefabs[Random.Range(0, treePrefabs.Length)];
-			Transform tree = Instantiate(treePrefab, treePos, Quaternion.identity);
-			tree.SetParent(transform);
+			BuildLane(edgeData.lanes[i], i);
 		}
 	}
-	public string GetId()
+
+	private void BuildLane(Lane lane, int index)
 	{
-		return id;
-	}
-
-	private void SetMaterialTiling(Transform lane, float x, float y) 
-	{
-		Material material = lane.GetComponentInChildren<Renderer>().material;
-		material.mainTextureScale = new Vector2(x, y);
-	}
-
-	private void CreateHouses(Vector3 spread, Vector3 direction, float roadLength, float roadWidth, float walkingWidth)
-	{
-		if (housePrefabs == null || housePrefabs.Length == 0) return;
-
-		float laneWidth = roadWidth + walkingWidth;
-		float spawnOffset = laneWidth; 
-
-		Vector3 startPos = new Vector3(edgeData.startRoadLane.x, 0, edgeData.startRoadLane.y);
-		float occupiedUpTo = 0f;
-		
-		int maxTries = 100;
-		int currentTry = 0;
-
-		while (occupiedUpTo < roadLength && currentTry < maxTries)
+		if (lane == null || lane.points == null || lane.points.Count < 2)
 		{
-			Transform housePrefab = housePrefabs[Random.Range(0, housePrefabs.Length)];
-			BoxCollider col = housePrefab.GetComponent<BoxCollider>();
-			if (col == null)
+			return;
+		}
+
+		GameObject laneGO = new GameObject($"Lane_{index}_{lane.type}");
+		laneGO.transform.SetParent(transform, worldPositionStays: false);
+
+		MeshFilter mf = laneGO.AddComponent<MeshFilter>();
+		MeshRenderer mr = laneGO.AddComponent<MeshRenderer>();
+		mr.sharedMaterial = GetMaterialFor(lane.type);
+
+		Mesh mesh = new Mesh();
+		mesh.SetVertices(BuildLaneVertices(lane));
+		mesh.SetTriangles(BuildLaneTriangles(lane.points.Count), 0);
+		mesh.RecalculateNormals();
+		mf.mesh = mesh;
+	}
+
+	private List<Vector3> BuildLaneVertices(Lane lane)
+	{
+		List<Vector3> vertices = new List<Vector3>();
+		int pointCnt = lane.points.Count;
+		float halfWidth = lane.width / 2f;
+
+		for (int i = 0; i < pointCnt; i++)
+		{
+			Vector3 pt = Converter.ToVector3(lane.points[i]);
+
+			Vector3 right;
+			float dist = halfWidth;
+
+			if (i == 0)
 			{
-				occupiedUpTo += 2f; 
-				continue;
+				Vector3 dir = Converter.ToVector3(lane.points[i + 1]) - pt;
+				right = Vector3.Cross(dir.normalized, -Vector3.up);
 			}
-
-			// Giả định góc xoay nhà hướng ra đường (-spread hoặc spread tuỳ prefab)
-			Quaternion rotation = Quaternion.LookRotation(-spread);
-			
-			// Tính hình chiếu offset của tâm BoxCollider và hình chiếu kích thước BoxCollider lên bề mặt đường
-			float offsetAlongRoad = Vector3.Dot(rotation * col.center, direction);
-			float extentAlongRoad = Mathf.Abs(Vector3.Dot(rotation * new Vector3(col.size.x / 2f, 0, 0), direction)) 
-			                      + Mathf.Abs(Vector3.Dot(rotation * new Vector3(0, 0, col.size.z / 2f), direction));
-			
-			// Tính khoảng cách từ tâm spawnPos lùi về mép gần nhất và tiến đến mép xa nhất
-			float backwardsExtent = extentAlongRoad - offsetAlongRoad;
-			float forwardsExtent = extentAlongRoad + offsetAlongRoad;
-
-			// Tính toán currentLength (toạ độ sinh nhà) sao cho mép nhà gần nhất bắt đầu đúng từ vùng trống
-			float currentLength = occupiedUpTo + backwardsExtent;
-			Vector3 spawnPos = startPos + spread * spawnOffset + direction * currentLength;
-			Vector3 boxCenter = spawnPos + rotation * col.center;
-
-			float maxHouseBoundary = currentLength + forwardsExtent;
-
-			// Nếu mép xa nhất của nhà tràn ra khỏi độ dài đường
-			if (maxHouseBoundary > roadLength)
+			else if (i == pointCnt - 1)
 			{
-				// Tràn về phía cuối con đường, coi như hết chỗ trống, kết thúc sinh nhà
-				break;
-			}
-
-			Vector3 boxExtents = col.size / 2f + new Vector3(houseMargin, houseMargin, houseMargin); 
-			
-			// Kiểm tra OverlapBox (layer nào chứa các nhà đã sinh thì cần truyền vào, ở đây mặc định kiểm tra toàn bộ)
-			Collider[] hits = Physics.OverlapBox(boxCenter, boxExtents, rotation);
-			bool overlap = false;
-			foreach (var hit in hits)
-			{
-				// Tránh BoxCollider mặt đất hoặc đường, có thể thêm kiểm tra tag như "House" cho an toàn hơn.
-				if (hit.gameObject.CompareTag("Untagged") && hit.GetComponent<BoxCollider>() != null) // Thay đổi tag theo thực tế project
-				{
-					overlap = true;
-					break;
-				}
-			}
-
-			if (!overlap)
-			{
-				Instantiate(housePrefab, spawnPos, rotation, transform);
-				// Cập nhật lại không gian bị chiếm dụng đến hết căn nhà hiện tại (+margin)
-				occupiedUpTo = maxHouseBoundary + houseMargin;
+				Vector3 dir = pt - Converter.ToVector3(lane.points[i - 1]);
+				right = Vector3.Cross(dir.normalized, -Vector3.up);
 			}
 			else
 			{
-				occupiedUpTo += 1f; // Dịch lên 1 ít để tìm khoảng cách trống tiếp theo
+				Vector3 toMid = pt - Converter.ToVector3(lane.points[i - 1]);
+				Vector3 fromMid = Converter.ToVector3(lane.points[i + 1]) - pt;
+				Vector3 midDir = ((toMid.normalized + fromMid.normalized) / 2f).normalized;
+				right = Vector3.Cross(midDir, -Vector3.up);
+				// scale theo cos góc giữa hai đoạn để mesh không bị bóp lại khi đường cong.
+				float angleRad = Vector3.Angle(toMid, fromMid) / 2f * Mathf.Deg2Rad;
+				float cosA = Mathf.Cos(angleRad);
+				if (cosA > 0.01f) dist = halfWidth / cosA;
 			}
-			currentTry++;
+
+			vertices.Add(pt + right * dist);
+			vertices.Add(pt - right * dist);
 		}
+		return vertices;
+	}
+
+	private List<int> BuildLaneTriangles(int pointCnt)
+	{
+		List<int> triangles = new List<int>();
+		for (int i = 0; i < pointCnt - 1; i++)
+		{
+			triangles.Add(2 * i);
+			triangles.Add(2 * i + 1);
+			triangles.Add(2 * i + 2);
+
+			triangles.Add(2 * i + 1);
+			triangles.Add(2 * i + 3);
+			triangles.Add(2 * i + 2);
+		}
+		return triangles;
+	}
+
+	private Material GetMaterialFor(string type)
+	{
+		if (laneMaterials != null)
+		{
+			foreach (var entry in laneMaterials)
+			{
+				if (entry != null && entry.type == type) return entry.material;
+			}
+		}
+		return fallbackMaterial;
 	}
 }

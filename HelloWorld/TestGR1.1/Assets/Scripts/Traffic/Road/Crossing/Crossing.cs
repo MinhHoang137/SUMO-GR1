@@ -11,11 +11,11 @@ public class Crossing : MonoBehaviour
 		Vector3 direction = Vector3.zero;
 		if (data.direction != null)
 		{
-			direction = new Vector3(data.direction.Value.x, 0, data.direction.Value.y).normalized;
+			direction = Converter.ToVector3(data.direction.Value).normalized;
 		}
 		Vector3 spread = new Vector3(direction.z, 0, -direction.x);
 		float offset = data.width / 2;
-		Vector3 position = new Vector3(data.start.x, 0, data.start.y) - offset * spread;
+		Vector3 position = Converter.ToVector3(data.start) - offset * spread;
 		transform.position = position;
 		transform.forward = direction;
 		transform.localScale = new Vector3(data.width, 1, data.length);

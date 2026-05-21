@@ -9,4 +9,6 @@ public struct Coordinate
 	public float x;
 	[JsonProperty("y")]
 	public float y;
+	[JsonProperty("z")]
+	public float z;
 }

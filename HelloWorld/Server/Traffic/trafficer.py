@@ -11,23 +11,30 @@ class TrafficerData:
 
     def to_dict(self):
         short_type = "v" if self.type == "vehicle" else "p" if self.type == "pedestrian" else self.type
+        pos = [round(self.position[0], 2), round(self.position[1], 2)]
+        if len(self.position) >= 3:
+            pos.append(round(self.position[2], 2))
         return {
             "i": self.id,
             "t": short_type,
             "sp": round(self.speed, 2),
-            "p": [round(self.position[0], 2), round(self.position[1], 2)],
+            "p": pos,
             "f": [round(self.forward[0], 2), round(self.forward[1], 2)]
         }
 
 def read_trafficers(traci):
     trafficers = []
-    
-    # Read vehicles
+
+    # Read vehicles (dùng getPosition3D để có cao độ — cần cho cầu/đèo trong .osm)
     try:
         vehicle_ids = traci.vehicle.getIDList()
         for v_id in vehicle_ids:
             try:
-                position = traci.vehicle.getPosition(v_id)
+                try:
+                    position = traci.vehicle.getPosition3D(v_id)
+                except AttributeError:
+                    # TraCI cũ không có getPosition3D
+                    position = traci.vehicle.getPosition(v_id)
                 speed = traci.vehicle.getSpeed(v_id)
                 angle = traci.vehicle.getAngle(v_id)
                 radian = math.radians(angle)
@@ -39,7 +46,7 @@ def read_trafficers(traci):
     except Exception as e:
         print(f"Error reading vehicles from SUMO: {e}")
 
-    # Read pedestrians
+    # Read pedestrians (TraCI person không có getPosition3D — giữ 2D)
     try:
         ped_ids = traci.person.getIDList()
         for p_id in ped_ids:
@@ -55,5 +62,5 @@ def read_trafficers(traci):
                 print(f"Error reading pedestrian {p_id}: {e}")
     except Exception as e:
         pass
-        
+
     return trafficers

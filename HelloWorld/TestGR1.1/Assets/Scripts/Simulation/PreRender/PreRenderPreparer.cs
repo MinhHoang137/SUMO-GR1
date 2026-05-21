@@ -42,12 +42,12 @@ public class PreRenderPreparer : MonoBehaviour
             errorText.color = Color.red;
             return;
         }
-        if (!IsValidFilePath(scriptPathInputField.text))
-        {
-            errorText.text = "Tệp kịch bản không hợp lệ.";
-            errorText.color = Color.red;
-            return;
-        }
+        // if (!IsValidFilePath(scriptPathInputField.text))
+        // {
+        //     errorText.text = "Tệp kịch bản không hợp lệ.";
+        //     errorText.color = Color.red;
+        //     return;
+        // }
 
         try
         {
