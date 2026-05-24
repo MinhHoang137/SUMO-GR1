@@ -1,11 +1,8 @@
-import json
-import math
-import socket
+from Traffic.lane_shapes import get_lane_end_z
 
-MAX_PACKET_SIZE = 4096
-
-# Chiều cao trụ đèn so với mặt đường (SUMO z = trục đứng).
-LIGHT_HEIGHT_SUMO = 5.0
+# Chiều cao trụ đèn TÍNH TỪ MẶT ĐƯỜNG (SUMO z = trục đứng). Cộng với terrain Z lấy từ
+# net.xml lane shape — không hardcode absolute Z, tránh đèn lơ lửng/chìm trên map 3D.
+LIGHT_HEIGHT_SUMO = 3.5
 
 
 class TrafficLightData:
@@ -40,8 +37,14 @@ def read_traffic_lights(traci):
                 start = lane[0]
                 end = lane[-1]
 
-                # SUMO (x, y, z_up): đặt đèn ở cuối lane, nâng cao theo trục đứng.
-                position = [end[0], end[1], LIGHT_HEIGHT_SUMO]
+                # Lấy Z terrain tại điểm cuối lane (net.xml). Fallback nếu lane.getShape đã 3D
+                # hoặc dùng 0.0 nếu data thiếu — vẫn cộng LIGHT_HEIGHT_SUMO cho chiều cao trụ.
+                terrain_z = get_lane_end_z(lane_id)
+                if terrain_z is None:
+                    terrain_z = end[2] if len(end) >= 3 else 0.0
+
+                # SUMO (x, y, z_up): đèn ở cuối lane, đỉnh trụ = terrain_z + LIGHT_HEIGHT_SUMO.
+                position = [end[0], end[1], terrain_z + LIGHT_HEIGHT_SUMO]
                 # Direction theo SUMO: vector ngang trong mặt phẳng (x, y), z = 0.
                 direction = [end[0] - start[0], end[1] - start[1], 0.0]
 

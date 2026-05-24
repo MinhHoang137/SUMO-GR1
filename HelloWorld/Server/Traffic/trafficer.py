@@ -1,5 +1,7 @@
-import json
 import math
+
+from Traffic.lane_shapes import get_z_at_lane_pos
+
 
 class TrafficerData:
     def __init__(self, id, obj_type, speed, position, forward):
@@ -46,12 +48,22 @@ def read_trafficers(traci):
     except Exception as e:
         print(f"Error reading vehicles from SUMO: {e}")
 
-    # Read pedestrians (TraCI person không có getPosition3D — giữ 2D)
+    # Read pedestrians. TraCI không có person.getPosition3D — suy Z bằng cách
+    # nội suy theo shape của lane (đọc từ net.xml) tại vị trí dọc lane.
     try:
         ped_ids = traci.person.getIDList()
         for p_id in ped_ids:
             try:
-                position = traci.person.getPosition(p_id)
+                pos2d = traci.person.getPosition(p_id)
+                z: float | None = None
+                try:
+                    lane_id = traci.person.getLaneID(p_id)
+                    lane_pos = traci.person.getLanePosition(p_id)
+                    if lane_id:
+                        z = get_z_at_lane_pos(lane_id, lane_pos)
+                except Exception:
+                    z = None
+                position = (pos2d[0], pos2d[1], z) if z is not None else pos2d
                 speed = traci.person.getSpeed(p_id)
                 angle = traci.person.getAngle(p_id)
                 radian = math.radians(angle)

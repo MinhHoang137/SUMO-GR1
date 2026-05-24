@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class Crossing : MonoBehaviour
 {
+	// Số lần lặp pattern texture mỗi mét chiều rộng. Trước đây set qua material.mainTextureScale
+	// (per-instance) — không batch được. Giờ bake vào mesh UV → share material → batch OK.
+	private const float TEXTURE_REPEATS_PER_METER = 2f;
+
 	private string id;
 	private CrossingData data;
 	public void Create(CrossingData data)
@@ -19,11 +23,27 @@ public class Crossing : MonoBehaviour
 		transform.position = position;
 		transform.forward = direction;
 		transform.localScale = new Vector3(data.width, 1, data.length);
-		Material material = GetComponentInChildren<Renderer>().material;
-		if (material != null)
+
+		// Bake texture scale vào UV thay vì modify material instance → mọi Crossing share
+		// sharedMaterial của prefab → DrawCallsReducer combine được trong cùng draw call.
+		MeshFilter mf = GetComponentInChildren<MeshFilter>();
+		if (mf != null && mf.sharedMesh != null)
 		{
-			float textureScale = 2;
-			material.mainTextureScale = new Vector2(data.width * textureScale, 1);
+			Mesh src = mf.sharedMesh;
+			Vector2[] srcUv = src.uv;
+			if (srcUv != null && srcUv.Length > 0)
+			{
+				float uScale = data.width * TEXTURE_REPEATS_PER_METER;
+				Vector2[] uv = new Vector2[srcUv.Length];
+				for (int i = 0; i < srcUv.Length; i++)
+				{
+					uv[i] = new Vector2(srcUv[i].x * uScale, srcUv[i].y);
+				}
+				// Clone mesh để không modify shared prefab asset.
+				Mesh m = Instantiate(src);
+				m.uv = uv;
+				mf.mesh = m;
+			}
 		}
 	}
 }

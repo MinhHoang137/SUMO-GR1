@@ -26,7 +26,9 @@ public class TrafficLightManager : MonoBehaviour
 			if (trafficLightDict.TryGetValue(data.Id, out TrafficLight light))
 			{
 				light.SetState(data.CurrentState);
-				light.SetPosition(new Vector3(data.Position[0], data.Position[1], data.Position[2]));
+				// Dùng Converter để khớp SUMO (x, y, z_up) → Unity (x, y_up, z) như Create().
+				// Đèn không di chuyển — SetPosition mỗi frame chỉ chống drift nếu server gửi sai.
+				light.SetPosition(Converter.ToVector3(data.Position));
 			}
 			else
 			{
