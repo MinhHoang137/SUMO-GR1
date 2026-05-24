@@ -64,7 +64,7 @@ public class TrafficerManager : MonoBehaviour
 			}
 			if (isReplay && currentTrafficer != null)
 			{
-				currentTrafficer.transform.position = new Vector3(data.position[0], 0, data.position[1]);
+				currentTrafficer.transform.position = Converter.ToVector3(data.position);
 			}
 		}
 
@@ -84,11 +84,13 @@ public class TrafficerManager : MonoBehaviour
 		if (prefab == null) return null;
 
 		Trafficer trafficer = GetTrafficerFromPool(data.Type, prefab);
-		trafficer.transform.position = new Vector3(data.position[0], 0, data.position[1]);
-		
+		trafficer.transform.position = Converter.ToVector3(data.position);
+
 		if (data.forward != null && data.forward.Length >= 2)
 		{
-			trafficer.transform.forward = new Vector3(data.forward[0], 0, data.forward[1]);
+			// SUMO angle compass: forward[0]=cos=Y_north (SUMO.y), forward[1]=sin=X_east (SUMO.x).
+			// Map SUMO(x,y) → Unity(x,z) ⇒ Unity.x = forward[1], Unity.z = forward[0]. Khớp Trafficer.Set.
+			trafficer.transform.forward = new Vector3(data.forward[1], 0, data.forward[0]);
 		}
 		
 		trafficer.Set(data);

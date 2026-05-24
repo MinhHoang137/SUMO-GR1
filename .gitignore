@@ -114,3 +114,6 @@ dist/
 # ignore UnityBuilds
 /HelloWorld/UnityBuild/
 
+# Ignore imported SUMO-to-Unity workspace
+/SUMO-GR1-osm-to-unity/
+

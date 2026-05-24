@@ -13,7 +13,7 @@ def parse_map_file(filepath):
         Một tuple (None, 0, 0) nếu có lỗi.
     """
     try:
-        with open(filepath, 'r') as f:
+        with open(filepath, 'r', encoding='utf-8') as f:
             lines = f.readlines()
             
         header = {}

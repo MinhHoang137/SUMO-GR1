@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: da968cb0b4722ee45840f9dd5dff9679, type: 2}
+  - {fileID: 2100000, guid: d0c76d31319793f4582c97b5eb1fb8cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -105,9 +105,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f1130340523a1a4690d43681a12d1b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 
   meshFilter: {fileID: 7153385057924360493}
+  boxCollider: {fileID: 0}
+  boxColliderIsTrigger: 1
   baseVertices: []
-  meshCollider: {fileID: 2099199525973536689}
+  data:
+    id: 
+    position: []
+    vertices: []
 --- !u!64 &2099199525973536689
 MeshCollider:
   m_ObjectHideFlags: 0

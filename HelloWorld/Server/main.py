@@ -19,8 +19,23 @@ def parse_arguments():
     lanes = int(sys.argv[2])
     return maze_file, lanes
 
-def setup_simulation_config():
+def setup_simulation_config(is_custom: bool = False):
     """Tương tác CLI với user nhằm khởi tạo thông số Traffic và GUI."""
+    # Custom Script: user đã dựng sẵn .sumocfg/.net.xml/.rou.xml bằng netedit
+    # → bỏ qua toàn bộ prompt sinh route, chỉ hỏi GUI + render mode.
+    if is_custom:
+        config = {
+            "mode": "custom",
+            "custom": True,
+            "has_ped": False,
+            "ped_impatience": None,
+        }
+        gui_option = input("Chạy với giao diện đồ họa Unity không? (y/n, mặc định n): ")
+        config["run_with_gui"] = gui_option.lower() == 'y'
+        render_option = input("Chế độ render? (1: Realtime, 2: Pre-render) (mặc định 1): ")
+        config["render_mode"] = "pre_render" if render_option == "2" else "realtime"
+        return config
+
     mode_option = input("Chạy ở chế độ nào? (1: Benchmark, 2: VRP) (mặc định 1): ")
     sim_mode = "vrp" if mode_option == "2" else "benchmark"
 
@@ -70,10 +85,14 @@ def main():
     # 1. Parse command-line args
     maze_file_path, num_lanes = parse_arguments()
 
-    # 2. Get user input / Setup configuration
-    config = setup_simulation_config()
+    # 2. Detect Custom Script mode: launcher truyền 1 thư mục chứa kịch bản
+    # do user dựng sẵn bằng netedit thay vì 1 file .map.
+    is_custom = os.path.isdir(maze_file_path)
 
-    # 3. Route to logic
+    # 3. Get user input / Setup configuration
+    config = setup_simulation_config(is_custom=is_custom)
+
+    # 4. Route to logic
     if config.get("render_mode") == "pre_render":
         run_prerender(maze_file_path, num_lanes, config)
     else:

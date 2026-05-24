@@ -1,28 +1,33 @@
-﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
+using UnityEngine;
 
 [Serializable]
-public class EdgeData //EgdeType0
+public class EdgeData
 {
 	[JsonProperty("i")]
 	public string id;
-	[JsonProperty("sr")]
-	public Coordinate startRoadLane; //Vị trí bắt đầu của làn đường cho xe đi
-	[JsonProperty("er")]
-	public Coordinate endRoadLane; //Vị trí kết thúc của làn đường cho xe đi
-	[JsonProperty("rn")]
-	public int roadNum; // Số làn cho xe chạy
-	[JsonProperty("sw")]
-	public Coordinate? startWalkingLane; //Vị trí bắt đầu của làn đường cho người đi bộ
-	[JsonProperty("ew")]
-	public Coordinate? endWalkingLane; //Vị trí kết thúc của làn đường cho người đi bộ
-	[JsonProperty("wn")]
-	public int walkingNum; // Số làn cho người đi bộ
-	[JsonProperty("d")]
-	public Coordinate direction; //Hướng của làn đường
+
+	// Danh sách các làn đường thuộc đoạn đường (polyline-based, hỗ trợ đường cong từ OSM).
+	[JsonProperty("ls")]
+	public List<Lane> lanes;
+
+	// Vị trí tâm của đoạn đường (dùng cho culling, label, vv).
 	[JsonProperty("p")]
-	public Coordinate position; // Trung điểm làn bên trái cùng
+	public Coordinate position;
 }
 
+[Serializable]
+public class Lane
+{
+	// generic | pedestrian | bicycle | bus | tram | emergency | ...
+	[JsonProperty("t")]
+	public string type;
 
+	[JsonProperty("p")]
+	public List<Coordinate> points;
+
+	[JsonProperty("w")]
+	public float width;
+}

@@ -8,8 +8,15 @@ class CrossingReader:
 
     @classmethod
     def parse_shape(cls, shape):
-        points = shape.strip().split(' ')
-        vertices = [(float(p.split(',')[0]), float(p.split(',')[1])) for p in points]
+        vertices = []
+        for p in shape.strip().split(' '):
+            parts = p.split(',')
+            if len(parts) < 2:
+                continue
+            x = float(parts[0])
+            y = float(parts[1])
+            z = float(parts[2]) if len(parts) >= 3 else 0.0
+            vertices.append((x, y, z))
         return vertices
 
     @classmethod
@@ -39,14 +46,22 @@ class CrossingReader:
 
                             dx = end[0] - start[0]
                             dy = end[1] - start[1]
+                            dz = end[2] - start[2]
                             magnitude = math.sqrt(dx**2 + dy**2)
 
-                            direction = {"x": round(dx / magnitude, 3), "y": round(dy / magnitude, 3)} if magnitude != 0 else {"x": 0, "y": 0}
+                            if magnitude != 0:
+                                direction = {
+                                    "x": round(dx / magnitude, 3),
+                                    "y": round(dy / magnitude, 3),
+                                    "z": round(dz / magnitude, 3),
+                                }
+                            else:
+                                direction = {"x": 0, "y": 0, "z": 0}
 
                             crossing_data = {
                                 "i": crossing_id,
-                                "st": {"x": round(start[0], 3), "y": round(start[1], 3)},
-                                "ed": {"x": round(end[0], 3), "y": round(end[1], 3)},
+                                "st": {"x": round(start[0], 3), "y": round(start[1], 3), "z": round(start[2], 3)},
+                                "ed": {"x": round(end[0], 3), "y": round(end[1], 3), "z": round(end[2], 3)},
                                 "w": round(width, 3),
                                 "l": round(length, 3),
                                 "d": direction
