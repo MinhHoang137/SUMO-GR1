@@ -13,7 +13,7 @@ class AppLauncher:
         self.root.resizable(True, True)
         
         # Variables
-        self.map_type = tk.StringVar(value="map")  # "map" | "osm"
+        self.map_type = tk.StringVar(value="map")  # "map" | "custom"
         self.map_file = tk.StringVar()
         self.num_lanes = tk.IntVar(value=2)
         self.sim_mode = tk.IntVar(value=1) # 1: Benchmark, 2: VRP
@@ -54,7 +54,7 @@ class AppLauncher:
         type_frame = ttk.Frame(main_frame)
         type_frame.grid(row=0, column=1, columnspan=2, sticky=tk.W)
         ttk.Radiobutton(type_frame, text="Maze (.map)", variable=self.map_type, value="map", command=self.toggle_map_type).pack(side=tk.LEFT, padx=5)
-        ttk.Radiobutton(type_frame, text="OSM (.osm)", variable=self.map_type, value="osm", command=self.toggle_map_type).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(type_frame, text="Custom Script (folder)", variable=self.map_type, value="custom", command=self.toggle_map_type).pack(side=tk.LEFT, padx=5)
 
         # Map Selection
         self.map_file_lbl = ttk.Label(main_frame, text="Map File (.map):")
@@ -140,21 +140,20 @@ class AppLauncher:
         init_dir = os.path.join(self.server_dir, "map")
         if not os.path.exists(init_dir):
             init_dir = self.base_dir
-        if self.map_type.get() == "osm":
-            filetypes = [("OSM Files", "*.osm"), ("All Files", "*.*")]
-            title = "Select OSM File"
+        if self.map_type.get() == "custom":
+            path = filedialog.askdirectory(initialdir=init_dir, title="Select Custom Script Folder (must contain .sumocfg + .net.xml + .rou.xml)")
         else:
             filetypes = [("Map Files", "*.map"), ("All Files", "*.*")]
-            title = "Select Map File"
-        path = filedialog.askopenfilename(initialdir=init_dir, title=title, filetypes=filetypes)
+            path = filedialog.askopenfilename(initialdir=init_dir, title="Select Map File", filetypes=filetypes)
         if path:
             # Save absolute path
             self.map_file.set(path)
 
     def toggle_map_type(self):
-        """Cập nhật label + bật/tắt Num Lanes theo loại map đang chọn (.osm tự định nghĩa số làn)."""
-        if self.map_type.get() == "osm":
-            self.map_file_lbl.configure(text="Map File (.osm):")
+        """Cập nhật UI theo loại map. Custom Script dùng kịch bản do user dựng sẵn (netedit) nên
+        vô hiệu hóa Num Lanes và toàn bộ tham số sinh route Benchmark/VRP."""
+        if self.map_type.get() == "custom":
+            self.map_file_lbl.configure(text="Script Folder:")
             self.lanes_lbl.configure(state="disabled")
             self.lanes_sb.configure(state="disabled")
         else:
@@ -163,8 +162,15 @@ class AppLauncher:
             self.lanes_sb.configure(state="normal")
         # Xoá đường dẫn cũ để tránh dùng nhầm file sai loại
         self.map_file.set("")
+        # Cập nhật trạng thái các frame Benchmark/VRP theo map_type mới
+        self.toggle_mode()
 
     def toggle_mode(self):
+        # Custom Script mode dùng kịch bản do user dựng sẵn → bỏ qua sinh route, disable hết
+        if self.map_type.get() == "custom":
+            for child in self.bench_frame.winfo_children(): child.configure(state='disabled')
+            for child in self.vrp_frame.winfo_children(): child.configure(state='disabled')
+            return
         if self.sim_mode.get() == 1: # Benchmark
             for child in self.bench_frame.winfo_children(): child.configure(state='normal')
             for child in self.vrp_frame.winfo_children(): child.configure(state='disabled')
@@ -187,28 +193,35 @@ class AppLauncher:
             
     def start_server(self):
         if not self.map_file.get():
-            messagebox.showerror("Error", "Please select a Map file first.")
+            messagebox.showerror("Error", "Please select a Map file or Script folder first.")
             return
-            
+
+        is_custom = self.map_type.get() == "custom"
+        if is_custom and not os.path.isdir(self.map_file.get()):
+            messagebox.showerror("Error", "Custom Script mode yêu cầu chọn 1 thư mục chứa kịch bản (.sumocfg + .net.xml + .rou.xml).")
+            return
+
         if self.server_process and self.server_process.poll() is None:
             messagebox.showinfo("Info", "Server is already running!")
             return
-            
-        # Build stdin inputs for main.py's input() prompts
+
+        # Build stdin inputs for main.py's input() prompts.
+        # Custom Script mode bỏ qua hoàn toàn các prompt sinh route → chỉ gửi GUI + render.
         inputs = []
-        inputs.append(str(self.sim_mode.get())) # 1: Benchmark, 2: VRP
-        
-        if self.sim_mode.get() == 1:
-            inputs.append(str(self.num_pairs.get()))
-            inputs.append(self.car_cr_type.get())
-            inputs.append("y" if self.has_ped.get() else "n")
-            if self.has_ped.get():
-                inputs.append(self.ped_cr_type.get())
-                inputs.append(str(self.ped_impatience.get()))
-        else:
-            inputs.append(str(self.num_clients.get()))
-            inputs.append(str(self.num_staff.get()))
-            
+        if not is_custom:
+            inputs.append(str(self.sim_mode.get())) # 1: Benchmark, 2: VRP
+
+            if self.sim_mode.get() == 1:
+                inputs.append(str(self.num_pairs.get()))
+                inputs.append(self.car_cr_type.get())
+                inputs.append("y" if self.has_ped.get() else "n")
+                if self.has_ped.get():
+                    inputs.append(self.ped_cr_type.get())
+                    inputs.append(str(self.ped_impatience.get()))
+            else:
+                inputs.append(str(self.num_clients.get()))
+                inputs.append(str(self.num_staff.get()))
+
         inputs.append("y" if self.run_with_gui.get() else "n")
         inputs.append(str(self.render_mode.get()))
         

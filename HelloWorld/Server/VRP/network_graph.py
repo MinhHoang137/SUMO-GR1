@@ -11,6 +11,87 @@ class NetworkGraph:
         self.nodes_pos: Dict[str, Tuple[float, float]] = {}
         self._build_graph(node_file, edge_file)
 
+    @classmethod
+    def from_net_xml(cls, net_file: str) -> "NetworkGraph":
+        """Tạo NetworkGraph trực tiếp từ tệp .net.xml của SUMO.
+        
+        Thay thế cho __init__(node_file, edge_file) khi chỉ có tệp .net.xml
+        (ví dụ: sau khi chuyển đổi từ OSM bằng netconvert).
+        
+        Cấu trúc .net.xml:
+        - <junction id="..." x="..." y="..." type="..."/> → node
+        - <edge id="..." from="..." to="..."><lane speed="..." length="..."/></edge> → edge
+        Các edge nội bộ (id bắt đầu bằng ':') bị bỏ qua.
+        """
+        instance = cls.__new__(cls)
+        instance.graph = {}
+        instance.distance_cache = {}
+        instance.path_cache = {}
+        instance.nodes_pos = {}
+        instance._build_graph_from_net(net_file)
+        return instance
+
+    def _build_graph_from_net(self, net_file: str) -> None:
+        try:
+            tree = ET.parse(net_file)
+            root = tree.getroot()
+        except Exception as e:
+            print(f"Warning: Could not parse net file {net_file}: {e}")
+            return
+
+        # --- Đọc junction làm node ---
+        SKIP_TYPES = {"internal", "dead_end"}
+        for junc in root.findall("junction"):
+            junc_id = junc.get("id")
+            junc_type = junc.get("type", "")
+            if not junc_id or junc_type in SKIP_TYPES:
+                continue
+            x = float(junc.get("x", 0.0))
+            y = float(junc.get("y", 0.0))
+            self.nodes_pos[junc_id] = (x, y)
+            if junc_id not in self.graph:
+                self.graph[junc_id] = []
+                self.distance_cache[junc_id] = {}
+                self.path_cache[junc_id] = {}
+
+        # --- Đọc edge ---
+        for edge in root.findall("edge"):
+            edge_id = edge.get("id", "")
+            if edge_id.startswith(":"):
+                # Bỏ qua edge nội bộ junction
+                continue
+            from_node = edge.get("from")
+            to_node = edge.get("to")
+            if not from_node or not to_node:
+                continue
+
+            # Lấy tốc độ và độ dài từ lane đầu tiên
+            speeds = []
+            lengths = []
+            for lane in edge.findall("lane"):
+                if lane.get("speed"):
+                    speeds.append(float(lane.get("speed")))
+                if lane.get("length"):
+                    lengths.append(float(lane.get("length")))
+
+            speed = max(speeds) if speeds else 13.9
+            if lengths:
+                length = max(lengths)
+            else:
+                x1, y1 = self.nodes_pos.get(from_node, (0.0, 0.0))
+                x2, y2 = self.nodes_pos.get(to_node, (0.0, 0.0))
+                length = math.hypot(x2 - x1, y2 - y1)
+
+            weight = length / speed if speed > 0 else float("inf")
+
+            for nid in (from_node, to_node):
+                if nid not in self.graph:
+                    self.graph[nid] = []
+                    self.distance_cache[nid] = {}
+                    self.path_cache[nid] = {}
+
+            self.graph[from_node].append((to_node, weight, edge_id))
+
     def _build_graph(self, node_file: str, edge_file: str) -> None:
         try:
             tree_nodes = ET.parse(node_file)
