@@ -233,9 +233,9 @@ public class UnityVehicle : MonoBehaviour
 		}
 		return true;
 	}
-	public void SetIsExist(bool isExist)
+	public void SetState(ExistState state)
 	{
-		trafficer.isExist = isExist;
+		trafficer.existState = state;
 	}
 	public UnityVehicleData GetUnityVehicleData()
 	{
@@ -246,7 +246,7 @@ public class UnityVehicle : MonoBehaviour
 			position,
 			forward,
 			trafficer.GetSpeed(),
-			trafficer.isExist
+			trafficer.existState
 		);
 	}
 }

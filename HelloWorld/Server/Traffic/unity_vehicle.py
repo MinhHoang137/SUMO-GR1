@@ -125,10 +125,12 @@ def process_vehicle_updates(traci):
         for v in vehicles:
             try:
                 veh_id = v['i']
-                is_exist = v.get('e', True)
+                # ExistState: 0 = Destroyed (hết vòng đời), 1 = ServerControlled,
+                # 2 = ClientControlled (xác xe — dành cho đợt 2, hiện chưa phát sinh).
+                state = v.get('e', 1)
 
-                # Nếu Unity đã xoá xe, thì remove khỏi SUMO
-                if not is_exist:
+                # Nếu Unity báo xe hết vòng đời, remove khỏi SUMO
+                if state == 0:
                     if veh_id in traci.vehicle.getIDList():
                         try:
                             traci.vehicle.remove(veh_id)

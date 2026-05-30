@@ -13,14 +13,14 @@ public class UnityVehicleData
 	[JsonProperty("sp")]
 	public float speed;
 	[JsonProperty("e")]
-	public bool isExist;
+	public ExistState state;
 
-	public UnityVehicleData(string id, float[] position, float[] forward, float speed, bool isExist = true)
+	public UnityVehicleData(string id, float[] position, float[] forward, float speed, ExistState state = ExistState.ServerControlled)
 	{
 		this.id = id;
 		this.position = position;
 		this.forward = forward;
 		this.speed = speed;
-		this.isExist = isExist;
+		this.state = state;
 	}
 }

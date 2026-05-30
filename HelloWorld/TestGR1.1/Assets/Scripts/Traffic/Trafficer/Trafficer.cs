@@ -26,7 +26,10 @@ public class Trafficer : MonoBehaviour
 	[SerializeField] private float rotateMultiplier = 5f;
 	[SerializeField] private bool moveByServer = true;
 
-	public bool isExist = true;
+	public ExistState existState = ExistState.ServerControlled;
+	// Cờ quét tạm thời mỗi frame trong TrafficerManager.ProcessData ("đã thấy frame này chưa").
+	// Runtime-only, không serialize — tách khỏi existState (state bền vững).
+	[System.NonSerialized] public bool seenThisFrame = true;
 
 	protected virtual void Update()
 	{

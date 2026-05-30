@@ -336,7 +336,7 @@ MonoBehaviour:
   interpolationRotationType: 1
   cameraHolder: {fileID: 2682539058478838558}
   rotateMultiplier: 15
-  isExist: 1
+  existState: 1
 --- !u!1 &4673168158081722249
 GameObject:
   m_ObjectHideFlags: 0

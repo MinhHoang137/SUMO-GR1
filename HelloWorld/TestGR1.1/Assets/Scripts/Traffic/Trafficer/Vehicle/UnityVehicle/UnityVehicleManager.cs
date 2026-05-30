@@ -68,7 +68,7 @@ public class UnityVehicleManager : MonoBehaviour
 	{
 		if (vehicle != null)
 		{
-			vehicle.SetIsExist(false);
+			vehicle.SetState(ExistState.Destroyed);
 			vehicleSender.SendUnityData(vehicle.GetUnityVehicleData());
 			vehicle = null;
 			stateText.text = CMD_CREATE;

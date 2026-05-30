@@ -42,20 +42,27 @@ public class TrafficerManager : MonoBehaviour
 			DisposeAllTrafficers();
 		}
 		List<Trafficer> trafficerList = new List<Trafficer>(trafficerDict.Values);
+		// Vòng 1: đánh dấu "chưa thấy frame này" cho các xe do server điều khiển.
+		// Bỏ qua UnityVehicle và xe ClientControlled (xác xe) — vòng đời của chúng không do server quyết.
 		foreach (var trafficer in trafficerList)
 		{
 			if (trafficer.GetComponent<UnityVehicle>() != null) continue;
-			trafficer.isExist = false;
+			if (trafficer.existState == ExistState.ClientControlled) continue;
+			trafficer.seenThisFrame = false;
 		}
 
+		// Vòng 2: áp dữ liệu từ server.
 		foreach (var data in datas)
 		{
 			Trafficer currentTrafficer = null;
 			if (trafficerDict.TryGetValue(data.id, out Trafficer trafficer))
 			{
 				if (trafficer.GetComponent<UnityVehicle>() != null) continue;
+				// SUMO vẫn stream xe đã chuyển sang client điều khiển → lờ đi, không ghi đè vị trí.
+				if (trafficer.existState == ExistState.ClientControlled) continue;
 				trafficer.Set(data);
-				trafficer.isExist = true;
+				trafficer.seenThisFrame = true;
+				trafficer.existState = ExistState.ServerControlled;
 				currentTrafficer = trafficer;
 			}
 			else
@@ -68,12 +75,17 @@ public class TrafficerManager : MonoBehaviour
 			}
 		}
 
+		// Vòng 3: recycle xe hết vòng đời (Destroyed) hoặc xe server không còn được stream.
 		foreach (var trafficer in trafficerList)
 		{
-			if (!trafficer.isExist)
+			bool isUnityVehicle = trafficer.GetComponent<UnityVehicle>() != null;
+			bool serverDropped = !isUnityVehicle
+				&& trafficer.existState != ExistState.ClientControlled
+				&& !trafficer.seenThisFrame;
+			if (trafficer.existState == ExistState.Destroyed || serverDropped)
 			{
 				RecycleTrafficer(trafficer);
-				if (trafficer.GetComponent<UnityVehicle>() != null) Destroy(trafficer.gameObject);
+				if (isUnityVehicle) Destroy(trafficer.gameObject);
 			}
 		}
 	}
@@ -94,7 +106,8 @@ public class TrafficerManager : MonoBehaviour
 		}
 		
 		trafficer.Set(data);
-		trafficer.isExist = true;
+		trafficer.existState = ExistState.ServerControlled;
+		trafficer.seenThisFrame = true;
 		// Gán type gốc vào tên (hoặc dùng để track lúc recycle)
 		trafficer.name = data.Type + "_" + data.id;
 		trafficer.transform.SetParent(transform);
