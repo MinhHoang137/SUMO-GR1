@@ -3,3 +3,6 @@ build/
 dist/
 *.spec
 UnityBuild/
+
+# Ignore test files and folders
+[tT]est*

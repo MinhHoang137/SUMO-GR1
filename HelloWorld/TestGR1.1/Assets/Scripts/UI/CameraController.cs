@@ -20,6 +20,8 @@ public class CameraController : MonoBehaviour
 	private bool isFree = true;
 	private Trafficer currentTrafficer;
 	[SerializeField] private RoadDataSO roadData;
+	[Header("Select Trafficer")]
+	[SerializeField] private float selectRange = 100f;
 
 	[Header("Optimization")]
 	private Vector3 lastPosition;
@@ -87,14 +89,10 @@ public class CameraController : MonoBehaviour
 	}
 	private void SetFreeToggle()
 	{
-		if (!isFree)
+		if (!PointAndSelectTrafficer())
 		{
 			SetTrafficerView((Trafficer)null);
 			//GameInput.Instance.EnableMove(true);
-		}
-		else
-		{
-			SetRandomTrafficerView();
 		}
 		OnSetTrafficer?.Invoke(this, new OnSetTrafficerEventArgs()
 		{
@@ -185,6 +183,28 @@ public class CameraController : MonoBehaviour
 			return; 
 		}
 		SetTrafficerView(trafficer);
+	}
+	private bool PointAndSelectTrafficer()
+	{
+		Ray ray;
+		if (!CursorManager.Instance.IsCursorLocked())
+		{
+			ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		}
+		else
+		{
+			ray = new Ray(transform.position, transform.forward);
+		}
+		if (Physics.Raycast(ray, out RaycastHit hit, selectRange))
+		{
+			Trafficer trafficer = hit.transform.GetComponentInParent<Trafficer>();
+			if (trafficer != null)
+			{
+				SetTrafficerView(trafficer);
+				return true;
+			}
+		}
+		return false;
 	}
 	public float Sensitivity
 	{

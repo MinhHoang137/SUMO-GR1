@@ -21,6 +21,9 @@ public class GameInput : MonoBehaviour
 	public event EventHandler OnToggleOptions;
 	public event EventHandler OnMouseToggle;
 
+	public event EventHandler OnBrakePressed;
+	public event EventHandler OnBrakeReleased;
+
 	private InputSystem_Actions inputActions;
 	private bool mouseEnabled = false;
 
@@ -28,7 +31,7 @@ public class GameInput : MonoBehaviour
 	{
 		if (Instance != null)
 		{
-			Destroy(gameObject);
+			Destroy(this);
 			return;
 		}
 		Instance = this;
@@ -39,6 +42,8 @@ public class GameInput : MonoBehaviour
 		//inputActions.CameraMap.MouseToggle.canceled += MouseToggle_performed;
 		inputActions.CameraMap.SwitchBackward.performed += SwitchBackward_performed;
 		inputActions.CameraMap.SwitchForward.performed += SwitchForward_performed;
+		inputActions.CameraMap.Brake.performed += Brake_performed;
+		inputActions.CameraMap.Brake.canceled += Brake_canceled;
 		inputActions.UI.ToggleController.performed += ToggleController_performed;
 		inputActions.UI.ToggleOptions.performed += ToggleOptions_performed;
 
@@ -46,7 +51,17 @@ public class GameInput : MonoBehaviour
 		DontDestroyOnLoad(this.gameObject);
 	}
 
-	private void ToggleOptions_performed(InputAction.CallbackContext obj)
+    private void Brake_canceled(InputAction.CallbackContext context)
+    {
+        OnBrakeReleased?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void Brake_performed(InputAction.CallbackContext context)
+    {
+        OnBrakePressed?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void ToggleOptions_performed(InputAction.CallbackContext obj)
 	{
 		OnToggleOptions?.Invoke(this, EventArgs.Empty);
 	}

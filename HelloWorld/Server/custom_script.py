@@ -18,6 +18,17 @@ def _find_first(folder, ext):
     return None
 
 
+def _copy_if_different(src, dst):
+    """Copy src→dst trừ khi đã trỏ cùng inode (vd: OSM launcher đã ghi thẳng vào SUMO_xml/).
+    shutil.copyfile sẽ raise SameFileError trong trường hợp đó."""
+    try:
+        if os.path.exists(dst) and os.path.samefile(src, dst):
+            return
+    except OSError:
+        pass
+    shutil.copyfile(src, dst)
+
+
 def _read_cfg_inputs(sumocfg_path):
     """Đọc net-file và route-files (giá trị đầu tiên) khai báo trong .sumocfg."""
     try:
@@ -75,8 +86,8 @@ def apply_custom_script(folder):
         return False
 
     os.makedirs(SUMO_XML_DIR, exist_ok=True)
-    shutil.copyfile(net_path, TARGET_NET)
-    shutil.copyfile(rou_path, TARGET_ROU)
+    _copy_if_different(net_path, TARGET_NET)
+    _copy_if_different(rou_path, TARGET_ROU)
 
     # Ghi đè sumocfg chuẩn để traci.start luôn dùng đúng cặp file vừa copy
     cfg_xml = (

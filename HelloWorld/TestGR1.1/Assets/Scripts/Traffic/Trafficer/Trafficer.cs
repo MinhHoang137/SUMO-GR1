@@ -5,7 +5,8 @@ public class Trafficer : MonoBehaviour
 	public enum InterpolationPositionType
 	{
 		Linear,
-		SLerp
+		SLerp, 
+		Overwrite
 	}
 	public enum InterpolationRotationType
 	{
@@ -23,17 +24,21 @@ public class Trafficer : MonoBehaviour
 
 	[SerializeField] private Transform cameraHolder;
 	[SerializeField] private float rotateMultiplier = 5f;
+	[SerializeField] private bool moveByServer = true;
 
 	public bool isExist = true;
 
 	protected virtual void Update()
 	{
-		Move();
+		if (moveByServer)
+		{
+			Move();
+		}
 	}
 
 	public virtual void Move()
 	{
-		float speedMultiplier = SpeedMultiplier.Instance.Multiplier;
+		float speedMultiplier = SpeedMultiplier.Instance == null ? 1 : SpeedMultiplier.Instance.Multiplier;
 
 		// Interpolate position
 		switch (interpolationPositionType)
@@ -53,7 +58,10 @@ public class Trafficer : MonoBehaviour
 		// Interpolate rotation
 		switch (interpolationRotationType)		{
 			case InterpolationRotationType.Overwrite:
-				transform.forward = nextForward;
+				if (nextForward.magnitude > 0.01f)
+				{
+					transform.forward = nextForward;
+				}
 				break;
 			case InterpolationRotationType.Slerp:
 				transform.forward = Vector3.Slerp(transform.forward, nextForward, rotateMultiplier * Time.deltaTime);

@@ -174,7 +174,8 @@ def listen_for_control_commands(cmd_socket):
     return 0
 
 def run_simulation(client_socket: socket.socket):
-    traci.start(["sumo", "--junction-taz", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
+    print("Launching SUMO simulation...")
+    traci.start(["sumo-gui", "--junction-taz", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
     step_index = 0
     trip_logger = VehicleTripCsvLogger(build_simulation_csv_path("result", has_ped))
     ped_seen: set[str] = set()

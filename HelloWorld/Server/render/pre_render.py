@@ -182,6 +182,7 @@ def run_prerender(maze_file, num_lanes, config):
         with open(prerender_file_path, "w", encoding="utf-8") as out_file:
             out_file.write("[\n")
             try:
+                print("Launching SUMO simulation...")
                 while traci.simulation.getMinExpectedNumber() > 0:
                     traci.simulationStep()
 

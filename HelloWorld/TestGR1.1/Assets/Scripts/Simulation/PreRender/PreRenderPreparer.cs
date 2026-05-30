@@ -24,8 +24,10 @@ public class PreRenderPreparer : MonoBehaviour
         scriptPathInputField.onEndEdit.AddListener(path => scriptPathInputField.text = CleanPath(path));
 
         replayButton.onClick.AddListener(() => {
-            GetRoadData();
-            LoadPreRenderScene();
+            if (GetRoadData())
+            {
+                LoadPreRenderScene();
+            }
         });
     }
 
@@ -34,19 +36,19 @@ public class PreRenderPreparer : MonoBehaviour
         return !string.IsNullOrEmpty(path) && System.IO.File.Exists(path);
     }
 
-    private void GetRoadData()
+    private bool GetRoadData()
     {
         if (!IsValidFilePath(mapPathInputField.text))
         {
             errorText.text = "Tệp bản đồ không hợp lệ.";
             errorText.color = Color.red;
-            return;
+            return false;
         }
         if (!IsValidFilePath(scriptPathInputField.text))
         {
             errorText.text = "Tệp kịch bản không hợp lệ.";
             errorText.color = Color.red;
-            return;
+            return false;
         }
 
         try
@@ -67,7 +69,9 @@ public class PreRenderPreparer : MonoBehaviour
         {
             errorText.text = $"Error loading data: {e.Message}";
             errorText.color = Color.red;
+            return false;
         }
+        return true;
     }
 
     #region Path Cleaning

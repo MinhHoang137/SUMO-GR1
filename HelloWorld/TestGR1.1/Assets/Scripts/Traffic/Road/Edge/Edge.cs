@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,29 +12,48 @@ public class Edge : Road
 		public Material material;
 	}
 
-	private string id;
+	[SerializeField] private string id;
 	private EdgeData data;
 
 	[Header("Lane materials")]
+	[Tooltip("Material cho từng loại lane (driving, sidewalk, pedestrian...). Key match theo Lane.type từ server.")]
 	[SerializeField] private LaneMaterialEntry[] laneMaterials;
+	[Tooltip("Material dùng khi lane.type không tìm thấy trong danh sách trên.")]
 	[SerializeField] private Material fallbackMaterial;
 
 	[Header("Junction fit")]
-	// Server đã snap lane endpoint vào biên polygon junction (xem edgeType0._snap_to_polygon).
-	// Overshoot ở đây chỉ là safety margin để chống z-fight tại seam lane↔junction cùng cao độ.
-	// Đặt 0 nếu material/độ cao tách bạch và không có z-fight; tăng nếu data lỗi vẫn còn gap.
+	[Tooltip("Kéo dài mesh dọc trục lane một đoạn (mét) để khớp biên junction theo phương ngang và chống z-fight tại seam. " +
+	         "Tăng nếu thấy khe hở giữa lane và junction; đặt 0 nếu thấy overshoot. " +
+	         "Server chỉ snap Z lane endpoint vào junction (không snap XY) để tránh rút mesh sidewalk + chồng lane 2 chiều.")]
 	[SerializeField, Range(0f, 5f)] private float endpointOvershoot = 0.1f;
 
 	[Header("Lane markings (vạch phân làn)")]
-	// Để null nếu không muốn vẽ. Khi có material, vẽ vạch trắng giữa các cặp lane liền kề
-	// (bỏ qua lane pedestrian — giữa vỉa hè và đường không phải vạch phân làn).
+	[Tooltip("Material vẽ vạch trắng phân làn (giữa các cặp lane liền kề + biên trái edge). " +
+	         "Để None nếu không muốn vẽ vạch.")]
 	[SerializeField] private Material laneMarkingMaterial;
+	[Tooltip("Bề rộng vạch phân làn (mét).")]
 	[SerializeField, Range(0.05f, 0.5f)] private float laneMarkingWidth = 0.15f;
-	// Khoảng cách Y vạch nổi trên mặt đường — đủ nhỏ để không thấy độ dày, đủ lớn để không z-fight.
+	[Tooltip("Khoảng cách Y vạch nổi trên mặt đường (mét). Đủ nhỏ để không thấy độ dày, đủ lớn để không z-fight.")]
 	[SerializeField, Range(0f, 0.01f)] private float laneMarkingYOffset = 0.005f;
-	// Đặt gapLength = 0 (hoặc dashLength = 0) → vạch liền. Mặc định 2m dash + 4m gap (chuẩn đô thị).
+	[Tooltip("Chiều dài mỗi nét đứt của vạch (mét). Đặt 0 (hoặc gap = 0) để vạch liền. Mặc định 2m (chuẩn đô thị).")]
 	[SerializeField, Min(0f)] private float laneMarkingDashLength = 2.0f;
+	[Tooltip("Khoảng trống giữa các nét đứt (mét). Đặt 0 (hoặc dash = 0) để vạch liền. Mặc định 4m (chuẩn đô thị).")]
 	[SerializeField, Min(0f)] private float laneMarkingGapLength = 4.0f;
+
+	[Header("Lane colliders")]
+	[Tooltip("Bật để dựng box collider cho cả edge: 1 sàn nằm phẳng (rộng = tổng width tất cả lane) + " +
+	         "2 vách dựng đứng ở 2 biên ngoài. Mỗi segment polyline → 1 bộ 3 collider chung 1 GameObject con. " +
+	         "Xe Unity có thể chạy + đổi làn tự do trong lòng edge.")]
+	[SerializeField] private bool buildLaneColliders = true;
+	[Tooltip("Bề dày tấm sàn collider (trục Y, mét). Mỏng cho collision chính xác, đủ dày tránh xuyên do float error.")]
+	[SerializeField, Range(0.001f, 0.5f)] private float laneFloorThickness = 0.1f;
+	[Tooltip("Bề dày vách collider (trục ngang lane, mét). Mỏng đủ để không lấn vào lane bên cạnh.")]
+	[SerializeField, Range(0.001f, 0.5f)] private float laneWallThickness = 0.1f;
+	[Tooltip("Chiều cao vách collider (mét). Default 2.")]
+	[SerializeField, Range(0f, 5f)] private float laneWallHeight = 2.0f;
+	[Tooltip("Raycast từ mỗi vách ra ngoài đoạn này (mét). Nếu trúng collider khác → xoá collider đó + bỏ vách này " +
+	         "→ giữa 2 edge sát nhau không còn vách trùng. Edge build sau sẽ detect vách edge build trước và xoá đi.")]
+	[SerializeField, Range(0f, 1f)] private float wallProximityCheckDistance = 0.5f;
 
 	public string GetId() => id;
 	public EdgeData GetData() => data;
@@ -67,6 +87,7 @@ public class Edge : Road
 
 		BuildLaneMarkings(edgeData, origin);
 		BuildLeftEdgeLine(edgeData, origin);
+		BuildLaneColliders(edgeData, origin);
 	}
 
 	private void BuildLane(Lane lane, int index, Vector3 origin)
@@ -345,5 +366,167 @@ public class Edge : Road
 			}
 		}
 		return fallbackMaterial;
+	}
+
+	// Dựng collider cho TOÀN edge (không chia theo lane) — để xe Unity có thể chạy và đổi làn
+	// tự do trong lòng đường. Mỗi segment polyline có hướng khác nhau, mà BoxCollider lấy
+	// rotation từ Transform của GameObject → buộc phải có 1 GameObject con / segment.
+	// Tối ưu: 3 collider (sàn + 2 vách) cùng segment dùng chung Transform đó, phân biệt nhau
+	// bằng BoxCollider.center + size (axis local: X = ngang, Y = đứng, Z = dọc segment).
+	// Spine = polyline lane[0] (rightmost theo SUMO). Centerline edge dịch -right khỏi spine
+	// một đoạn = (totalEdgeWidth - lane0.width) / 2.
+	private void BuildLaneColliders(EdgeData edgeData, Vector3 origin)
+	{
+		if (!buildLaneColliders) return;
+		var lanes = edgeData.lanes;
+		if (lanes == null || lanes.Count == 0) return;
+
+		Lane spineLane = lanes[0];
+		if (spineLane == null || spineLane.points == null || spineLane.points.Count < 2) return;
+
+		float totalEdgeWidth = 0f;
+		for (int i = 0; i < lanes.Count; i++) totalEdgeWidth += lanes[i].width;
+		float halfEdgeWidth = totalEdgeWidth * 0.5f;
+		float spineToEdgeCenterOffset = halfEdgeWidth - spineLane.width * 0.5f;
+		float halfWallHeight = laneWallHeight * 0.5f;
+
+		GameObject collidersRoot = new("EdgeColliders");
+		collidersRoot.transform.SetParent(transform, worldPositionStays: false);
+
+		// Track tất cả vách đã dựng để dọn ở pass sau (1 frame delay). Build pass này tránh
+		// raycast vì collider mới AddComponent chưa được physics world thấy ngay trong cùng frame
+		// (autoSyncTransforms = false từ Unity 2018.3+). Delay 1 frame đảm bảo TẤT CẢ edge đã build
+		// xong → cleanup symmetric, không phụ thuộc thứ tự build edge nào trước.
+		List<BoxCollider> builtWalls = new();
+
+		int segmentCount = spineLane.points.Count - 1;
+		for (int segmentIndex = 0; segmentIndex < segmentCount; segmentIndex++)
+		{
+			Vector3 spineStart = Converter.ToVector3(spineLane.points[segmentIndex]);
+			Vector3 spineEnd = Converter.ToVector3(spineLane.points[segmentIndex + 1]);
+			Vector3 segmentVector = spineEnd - spineStart;
+			float segmentLength = segmentVector.magnitude;
+			if (segmentLength < 1e-4f) continue;
+
+			Vector3 segmentDirection = segmentVector / segmentLength;
+			// Cùng convention với BuildLaneVertices: right = Cross(dir, -up).
+			// +right = về phía lane index nhỏ hơn; -right = về phía lane index lớn hơn.
+			Vector3 segmentRight = Vector3.Cross(segmentDirection, -Vector3.up);
+
+			Vector3 spineMidpoint = (spineStart + spineEnd) * 0.5f;
+			Vector3 edgeCenterLocal = spineMidpoint - segmentRight * spineToEdgeCenterOffset - origin;
+			// LookRotation đặt trục Z local theo segmentDirection ⇒ trục X local = segmentRight, Y = up.
+			Quaternion segmentRotation = Quaternion.LookRotation(segmentDirection, Vector3.up);
+
+			GameObject segmentGO = new($"Segment_{segmentIndex}");
+			segmentGO.transform.SetParent(collidersRoot.transform, worldPositionStays: false);
+			segmentGO.transform.SetLocalPositionAndRotation(edgeCenterLocal, segmentRotation);
+
+			// Floor — center tại gốc local (đã đặt ở edge center).
+			AddBoxCollider(segmentGO,
+				center: Vector3.zero,
+				size: new Vector3(totalEdgeWidth, laneFloorThickness, segmentLength));
+
+			// Vách phải — dịch +X local (= +segmentRight). Luôn build, track để pass cleanup sau lo.
+			BoxCollider rightWall = AddBoxCollider(segmentGO,
+				center: new Vector3(halfEdgeWidth, halfWallHeight, 0f),
+				size: new Vector3(laneWallThickness, laneWallHeight, segmentLength));
+			builtWalls.Add(rightWall);
+
+			// Vách trái — dịch -X local.
+			BoxCollider leftWall = AddBoxCollider(segmentGO,
+				center: new Vector3(-halfEdgeWidth, halfWallHeight, 0f),
+				size: new Vector3(laneWallThickness, laneWallHeight, segmentLength));
+			builtWalls.Add(leftWall);
+		}
+
+		// Lên lịch dọn các cặp vách sát nhau ở frame sau — lúc đó physics đã sync và mọi edge khác
+		// (nếu build cùng frame) cũng đã dựng xong walls của họ.
+		StartCoroutine(PruneAdjacentWallsNextFrame(builtWalls));
+	}
+
+	// Pass cleanup chạy sau 1 frame. 3 phase, cache trước, destroy 1 lượt:
+	//   (1) OverlapBox cho mỗi vách → bắt các vách CHỒNG / TOUCHING (raycast không tới vì
+	//       Unity skip collider chứa origin).
+	//   (2) Raycast outward CHỈ NGOÀI mặt ngoài vách → bắt các vách GẦN (≤ 0.5m) chưa chạm.
+	//   (3) Iterate set toDestroy, disable + Destroy 1 lần.
+	// Filter quan trọng: bỏ qua chính mình, vách cùng edge (myWalls), và floor (center.x ≈ 0).
+	private IEnumerator PruneAdjacentWallsNextFrame(List<BoxCollider> walls)
+	{
+		yield return null;
+		Physics.SyncTransforms();
+
+		HashSet<BoxCollider> myWalls = new(walls);
+		HashSet<BoxCollider> toDestroy = new();
+		Collider[] overlapBuffer = new Collider[16];
+
+		foreach (BoxCollider wall in walls)
+		{
+			if (wall == null) continue;
+
+			Transform wallTransform = wall.transform;
+			Vector3 worldCenter = wallTransform.TransformPoint(wall.center);
+			Quaternion worldRotation = wallTransform.rotation;
+
+			// (1) OverlapBox — bắt vách chồng/touching.
+			Vector3 halfExtents = wall.size * 0.5f;
+			int overlapCount = Physics.OverlapBoxNonAlloc(worldCenter, halfExtents, overlapBuffer, worldRotation);
+			for (int k = 0; k < overlapCount; k++)
+			{
+				if (IsForeignWall(overlapBuffer[k], wall, myWalls, out BoxCollider foreignBox))
+				{
+					toDestroy.Add(wall);
+					toDestroy.Add(foreignBox);
+				}
+			}
+
+			// (2) Raycast outward — bắt vách gần chưa chạm. Offset origin ra ngoài mặt vách để
+			// không vướng Unity skip-self-collider khi cast từ trong vách.
+			Vector3 outwardLocal = wall.center.x > 0f ? Vector3.right : Vector3.left;
+			Vector3 worldDirection = wallTransform.TransformDirection(outwardLocal);
+			float originOffset = wall.size.x * 0.5f + 0.001f;
+			Vector3 rayOrigin = worldCenter + worldDirection * originOffset;
+			float rayDistance = wallProximityCheckDistance - originOffset;
+			if (rayDistance <= 0f) continue;
+
+			if (Physics.Raycast(rayOrigin, worldDirection, out RaycastHit hit, rayDistance)
+			    && IsForeignWall(hit.collider, wall, myWalls, out BoxCollider rayHitBox))
+			{
+				toDestroy.Add(wall);
+				toDestroy.Add(rayHitBox);
+			}
+		}
+
+		// (3) Destroy tất cả 1 lượt.
+		foreach (BoxCollider box in toDestroy)
+		{
+			if (box == null) continue;
+			box.enabled = false;
+			Destroy(box);
+		}
+	}
+
+	// "Foreign wall" = BoxCollider của vách thuộc edge KHÁC.
+	// Lọc: cùng object (self), cùng edge (myWalls set), floor (center.x ≈ 0), hoặc thuộc Junction
+	// (junction có BoxCollider phủ toàn vùng giao lộ — không phải vách edge, đừng huỷ).
+	private static bool IsForeignWall(Collider candidate, BoxCollider selfWall,
+	                                  HashSet<BoxCollider> myWalls, out BoxCollider foreignWall)
+	{
+		foreignWall = null;
+		if (candidate is not BoxCollider box) return false;
+		if (box == selfWall) return false;
+		if (myWalls.Contains(box)) return false;
+		if (Mathf.Approximately(box.center.x, 0f)) return false;
+		if (box.GetComponent<Junction>() != null) return false;
+		foreignWall = box;
+		return true;
+	}
+
+	private static BoxCollider AddBoxCollider(GameObject host, Vector3 center, Vector3 size)
+	{
+		BoxCollider boxCollider = host.AddComponent<BoxCollider>();
+		boxCollider.center = center;
+		boxCollider.size = size;
+		return boxCollider;
 	}
 }

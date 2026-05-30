@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48073bea135cdce42bc6274e09af2f5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 
   laneMaterials:
   - type: pedestrian
     material: {fileID: 2100000, guid: 3e5672c0563f79848960f7036b933425, type: 2}
@@ -56,6 +57,13 @@ MonoBehaviour:
   laneMarkingMaterial: {fileID: 2100000, guid: ad26fd8585274004b8af9f6203d8835b, type: 2}
   laneMarkingWidth: 0.15
   laneMarkingYOffset: 0.005
+  laneMarkingDashLength: 2
+  laneMarkingGapLength: 4
+  buildLaneColliders: 1
+  laneFloorThickness: 0.1
+  laneWallThickness: 0.1
+  laneWallHeight: 2
+  wallProximityCheckDistance: 0.248
 --- !u!114 &8186603551382773797
 MonoBehaviour:
   m_ObjectHideFlags: 0
