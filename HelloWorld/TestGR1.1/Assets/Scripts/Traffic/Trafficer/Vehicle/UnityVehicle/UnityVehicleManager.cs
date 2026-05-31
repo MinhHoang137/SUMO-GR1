@@ -120,8 +120,8 @@ public class UnityVehicleManager : MonoBehaviour
 	{
 		if (vehicle != null)
 		{
+			// Set Destroyed → biến mất khỏi batch client-owned → server reconcile xoá khỏi SUMO.
 			vehicle.SetState(ExistState.Destroyed);
-			vehicleSender.SendUnityData(vehicle.GetUnityVehicleData());
 			vehicle = null;
 			stateText.text = CMD_CREATE;
 		}
@@ -134,11 +134,33 @@ public class UnityVehicleManager : MonoBehaviour
 	private IEnumerator SendVehicleDataRoutine()
 	{
 		var wait = new WaitForSeconds(0.1f);
+		bool hadCars = false;
 		while (true)
 		{
-			if (vehicle != null)
+			// Gom MỌI xe client-owned (CLIENT_CAR + xe server bị chiếm + xác xe) thành 1 batch / 1 message.
+			if (TrafficerManager.Instance != null)
 			{
-				vehicleSender.SendUnityData(vehicle.GetUnityVehicleData());
+				List<UnityVehicleData> batch = new List<UnityVehicleData>();
+				foreach (Trafficer t in TrafficerManager.Instance.GetTrafficers())
+				{
+					if (!t.IsClientOwned) continue;
+					if (t.TryGetComponent<UnityVehicle>(out var uv))
+					{
+						batch.Add(uv.GetUnityVehicleData());
+					}
+				}
+
+				if (batch.Count > 0)
+				{
+					vehicleSender.SendBatch(batch);
+					hadCars = true;
+				}
+				else if (hadCars)
+				{
+					// Vừa hết xe client → gửi 1 batch rỗng để server reconcile xoá xe cuối, rồi im lặng.
+					vehicleSender.SendBatch(batch);
+					hadCars = false;
+				}
 			}
 			yield return wait;
 		}

@@ -9,6 +9,7 @@ public class UnityVehicle : MonoBehaviour
 	private Trafficer trafficer;
 	private Rigidbody rb;
 	private WheelController wheels;
+	[SerializeField] private PauseSO pauseSO;
 
 	[SerializeField] private float speedMultiplier = 1;
 	[SerializeField] private float rotateMultiplier = 5f;
@@ -59,6 +60,10 @@ public class UnityVehicle : MonoBehaviour
 	{
 		trafficer.existState = ExistState.ClientControlled;
 		ApplyMode(ExistState.ClientControlled);
+		if (TryGetComponent(out Vehicle vehicle))
+		{
+			vehicle.enabled = false; // tắt logic Vehicle 
+		}
 	}
 
 	/// <summary>Trả quyền cho server (xe tự chạy lại). Re-anchor do server xử lý.</summary>
@@ -66,6 +71,10 @@ public class UnityVehicle : MonoBehaviour
 	{
 		trafficer.existState = ExistState.ServerControlled;
 		ApplyMode(ExistState.ServerControlled);
+		if (TryGetComponent(out Vehicle vehicle))
+		{
+			vehicle.enabled = true; // bật lại logic Vehicle
+		}
 	}
 
 	/// <summary>Thành xác xe sau va chạm: vật lý nhưng không ai lái.</summary>
@@ -106,6 +115,12 @@ public class UnityVehicle : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+		if (pauseSO != null && pauseSO.isPaused)
+		{
+			rb.linearVelocity = Vector3.zero;
+			rb.angularVelocity = Vector3.zero;
+			return; // tạm dừng → không update gì cả, giữ nguyên pose hiện tại.
+		} 
 		if (wheels == null) return;
 		if (devMode)
 		{

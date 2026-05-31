@@ -18,6 +18,7 @@ DEFAULT_NET_PATH = os.path.join(os.path.dirname(__file__), '../SUMO_xml/HelloWor
 
 latest_vehicles = None
 vehicles_lock = threading.Lock()
+managed_ids = set()  # id xe đang do client chi phối (mirror/freeze) — dùng để reconcile khi vắng khỏi batch
 
 
 def _pick_edge_from_netxml(net_xml_path: str) -> str:
@@ -112,24 +113,26 @@ def process_vehicle_updates(traci):
         traci.route.add(ROUTE_ID, [EDGE_ID])
         print(f"[Python] Đã tạo route {ROUTE_ID} -> {EDGE_ID}")
 
-    global latest_vehicles
+    global latest_vehicles, managed_ids
     vehicles = None
     with vehicles_lock:
         if latest_vehicles is not None:
             vehicles = latest_vehicles
             latest_vehicles = None  # Consume the latest data
 
-    if vehicles:
-        print(f"[Python] Đang cập nhật {len(vehicles)} xe:")
+    if vehicles is not None:
+        present_ids = set()
+        if vehicles:
+            print(f"[Python] Đang cập nhật {len(vehicles)} xe:")
 
         for v in vehicles:
             try:
                 veh_id = v['i']
-                # ExistState: 0 = Destroyed (hết vòng đời), 1 = ServerControlled,
-                # 2 = ClientControlled (xác xe — dành cho đợt 2, hiện chưa phát sinh).
+                # ExistState: 0 = Destroyed, 1 = ServerControlled (re-anchor — chunk 5),
+                # 2 = ClientControlled (client lái, SUMO mirror), 3 = Wrecked (xác xe đông cứng).
                 state = v.get('e', 1)
 
-                # Nếu Unity báo xe hết vòng đời, remove khỏi SUMO
+                # Hết vòng đời → remove khỏi SUMO
                 if state == 0:
                     if veh_id in traci.vehicle.getIDList():
                         try:
@@ -144,16 +147,39 @@ def process_vehicle_updates(traci):
                 speed = v['sp']
                 angle = math.degrees(math.atan2(forward[0], forward[1]))
 
+                # Xe client chưa có gốc trong SUMO (vd CLIENT_CAR) → thêm mới (đỏ).
+                # Xe server bị chiếm quyền thì đã có sẵn → bỏ qua add, đổi sang xanh lam.
+                was_added = False
                 if veh_id not in traci.vehicle.getIDList():
                     try:
                         traci.vehicle.add(vehID=veh_id, routeID="", typeID="DEFAULT_VEHTYPE")
-                        traci.vehicle.setColor(veh_id, (255, 0, 0, 255))
-                        traci.vehicle.setLaneChangeMode(veh_id, 0b000000000000)
+                        traci.vehicle.setColor(veh_id, (255, 0, 0, 255))  # đỏ: do Unity sinh
                         print(f"  [+] Thêm xe mới: {veh_id}")
+                        was_added = True
                     except Exception as e:
                         print(f"  [!] Lỗi khi thêm xe {veh_id}: {e}")
                         continue
 
+                # Xe server bị chiếm quyền lần đầu (đã có sẵn, chưa từng quản lý) → xanh lam, set 1 lần.
+                if not was_added and veh_id not in managed_ids:
+                    traci.vehicle.setColor(veh_id, (0, 0, 255, 255))  # xanh lam: bị chiếm quyền
+                    print(f"  [~] Xe {veh_id} bị chiếm quyền → xanh lam")
+
+                present_ids.add(veh_id)  # đang do client chi phối → reconcile sẽ giữ
+
+                # Tắt autopilot để SUMO không giành lái xe đang do client chi phối.
+                traci.vehicle.setSpeedMode(veh_id, 0)
+                traci.vehicle.setLaneChangeMode(veh_id, 0)
+
+                if state == 3:
+                    # Xác xe: đông cứng tại chỗ → các xe sau dồn lại gây ùn ứ.
+                    # Despawn do client điều khiển (gửi state 0 khi hết N bước).
+                    traci.vehicle.setSpeed(veh_id, 0)
+                    print(f"  [x] Xác xe {veh_id} đông cứng tại {pos}")
+                    continue
+
+                # state 2 (mirror) — SUMO bám theo vị trí client lái.
+                # state 1 (re-anchor) sẽ xử lý riêng ở chunk 5; uploader hiện chỉ gửi 2/3.
                 traci.vehicle.moveToXY(vehID=veh_id,
                                        edgeID="", laneIndex=0,
                                        x=pos[0], y=pos[1],
@@ -180,3 +206,13 @@ def process_vehicle_updates(traci):
 
             except Exception as e:
                 print(f"  [!] Lỗi khi cập nhật xe {v.get('id', '?')}: {e}")
+
+        # Reconcile: xe từng do client chi phối nhưng vắng khỏi batch (client thả/huỷ/despawn) → xoá khỏi SUMO.
+        for gone in managed_ids - present_ids:
+            if gone in traci.vehicle.getIDList():
+                try:
+                    traci.vehicle.remove(gone)
+                    print(f"  [-] Reconcile: xoá {gone} khỏi SUMO")
+                except Exception as e:
+                    print(f"  [!] Lỗi reconcile xoá {gone}: {e}")
+        managed_ids = present_ids

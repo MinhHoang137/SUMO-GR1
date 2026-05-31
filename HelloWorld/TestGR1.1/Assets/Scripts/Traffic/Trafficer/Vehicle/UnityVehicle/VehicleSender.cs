@@ -1,16 +1,19 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Concurrent;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Text;
 using System;
 using UnityEngine;
 using System.Threading;
 
 public class VehicleSender : MonoBehaviour
 {
+	private const int BUFFER_SIZE = 131072; // 128 KB
+
 	private Thread sendThread;
-	private ConcurrentQueue<UnityVehicleData> queue = new();
+	// Chỉ giữ batch MỚI NHẤT (snapshot mọi xe client-owned). Server overwrite latest mỗi message
+	// nên gửi từng xe lẻ sẽ mất xe — phải gửi cả batch trong 1 message. Batch cũ chưa gửi thì bỏ.
+	private List<UnityVehicleData> pendingBatch;
+	private readonly object batchLock = new object();
 	private AutoResetEvent queueSignal = new AutoResetEvent(false);
 	private bool isRunning = true;
 
@@ -38,57 +41,54 @@ public class VehicleSender : MonoBehaviour
 		}
 	}
 
-	public void SendUnityData(UnityVehicleData vehicleData)
+	/// <summary>Gửi nguyên 1 batch (snapshot mọi xe client-owned). Gửi cả batch rỗng để server reconcile xoá xe đã mất.</summary>
+	public void SendBatch(List<UnityVehicleData> batch)
 	{
-		if (vehicleData == null)
+		if (batch == null) return;
+		lock (batchLock)
 		{
-			return;
+			pendingBatch = batch; // thay-ghi: chỉ batch mới nhất là sự thật
 		}
-		if (queue.Count < 5) // Giới hạn số lượng dữ liệu trong hàng đợi
-		{
-			queue.Enqueue(vehicleData);
-		}
-		queueSignal.Set(); // Đánh thức thread nếu đang chờ
+		queueSignal.Set();
 	}
 
 	private void SendLoop()
 	{
 		while (isRunning)
 		{
-			if (queue.TryDequeue(out var vehicleData))
+			List<UnityVehicleData> batch;
+			lock (batchLock)
 			{
-				// Đảm bảo có kết nối trước khi gửi
-				if (!EnsureConnected())
-				{
-					// Nếu không kết nối được, đẩy lại dữ liệu vào hàng đợi và chờ một chút
-					queue.Enqueue(vehicleData);
-					queueSignal.WaitOne(reconnectDelayMillis);
-					continue;
-				}
+				batch = pendingBatch;
+				pendingBatch = null;
+			}
 
-				try
+			if (batch == null)
+			{
+				queueSignal.WaitOne(); // Đợi đến khi có batch mới
+				continue;
+			}
+
+			// Lỗi kết nối / gửi → bỏ batch này (batch mới sẽ tới ngay sau 0.1s), không requeue.
+			if (!EnsureConnected())
+			{
+				queueSignal.WaitOne(reconnectDelayMillis);
+				continue;
+			}
+
+			try
+			{
+				sendJson = JsonConvert.SerializeObject(batch);
+				if (!Network.SendMessage(persistentClient, sendJson, BUFFER_SIZE, "<END>"))
 				{
-					List<UnityVehicleData> dataList = new List<UnityVehicleData> { vehicleData };
-					sendJson = JsonConvert.SerializeObject(dataList);
-					
-					if (!Network.SendMessage(persistentClient, sendJson, 1024, "<END>"))
-					{
-						throw new Exception("Failed to send message");
-					}
-				}
-				catch (Exception ex)
-				{
-					Debug.LogError($"[Unity] Lỗi khi gửi dữ liệu: {ex.Message}");
-					// nếu có lỗi gửi, đóng kết nối để thử reconnect ở lần sau
-					CleanupConnection();
-					// đẩy lại dữ liệu để thử gửi sau khi reconnect
-					queue.Enqueue(vehicleData);
-					queueSignal.WaitOne(reconnectDelayMillis);
+					throw new Exception("Failed to send message");
 				}
 			}
-			else
+			catch (Exception ex)
 			{
-				queueSignal.WaitOne(); // Đợi đến khi có dữ liệu mới
+				Debug.LogError($"[Unity] Lỗi khi gửi dữ liệu: {ex.Message}");
+				CleanupConnection();
+				queueSignal.WaitOne(reconnectDelayMillis);
 			}
 		}
 	}
@@ -122,4 +122,3 @@ public class VehicleSender : MonoBehaviour
 		persistentClient = null;
 	}
 }
-

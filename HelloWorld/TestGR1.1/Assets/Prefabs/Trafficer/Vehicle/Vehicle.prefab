@@ -1071,9 +1071,9 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &1704537091116626375
 MonoBehaviour:
@@ -1082,13 +1082,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3077825237559346182}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 94d3339bea34ce343beac2bf92947520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnityVehicle
+  pauseSO: {fileID: 11400000, guid: 73975c90d2b7fc54fbd548ba6d7f95e6, type: 2}
   speedMultiplier: 1
-  speed: 14
   rotateMultiplier: 5
   forwardSensor:
   - {fileID: 1457706957899566938}

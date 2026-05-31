@@ -300,6 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d3339bea34ce343beac2bf92947520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pauseSO: {fileID: 11400000, guid: 73975c90d2b7fc54fbd548ba6d7f95e6, type: 2}
   speedMultiplier: 5
   rotateMultiplier: 1.5
   forwardSensor:
@@ -340,7 +341,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!65 &912195437895313894
 BoxCollider:
