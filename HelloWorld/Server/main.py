@@ -78,7 +78,7 @@ def setup_simulation_config(is_custom: bool = False):
     
     render_option = input("Chế độ render? (1: Realtime, 2: Pre-render) (mặc định 1): ")
     config["render_mode"] = "pre_render" if render_option == "2" else "realtime"
-    
+
     return config
 
 def main():

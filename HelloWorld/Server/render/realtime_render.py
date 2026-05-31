@@ -47,7 +47,7 @@ END_MARKER = '<END>'
 
 target_exe = "../UnityBuild/TestGR1.1.exe"
 stop_event = threading.Event()
-time_step = 0.05  # Giả sử mỗi bước mô phỏng là 0.11 giây
+time_step = 0.05  # Giãn cách thời gian thực (giây) giữa các simulationStep khi chạy GUI. Khởi tạo từ launcher, Unity chỉnh được lúc chạy.
 time_step_lock = threading.Lock()
 # Pause/resume simulation (thread-safe). Unity should control this via commands.
 pause_event = threading.Event()  # set => paused, clear => running
@@ -77,30 +77,6 @@ def async_task(target, *args, join=False, daemon=False):
     if join:
         thread.join()
     return thread
-
-def process_config_update(data: dict):
-    param_map = {
-        "timeStep": ("time_step", time_step_lock),
-    }
-
-    for key, value in data.items():
-        if key in param_map:
-            var_name, lock = param_map[key]
-            try:
-                val = float(value)
-                if val < 0:
-                    print(f"[Info] Ignored negative value for {key}: {val}")
-                    continue
-
-                if lock:
-                    with lock:
-                        globals()[var_name] = val
-                else:
-                    globals()[var_name] = val
-                
-                print(f"[Info] Updated {var_name} to {val}")
-            except Exception as e:
-                print(f"[Error] Failed to update {key} with value {value}: {e}")
 
 def client_thread_function(socket: socket.socket):
     first_msg = socket.recv(1024).decode('utf-8')
@@ -150,11 +126,11 @@ def cmd_handler(client_socket: socket.socket):
                 try:
                     data = json.loads(msg)
                     if "timeStep" in data:
-                        val = float(data["timeStep"])
+                        val = float(data["timeStep"])  # Unity gửi mili-giây
                         if val > 0:
                             with time_step_lock:
                                 global time_step
-                                time_step = val/1000.0
+                                time_step = val / 1000.0
                             print(f"[Info] Updated time_step to {time_step}")
                             print(f"[MONITOR] TIME_STEP: {time_step}", flush=True)
                 except Exception as e:
@@ -176,6 +152,7 @@ def listen_for_control_commands(cmd_socket):
 def run_simulation(client_socket: socket.socket):
     print("Launching SUMO simulation...")
     traci.start(["sumo-gui", "--junction-taz", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
+    print(f"[MONITOR] TIME_STEP: {time_step}", flush=True)
     step_index = 0
     trip_logger = VehicleTripCsvLogger(build_simulation_csv_path("result", has_ped))
     ped_seen: set[str] = set()
@@ -207,10 +184,10 @@ def run_simulation(client_socket: socket.socket):
             if run_with_gui: 
                 network.send_data(client_socket, data)
             
-            current_time_step = 0.05
-            with time_step_lock:
-                current_time_step = time_step
-            if run_with_gui: sleep(current_time_step)
+            if run_with_gui:
+                with time_step_lock:
+                    current_time_step = time_step
+                sleep(current_time_step)
     except Exception as e:
         print(f"Error during simulation: {e}")
     finally:
@@ -379,14 +356,12 @@ def start_network_services(config):
     }
 
 def run_realtime(maze_file, num_lanes, config):
-    global has_ped, ped_impatience, maze_file_path, run_with_gui, time_step
+    global has_ped, ped_impatience, maze_file_path, run_with_gui
 
     maze_file_path = maze_file
     has_ped = config["has_ped"]
     ped_impatience = config["ped_impatience"]
     run_with_gui = config["run_with_gui"]
-    if not run_with_gui:
-        time_step = 0
 
     initialize_map_and_routes(maze_file_path, num_lanes, config)
     network_context = start_network_services(config)
