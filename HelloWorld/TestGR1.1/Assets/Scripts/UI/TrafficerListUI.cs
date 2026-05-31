@@ -33,7 +33,7 @@ public class TrafficerListUI : MonoBehaviour
     private void AddItem(Trafficer trafficer)
 	{
 		TrafficerButton button = Instantiate(itemPrefab, itemHolder);
-		if (trafficer.TryGetComponent<UnityVehicle>(out UnityVehicle vehicle))
+		if (trafficer.isStandaloneClient)
 		{
 			button.transform.SetAsFirstSibling();
 		}

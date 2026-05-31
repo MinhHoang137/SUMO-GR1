@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System;
 
 [RequireComponent(typeof(Trafficer))]
+[RequireComponent(typeof(WheelController))]
 public class UnityVehicle : MonoBehaviour
 {
 	private Trafficer trafficer;
+	private Rigidbody rb;
+	private WheelController wheels;
 
-    private static int idCounter = 0;
-	private const string ID_PREFIX = "UnityVehicle_";
 	[SerializeField] private float speedMultiplier = 1;
-	[SerializeField] private float speed = 14;
 	[SerializeField] private float rotateMultiplier = 5f;
 
 	[Header("Sensors")]
@@ -19,23 +19,6 @@ public class UnityVehicle : MonoBehaviour
 	[SerializeField] private List<Sensor> rightSensor;
 	[SerializeField] private List<Sensor> backSensor;
 
-	[Header("Motor Settings")]
-	[SerializeField] private float motorForce = 1500f;
-	[SerializeField] private float brakeForce = 3000f;
-	[SerializeField] private float maxSteerAngle = 30f;
-
-	[Header("Wheel Colliders")]
-	[SerializeField] private WheelCollider frontLeftWc;
-	[SerializeField] private WheelCollider frontRightWc;
-	[SerializeField] private WheelCollider rearLeftWc;
-	[SerializeField] private WheelCollider rearRightWc;
-
-	[Header("Wheel Transforms")]
-	[SerializeField] private Transform frontLeftWheel;
-	[SerializeField] private Transform frontRightWheel;
-	[SerializeField] private Transform rearLeftWheel;
-	[SerializeField] private Transform rearRightWheel;
-
 	[Header("DevMode")]
 	[SerializeField] private bool devMode = false;
 
@@ -43,57 +26,111 @@ public class UnityVehicle : MonoBehaviour
 
 	private void Awake()
 	{
-		if (!devMode)
-		{
-			trafficer = GetComponent<Trafficer>();
-		}
-		
+		trafficer = GetComponent<Trafficer>();
+		rb = GetComponent<Rigidbody>();
+		wheels = GetComponent<WheelController>();
+		// Khởi tạo theo state: server → kinematic + tắt wheel collider; client/wreck → bật vật lý.
+		ApplyMode(devMode ? ExistState.ClientControlled : trafficer.existState);
 	}
 
-	// Start is called once before the first execution of Update after the MonoBehaviour is created
-	void Start()
-    {
-		GameInput.Instance.OnBrakePressed += OnBrakePressed;
-		GameInput.Instance.OnBrakeReleased += OnBrakeReleased;
-		if (devMode) return;
-		trafficer.SetSpeed(speed);
-        trafficer.SetId( $"{ID_PREFIX} {idCounter}" );
-        TrafficerManager.Instance.AddTrafficer(trafficer);
-		idCounter++;
-		trafficer.SetDestination(transform.position);
-		
+	private void OnEnable()
+	{
+		if (GameInput.Instance != null)
+		{
+			GameInput.Instance.OnBrakePressed += OnBrakePressed;
+			GameInput.Instance.OnBrakeReleased += OnBrakeReleased;
+		}
+		// Awake không chạy lại khi tái dùng từ pool / hiện lại sau cull → áp lại chế độ theo state đã lưu.
+		if (trafficer != null) ApplyMode(devMode ? ExistState.ClientControlled : trafficer.existState);
+	}
+
+	private void OnDisable()
+	{
+		if (GameInput.Instance != null)
+		{
+			GameInput.Instance.OnBrakePressed -= OnBrakePressed;
+			GameInput.Instance.OnBrakeReleased -= OnBrakeReleased;
+		}
+	}
+
+	// ── Chuyển chế độ điều khiển ─────────────────────────────────────
+	/// <summary>Client chiếm quyền lái xe này.</summary>
+	public void TakeControl()
+	{
+		trafficer.existState = ExistState.ClientControlled;
+		ApplyMode(ExistState.ClientControlled);
+	}
+
+	/// <summary>Trả quyền cho server (xe tự chạy lại). Re-anchor do server xử lý.</summary>
+	public void ReleaseControl()
+	{
+		trafficer.existState = ExistState.ServerControlled;
+		ApplyMode(ExistState.ServerControlled);
+	}
+
+	/// <summary>Thành xác xe sau va chạm: vật lý nhưng không ai lái.</summary>
+	public void BecomeWreck()
+	{
+		trafficer.existState = ExistState.Wrecked;
+		ApplyMode(ExistState.Wrecked);
+	}
+
+	// Hybrid: chỉ bật vật lý (Rigidbody dynamic + wheel collider) ở chế độ client/wreck.
+	private void ApplyMode(ExistState mode)
+	{
+		bool physics = mode == ExistState.ClientControlled || mode == ExistState.Wrecked;
+		if (rb != null) rb.isKinematic = !physics;
+		if (wheels != null) wheels.SetCollidersEnabled(physics);
+	}
+
+	// Chỉ xe đang được client lái VÀ camera đang gắn mới nhận input (phanh/ga/lái).
+	private bool IsActivelyDriven()
+	{
+		if (devMode) return true;
+		return trafficer.existState == ExistState.ClientControlled
+			&& CameraController.Instance != null
+			&& CameraController.Instance.CurrentTrafficer == trafficer;
 	}
 
     private void OnBrakeReleased(object sender, EventArgs e)
     {
-		ApplyBrakes(false);
+		if (IsActivelyDriven() && wheels != null) wheels.Brake(false);
     }
 
     private void OnBrakePressed(object sender, EventArgs e)
 	{
-		ApplyBrakes(true);
+		if (IsActivelyDriven() && wheels != null) wheels.Brake(true);
 	}
-	
+
 
     // Update is called once per frame
     void FixedUpdate()
     {
-		if (!devMode)
+		if (wheels == null) return;
+		if (devMode)
 		{
-			if (CameraController.Instance != null && CameraController.Instance.CurrentTrafficer == trafficer)
-			{
-				HandleMotor();
-				HandleSteering();
-				UpdateWheelPoses();
-			}
+			DriveFromInput();
+			return;
+		}
+		if (trafficer.existState == ExistState.ClientControlled
+			&& CameraController.Instance != null
+			&& CameraController.Instance.CurrentTrafficer == trafficer)
+		{
+			DriveFromInput();
+		}
+		else if (trafficer.existState == ExistState.Wrecked)
+		{
+			wheels.UpdatePoses();
+		}
+	}
 
-		}
-		else
-		{
-			HandleMotor();
-			HandleSteering();
-			UpdateWheelPoses();
-		}
+	// Đọc input người chơi và ủy quyền cho WheelController.
+	private void DriveFromInput()
+	{
+		Vector3 input = GameInput.Instance.GetMovementInput();
+		wheels.Drive(input.z);
+		wheels.Steer(input.x);
+		wheels.UpdatePoses();
 	}
 	private Vector3 CustomMove()
 	{
@@ -126,65 +163,6 @@ public class UnityVehicle : MonoBehaviour
 		return nextPosition;
 	}
 
-	private void HandleMotor()
-	{
-		// Debug.Log("handle motor	");
-		Vector3 input = GameInput.Instance.GetMovementInput();
-		if (Mathf.Abs(input.z) > 0.01f)
-		{
-			// Debug.Log($"Input: {input}, Moving: {moving}");
-			frontLeftWc.motorTorque = motorForce * input.z;
-			frontRightWc.motorTorque = motorForce * input.z;
-			rearLeftWc.motorTorque = motorForce * input.z;
-			rearRightWc.motorTorque = motorForce * input.z;
-		}
-		else
-		{
-			frontLeftWc.motorTorque = 0;
-			frontRightWc.motorTorque = 0;
-			rearLeftWc.motorTorque = 0;
-			rearRightWc.motorTorque = 0;
-		}
-	}
-	private void HandleSteering()
-	{
-		Vector3 input = GameInput.Instance.GetMovementInput();
-		float steerAngle = maxSteerAngle * input.x;
-		frontLeftWc.steerAngle = steerAngle;
-		frontRightWc.steerAngle = steerAngle;
-	}
-	private void ApplyBrakes(bool isBraking)
-	{
-		// Debug.Log($"Applying Brakes: {isBraking}");
-		if (isBraking)
-		{
-			frontLeftWc.brakeTorque = brakeForce;
-			frontRightWc.brakeTorque = brakeForce;
-			rearLeftWc.brakeTorque = brakeForce;
-			rearRightWc.brakeTorque = brakeForce;
-			// Debug.Log("Braking");
-		}
-		else
-		{
-			frontLeftWc.brakeTorque = 0;
-			frontRightWc.brakeTorque = 0;
-			rearLeftWc.brakeTorque = 0;
-			rearRightWc.brakeTorque = 0;
-			// Debug.Log("Released Brakes");
-		}
-	}
-	private void UpdateWheelPoses()
-	{
-		UpdateWheelPose(frontLeftWc, frontLeftWheel);
-		UpdateWheelPose(frontRightWc, frontRightWheel);
-		UpdateWheelPose(rearLeftWc, rearLeftWheel);
-		UpdateWheelPose(rearRightWc, rearRightWheel);
-	}
-	private void UpdateWheelPose(WheelCollider wc, Transform wheel)
-	{
-        wc.GetWorldPose(out Vector3 pos, out Quaternion rot);
-        wheel.SetPositionAndRotation(pos, rot);
-    }
 	private bool CanMoveForward()
 	{
 		if (devMode) return true;
@@ -241,11 +219,13 @@ public class UnityVehicle : MonoBehaviour
 	{
 		float[] position = { transform.position.x, transform.position.z };
 		float[] forward = { transform.forward.x, transform.forward.z };
+		// Khi đang chạy vật lý → báo tốc độ thực từ Rigidbody; ngược lại dùng tốc độ server.
+		float reportedSpeed = (rb != null && !rb.isKinematic) ? rb.linearVelocity.magnitude : trafficer.GetSpeed();
 		return new UnityVehicleData(
 			trafficer.GetId(),
 			position,
 			forward,
-			trafficer.GetSpeed(),
+			reportedSpeed,
 			trafficer.existState
 		);
 	}

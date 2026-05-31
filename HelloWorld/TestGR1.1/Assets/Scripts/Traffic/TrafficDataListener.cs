@@ -71,6 +71,7 @@ public class TrafficDataListener : MonoBehaviour
 			if (data != null) { 
 				UnityMainThreadDispatcher.Instance().Enqueue(() =>
 				{
+					TrafficerManager.Instance.CurrentStep = data.Step;
 					TrafficLightManager.Instance.ProcessData(data.TrafficLights);
 					TrafficerManager.Instance.ProcessData(data.Trafficers);
 				});

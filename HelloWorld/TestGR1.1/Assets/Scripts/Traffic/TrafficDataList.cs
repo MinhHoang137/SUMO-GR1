@@ -10,12 +10,16 @@ using Newtonsoft.Json;
 [Serializable]
 public class TrafficDataList
 {
+    [JsonProperty("st")]
+    [SerializeField] private int step = 0;
+
     [JsonProperty("tl")]
     [SerializeField] private List<TrafficLightData> trafficLights = new ();
 
 	[JsonProperty("tr")]
 	[SerializeField] private List<TrafficerData> trafficers = new ();
-	
+
+	public int Step => step;
 	public List<TrafficLightData> TrafficLights => trafficLights;
 	public List<TrafficerData> Trafficers => trafficers;
 }

@@ -168,6 +168,7 @@ def run_simulation(client_socket: socket.socket):
             step_index += 1
             process_vehicle_updates(traci)
             data = {
+                "st": step_index,  # bước SUMO hiện tại — client dùng để đếm vòng đời xác xe (wreck)
                 "tl": read_traffic_lights(traci),
                 "tr": read_trafficers(traci)
             }

@@ -51,6 +51,9 @@ public class Edge : Road
 	[SerializeField, Range(0.001f, 0.5f)] private float laneWallThickness = 0.1f;
 	[Tooltip("Chiều cao vách collider (mét). Default 2.")]
 	[SerializeField, Range(0f, 5f)] private float laneWallHeight = 2.0f;
+	[Tooltip("Rút ngắn vách collider mỗi đầu (mét) dọc theo segment. Tránh đầu mút vách chụm/lấn vào " +
+	         "vách edge khác ở góc cua + junction khiến prune xoá nhầm → giữ được vách dọc. Sàn giữ nguyên chiều dài.")]
+	[SerializeField, Range(0f, 2f)] private float laneWallEndInset = 1.0f;
 	[Tooltip("Raycast từ mỗi vách ra ngoài đoạn này (mét). Nếu trúng collider khác → xoá collider đó + bỏ vách này " +
 	         "→ giữa 2 edge sát nhau không còn vách trùng. Edge build sau sẽ detect vách edge build trước và xoá đi.")]
 	[SerializeField, Range(0f, 1f)] private float wallProximityCheckDistance = 0.5f;
@@ -408,6 +411,10 @@ public class Edge : Road
 			float segmentLength = segmentVector.magnitude;
 			if (segmentLength < 1e-4f) continue;
 
+			// Vách rút ngắn mỗi đầu để đầu mút không chạm vách lân cận (góc cua / junction) khiến
+			// prune xoá nhầm. Clamp tối thiểu để segment ngắn vẫn còn 1 đoạn vách.
+			float wallLength = Mathf.Max(segmentLength - 2f * laneWallEndInset, 0.1f);
+
 			Vector3 segmentDirection = segmentVector / segmentLength;
 			// Cùng convention với BuildLaneVertices: right = Cross(dir, -up).
 			// +right = về phía lane index nhỏ hơn; -right = về phía lane index lớn hơn.
@@ -430,13 +437,13 @@ public class Edge : Road
 			// Vách phải — dịch +X local (= +segmentRight). Luôn build, track để pass cleanup sau lo.
 			BoxCollider rightWall = AddBoxCollider(segmentGO,
 				center: new Vector3(halfEdgeWidth, halfWallHeight, 0f),
-				size: new Vector3(laneWallThickness, laneWallHeight, segmentLength));
+				size: new Vector3(laneWallThickness, laneWallHeight, wallLength));
 			builtWalls.Add(rightWall);
 
 			// Vách trái — dịch -X local.
 			BoxCollider leftWall = AddBoxCollider(segmentGO,
 				center: new Vector3(-halfEdgeWidth, halfWallHeight, 0f),
-				size: new Vector3(laneWallThickness, laneWallHeight, segmentLength));
+				size: new Vector3(laneWallThickness, laneWallHeight, wallLength));
 			builtWalls.Add(leftWall);
 		}
 
