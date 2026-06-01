@@ -25,6 +25,10 @@ public class UnityVehicle : MonoBehaviour
 
 	private Vector3 moving;
 
+	// Chunk 4: theo dõi va chạm và thời điểm wreck
+	public int wreckStartStep;
+	private bool hasCrashed;
+
 	private void Awake()
 	{
 		trafficer = GetComponent<Trafficer>();
@@ -58,6 +62,7 @@ public class UnityVehicle : MonoBehaviour
 	/// <summary>Client chiếm quyền lái xe này.</summary>
 	public void TakeControl()
 	{
+		hasCrashed = false;
 		trafficer.existState = ExistState.ClientControlled;
 		ApplyMode(ExistState.ClientControlled);
 		if (TryGetComponent(out Vehicle vehicle))
@@ -69,6 +74,11 @@ public class UnityVehicle : MonoBehaviour
 	/// <summary>Trả quyền cho server (xe tự chạy lại). Re-anchor do server xử lý.</summary>
 	public void ReleaseControl()
 	{
+		if (hasCrashed)
+		{
+			BecomeWreck();
+			return;
+		}
 		trafficer.existState = ExistState.ServerControlled;
 		ApplyMode(ExistState.ServerControlled);
 		if (TryGetComponent(out Vehicle vehicle))
@@ -78,10 +88,14 @@ public class UnityVehicle : MonoBehaviour
 	}
 
 	/// <summary>Thành xác xe sau va chạm: vật lý nhưng không ai lái.</summary>
-	public void BecomeWreck()
+	public void BecomeWreck(Vector3 impulse = default)
 	{
 		trafficer.existState = ExistState.Wrecked;
+		wreckStartStep = TrafficerManager.Instance != null ? TrafficerManager.Instance.CurrentStep : 0;
 		ApplyMode(ExistState.Wrecked);
+		// ApplyMode đã đặt rb về dynamic → AddForce mới có tác dụng
+		if (rb != null && impulse != Vector3.zero)
+			rb.AddForce(impulse, ForceMode.Impulse);
 	}
 
 	// Hybrid: chỉ bật vật lý (Rigidbody dynamic + wheel collider) ở chế độ client/wreck.
@@ -226,6 +240,26 @@ public class UnityVehicle : MonoBehaviour
 		}
 		return true;
 	}
+	private void OnCollisionEnter(Collision collision)
+	{
+		// Chỉ xe dynamic (client/wreck) mới xử lý — xe kinematic không gây wreck
+		if (!trafficer.IsClientOwned) return;
+
+		// Latch crash cho xe người chơi đang lái
+		if (trafficer.existState == ExistState.ClientControlled)
+			hasCrashed = true;
+
+		// Tìm xe ServerControlled bị tông
+		Trafficer otherTrafficer = collision.gameObject.GetComponent<Trafficer>();
+		if (otherTrafficer == null || otherTrafficer.existState != ExistState.ServerControlled) return;
+
+		UnityVehicle otherUV = collision.gameObject.GetComponent<UnityVehicle>();
+		if (otherUV == null) return;
+
+		// Truyền xung lực để xác xe văng theo hướng va chạm
+		otherUV.BecomeWreck(collision.relativeVelocity);
+	}
+
 	public void SetState(ExistState state)
 	{
 		trafficer.existState = state;

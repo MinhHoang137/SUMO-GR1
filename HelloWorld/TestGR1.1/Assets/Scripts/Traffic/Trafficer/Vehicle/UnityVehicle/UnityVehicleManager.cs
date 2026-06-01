@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class UnityVehicleManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class UnityVehicleManager : MonoBehaviour
 	private const string CLIENT_CAR_ID = "CLIENT_CAR";  // id đặc biệt, duy nhất, server không chiếm quyền
 	private const string GENERIC_LANE = "generic";
 	private const float SPAWN_FORWARD_OFFSET = 5f;       // cách điểm đầu lane 5m về phía trước
+	private const int PRE_RENDER_SCENE_INDEX = 2;
 
 	private UnityVehicle vehicle = null;
     [SerializeField] private Button stateButton;
@@ -38,6 +40,7 @@ public class UnityVehicleManager : MonoBehaviour
 
 	private void Create()
 	{
+		if (SceneManager.GetActiveScene().buildIndex == PRE_RENDER_SCENE_INDEX) return;
 		if (vehicle != null)
 		{
 			Debug.Log("Vehicle already exists");

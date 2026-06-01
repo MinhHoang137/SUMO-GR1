@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Nút chiếm/trả quyền điều khiển xe đang được camera gắn vào.
@@ -20,6 +21,7 @@ public class VehicleTakeoverUI : MonoBehaviour
 
 	private const string TAKE = "Chiếm quyền";
 	private const string RELEASE = "Trả quyền";
+	private const int PRE_RENDER_SCENE_INDEX = 2;
 
 	private Trafficer currentTrafficer;
 	private UnityVehicle currentVehicle;
@@ -61,6 +63,7 @@ public class VehicleTakeoverUI : MonoBehaviour
 		bool canControl = trafficer != null
 			&& !trafficer.isStandaloneClient
 			&& trafficer.existState != ExistState.Wrecked
+			&& SceneManager.GetActiveScene().buildIndex != PRE_RENDER_SCENE_INDEX
 			&& trafficer.TryGetComponent<UnityVehicle>(out var vehicle);
 
 		if (!canControl)
@@ -82,6 +85,7 @@ public class VehicleTakeoverUI : MonoBehaviour
 	private void OnButtonClicked()
 	{
 		if (currentVehicle == null || currentTrafficer == null) return;
+		if (SceneManager.GetActiveScene().buildIndex == PRE_RENDER_SCENE_INDEX) return;
 
 		if (currentTrafficer.existState == ExistState.ServerControlled)
 		{

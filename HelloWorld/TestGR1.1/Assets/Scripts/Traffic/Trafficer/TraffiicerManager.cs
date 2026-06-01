@@ -23,6 +23,8 @@ public class TrafficerManager : MonoBehaviour
 
 	// Bước SUMO mới nhất (server gửi qua field "st"). Dùng cho vòng đời xác xe (Wrecked).
 	public int CurrentStep { get; set; }
+	// Số bước SUMO xác xe tồn tại trước khi bị despawn.
+	[SerializeField] private int wreckLifetimeSteps = 150;
 	[SerializeField] private TrafficerKeyPrefabSO trafficerKeyPrefabSO;
 	
 	private Dictionary<string, Trafficer> trafficerDict = new Dictionary<string, Trafficer>();
@@ -74,6 +76,15 @@ public class TrafficerManager : MonoBehaviour
 			{
 				currentTrafficer.transform.position = Converter.ToVector3(data.position);
 			}
+		}
+
+		// Vòng 2.5: despawn xác xe quá hạn (đếm tập trung — độc lập với active/inactive GameObject).
+		foreach (var trafficer in trafficerList)
+		{
+			if (trafficer.existState != ExistState.Wrecked) continue;
+			UnityVehicle uv = trafficer.GetComponent<UnityVehicle>();
+			if (uv != null && CurrentStep - uv.wreckStartStep >= wreckLifetimeSteps)
+				trafficer.existState = ExistState.Destroyed;
 		}
 
 		// Vòng 3: recycle xe hết vòng đời (Destroyed) hoặc xe server không còn được stream.

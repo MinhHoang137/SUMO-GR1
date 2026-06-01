@@ -6446,6 +6446,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 229311ced7d9f3e4884a3c098313c033, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wreckLifetimeSteps: 150
   trafficerKeyPrefabSO: {fileID: 11400000, guid: fa0d879d47fc7164a99f1383f22f3db1, type: 2}
 --- !u!1 &978272474
 GameObject:
@@ -6756,7 +6757,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1032112025124884504, guid: ea5b5d79335012440a34157e6c166492, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1534626685795000359, guid: ea5b5d79335012440a34157e6c166492, type: 3}
       propertyPath: m_LocalPosition.x

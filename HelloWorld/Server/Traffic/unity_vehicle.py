@@ -19,6 +19,7 @@ DEFAULT_NET_PATH = os.path.join(os.path.dirname(__file__), '../SUMO_xml/HelloWor
 latest_vehicles = None
 vehicles_lock = threading.Lock()
 managed_ids = set()  # id xe đang do client chi phối (mirror/freeze) — dùng để reconcile khi vắng khỏi batch
+wrecked_ids = set()  # id xe đang ở trạng thái Wrecked — để tô màu cam một lần
 
 
 def _pick_edge_from_netxml(net_xml_path: str) -> str:
@@ -113,7 +114,7 @@ def process_vehicle_updates(traci):
         traci.route.add(ROUTE_ID, [EDGE_ID])
         print(f"[Python] Đã tạo route {ROUTE_ID} -> {EDGE_ID}")
 
-    global latest_vehicles, managed_ids
+    global latest_vehicles, managed_ids, wrecked_ids
     vehicles = None
     with vehicles_lock:
         if latest_vehicles is not None:
@@ -140,6 +141,7 @@ def process_vehicle_updates(traci):
                             print(f"  [-] Xoá xe {veh_id} khỏi SUMO")
                         except Exception as e:
                             print(f"  [!] Lỗi khi xoá xe {veh_id}: {e}")
+                    wrecked_ids.discard(veh_id)
                     continue  # Không xử lý thêm
 
                 pos = v['p']
@@ -175,7 +177,10 @@ def process_vehicle_updates(traci):
                     # Xác xe: đông cứng tại chỗ → các xe sau dồn lại gây ùn ứ.
                     # Despawn do client điều khiển (gửi state 0 khi hết N bước).
                     traci.vehicle.setSpeed(veh_id, 0)
-                    print(f"  [x] Xác xe {veh_id} đông cứng tại {pos}")
+                    if veh_id not in wrecked_ids:
+                        traci.vehicle.setColor(veh_id, (255, 165, 0, 255))  # cam: xác xe
+                        wrecked_ids.add(veh_id)
+                        print(f"  [x] Xe {veh_id} thành xác → cam, đông cứng tại {pos}")
                     continue
 
                 # state 2 (mirror) — SUMO bám theo vị trí client lái.
@@ -215,4 +220,5 @@ def process_vehicle_updates(traci):
                     print(f"  [-] Reconcile: xoá {gone} khỏi SUMO")
                 except Exception as e:
                     print(f"  [!] Lỗi reconcile xoá {gone}: {e}")
+            wrecked_ids.discard(gone)
         managed_ids = present_ids
