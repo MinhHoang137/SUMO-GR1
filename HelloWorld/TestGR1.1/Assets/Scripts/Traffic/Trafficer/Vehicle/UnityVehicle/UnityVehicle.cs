@@ -83,8 +83,11 @@ public class UnityVehicle : MonoBehaviour
 		ApplyMode(ExistState.ServerControlled);
 		if (TryGetComponent(out Vehicle vehicle))
 		{
-			vehicle.enabled = true; // bật lại logic Vehicle
+			vehicle.enabled = true;
 		}
+		// Chunk 5: gửi one-shot state=1 → server re-anchor. Không áp dụng cho CLIENT_CAR.
+		if (!trafficer.isStandaloneClient && UnityVehicleManager.Instance != null)
+			UnityVehicleManager.Instance.EnqueueRelease(GetUnityVehicleData());
 	}
 
 	/// <summary>Thành xác xe sau va chạm: vật lý nhưng không ai lái.</summary>
@@ -131,8 +134,11 @@ public class UnityVehicle : MonoBehaviour
     {
 		if (pauseSO != null && pauseSO.isPaused)
 		{
-			rb.linearVelocity = Vector3.zero;
-			rb.angularVelocity = Vector3.zero;
+			if (!rb.isKinematic)
+			{
+				rb.linearVelocity = Vector3.zero;
+				rb.angularVelocity = Vector3.zero;
+			}
 			return; // tạm dừng → không update gì cả, giữ nguyên pose hiện tại.
 		} 
 		if (wheels == null) return;

@@ -21,6 +21,8 @@ vehicles_lock = threading.Lock()
 managed_ids = set()  # id xe đang do client chi phối (mirror/freeze) — dùng để reconcile khi vắng khỏi batch
 wrecked_ids = set()  # id xe đang ở trạng thái Wrecked — để tô màu cam một lần
 
+SNAP_THRESHOLD = 20.0  # m: khoảng cách tối đa cho phép snap xe về lane khi re-anchor
+
 
 def _pick_edge_from_netxml(net_xml_path: str) -> str:
     """Chọn cạnh mặc định từ .net.xml.
@@ -68,6 +70,75 @@ def _pick_edge_from_netxml(net_xml_path: str) -> str:
         return ""
     except Exception:
         return ""
+
+def _lane_pos_to_xy(traci, lane_id: str, pos: float):
+    """Nội suy toạ độ XY từ vị trí dọc theo lane (dùng shape của lane)."""
+    shape = traci.lane.getShape(lane_id)
+    accumulated = 0.0
+    for i in range(len(shape) - 1):
+        ax, ay = shape[i]
+        bx, by = shape[i + 1]
+        seg = math.sqrt((bx - ax) ** 2 + (by - ay) ** 2)
+        if seg <= 0:
+            continue
+        if accumulated + seg >= pos:
+            t = (pos - accumulated) / seg
+            return ax + t * (bx - ax), ay + t * (by - ay)
+        accumulated += seg
+    return shape[-1]  # quá cuối lane → trả điểm cuối
+
+
+def _remove_vehicle(traci, veh_id: str):
+    try:
+        if veh_id in traci.vehicle.getIDList():
+            traci.vehicle.remove(veh_id)
+            print(f"  [-] Hủy xe {veh_id}")
+    except Exception as e:
+        print(f"  [!] Lỗi hủy xe {veh_id}: {e}")
+
+
+def _re_anchor(traci, veh_id: str, pos: list):
+    """Snap xe về lane gần nhất, cấp route, trả autopilot. Xóa xe nếu không snap được."""
+    if veh_id not in traci.vehicle.getIDList():
+        return
+    x, y = pos[0], pos[1]
+
+    try:
+        edge_id, lane_pos, lane_idx = traci.simulation.convertRoad(x, y, isGeo=False, vClass="passenger")
+    except Exception as e:
+        print(f"  [!] convertRoad lỗi cho {veh_id}: {e}")
+        _remove_vehicle(traci, veh_id)
+        return
+
+    if not edge_id:
+        print(f"  [~] Re-anchor {veh_id}: không tìm được lane → hủy xe")
+        _remove_vehicle(traci, veh_id)
+        return
+
+    lane_id = f"{edge_id}_{lane_idx}"
+    try:
+        sx, sy = _lane_pos_to_xy(traci, lane_id, lane_pos)
+    except Exception:
+        sx, sy = x, y  # fallback: dùng vị trí Unity làm gốc so sánh
+
+    dist = math.sqrt((x - sx) ** 2 + (y - sy) ** 2)
+    if dist > SNAP_THRESHOLD:
+        print(f"  [~] Re-anchor {veh_id}: quá xa ({dist:.1f}m > {SNAP_THRESHOLD}m) → hủy xe")
+        _remove_vehicle(traci, veh_id)
+        return
+
+    try:
+        traci.vehicle.moveTo(veh_id, lane_id, lane_pos)
+        traci.vehicle.rerouteTraveltime(veh_id)
+        traci.vehicle.setSpeedMode(veh_id, 31)
+        traci.vehicle.setLaneChangeMode(veh_id, 1621)
+        traci.vehicle.setSpeed(veh_id, -1)
+        traci.vehicle.setColor(veh_id, (255, 255, 0, 255))  # vàng: trả về server
+        print(f"  [<] Re-anchor {veh_id} → {lane_id} pos {lane_pos:.1f} (dist {dist:.1f}m) → vàng")
+    except Exception as e:
+        print(f"  [!] Re-anchor lỗi {veh_id}: {e}")
+        _remove_vehicle(traci, veh_id)
+
 
 def client_handler(client_socket: socket.socket):
     global latest_vehicles
@@ -148,6 +219,14 @@ def process_vehicle_updates(traci):
                 forward = v['f']
                 speed = v['sp']
                 angle = math.degrees(math.atan2(forward[0], forward[1]))
+
+                # state 1 = re-anchor (chunk 5): thả quyền → snap về lane, cấp route, trả autopilot.
+                # Không add vào present_ids → reconcile không đụng sau khi managed_ids.discard.
+                if state == 1:
+                    _re_anchor(traci, veh_id, pos)
+                    managed_ids.discard(veh_id)
+                    wrecked_ids.discard(veh_id)
+                    continue
 
                 # Xe client chưa có gốc trong SUMO (vd CLIENT_CAR) → thêm mới (đỏ).
                 # Xe server bị chiếm quyền thì đã có sẵn → bỏ qua add, đổi sang xanh lam.

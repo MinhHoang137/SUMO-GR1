@@ -7,11 +7,16 @@ using UnityEngine.SceneManagement;
 
 public class UnityVehicleManager : MonoBehaviour
 {
+	public static UnityVehicleManager Instance { get; private set; }
+
 	private const string CMD_CREATE = "Tạo xe Unity";
 	private const string CLIENT_CAR_ID = "CLIENT_CAR";  // id đặc biệt, duy nhất, server không chiếm quyền
 	private const string GENERIC_LANE = "generic";
 	private const float SPAWN_FORWARD_OFFSET = 5f;       // cách điểm đầu lane 5m về phía trước
 	private const int PRE_RENDER_SCENE_INDEX = 2;
+
+	// Chunk 5: one-shot release signal — drain mỗi batch, gửi state=1 cho server re-anchor.
+	private List<UnityVehicleData> pendingReleaseItems = new List<UnityVehicleData>();
 
 	private UnityVehicle vehicle = null;
     [SerializeField] private Button stateButton;
@@ -19,6 +24,16 @@ public class UnityVehicleManager : MonoBehaviour
     [SerializeField] private UnityVehicle prefab;
 	[SerializeField] private VehicleSender vehicleSender;
 	[SerializeField] private RoadDataSO roadData;
+
+	private void Awake()
+	{
+		Instance = this;
+	}
+
+	private void OnDestroy()
+	{
+		Instance = null;
+	}
 
 	private void Start()
 	{
@@ -134,6 +149,12 @@ public class UnityVehicleManager : MonoBehaviour
 		}
 	}
 
+	/// <summary>Đăng ký one-shot tín hiệu thả quyền (state=1) để gửi cùng batch tiếp theo.</summary>
+	public void EnqueueRelease(UnityVehicleData data)
+	{
+		pendingReleaseItems.Add(data);
+	}
+
 	private IEnumerator SendVehicleDataRoutine()
 	{
 		var wait = new WaitForSeconds(0.1f);
@@ -144,6 +165,14 @@ public class UnityVehicleManager : MonoBehaviour
 			if (TrafficerManager.Instance != null)
 			{
 				List<UnityVehicleData> batch = new List<UnityVehicleData>();
+
+				// Chunk 5: drain pending release signals (one-shot, state=1 — re-anchor).
+				if (pendingReleaseItems.Count > 0)
+				{
+					batch.AddRange(pendingReleaseItems);
+					pendingReleaseItems.Clear();
+				}
+
 				foreach (Trafficer t in TrafficerManager.Instance.GetTrafficers())
 				{
 					if (!t.IsClientOwned) continue;
