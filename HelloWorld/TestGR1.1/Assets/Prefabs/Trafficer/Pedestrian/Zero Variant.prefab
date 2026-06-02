@@ -13,6 +13,10 @@ PrefabInstance:
       value: ZeroVisual
       objectReference: {fileID: 0}
     - target: {fileID: 4923799879794562874, guid: 575eb20d1765cc44797bce3427c6bbee, type: 3}
+      propertyPath: pauseSO
+      value: 
+      objectReference: {fileID: 11400000, guid: 73975c90d2b7fc54fbd548ba6d7f95e6, type: 2}
+    - target: {fileID: 4923799879794562874, guid: 575eb20d1765cc44797bce3427c6bbee, type: 3}
       propertyPath: baseSpeed
       value: 3
       objectReference: {fileID: 0}

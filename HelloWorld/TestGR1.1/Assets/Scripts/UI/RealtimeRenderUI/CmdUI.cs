@@ -7,6 +7,7 @@ using TMPro;
 public class CmdUI : MonoBehaviour
 {
     [SerializeField] private Button pauseButton;
+    [SerializeField] private PauseSO pauseSO;
     [SerializeField] private Button closeButton;
     [SerializeField] private NetworkSO networkSO;
 
@@ -74,6 +75,10 @@ public class CmdUI : MonoBehaviour
             pauseButton.GetComponentInChildren<TMP_Text>().text = "Tiếp tục";
         } else {
             pauseButton.GetComponentInChildren<TMP_Text>().text = "Tạm dừng";
+        }
+        if (pauseSO != null)
+        {
+            pauseSO.isPaused = isPaused;
         }
     }
 

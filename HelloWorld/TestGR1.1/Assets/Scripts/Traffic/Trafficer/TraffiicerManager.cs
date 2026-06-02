@@ -20,6 +20,11 @@ public class TrafficerManager : MonoBehaviour
 	public event EventHandler<TrafficerEventArgs> OnRemoveTrafficer;
 
 	public static TrafficerManager Instance { get; private set; }
+
+	// Bước SUMO mới nhất (server gửi qua field "st"). Dùng cho vòng đời xác xe (Wrecked).
+	public int CurrentStep { get; set; }
+	// Số bước SUMO xác xe tồn tại trước khi bị despawn.
+	[SerializeField] private int wreckLifetimeSteps = 150;
 	[SerializeField] private TrafficerKeyPrefabSO trafficerKeyPrefabSO;
 	
 	private Dictionary<string, Trafficer> trafficerDict = new Dictionary<string, Trafficer>();
@@ -43,11 +48,10 @@ public class TrafficerManager : MonoBehaviour
 		}
 		List<Trafficer> trafficerList = new List<Trafficer>(trafficerDict.Values);
 		// Vòng 1: đánh dấu "chưa thấy frame này" cho các xe do server điều khiển.
-		// Bỏ qua UnityVehicle và xe ClientControlled (xác xe) — vòng đời của chúng không do server quyết.
+		// Bỏ qua xe client sở hữu (đang lái / xác xe) — vòng đời của chúng không do server quyết.
 		foreach (var trafficer in trafficerList)
 		{
-			if (trafficer.GetComponent<UnityVehicle>() != null) continue;
-			if (trafficer.existState == ExistState.ClientControlled) continue;
+			if (trafficer.IsClientOwned) continue;
 			trafficer.seenThisFrame = false;
 		}
 
@@ -57,9 +61,8 @@ public class TrafficerManager : MonoBehaviour
 			Trafficer currentTrafficer = null;
 			if (trafficerDict.TryGetValue(data.id, out Trafficer trafficer))
 			{
-				if (trafficer.GetComponent<UnityVehicle>() != null) continue;
-				// SUMO vẫn stream xe đã chuyển sang client điều khiển → lờ đi, không ghi đè vị trí.
-				if (trafficer.existState == ExistState.ClientControlled) continue;
+				// SUMO vẫn stream xe đã chuyển sang client/wreck → lờ đi, không ghi đè vị trí.
+				if (trafficer.IsClientOwned) continue;
 				trafficer.Set(data);
 				trafficer.seenThisFrame = true;
 				trafficer.existState = ExistState.ServerControlled;
@@ -75,17 +78,24 @@ public class TrafficerManager : MonoBehaviour
 			}
 		}
 
+		// Vòng 2.5: despawn xác xe quá hạn (đếm tập trung — độc lập với active/inactive GameObject).
+		foreach (var trafficer in trafficerList)
+		{
+			if (trafficer.existState != ExistState.Wrecked) continue;
+			UnityVehicle uv = trafficer.GetComponent<UnityVehicle>();
+			if (uv != null && CurrentStep - uv.wreckStartStep >= wreckLifetimeSteps)
+				trafficer.existState = ExistState.Destroyed;
+		}
+
 		// Vòng 3: recycle xe hết vòng đời (Destroyed) hoặc xe server không còn được stream.
 		foreach (var trafficer in trafficerList)
 		{
-			bool isUnityVehicle = trafficer.GetComponent<UnityVehicle>() != null;
-			bool serverDropped = !isUnityVehicle
-				&& trafficer.existState != ExistState.ClientControlled
-				&& !trafficer.seenThisFrame;
+			bool serverDropped = !trafficer.IsClientOwned && !trafficer.seenThisFrame;
 			if (trafficer.existState == ExistState.Destroyed || serverDropped)
 			{
 				RecycleTrafficer(trafficer);
-				if (isUnityVehicle) Destroy(trafficer.gameObject);
+				// Chỉ xe máy khách (CLIENT_CAR) bị hủy hẳn; xe server quay về pool.
+				if (trafficer.isStandaloneClient) Destroy(trafficer.gameObject);
 			}
 		}
 	}
@@ -127,7 +137,7 @@ public class TrafficerManager : MonoBehaviour
 		OnRemoveTrafficer?.Invoke(this, new TrafficerEventArgs(trafficer));
 		trafficer.gameObject.SetActive(false);
 
-		if (trafficer.GetComponent<UnityVehicle>() == null)
+		if (!trafficer.isStandaloneClient)
 		{
 			// Pool by type
 			string poolKey = "v";
@@ -179,9 +189,8 @@ public class TrafficerManager : MonoBehaviour
 		List<Trafficer> trafficerList = new List<Trafficer>(trafficerDict.Values);
 		foreach (var trafficer in trafficerList)
 		{
-			if (trafficer.GetComponent<UnityVehicle>() != null) continue;
+			if (trafficer.isStandaloneClient) continue;  // giữ xe máy khách
 			RecycleTrafficer(trafficer);
-			if (trafficer.GetComponent<UnityVehicle>() != null) Destroy(trafficer.gameObject);
 		}
 	}
 

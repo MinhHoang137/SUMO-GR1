@@ -63,6 +63,7 @@ MonoBehaviour:
   laneFloorThickness: 0.1
   laneWallThickness: 0.1
   laneWallHeight: 2
+  laneWallEndInset: 0.3
   wallProximityCheckDistance: 0.248
 --- !u!114 &8186603551382773797
 MonoBehaviour:

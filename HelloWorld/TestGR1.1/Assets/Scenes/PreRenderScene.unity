@@ -10374,7 +10374,6 @@ MonoBehaviour:
   prefab: {fileID: 5919597149920569336, guid: 941742bd01effd1469c0bb314aa9f614, type: 3}
   vehicleSender: {fileID: 1319548178}
   roadData: {fileID: 11400000, guid: 98c754257f84660489d00622e8bfd4fa, type: 2}
-  junctionPos: []
 --- !u!1 &1786627654
 GameObject:
   m_ObjectHideFlags: 0
@@ -12761,7 +12760,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1032112025124884504, guid: ea5b5d79335012440a34157e6c166492, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1534626685795000359, guid: ea5b5d79335012440a34157e6c166492, type: 3}
       propertyPath: m_LocalPosition.x

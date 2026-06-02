@@ -30,10 +30,15 @@ public class Trafficer : MonoBehaviour
 	// Cờ quét tạm thời mỗi frame trong TrafficerManager.ProcessData ("đã thấy frame này chưa").
 	// Runtime-only, không serialize — tách khỏi existState (state bền vững).
 	[System.NonSerialized] public bool seenThisFrame = true;
+	// Xe người chơi sinh từ máy khách (CLIENT_CAR): không pool, hủy hẳn khi recycle.
+	[System.NonSerialized] public bool isStandaloneClient = false;
+
+	// Xe đang do client sở hữu (đang lái hoặc xác xe) — server không can thiệp vị trí/ vòng đời.
+	public bool IsClientOwned => existState == ExistState.ClientControlled || existState == ExistState.Wrecked;
 
 	protected virtual void Update()
 	{
-		if (moveByServer)
+		if (existState == ExistState.ServerControlled && moveByServer)
 		{
 			Move();
 		}
@@ -84,7 +89,8 @@ public class Trafficer : MonoBehaviour
 	public void Show()
 	{
 		gameObject.SetActive(true);
-		transform.position = destination;
+		// Xe client sở hữu (đang lái / xác xe) lấy vị trí từ vật lý, không snap về server.
+		if (!IsClientOwned) transform.position = destination;
 	}
 	public void SetDestination(Vector3 destination)
 	{
@@ -158,7 +164,8 @@ public class Trafficer : MonoBehaviour
 		}
 	}
 	protected virtual void OnEnable() {
-		transform.position = destination;
+		// Khi bị cull theo khoảng cách rồi hiện lại: xe client-owned giữ vị trí vật lý, không snap về server.
+		if (!IsClientOwned) transform.position = destination;
 	}
 	
 }

@@ -94,12 +94,8 @@ public class CameraController : MonoBehaviour
 			SetTrafficerView((Trafficer)null);
 			//GameInput.Instance.EnableMove(true);
 		}
-		OnSetTrafficer?.Invoke(this, new OnSetTrafficerEventArgs()
-		{
-			state = GetState(),
-			preTrafficer = currentTrafficer,
-			newTrafficer = null
-		});
+		// SetTrafficerView (cả nhánh chọn xe lẫn nhánh null) đã bắn OnSetTrafficer với newTrafficer đúng.
+		// KHÔNG bắn lại sự kiện null ở đây — nó sẽ ghi đè newTrafficer=xe → ẩn nhầm nút chiếm quyền.
 	}
 	public void SetRandomTrafficerView()
 	{
