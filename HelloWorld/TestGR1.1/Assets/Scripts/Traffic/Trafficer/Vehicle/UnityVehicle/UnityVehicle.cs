@@ -106,7 +106,21 @@ public class UnityVehicle : MonoBehaviour
 	{
 		bool physics = mode == ExistState.ClientControlled || mode == ExistState.Wrecked;
 		if (rb != null) rb.isKinematic = !physics;
-		if (wheels != null) wheels.SetCollidersEnabled(physics);
+		if (wheels != null)
+		{
+			wheels.SetCollidersEnabled(physics);
+			// Bật vật lý: đặt lại trọng tâm khi bánh đã bật (CoM gồm cả bánh — tất định cho mọi xe),
+			// và xoá vận tốc tồn dư từ giai đoạn kinematic để xe không bị giật/vẹo lúc tiếp quản.
+			if (physics)
+			{
+				wheels.ApplyCenterOfMass();
+				if (rb != null)
+				{
+					rb.linearVelocity = Vector3.zero;
+					rb.angularVelocity = Vector3.zero;
+				}
+			}
+		}
 	}
 
 	// Chỉ xe đang được client lái VÀ camera đang gắn mới nhận input (phanh/ga/lái).

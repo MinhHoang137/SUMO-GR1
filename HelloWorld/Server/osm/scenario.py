@@ -15,7 +15,10 @@ from __future__ import annotations
 
 import os
 import sys
+import re
+import shutil
 import random
+import subprocess
 import xml.etree.ElementTree as ET
 from typing import Dict, List, Optional, Tuple
 
@@ -24,7 +27,7 @@ _SERVER_DIR = os.path.abspath(os.path.join(_CUR_DIR, os.pardir))
 if _SERVER_DIR not in sys.path:
     sys.path.insert(0, _SERVER_DIR)
 
-from osm_to_net import convert_osm_to_net_3d_roads  # noqa: E402
+from osm.osm_to_net import convert_osm_to_net_3d_roads  # noqa: E402
 
 
 _SKIP_JUNCTION_TYPES = {"internal", "dead_end"}
@@ -244,7 +247,94 @@ def generate_routes(net_path: str,
         os.makedirs(out_dir, exist_ok=True)
     tree.write(rou_path, encoding="UTF-8", xml_declaration=True)
     print(f"[Thành công] Đã sinh {car_count} car flow + {ped_count} pedestrian flow → {rou_path}")
+
+    # Lọc các flow không route được (vd vỉa hè cụm junction bị ngắt → "Disconnected walk").
+    # Adjacency mức-cạnh không đảm bảo người đi bộ băng qua được junction, nên xác thực bằng
+    # chính SUMO rồi gỡ flow hỏng — tránh mô phỏng quit lúc chạy thật.
+    removed = _prune_unroutable(net_path, rou_path)
+    if removed:
+        print(f"[Info] Đã gỡ {len(removed)} flow không route được: {', '.join(sorted(removed))}")
+
     return (car_count + ped_count) > 0
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Route validation (gỡ flow không route được bằng chính SUMO)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Các cụm từ trong log SUMO báo một agent không có lộ trình hợp lệ.
+_ROUTE_FAIL_KEYS = (
+    "could not find route",
+    "Disconnected walk",
+    "no valid route",
+    "invalid route",
+    "has no route",
+)
+# Lấy id ngay sau 'person'/'vehicle', bỏ hậu tố .N của từng lượt sinh (pf_0.3 → pf_0).
+_AGENT_ID_RE = re.compile(r"(?:[Pp]erson|[Vv]ehicle)\s+'([A-Za-z0-9_]+?)(?:\.\d+)?'")
+
+
+def _prune_unroutable(net_path: str, rou_path: str) -> set:
+    """Chạy SUMO headless trên một bản 1-lượt của rou_path để phát hiện flow không
+    route được, rồi gỡ chúng khỏi rou_path. Trả về tập id flow đã gỡ.
+
+    SUMO là validator đáng tin duy nhất ở đây: duarouter (router intermodal) "dễ tính"
+    hơn pedestrian model lúc chạy nên KHÔNG bắt được lỗi "Disconnected walk".
+    Nếu không tìm thấy sumo trong PATH thì bỏ qua (không chặn việc sinh map).
+    """
+    if shutil.which("sumo") is None:
+        print("[Cảnh báo] Không thấy 'sumo' trong PATH — bỏ qua bước lọc route hỏng.")
+        return set()
+
+    try:
+        tree = ET.parse(rou_path)
+    except ET.ParseError:
+        return set()
+    root = tree.getroot()
+
+    # Bản kiểm tra: mỗi flow chỉ sinh 1 lượt (number=1, bỏ period/end) → sim kết thúc sớm
+    # khi nhúm agent đầu tiên đi xong/ lỗi, thay vì chạy hết end=3600.
+    for tag in ("flow", "personFlow"):
+        for el in root.findall(tag):
+            el.set("number", "1")
+            for attr in ("period", "end"):
+                el.attrib.pop(attr, None)
+    check_path = rou_path + ".check.tmp.xml"
+    tree.write(check_path, encoding="UTF-8", xml_declaration=True)
+
+    bad: set = set()
+    try:
+        proc = subprocess.run(
+            ["sumo", "-n", net_path, "-r", check_path,
+             "--no-step-log", "--duration-log.disable", "--ignore-route-errors"],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+        )
+        for line in (proc.stdout + proc.stderr).splitlines():
+            if any(k in line for k in _ROUTE_FAIL_KEYS):
+                bad.update(_AGENT_ID_RE.findall(line))
+    except Exception as e:
+        print(f"[Cảnh báo] Bước lọc route hỏng gặp lỗi ({e}) — giữ nguyên route.")
+        bad = set()
+    finally:
+        try:
+            os.remove(check_path)
+        except OSError:
+            pass
+
+    if not bad:
+        return set()
+
+    # Gỡ các flow/personFlow có id nằm trong tập hỏng khỏi rou gốc rồi ghi lại.
+    orig = ET.parse(rou_path)
+    oroot = orig.getroot()
+    for tag in ("flow", "personFlow"):
+        for el in list(oroot.findall(tag)):
+            if el.get("id") in bad:
+                oroot.remove(el)
+    if hasattr(ET, "indent"):
+        ET.indent(orig, space="    ", level=0)
+    orig.write(rou_path, encoding="UTF-8", xml_declaration=True)
+    return bad
 
 
 # ─────────────────────────────────────────────────────────────────────────────

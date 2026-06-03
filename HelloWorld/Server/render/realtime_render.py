@@ -33,7 +33,7 @@ from SUMO_xml.create_city_map import create_map
 from naive_map_creator import naive_create_map
 # osm_to_net giữ lại cho osm_launcher.py phụ trợ (tạo .net.xml 3D từ .osm). Custom Script
 # mode không dùng đường dẫn này — user tự dựng kịch bản trong netedit.
-from osm_to_net import convert_osm_to_net_3d_roads
+from osm.osm_to_net import convert_osm_to_net_3d_roads
 from custom_script import apply_custom_script
 
 CS = "CS"
@@ -45,7 +45,7 @@ MAX_PACKET_SIZE = 131072 # 128 KB
 MAX_RETRIES = 5
 END_MARKER = '<END>'
 
-target_exe = "../UnityBuild/TestGR1.1.exe"
+target_exe = "../../UnityBuild/TestGR1.1.exe"  # tương đối từ Server/render/ → HelloWorld/UnityBuild/
 stop_event = threading.Event()
 time_step = 0.05  # Giãn cách thời gian thực (giây) giữa các simulationStep khi chạy GUI. Khởi tạo từ launcher, Unity chỉnh được lúc chạy.
 time_step_lock = threading.Lock()
@@ -151,7 +151,9 @@ def listen_for_control_commands(cmd_socket):
 
 def run_simulation(client_socket: socket.socket):
     print("Launching SUMO simulation...")
-    traci.start(["sumo-gui", "--junction-taz", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
+    # --ignore-route-errors: nếu còn person/xe nào không route được (vd vỉa hè cụm junction
+    # bị ngắt), SUMO bỏ qua thay vì quit cả mô phỏng. Net-an-toàn lúc demo hội đồng.
+    traci.start(["sumo-gui", "--junction-taz", "--ignore-route-errors", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
     print(f"[MONITOR] TIME_STEP: {time_step}", flush=True)
     step_index = 0
     trip_logger = VehicleTripCsvLogger(build_simulation_csv_path("result", has_ped))
@@ -162,6 +164,7 @@ def run_simulation(client_socket: socket.socket):
             if pause_event.is_set():
                 sleep(0.5)
                 continue
+            loop_start = time.perf_counter()  # mốc đo a = thời gian xử lý 1 vòng lặp
             traci.simulationStep()
 
             trip_logger.log_step(traci, step_index)
@@ -188,7 +191,11 @@ def run_simulation(client_socket: socket.socket):
             if run_with_gui:
                 with time_step_lock:
                     current_time_step = time_step
-                sleep(current_time_step)
+                # a = thời gian đã trôi của vòng lặp; b = phần còn lại để a + b = time_step.
+                elapsed = time.perf_counter() - loop_start
+                remaining = current_time_step - elapsed
+                if remaining > 0:
+                    sleep(remaining)
     except Exception as e:
         print(f"Error during simulation: {e}")
     finally:
@@ -339,7 +346,8 @@ def start_network_services(config):
 
     server_thread = async_task(network.server_thread, server_socket, client_thread_function, daemon=False)
     
-    if config["run_with_gui"]: 
+    if config["run_with_gui"]:
+        subprocess.Popen([os.path.abspath(os.path.join(os.path.dirname(__file__), target_exe))])
         pass
     else:
         run_simulation_thread = async_task(run_simulation, None, daemon=False)

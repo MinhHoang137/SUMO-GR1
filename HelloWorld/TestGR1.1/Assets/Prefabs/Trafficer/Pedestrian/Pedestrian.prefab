@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4974529103670524088}
   - component: {fileID: 7793644617040161427}
   - component: {fileID: 6917291490814554156}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pedestrian
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,6 +101,7 @@ MonoBehaviour:
   interpolationRotationType: 1
   cameraHolder: {fileID: 4319770399364026720}
   rotateMultiplier: 15
+  moveByServer: 1
   existState: 1
 --- !u!1 &6576246963323543466
 GameObject:
@@ -113,7 +114,7 @@ GameObject:
   - component: {fileID: 3553110969899429030}
   - component: {fileID: 6867127149207843534}
   - component: {fileID: 8863850240817018894}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -201,7 +202,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4319770399364026720}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CameraHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}

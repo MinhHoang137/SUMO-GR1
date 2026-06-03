@@ -22,7 +22,7 @@ from Traffic.crossing import CrossingReader
 from SUMO_xml.create_map_from_maze import create_map_from_maze_file
 from SUMO_xml.route_gen import create_routes, create_routes_osm
 # osm_to_net giữ lại cho osm_launcher.py phụ trợ; Custom Script mode không đi qua đây.
-from osm_to_net import convert_osm_to_net_3d_roads
+from osm.osm_to_net import convert_osm_to_net_3d_roads
 from custom_script import apply_custom_script
 
 def initialize_map_and_routes(maze_file, num_lanes, config):
@@ -145,7 +145,8 @@ def run_prerender(maze_file, num_lanes, config):
     
     initialize_map_and_routes(maze_file, num_lanes, config)
     
-    traci.start(["sumo", "--junction-taz", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
+    # --ignore-route-errors: bỏ qua person/xe không route được thay vì quit cả mô phỏng.
+    traci.start(["sumo", "--junction-taz", "--ignore-route-errors", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
     
     step_index = 0
     trip_logger = VehicleTripCsvLogger(build_simulation_csv_path("result", has_ped))

@@ -5,6 +5,14 @@ using UnityEngine;
 
 public class Edge : Road
 {
+	// Chế độ dựng collider cho edge.
+	public enum EdgeColliderMode
+	{
+		None,         // Không sinh collider nào.
+		FloorOnly,    // Chỉ sinh sàn (1 box nằm phẳng / segment).
+		FloorAndWalls // Sinh cả sàn + 2 vách dựng đứng + prune vách trùng ở giữa.
+	}
+
 	[Serializable]
 	public class LaneMaterialEntry
 	{
@@ -41,10 +49,12 @@ public class Edge : Road
 	[SerializeField, Min(0f)] private float laneMarkingGapLength = 4.0f;
 
 	[Header("Lane colliders")]
-	[Tooltip("Bật để dựng box collider cho cả edge: 1 sàn nằm phẳng (rộng = tổng width tất cả lane) + " +
-	         "2 vách dựng đứng ở 2 biên ngoài. Mỗi segment polyline → 1 bộ 3 collider chung 1 GameObject con. " +
-	         "Xe Unity có thể chạy + đổi làn tự do trong lòng edge.")]
-	[SerializeField] private bool buildLaneColliders = true;
+	[Tooltip("Chế độ dựng box collider cho cả edge:\n" +
+	         "- None: không sinh collider.\n" +
+	         "- FloorOnly: chỉ sinh sàn nằm phẳng (rộng = tổng width tất cả lane).\n" +
+	         "- FloorAndWalls: sinh cả sàn + 2 vách dựng đứng ở 2 biên ngoài (vẫn prune vách trùng ở giữa).\n" +
+	         "Mỗi segment polyline → 1 GameObject con. Xe Unity có thể chạy + đổi làn tự do trong lòng edge.")]
+	[SerializeField] private EdgeColliderMode colliderMode = EdgeColliderMode.FloorAndWalls;
 	[Tooltip("Bề dày tấm sàn collider (trục Y, mét). Mỏng cho collision chính xác, đủ dày tránh xuyên do float error.")]
 	[SerializeField, Range(0.001f, 0.5f)] private float laneFloorThickness = 0.1f;
 	[Tooltip("Bề dày vách collider (trục ngang lane, mét). Mỏng đủ để không lấn vào lane bên cạnh.")]
@@ -380,7 +390,8 @@ public class Edge : Road
 	// một đoạn = (totalEdgeWidth - lane0.width) / 2.
 	private void BuildLaneColliders(EdgeData edgeData, Vector3 origin)
 	{
-		if (!buildLaneColliders) return;
+		if (colliderMode == EdgeColliderMode.None) return;
+		bool buildWalls = colliderMode == EdgeColliderMode.FloorAndWalls;
 		var lanes = edgeData.lanes;
 		if (lanes == null || lanes.Count == 0) return;
 
@@ -434,6 +445,8 @@ public class Edge : Road
 				center: Vector3.zero,
 				size: new Vector3(totalEdgeWidth, laneFloorThickness, segmentLength));
 
+			if (!buildWalls) continue;
+
 			// Vách phải — dịch +X local (= +segmentRight). Luôn build, track để pass cleanup sau lo.
 			BoxCollider rightWall = AddBoxCollider(segmentGO,
 				center: new Vector3(halfEdgeWidth, halfWallHeight, 0f),
@@ -448,8 +461,8 @@ public class Edge : Road
 		}
 
 		// Lên lịch dọn các cặp vách sát nhau ở frame sau — lúc đó physics đã sync và mọi edge khác
-		// (nếu build cùng frame) cũng đã dựng xong walls của họ.
-		StartCoroutine(PruneAdjacentWallsNextFrame(builtWalls));
+		// (nếu build cùng frame) cũng đã dựng xong walls của họ. Chỉ chạy khi có dựng vách.
+		if (buildWalls) StartCoroutine(PruneAdjacentWallsNextFrame(builtWalls));
 	}
 
 	// Pass cleanup chạy sau 1 frame. 3 phase, cache trước, destroy 1 lượt:

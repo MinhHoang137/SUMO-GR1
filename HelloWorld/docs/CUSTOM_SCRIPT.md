@@ -57,7 +57,7 @@ nhánh sinh route trong `initialize_map_and_routes` qua check
 Các thành phần sau vẫn còn trong codebase, được đánh dấu DEPRECATED nhưng giữ
 lại làm tham chiếu hoặc phục vụ `osm_launcher.py` / chạy `main.py` trực tiếp:
 
-- `Server/osm_to_net.py` — convert `.osm` → `.net.xml` (osm_launcher.py dùng).
+- `Server/osm/osm_to_net.py` — convert `.osm` → `.net.xml` (osm_launcher.py dùng).
 - `Server/SUMO_xml/route_gen.py::create_routes_osm` — pre-compute Dijkstra
   routes cho OSM network (thay vì TAZ routing).
 - Nhánh `if maze_file.lower().endswith(".osm")` trong:

@@ -26,6 +26,11 @@ public class CameraController : MonoBehaviour
 	[Header("Optimization")]
 	private Vector3 lastPosition;
 	[SerializeField] private float moveThreshold = 100f;
+
+	[Header("Free Camera Leveling")]
+	[Tooltip("Tốc độ lerp roll (trục Z) về 0 khi camera trả về tự do.")]
+	[SerializeField] private float rollLevelSpeed = 8f;
+	private bool isLevelingRoll = false;
 	private void Awake()
 	{
 		Instance = this;
@@ -57,6 +62,7 @@ public class CameraController : MonoBehaviour
 	{
 		Move();
 		Rotate();
+		LevelRoll();
 	}
 	private void Move()
 	{
@@ -86,6 +92,19 @@ public class CameraController : MonoBehaviour
 		}
 		transform.Rotate(Vector3.left * mouseY);
 		transform.Rotate(Vector3.up * mouseX, Space.World);
+	}
+	// Lerp roll (trục Z) về 0 khi camera về tự do — xe có thể bị lật nghiêng nên world-rotation thừa hưởng roll.
+	private void LevelRoll()
+	{
+		if (!isLevelingRoll) return;
+		Vector3 e = transform.eulerAngles;
+		float z = Mathf.LerpAngle(e.z, 0f, Time.deltaTime * rollLevelSpeed);
+		transform.eulerAngles = new Vector3(e.x, e.y, z);
+		if (Mathf.Abs(Mathf.DeltaAngle(z, 0f)) < 0.05f)
+		{
+			transform.eulerAngles = new Vector3(e.x, e.y, 0f);
+			isLevelingRoll = false;
+		}
 	}
 	private void SetFreeToggle()
 	{
@@ -146,6 +165,7 @@ public class CameraController : MonoBehaviour
 		if (newTrafficer == null) {
 			transform.SetParent(null);
 			isFree = true;
+			isLevelingRoll = true;
 			OnSetTrafficer?.Invoke(this, new OnSetTrafficerEventArgs()
 			{
 				state = GetState(),

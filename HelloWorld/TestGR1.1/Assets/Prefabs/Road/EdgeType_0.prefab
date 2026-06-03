@@ -59,7 +59,7 @@ MonoBehaviour:
   laneMarkingYOffset: 0.005
   laneMarkingDashLength: 2
   laneMarkingGapLength: 4
-  buildLaneColliders: 1
+  colliderMode: 1
   laneFloorThickness: 0.1
   laneWallThickness: 0.1
   laneWallHeight: 2

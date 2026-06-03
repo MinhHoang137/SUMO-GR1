@@ -1,6 +1,4 @@
-# DEPRECATED khỏi pipeline launcher chính (kể từ khi OSM trong launcher được thay
-# bằng Custom Script). File này vẫn được osm_launcher.py dùng để dựng .net.xml 3D
-# từ .osm như một công cụ phụ trợ — đừng xóa.
+
 
 import os
 import argparse
@@ -31,6 +29,11 @@ def convert_osm_to_net_3d_roads(osm_file, output_net_file=None, mode="3d"):
         "netconvert",
         "--osm-files", osm_file,
         "-o", output_net_file,
+
+        # --- BỀ RỘNG LÀN ---
+        # OSM thường không khai báo width → netconvert dùng mặc định 3.2m.
+        # Nới lên 4.0m để xe (to gần bằng lòng đường) còn chỗ lái.
+        "--default.lanewidth", "4.0",
 
         # --- LÀM GỌN VÀ TỐI ƯU MẠNG LƯỚI ---
         "--geometry.remove",
