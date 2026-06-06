@@ -5,9 +5,9 @@ import os
 import sys
 
 
-WORKSPACE_ROOT = os.path.dirname(os.path.dirname(__file__))
-if WORKSPACE_ROOT not in sys.path:
-	sys.path.insert(0, WORKSPACE_ROOT)
+RENDER_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "render")
+if RENDER_DIR not in sys.path:
+	sys.path.insert(0, RENDER_DIR)
 
 
 from result import VehicleTripCsvLogger

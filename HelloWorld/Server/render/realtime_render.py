@@ -1,8 +1,13 @@
 import sys
 import os
 
-# Adds the Server directory to sys.path so modules can be imported correctly
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Adds Server/ and Server/render/ to sys.path so all local modules resolve correctly
+_render_dir = os.path.dirname(os.path.abspath(__file__))
+_server_dir = os.path.dirname(_render_dir)
+if _render_dir not in sys.path:
+    sys.path.insert(0, _render_dir)
+if _server_dir not in sys.path:
+    sys.path.append(_server_dir)
 
 import json
 import math
@@ -16,10 +21,9 @@ import threading
 import network
 from result import (
     VehicleTripCsvLogger,
-    build_simulation_csv_path,
-    build_simulation_summary_json_path,
-    write_simulation_summary_json,
+    finish_simulation_logging,
 )
+from scenario_recorder import SimulationSession
 
 from Traffic.crossing import CrossingReader
 from Traffic.crossRoad import CrossRoadReader
@@ -56,6 +60,7 @@ has_ped = False
 sim_count = 1
 ped_impatience = None
 maze_file_path = ""
+simulation_session: SimulationSession | None = None
 
 def set_pause_sim(is_paused: bool) -> None:
     """Set pause state in a thread-safe way."""
@@ -156,9 +161,11 @@ def run_simulation(client_socket: socket.socket):
     traci.start(["sumo-gui", "--junction-taz", "--ignore-route-errors", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
     print(f"[MONITOR] TIME_STEP: {time_step}", flush=True)
     step_index = 0
-    trip_logger = VehicleTripCsvLogger(build_simulation_csv_path("result", has_ped))
+    trip_logger = VehicleTripCsvLogger(simulation_session.csv_path if simulation_session else "result/trips.csv")
     ped_seen: set[str] = set()
     trip_logger.open()
+    if simulation_session:
+        simulation_session.open()
     try:
         while traci.simulation.getMinExpectedNumber() > 0 and not stop_event.is_set():
             if pause_event.is_set():
@@ -184,10 +191,13 @@ def run_simulation(client_socket: socket.socket):
                             ped_seen.add(str(ped_id))
             except Exception:
                 pass
-            
-            if run_with_gui: 
+
+            if simulation_session:
+                simulation_session.record_frame(data)
+
+            if run_with_gui:
                 network.send_data(client_socket, data)
-            
+
             if run_with_gui:
                 with time_step_lock:
                     current_time_step = time_step
@@ -199,8 +209,12 @@ def run_simulation(client_socket: socket.socket):
     except Exception as e:
         print(f"Error during simulation: {e}")
     finally:
-        from result import finish_simulation_logging
-        finish_simulation_logging(trip_logger, len(ped_seen), ped_impatience, maze_file_path)
+        if simulation_session:
+            simulation_session.close()
+        finish_simulation_logging(
+            trip_logger, len(ped_seen), ped_impatience, maze_file_path,
+            summary_path=simulation_session.summary_path if simulation_session else None,
+        )
         traci.close()
         print("SUMO simulation stopped.")
         stop_event.set()
@@ -214,6 +228,8 @@ def send_road_data(client_socket: socket.socket):
         "ed": edges,
         "cd": crossings
     }
+    if simulation_session:
+        simulation_session.save_road_data(road_data)
     try:
         for i in range(MAX_RETRIES):
             if not network.send_data(client_socket, road_data):
@@ -365,7 +381,7 @@ def start_network_services(config):
     }
 
 def run_realtime(maze_file, num_lanes, config):
-    global has_ped, ped_impatience, maze_file_path, run_with_gui
+    global has_ped, ped_impatience, maze_file_path, run_with_gui, simulation_session
 
     maze_file_path = maze_file
     has_ped = config["has_ped"]
@@ -373,6 +389,17 @@ def run_realtime(maze_file, num_lanes, config):
     run_with_gui = config["run_with_gui"]
 
     initialize_map_and_routes(maze_file_path, num_lanes, config)
+
+    simulation_session = SimulationSession(maze_file_path, has_ped=has_ped)
+    print(f"Session directory: {simulation_session.session_dir}")
+
+    # Lưu road data ngay sau khi map được tạo (không-GUI mode không có client gọi send_road_data).
+    if not run_with_gui:
+        crossroads = CrossRoadReader.read_all_junctions()
+        edges = EdgeReader.read_edges()
+        crossings = CrossingReader.read_crossings()
+        simulation_session.save_road_data({"jd": crossroads, "ed": edges, "cd": crossings})
+
     network_context = start_network_services(config)
 
     try:
