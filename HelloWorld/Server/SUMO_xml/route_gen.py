@@ -163,17 +163,17 @@ def split_in_out(crossroads):
     if not crossroads:
         return _in, _out
     for cr in crossroads:
-        x, y = cr["p"]
+        x, y = cr["p"][0], cr["p"][1]  # cr["p"] có thể là [x,y] hoặc [x,y,z] (junction 3D)
         center_x += x
         center_y += y
     center_x /= len(crossroads)
     center_y /= len(crossroads)
     for cr in crossroads:
-        x, y = cr["p"]
+        x, y = cr["p"][0], cr["p"][1]  # cr["p"] có thể là [x,y] hoặc [x,y,z] (junction 3D)
         median_rad += ((x - center_x) ** 2 + (y - center_y) ** 2) ** 0.5
     median_rad /= len(crossroads)
     for cr in crossroads:
-        x, y = cr["p"]
+        x, y = cr["p"][0], cr["p"][1]  # cr["p"] có thể là [x,y] hoặc [x,y,z] (junction 3D)
         rad = ((x - center_x) ** 2 + (y - center_y) ** 2) ** 0.5
         if rad < median_rad:
             _in.append(cr)

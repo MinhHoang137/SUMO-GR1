@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -8,6 +10,26 @@ using UnityEngine;
 public class Network
 {
     private static Dictionary<string, TcpClient> _connectedClients = new Dictionary<string, TcpClient>();
+
+    // Tiền tố đánh dấu payload đã nén (raw-deflate + base64) từ server — khớp GZ_PREFIX ở network.py.
+    private const string GZ_PREFIX = "GZ:";
+
+    // Nếu message có tiền tố GZ: → base64-decode rồi giải nén raw-deflate về JSON gốc.
+    // Không có tiền tố → trả nguyên (JSON thường — tương thích ngược / khi tắt nén ở server).
+    public static string MaybeDecompress(string message)
+    {
+        if (string.IsNullOrEmpty(message) || !message.StartsWith(GZ_PREFIX, StringComparison.Ordinal))
+        {
+            return message;
+        }
+        byte[] compressed = Convert.FromBase64String(message.Substring(GZ_PREFIX.Length));
+        using (var input = new MemoryStream(compressed))
+        using (var deflate = new DeflateStream(input, CompressionMode.Decompress))
+        using (var reader = new StreamReader(deflate, Encoding.UTF8))
+        {
+            return reader.ReadToEnd();
+        }
+    }
 
     // Buffer nhận bền theo từng kết nối — giữ phần dư sau END_MARKER (giống _recv_buffers ở network.py)
     // để không rớt message khi TCP gộp nhiều gói vào một lần đọc.

@@ -201,7 +201,8 @@ def run_simulation(client_socket: socket.socket):
             # end-to-end. Đặt SAU record_frame nên session/replay không lưu "ts" (không cần).
             data["ts"] = int(time.time() * 1000)
             # Realtime luôn có Unity là client → luôn stream và giãn nhịp.
-            network.send_data(client_socket, data)
+            # Nén luồng stream (raw-deflate+base64) để giảm băng thông/parse phía Unity.
+            network.send_data(client_socket, data, compress=network.COMPRESS_DOWNLOAD)
 
             with time_step_lock:
                 current_time_step = time_step
