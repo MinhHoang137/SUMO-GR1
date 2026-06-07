@@ -35,8 +35,7 @@
     \field{labeltitlesource}{title}
     \field{number}{1-2}
     \field{pages}{341\bibrangedash 385}
-    \field{title}{Automated discourse generation using discourse structure
-  relations}
+    \field{title}{Automated discourse generation using discourse structure relations}
     \field{volume}{63}
     \field{journaltitle}{Artificial intelligence}
     \field{year}{1993}
@@ -107,8 +106,7 @@
     \strng{fullhash}{PMDEB1}
     \field{labelnamesource}{author}
     \field{labeltitlesource}{title}
-    \field{booktitle}{{ESSLLI} workshop on information structure, discourse
-  structure and discourse semantics, Copenhagen, Denmark}
+    \field{booktitle}{{ESSLLI} workshop on information structure, discourse structure and discourse semantics, Copenhagen, Denmark}
     \field{pages}{129\bibrangedash 143}
     \field{title}{Discourse structure and anaphoric accessibility}
     \field{year}{2001}
@@ -127,8 +125,7 @@
     \strng{fullhash}{KA1}
     \field{labelnamesource}{author}
     \field{labeltitlesource}{title}
-    \field{title}{A data-driven methodology for motivating a set of coherence
-  relations}
+    \field{title}{A data-driven methodology for motivating a set of coherence relations}
     \list{institution}{1}{%
       {The University of Edinburgh, {UK}}%
     }

@@ -36,8 +36,9 @@ from SUMO_xml.create_map_from_maze import create_map_from_maze_file
 from SUMO_xml.route_gen import create_routes, create_routes_osm
 from SUMO_xml.create_city_map import create_map
 from naive_map_creator import naive_create_map
-# osm_to_net giữ lại cho osm_launcher.py phụ trợ (tạo .net.xml 3D từ .osm). Custom Script
-# mode không dùng đường dẫn này — user tự dựng kịch bản trong netedit.
+# osm_to_net: đường dẫn .osm→.net.xml CŨ, chỉ còn osm_launcher.py / debug tay dùng.
+# Luồng OSM chính hiện nay đi qua osm.build_scenario (sinh sẵn net+rou+cfg vào SUMO_xml/),
+# rồi nạp lại bằng apply_custom_script (xem custom_script.py để hiểu vai trò loader này).
 from osm.osm_to_net import convert_osm_to_net_3d_roads
 from custom_script import apply_custom_script
 
@@ -251,8 +252,9 @@ def send_road_data(client_socket: socket.socket):
 
 def initialize_map_and_routes(maze_file, num_lanes, config):
     net_xml_path = "./SUMO_xml/HelloWorld.net.xml"
-    # Custom Script: user đã dựng .sumocfg/.net.xml/.rou.xml bằng netedit
-    # → chỉ copy vào SUMO_xml/ và bỏ qua toàn bộ sinh route tự động.
+    # Nạp kịch bản dựng-sẵn từ một thư mục (config["custom"], bật khi maze_file là dir):
+    # luồng OSM auto-gen đã sinh net/rou/cfg vào SUMO_xml/ → chỉ chốt lại bộ file và bỏ
+    # qua sinh route tự động. (Không phải mode người dùng tự dựng — xem custom_script.py.)
     if config.get("custom"):
         if not apply_custom_script(maze_file):
             print("[Error] Failed to apply custom script folder.")
@@ -321,8 +323,9 @@ def initialize_map_and_routes(maze_file, num_lanes, config):
         
         print("[Info] Đang khởi tạo lộ trình VRP...")
         net_xml_path = "./SUMO_xml/HelloWorld.net.xml"
-        # DEPRECATED: nhánh OSM VRP không còn đi qua launcher chính (OSM đã được
-        # thay bằng Custom Script). Giữ lại để main.py legacy với .osm vẫn chạy.
+        # DEPRECATED: nhánh nhận .osm trực tiếp này chỉ còn cho main.py legacy/debug tay.
+        # Luồng OSM chính giờ sinh sẵn file qua build_scenario rồi nạp dạng thư mục
+        # (config["custom"]), nên maze_file ở đây hiếm khi còn là .osm.
         if maze_file.lower().endswith(".osm"):
             # OSM path: chỉ có .net.xml, đọc trực tiếp từ đó
             graph = NetworkGraph.from_net_xml(net_xml_path)
@@ -374,7 +377,7 @@ def start_network_services(config):
     server_thread = async_task(network.server_thread, server_socket, client_thread_function, daemon=False)
     
     # Realtime luôn khởi chạy Unity (3D). Chế độ headless đã được thay bằng pre-render.
-    subprocess.Popen([os.path.abspath(os.path.join(os.path.dirname(__file__), target_exe))])
+    # subprocess.Popen([os.path.abspath(os.path.join(os.path.dirname(__file__), target_exe))])
 
     receive_thread = async_task(receive, receive_socket, daemon=False)
     listen_thread = async_task(listen_for_control_commands, cmd_socket, daemon=False)

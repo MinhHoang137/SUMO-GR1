@@ -1,5 +1,15 @@
-"""Custom Script mode: user dựng sẵn kịch bản SUMO bằng netedit, server chỉ copy
-file vào SUMO_xml/ với tên chuẩn (HelloWorld.*) và bỏ qua sinh route tự động."""
+"""Loader kịch bản dựng-sẵn: copy .net.xml/.rou.xml (+ ghi .sumocfg chuẩn) từ một
+thư mục vào SUMO_xml/ với tên chuẩn (HelloWorld.*) và bỏ qua sinh route tự động.
+
+VAI TRÒ THỰC TẾ: hàm này được luồng OSM auto-gen TÁI SỬ DỤNG làm bước nạp lúc chạy.
+launcher OSM tab gọi build_scenario (osm/) để sinh net+rou+cfg vào SUMO_xml/, rồi
+truyền chính thư mục SUMO_xml/ cho main.py → main.py thấy isdir → config["custom"]=True
+→ initialize_map_and_routes gọi apply_custom_script để chốt bộ file. KHÔNG xóa: luồng
+OSM đang phụ thuộc hàm này.
+
+KHÔNG tồn tại (tính năng tương lai): không có mode hướng-người-dùng "tự dựng kịch bản
+trong netedit rồi trỏ server vào" — launcher chỉ có Benchmark / VRP / OSM. Tên gọi
+"Custom Script" chỉ là cơ chế nội bộ, KHÔNG phải một mode người dùng chọn được."""
 
 import os
 import shutil

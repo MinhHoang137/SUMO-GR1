@@ -135,6 +135,35 @@ Chọn 6 use case "xương sống" và có luồng phát sinh phong phú:
   - 5.x Cơ chế **takeover hybrid** (kinematic↔dynamic, khóa điều khiển bằng `existState`, upload batch).
   - 5.y Cơ chế **wreck + re-anchor** (đếm despawn tập trung chống cull, snap lane bằng `convertRoad`/`moveTo`, ngưỡng `SNAP_THRESHOLD`).
 
+#### [ĐỀ XUẤT THÊM — CHỜ CÂN NHẮC] 5.z Tối ưu luồng dữ liệu SUMO↔Unity
+> Nguồn: `HelloWorld/KE_HOACH_TOI_UU_LUONG_DU_LIEU.md` (đã hiện thực + đo). Có số liệu thật nên hợp
+> làm một mục giải pháp/đóng góp. Chương 6 đã nhắc tới (kết quả + hạn chế) nhưng Chương 5 chưa giải
+> thích *cách làm*. Gắn được với `tab:perf` Chương 4.
+
+Bốn giải pháp con (xếp theo lợi ích/công sức):
+1. **Gom truy vấn TraCI bằng subscription** — thay N×k lệnh riêng/bước bằng 1 lần `subscribe` +
+   `getAllSubscriptionResults()` (~1 round-trip). Đo (~90 xe, 200 bước, localhost): **3769 ms → 372 ms (~10×)**,
+   2763 phép đọc, **0 sai lệch**. File `Server/Traffic/trafficer.py`.
+2. **Nén luồng trạng thái** — raw-DEFLATE+base64, tiền tố `GZ:`, giữ nguyên khung `<END>`, có cờ
+   `COMPRESS_DOWNLOAD`, tương thích ngược. Đo ~3× (float ngẫu nhiên; SUMO thật cao hơn).
+   File `Server/network.py`, Unity `Network.MaybeDecompress`.
+3. **Sửa rớt frame + bỏ quét O(n²)** ở `Network.ReadMessage` (Unity): buffer bền per-connection,
+   giữ phần dư sau `<END>`, quét marker theo offset. Sửa luôn bug TCP gộp gói làm mất bản tin.
+4. **TCP_NODELAY (tắt Nagle) + giảm cấp phát** — `setsockopt`/`client.NoDelay`; tái dùng list trong
+   `ProcessData`. File `Server/network.py`, Unity `Network.cs`, `TraffiicerManager.cs`.
+
+Kèm **cơ chế đo độ trễ đầu–cuối**: Python đóng dấu `"ts"` lúc gửi, Unity tính `LatencyMs` + hiển thị
+`LatencyText`; chạy thuần một máy nên trừ trực tiếp, không cần đồng bộ đồng hồ → điền `tab:perf`.
+
+**Bảng số liệu gợi ý:** đọc trạng thái/bước 3769→372 ms (~10×); payload/bước ~3×; rớt frame: có→**0**;
+độ trễ đầu–cuối: đo được theo N xe.
+
+**CHƯA làm (giữ ở Chương 6 — hướng phát triển, đừng ghi như đã đạt):** định dạng nhị phân (MessagePack),
+delta encoding, lọc theo vùng quan sát (AoI). Lưu ý xe client-owned (đang lái/xác xe) KHÔNG được lọc dù xa camera.
+
+> Định hướng khi viết: nhấn mạnh **thay đổi vừa phải, có cờ bật/tắt, tương thích ngược** — không phải
+> tối ưu đánh đổi rủi ro cao.
+
 ### Chương 6 — Kết luận
 - Cập nhật đóng góp đạt được (gồm tính tương tác: chiếm quyền/lái xe, va chạm, re-anchor; lưu & phát lại phiên).
 - Hướng phát triển: hỗ trợ **đa người dùng đồng thời** (nhiều client cùng một phiên mô phỏng), mở rộng loại phương tiện, đánh giá định lượng (FPS/độ trễ theo quy mô mạng), cải thiện re-anchor & vật lý lái.

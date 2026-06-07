@@ -23,7 +23,8 @@ Về kết quả đạt được, đồ án đã hoàn thành các nhóm chức 
 	\item \textbf{Tự động dựng cảnh từ dữ liệu mạng đường}: dựng mạng đường trong
 	không gian ba chiều từ kịch bản sinh tự động theo lưới mê cung phục vụ kiểm
 	thử, hoặc từ bản đồ thực tế OpenStreetMap, giảm đáng kể thao tác thủ công khi
-	thay đổi kịch bản.
+	thay đổi kịch bản; với bản đồ OpenStreetMap còn trích xuất và dựng khối công
+	trình (toà nhà) từ dữ liệu nguồn nhằm tăng tính trực quan của khung cảnh.
 	\item \textbf{Hiển thị đa đối tượng theo thời gian}: tạo, cập nhật và thu hồi
 	phương tiện, đèn tín hiệu và người đi bộ theo vòng đời mô phỏng; áp dụng nội
 	suy chuyển động để hiển thị mượt khi tốc độ khung hình cao.
@@ -39,12 +40,19 @@ Về kết quả đạt được, đồ án đã hoàn thành các nhóm chức 
 	\item \textbf{Điều khiển vận hành}: cung cấp các thao tác điều khiển camera,
 	tạm dừng và tiếp tục, điều chỉnh tốc độ mô phỏng lúc đang chạy, và lọc đối
 	tượng hiển thị theo vùng quan sát nhằm duy trì hiệu năng.
+	\item \textbf{Tối ưu luồng dữ liệu và đo độ trễ}: thu gọn số lần gọi
+	\gls{TraCI} trong mỗi bước bằng cơ chế đăng ký (subscription) thay cho việc
+	truy vấn riêng lẻ từng đối tượng, nén luồng dữ liệu trạng thái trước khi
+	truyền và tắt cơ chế gộp gói (Nagle) để giảm độ trễ; đồng thời sửa lỗi mất
+	khung dữ liệu khi các gói TCP dồn vào nhau và bổ sung cơ chế đo, hiển
+	thị độ trễ đầu--cuối phục vụ đánh giá chất lượng đồng bộ.
 \end{itemize}
 
 Bên cạnh các kết quả đạt được, hệ thống vẫn còn một số hạn chế cần tiếp tục hoàn
-thiện. Thứ nhất, giao thức truyền thông hiện tại ưu tiên tính đơn giản nên khi số
-lượng đối tượng lớn có thể phát sinh tải xử lý và băng thông, làm giảm tốc độ cập
-nhật. Thứ hai, mô hình vật lý cho chế độ lái còn ở mức cơ bản, chưa phản ánh đầy
+thiện. Thứ nhất, mặc dù luồng truyền thông đã được tối ưu một bước (gom truy vấn
+\gls{TraCI} bằng subscription, nén dữ liệu trạng thái, giảm độ trễ gói tin), giao
+thức vẫn dựa trên định dạng văn bản \gls{JSON}, nên với mạng có rất nhiều đối
+tượng vẫn còn dư địa cải thiện về tải xử lý và băng thông. Thứ hai, mô hình vật lý cho chế độ lái còn ở mức cơ bản, chưa phản ánh đầy
 đủ động lực học của phương tiện; cơ chế đưa xe trở lại làn đường sử dụng ngưỡng
 khoảng cách cố định nên trong một số tình huống phức tạp có thể chưa tối ưu. Thứ
 ba, hệ thống hiện chạy trên một máy và hỗ trợ một người dùng cho mỗi phiên mô
@@ -63,10 +71,11 @@ thống vận hành ổn định.
 Trong thời gian tới, đồ án có thể được phát triển theo các hướng chính sau:
 
 \begin{itemize}[leftmargin=2em]
-	\item \textbf{Tối ưu truyền thông và hiệu năng}: giảm chi phí đóng gói và phân
-	tích dữ liệu bằng định dạng nhị phân hoặc nén, hoặc chỉ truyền phần thay đổi
-	theo từng bước; bổ sung cơ chế đo độ trễ đầu--cuối để đánh giá chất lượng đồng
-	bộ khi số lượng đối tượng tăng.
+	\item \textbf{Tối ưu truyền thông và hiệu năng}: tiếp nối các tối ưu đã có
+	(subscription, nén dữ liệu, đo độ trễ đầu--cuối), giảm thêm chi phí đóng gói
+	và phân tích bằng định dạng nhị phân thay cho văn bản \gls{JSON}, chỉ truyền
+	phần thay đổi theo từng bước (mã hóa sai phân), và lọc dữ liệu theo vùng quan
+	sát để giảm tải khi số lượng đối tượng rất lớn.
 	\item \textbf{Hỗ trợ nhiều người dùng đồng thời}: mở rộng kiến trúc để nhiều
 	máy hiển thị cùng tham gia một phiên mô phỏng, mỗi người điều khiển một phương
 	tiện riêng; đây là tính năng chưa có trong phiên bản hiện tại và đòi hỏi cơ
