@@ -23,6 +23,7 @@ from Traffic.unity_vehicle import process_vehicle_updates
 from Traffic.crossRoad import CrossRoadReader
 from Traffic.edgeType0 import EdgeReader
 from Traffic.crossing import CrossingReader
+from osm.building import BuildingReader
 from SUMO_xml.create_map_from_maze import create_map_from_maze_file
 from SUMO_xml.route_gen import create_routes, create_routes_osm
 from naive_map_creator import naive_create_map
@@ -168,7 +169,12 @@ def run_prerender(maze_file, num_lanes, config):
     crossroads = CrossRoadReader.read_all_junctions()
     edges = EdgeReader.read_edges()
     crossings = CrossingReader.read_crossings()
-    session.save_road_data({"jd": crossroads, "ed": edges, "cd": crossings})
+    session.save_road_data({
+        "jd": crossroads, "ed": edges, "cd": crossings,
+        "bd": BuildingReader.read_buildings()  # [] nếu không phải chế độ OSM
+    })
+    # road_data.json đầy đủ đã lưu (pre-render headless, không gửi qua socket) → xoá cache.
+    BuildingReader.discard()
 
     session.open()
     try:

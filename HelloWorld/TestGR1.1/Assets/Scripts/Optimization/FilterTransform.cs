@@ -7,7 +7,10 @@ public class FilterTransform : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        CameraController.Instance.OnCameraMove += CameraController_OnCameraMove;
+        if (CameraController.Instance != null)
+        {
+            CameraController.Instance.OnCameraMove += CameraController_OnCameraMove;
+        }
         if (filterSO.GetUseFilter())
         {
             Filter();

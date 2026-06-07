@@ -403,6 +403,21 @@ def build_scenario(osm_file: str,
         print("[Cảnh báo] Không sinh được route nào — net có thể quá nhỏ hoặc thiếu sidewalk.")
         # Vẫn ghi sumocfg để user có thể mở net trong SUMO-GUI; .rou.xml đã được ghi (rỗng)
     write_sumocfg(net_path, rou_path, cfg_path)
+
+    # Trích polygon toà nhà từ .osm → cache cạnh net (toạ độ net SUMO). Chỉ chế độ OSM
+    # mới có bước này; runtime gộp vào road_data ("bd") rồi xoá cache. Lỗi ở đây không
+    # được làm hỏng việc dựng kịch bản → bọc try/except.
+    try:
+        from osm.building_extractor import write_buildings_json
+        base, _ext = os.path.splitext(net_path)
+        if base.lower().endswith(".net"):
+            base = base[:-4]
+        buildings_path = base + ".buildings.json"
+        n_bldg = write_buildings_json(osm_file, net_path, buildings_path)
+        print(f"[Thành công] Đã ghi {n_bldg} toà nhà → {buildings_path}")
+    except Exception as e:
+        print(f"[Cảnh báo] Trích building thất bại ({e}) — bỏ qua khối nhà.")
+
     return True
 
 

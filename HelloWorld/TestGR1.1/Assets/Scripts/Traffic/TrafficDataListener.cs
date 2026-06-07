@@ -74,6 +74,8 @@ public class TrafficDataListener : MonoBehaviour
 					TrafficerManager.Instance.CurrentStep = data.Step;
 					TrafficLightManager.Instance.ProcessData(data.TrafficLights);
 					TrafficerManager.Instance.ProcessData(data.Trafficers);
+					// Hoàn thành 1 step → đo độ trễ end-to-end so với server.
+					TrafficerManager.Instance.ReportStepLatency(data.ServerTimeMs);
 				});
 			}
 		}

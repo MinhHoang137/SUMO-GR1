@@ -13,6 +13,11 @@ public class TrafficDataList
     [JsonProperty("st")]
     [SerializeField] private int step = 0;
 
+    // Thời điểm server gửi gói (epoch mili-giây). Dùng để đo độ trễ end-to-end ở Unity.
+    // = 0 khi không có (vd replay) → bỏ qua phép đo.
+    [JsonProperty("ts")]
+    [SerializeField] private long serverTimeMs = 0;
+
     [JsonProperty("tl")]
     [SerializeField] private List<TrafficLightData> trafficLights = new ();
 
@@ -20,6 +25,7 @@ public class TrafficDataList
 	[SerializeField] private List<TrafficerData> trafficers = new ();
 
 	public int Step => step;
+	public long ServerTimeMs => serverTimeMs;
 	public List<TrafficLightData> TrafficLights => trafficLights;
 	public List<TrafficerData> Trafficers => trafficers;
 }

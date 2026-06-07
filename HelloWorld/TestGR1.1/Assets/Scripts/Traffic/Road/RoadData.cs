@@ -19,8 +19,12 @@ public class RoadData
 	public List<EdgeData> edgeDatas;
 	[JsonProperty("cd")]
 	public List<CrossingData> crossingDatas;
+	// Toà nhà — chỉ có ở chế độ render OSM; null/rỗng ở benchmark & custom-script.
+	[JsonProperty("bd")]
+	public List<BuildingData> buildingDatas;
 
 	public List<JunctionData> JunctionDatas => junctionDatas;
 	public List<EdgeData> EdgeDatas => edgeDatas;
 	public List<CrossingData> CrossingDatas => crossingDatas;
+	public List<BuildingData> BuildingDatas => buildingDatas;
 }

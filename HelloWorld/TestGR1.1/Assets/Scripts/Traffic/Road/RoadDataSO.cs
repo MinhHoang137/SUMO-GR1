@@ -8,4 +8,5 @@ public class RoadDataSO : ScriptableObject
     public List<JunctionData> junctionDatas;
 	public List<EdgeData> edgeDatas;
 	public List<CrossingData> crossingDatas;
+	public List<BuildingData> buildingDatas;
 }

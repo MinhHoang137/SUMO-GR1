@@ -16,15 +16,33 @@ public class TrafficerManager : MonoBehaviour
 			get { return trafficer; }
 		}
 	}
+	public class LatencyEventArgs : EventArgs
+	{
+		public LatencyEventArgs(long latencyMs)
+		{
+			LatencyMs = latencyMs;
+		}
+		// Độ trễ của step vừa nhận (mili-giây, số nguyên).
+		public long LatencyMs { get; }
+	}
+
 	public event EventHandler<TrafficerEventArgs> OnAddTrafficer;
 	public event EventHandler<TrafficerEventArgs> OnRemoveTrafficer;
+
+	// Bắn mỗi khi hoàn thành 1 step, mang theo độ trễ end-to-end (mili-giây) so với server.
+	// UI/logger subscribe để hiển thị độ trễ realtime.
+	public event EventHandler<LatencyEventArgs> OnLatencyChanged;
 
 	public static TrafficerManager Instance { get; private set; }
 
 	// Bước SUMO mới nhất (server gửi qua field "st"). Dùng cho vòng đời xác xe (Wrecked).
 	public int CurrentStep { get; set; }
+
+	// Độ trễ end-to-end (mili-giây) của step gần nhất = thời điểm nhận tại Unity - timestamp server gửi ("ts").
+	// Yêu cầu đồng hồ 2 máy đồng bộ; localhost (cùng máy) thì chính xác.
+	public long LatencyMs { get; private set; }
 	// Số bước SUMO xác xe tồn tại trước khi bị despawn.
-	[SerializeField] private int wreckLifetimeSteps = 150;
+	[SerializeField, Min(0)] private int wreckLifetimeSteps = 150;
 	[SerializeField] private TrafficerKeyPrefabSO trafficerKeyPrefabSO;
 	
 	private Dictionary<string, Trafficer> trafficerDict = new Dictionary<string, Trafficer>();
@@ -98,6 +116,21 @@ public class TrafficerManager : MonoBehaviour
 				if (trafficer.isStandaloneClient) Destroy(trafficer.gameObject);
 			}
 		}
+	}
+
+	// Gọi sau khi xử lý xong dữ liệu 1 step. Tính độ trễ end-to-end so với timestamp server
+	// rồi bắn OnLatencyChanged. serverTimeMs <= 0 (vd replay không có "ts") → bỏ qua.
+	public void ReportStepLatency(long serverTimeMs)
+	{
+		if (serverTimeMs <= 0) return;
+
+		long nowMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+		long latency = nowMs - serverTimeMs;
+		// Chống nhiễu khi đồng hồ lệch âm.
+		if (latency < 0) latency = 0;
+
+		LatencyMs = latency;
+		OnLatencyChanged?.Invoke(this, new LatencyEventArgs(LatencyMs));
 	}
 
 	private Trafficer SpawnTrafficer(TrafficerData data)

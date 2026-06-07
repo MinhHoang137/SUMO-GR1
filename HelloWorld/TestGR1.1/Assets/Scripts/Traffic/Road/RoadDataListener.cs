@@ -100,6 +100,8 @@ public class RoadDataListener : MonoBehaviour
 				roadDataSO.edgeDatas = roadData.EdgeDatas;
 				roadDataSO.junctionDatas = roadData.JunctionDatas;
 				roadDataSO.crossingDatas = roadData.CrossingDatas;
+				// null ở chế độ không phải OSM → clear danh sách cũ (tránh giữ nhà của lần chạy trước trên SO asset).
+				roadDataSO.buildingDatas = roadData.BuildingDatas;
 				//roadDataSO.edgeDatas = newRoadDataSO.edgeDatas;
 				//roadDataSO.junctionDatas = newRoadDataSO.junctionDatas;
 				//roadDataSO.crossingDatas = newRoadDataSO.crossingDatas;

@@ -31,6 +31,7 @@ from Traffic.edgeType0 import EdgeReader
 from Traffic.trafficLight import read_traffic_lights
 from Traffic.trafficer import read_trafficers
 from Traffic.unity_vehicle import receive, process_vehicle_updates
+from osm.building import BuildingReader
 from SUMO_xml.create_map_from_maze import create_map_from_maze_file
 from SUMO_xml.route_gen import create_routes, create_routes_osm
 from SUMO_xml.create_city_map import create_map
@@ -196,6 +197,9 @@ def run_simulation(client_socket: socket.socket):
             if simulation_session:
                 simulation_session.record_frame(data)
 
+            # Đính timestamp gửi (epoch mili-giây) ngay sát lúc stream để Unity đo độ trễ
+            # end-to-end. Đặt SAU record_frame nên session/replay không lưu "ts" (không cần).
+            data["ts"] = int(time.time() * 1000)
             # Realtime luôn có Unity là client → luôn stream và giãn nhịp.
             network.send_data(client_socket, data)
 
@@ -226,7 +230,8 @@ def send_road_data(client_socket: socket.socket):
     road_data = {
         "jd": crossroads,
         "ed": edges,
-        "cd": crossings
+        "cd": crossings,
+        "bd": BuildingReader.read_buildings()  # [] nếu không phải chế độ OSM
     }
     if simulation_session:
         simulation_session.save_road_data(road_data)
@@ -238,6 +243,8 @@ def send_road_data(client_socket: socket.socket):
             else:
                 break
         print("Road data sent successfully.")
+        # road_data.json đầy đủ đã được lưu + gửi → xoá cache building trung gian.
+        BuildingReader.discard()
     except Exception as e:
         print(f"Error sending road data: {e}")
 
@@ -398,7 +405,12 @@ def run_realtime(maze_file, num_lanes, config):
     crossroads = CrossRoadReader.read_all_junctions()
     edges = EdgeReader.read_edges()
     crossings = CrossingReader.read_crossings()
-    simulation_session.save_road_data({"jd": crossroads, "ed": edges, "cd": crossings})
+    # Đọc building không huỷ cache ở đây — send_road_data (khi Unity kết nối) cần đọc lại
+    # rồi mới discard.
+    simulation_session.save_road_data({
+        "jd": crossroads, "ed": edges, "cd": crossings,
+        "bd": BuildingReader.read_buildings()
+    })
 
     network_context = start_network_services(config)
 
