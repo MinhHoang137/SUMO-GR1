@@ -112,6 +112,13 @@ def server_thread(server_socket: socket.socket, client_handler):
     while True:
         try:
             client_socket, addr = server_socket.accept()
+            if client_socket:
+                # Tắt Nagle trên kết nối đã chấp nhận: stream realtime nhịp ~50ms cần độ trễ thấp,
+                # không để TCP gộp/giữ gói tới ~40ms.
+                try:
+                    client_socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                except Exception as e:
+                    print(f"[Warn] Could not set TCP_NODELAY: {e}")
             if not client_socket:
                 try:
                     print(f"Error accepting connection on server socket: {server_socket} | Address: {server_socket.getsockname()}")

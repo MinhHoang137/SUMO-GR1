@@ -98,11 +98,12 @@ Lợi ích nhỏ nhưng dễ làm, giảm GC spike.
 
 ## 3. Lộ trình thực hiện theo giai đoạn
 
-### Giai đoạn 1 — Sửa nhanh, rủi ro thấp, lợi ích cao
-- [ ] **P0** Viết lại `Network.ReadMessage` (buffer bền + quét incremental + giữ phần dư). *Sửa cả
-      bug rớt frame.*
-- [ ] **P1** Bật `TCP_NODELAY` hai đầu.
-- [ ] **P2** Tái dùng list trong `ProcessData`; bỏ/giảm so sánh `lastJson`.
+### Giai đoạn 1 — Sửa nhanh, rủi ro thấp, lợi ích cao ✅ ĐÃ LÀM
+- [x] **P0** Viết lại `Network.ReadMessage` (buffer bền per-connection + quét marker incremental ở mức
+      byte + giữ phần dư sau marker). *Sửa cả bug rớt frame khi gói TCP dính nhau; bỏ quét O(n²).*
+- [x] **P1** Bật `TCP_NODELAY`: Unity `client.NoDelay=true` (`CreateTcpClient`); server `setsockopt` trên socket đã accept.
+- [x] **P2** Tái dùng list snapshot trong `ProcessData` (clear+nạp lại thay vì `new` mỗi packet).
+      *(`lastJson` giữ nguyên làm dedup an toàn — chi phí thấp, không đổi hành vi.)*
 
 → *Kỳ vọng: giảm CPU Unity rõ rệt khi đông xe, hết rớt frame, độ trễ ổn định hơn. Không đổi giao thức.*
 
