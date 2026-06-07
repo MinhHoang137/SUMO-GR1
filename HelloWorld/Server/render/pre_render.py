@@ -25,6 +25,7 @@ from Traffic.edgeType0 import EdgeReader
 from Traffic.crossing import CrossingReader
 from SUMO_xml.create_map_from_maze import create_map_from_maze_file
 from SUMO_xml.route_gen import create_routes, create_routes_osm
+from naive_map_creator import naive_create_map
 # osm_to_net giữ lại cho osm_launcher.py phụ trợ; Custom Script mode không đi qua đây.
 from osm.osm_to_net import convert_osm_to_net_3d_roads
 from custom_script import apply_custom_script
@@ -45,7 +46,10 @@ def initialize_map_and_routes(maze_file, num_lanes, config):
             print("[Error] Failed to convert OSM file to SUMO network.")
             sys.exit(1)
     else:
-        if not create_map_from_maze_file(maze_file, num_lanes):
+        # Benchmark: sinh mạng theo kiểu vét cạn (mỗi ô '.' là một node) để tạo mạng dày,
+        # đúng tinh thần đo tải hệ thống. KHÔNG dùng create_map_from_maze_file (sinh mạng
+        # thưa, tối ưu node) cho tệp .map nữa.
+        if not naive_create_map(maze_file, num_lanes):
             print("[Error] Failed to create map from maze file.")
             sys.exit(1)
 

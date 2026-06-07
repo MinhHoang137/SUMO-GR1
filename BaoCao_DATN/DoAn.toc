@@ -1,0 +1,142 @@
+\ttl@change@i {\@ne }{chapter}{0.0cm}{\bfseries \vspace {0.3cm}}{{\bfseries {\scshape } CHƯƠNG \thecontentslabel .\ }}{}{\titlerule *[0.3pc]{.}\contentspage }\relax 
+\ttl@change@v {chapter}{}{}{}\relax 
+\ttl@change@i {\@ne }{section}{0.0cm}{\vspace {0.3cm}}{\thecontentslabel \ }{}{\titlerule *[0.3pc]{.}\contentspage }\relax 
+\ttl@change@v {section}{}{}{}\relax 
+\ttl@change@i {\@ne }{subsection}{1.0cm}{\vspace {0.3cm}}{\thecontentslabel \ }{}{\titlerule *[0.3pc]{.}\contentspage }\relax 
+\ttl@change@v {subsection}{}{}{}\relax 
+\thispagestyle {empty}
+\contentsline {chapter}{\numberline {1}GIỚI THIỆU ĐỀ TÀI}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Đặt vấn đề}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Mục tiêu và phạm vi đề tài}{2}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Định hướng giải pháp}{3}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Bố cục đồ án}{4}{section.1.4}%
+\contentsline {chapter}{\numberline {2}KHẢO SÁT VÀ PHÂN TÍCH YÊU CẦU}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Khảo sát hiện trạng}{5}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Công cụ quan sát đi kèm trình mô phỏng}{5}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Các ứng dụng trực quan hóa giao thông ba chiều}{5}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}So sánh và rút ra yêu cầu}{5}{subsection.2.1.3}%
+\contentsline {section}{\numberline {2.2}Tổng quan chức năng}{6}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Biểu đồ use case tổng quát}{6}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Biểu đồ use case phân rã nhóm Chuẩn bị kịch bản và bản đồ}{8}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Biểu đồ use case phân rã nhóm Vận hành mô phỏng}{8}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Biểu đồ use case phân rã nhóm Quan sát và trực quan hóa}{9}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}Biểu đồ use case phân rã nhóm Lái xe tương tác}{9}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.6}Biểu đồ use case phân rã nhóm Kết quả và kết thúc}{10}{subsection.2.2.6}%
+\contentsline {section}{\numberline {2.3}Đặc tả chức năng}{10}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Đặc tả use case Chạy mô phỏng thời gian thực}{10}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Đặc tả use case Sinh tuyến đường cho phương tiện}{11}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Đặc tả use case Chiếm quyền điều khiển và lái xe}{11}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}Đặc tả use case Trả quyền điều khiển phương tiện}{13}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.5}Đặc tả use case Tạm dừng và tiếp tục mô phỏng}{14}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.6}Đặc tả use case Nhập bản đồ từ OpenStreetMap}{15}{subsection.2.3.6}%
+\contentsline {section}{\numberline {2.4}Yêu cầu phi chức năng}{15}{section.2.4}%
+\contentsline {chapter}{\numberline {3}NỀN TẢNG LÝ THUYẾT VÀ CÔNG NGHỆ SỬ DỤNG}{17}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Tổng quan công nghệ và vai trò trong hệ thống}{17}{section.3.1}%
+\contentsline {section}{\numberline {3.2}SUMO (Simulation of Urban Mobility)}{18}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Giới thiệu}{18}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Lý do lựa chọn SUMO}{18}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Các thành phần cấu hình và dữ liệu trong SUMO}{18}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Các lựa chọn thay thế và đánh giá}{19}{subsection.3.2.4}%
+\contentsline {section}{\numberline {3.3}TraCI (Traffic Control Interface)}{19}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Giới thiệu}{19}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Mô hình hoạt động client--server}{20}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Nhóm chức năng TraCI sử dụng trong đồ án}{20}{subsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.3.4}Lựa chọn thay thế}{20}{subsection.3.3.4}%
+\contentsline {section}{\numberline {3.4}Python cho điều phối và xử lý dữ liệu}{21}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Vai trò trong hệ thống}{21}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Chuẩn hóa theo định dạng trao đổi độc lập nền tảng}{21}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}Tổ chức xử lý theo bước thời gian}{21}{subsection.3.4.3}%
+\contentsline {subsection}{\numberline {3.4.4}Lựa chọn thay thế}{21}{subsection.3.4.4}%
+\contentsline {section}{\numberline {3.5}Unity cho hiển thị 3D và tương tác}{21}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Giới thiệu và lý do lựa chọn}{21}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Pipeline hiển thị đối tượng giao thông}{22}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.3}Hệ thống vật lý của Unity cho chế độ lái}{22}{subsection.3.5.3}%
+\contentsline {subsection}{\numberline {3.5.4}Lựa chọn thay thế}{22}{subsection.3.5.4}%
+\contentsline {section}{\numberline {3.6}Tích hợp SUMO--TraCI/Python--Unity}{22}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Phương thức trao đổi dữ liệu}{22}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}Định dạng dữ liệu tối thiểu}{23}{subsection.3.6.2}%
+\contentsline {subsection}{\numberline {3.6.3}Đồng bộ thời gian giữa bước mô phỏng và khung hình}{23}{subsection.3.6.3}%
+\contentsline {subsection}{\numberline {3.6.4}Kết chương}{23}{subsection.3.6.4}%
+\contentsline {chapter}{\numberline {4}PHÂN TÍCH THIẾT KẾ, TRIỂN KHAI VÀ ĐÁNH GIÁ HỆ THỐNG}{24}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Thiết kế kiến trúc}{24}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Lựa chọn kiến trúc phần mềm}{24}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Kiến trúc tổng quan}{24}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Thiết kế các mô-đun chính}{25}{subsection.4.1.3}%
+\contentsline {section}{\numberline {4.2}Thiết kế chi tiết}{25}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Máy trạng thái điều khiển phương tiện}{25}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Hai luồng dữ liệu giữa mô phỏng và hiển thị}{26}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Thiết kế một số lớp chủ đạo}{26}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.2.4}Lưu trữ dữ liệu}{27}{subsection.4.2.4}%
+\contentsline {section}{\numberline {4.3}Xây dựng ứng dụng}{27}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Thư viện và công cụ sử dụng}{27}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Kết quả đạt được và thống kê mã nguồn}{27}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Minh họa các chức năng chính}{28}{subsection.4.3.3}%
+\contentsline {section}{\numberline {4.4}Kiểm thử}{28}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Thực nghiệm và đánh giá}{29}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Môi trường và kịch bản thực nghiệm}{29}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}Phương pháp đánh giá}{29}{subsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.5.3}Kết quả}{29}{subsection.4.5.3}%
+\contentsline {subsection}{\numberline {4.5.4}Triển khai}{30}{subsection.4.5.4}%
+\contentsline {chapter}{\numberline {5}CÁC GIẢI PHÁP VÀ ĐÓNG GÓP NỔI BẬT}{31}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Dựng bản đồ ba chiều chính xác từ SUMO và OpenStreetMap}{31}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Vấn đề}{31}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Giải pháp}{31}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}Kết quả đạt được}{33}{subsection.5.1.3}%
+\contentsline {section}{\numberline {5.2}Tạo phương tiện của người dùng và chiếm quyền điều khiển}{33}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Vấn đề}{33}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Giải pháp}{34}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}Kết quả đạt được}{34}{subsection.5.2.3}%
+\contentsline {section}{\numberline {5.3}Hệ thống va chạm giả lập tai nạn}{34}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Vấn đề}{34}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Giải pháp}{35}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}Kết quả đạt được}{35}{subsection.5.3.3}%
+\contentsline {section}{\numberline {5.4}Trả quyền điều khiển và đưa phương tiện về làn đường}{35}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Vấn đề}{35}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Giải pháp}{35}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {5.4.3}Kết quả đạt được}{35}{subsection.5.4.3}%
+\contentsline {section}{\numberline {5.5}Lưu trữ kịch bản và phát lại}{36}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Vấn đề}{36}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Giải pháp}{36}{subsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.5.3}Kết quả đạt được}{36}{subsection.5.5.3}%
+\contentsline {section}{\numberline {5.6}Giao tiếp thời gian thực tin cậy bằng tách khung bản tin}{36}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Vấn đề}{36}{subsection.5.6.1}%
+\contentsline {subsection}{\numberline {5.6.2}Giải pháp}{36}{subsection.5.6.2}%
+\contentsline {subsection}{\numberline {5.6.3}Kết quả đạt được}{37}{subsection.5.6.3}%
+\contentsline {section}{\numberline {5.7}Tối ưu hiệu năng hiển thị quy mô lớn}{37}{section.5.7}%
+\contentsline {subsection}{\numberline {5.7.1}Vấn đề}{37}{subsection.5.7.1}%
+\contentsline {subsection}{\numberline {5.7.2}Giải pháp}{37}{subsection.5.7.2}%
+\contentsline {subsection}{\numberline {5.7.3}Kết quả đạt được}{37}{subsection.5.7.3}%
+\contentsline {section}{\numberline {5.8}Kết chương}{37}{section.5.8}%
+\contentsline {chapter}{\numberline {6}KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}{38}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Kết luận}{38}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Hướng phát triển}{39}{section.6.2}%
+\contentsline {chapter}{TÀI LIỆU THAM KHẢO}{43}{section*.41}%
+\contentsline {chapter}{PHỤ LỤC}{45}{section*.42}%
+\ttl@change@i {\@ne }{chapter}{0.0cm}{\bfseries \vspace {0.3cm}}{{\bfseries {\scshape } \thecontentslabel .\ }}{}{\titlerule *[0.3pc]{.}\contentspage }\relax 
+\ttl@change@v {chapter}{}{}{}\relax 
+\contentsline {chapter}{\numberline {A}HƯỚNG DẪN VIẾT ĐỒ ÁN TỐT NGHIỆP}{45}{chapter.1.A}%
+\contentsline {section}{\numberline {A.1}Ngành học}{46}{section.1.A.1}%
+\contentsline {section}{\numberline {A.2}Đánh dấu (bullet) và đánh số (numering)}{46}{section.1.A.2}%
+\contentsline {section}{\numberline {A.3}Cách thêm bảng}{47}{section.1.A.3}%
+\contentsline {section}{\numberline {A.4}Chèn hình ảnh}{47}{section.1.A.4}%
+\contentsline {section}{\numberline {A.5}Tài liệu tham khảo}{48}{section.1.A.5}%
+\contentsline {paragraph}{Cách liệt kê}{48}{paragraph*.45}%
+\contentsline {paragraph}{Các loại tài liệu tham khảo}{48}{paragraph*.46}%
+\contentsline {section}{\numberline {A.6}Cách viết phương trình và công thức toán học}{48}{section.1.A.6}%
+\contentsline {section}{\numberline {A.7}Qui cách đóng quyển}{48}{section.1.A.7}%
+\contentsline {chapter}{\numberline {B}ĐẶC TẢ USE CASE}{50}{chapter.1.B}%
+\contentsline {section}{\numberline {B.1}Đặc tả use case Tạo bản đồ từ lưới mê cung}{50}{section.1.B.1}%
+\contentsline {section}{\numberline {B.2}Đặc tả use case Sinh tuyến đường cho người đi bộ}{50}{section.1.B.2}%
+\contentsline {section}{\numberline {B.3}Đặc tả use case Cấu hình tham số mô phỏng}{51}{section.1.B.3}%
+\contentsline {section}{\numberline {B.4}Đặc tả use case Chạy mô phỏng chế độ phát lại}{51}{section.1.B.4}%
+\contentsline {section}{\numberline {B.5}Đặc tả use case Chạy kèm giao diện sumo-gui}{52}{section.1.B.5}%
+\contentsline {section}{\numberline {B.6}Đặc tả use case Chạy kịch bản định tuyến giao hàng}{52}{section.1.B.6}%
+\contentsline {section}{\numberline {B.7}Đặc tả use case Hiển thị phương tiện theo thời gian}{53}{section.1.B.7}%
+\contentsline {section}{\numberline {B.8}Đặc tả use case Hiển thị đèn tín hiệu}{53}{section.1.B.8}%
+\contentsline {section}{\numberline {B.9}Đặc tả use case Hiển thị người đi bộ}{54}{section.1.B.9}%
+\contentsline {section}{\numberline {B.10}Đặc tả use case Điều khiển camera quan sát}{54}{section.1.B.10}%
+\contentsline {section}{\numberline {B.11}Đặc tả use case Điều chỉnh tốc độ mô phỏng}{54}{section.1.B.11}%
+\contentsline {section}{\numberline {B.12}Đặc tả use case Lọc đối tượng hiển thị theo vùng}{55}{section.1.B.12}%
+\contentsline {section}{\numberline {B.13}Đặc tả use case Xử lý va chạm sinh xác xe}{55}{section.1.B.13}%
+\contentsline {section}{\numberline {B.14}Đặc tả use case Lưu trữ và kết thúc phiên mô phỏng}{56}{section.1.B.14}%
+\contentsfinish 

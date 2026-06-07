@@ -30,10 +30,12 @@ def setup_simulation_config(is_custom: bool = False):
             "has_ped": False,
             "ped_impatience": None,
         }
-        gui_option = input("Chạy với giao diện đồ họa Unity không? (y/n, mặc định n): ")
-        config["run_with_gui"] = gui_option.lower() == 'y'
         render_option = input("Chế độ render? (1: Realtime, 2: Pre-render) (mặc định 1): ")
         config["render_mode"] = "pre_render" if render_option == "2" else "realtime"
+        # GUI mode chỉ áp dụng cho realtime; pre-render luôn headless, chỉ ghi kịch bản.
+        if config["render_mode"] == "realtime":
+            gui_option = input("Chế độ hiển thị? (1: Chỉ 3D, 2: Cả 2D và 3D) (mặc định 1): ")
+            config["gui_mode"] = "2d3d" if gui_option == "2" else "3d"
         return config
 
     mode_option = input("Chạy ở chế độ nào? (1: Benchmark, 2: VRP) (mặc định 1): ")
@@ -73,11 +75,13 @@ def setup_simulation_config(is_custom: bool = False):
         num_staff_input = input("Số lượng nhân viên giao hàng (mặc định 3): ")
         config["vrp_num_staff"] = int(num_staff_input) if num_staff_input else 3
     
-    gui_option = input("Chạy với giao diện đồ họa Unity không? (y/n, mặc định n): ")
-    config["run_with_gui"] = gui_option.lower() == 'y'
-    
     render_option = input("Chế độ render? (1: Realtime, 2: Pre-render) (mặc định 1): ")
     config["render_mode"] = "pre_render" if render_option == "2" else "realtime"
+
+    # GUI mode chỉ áp dụng cho realtime; pre-render luôn headless, chỉ ghi kịch bản.
+    if config["render_mode"] == "realtime":
+        gui_option = input("Chế độ hiển thị? (1: Chỉ 3D, 2: Cả 2D và 3D) (mặc định 1): ")
+        config["gui_mode"] = "2d3d" if gui_option == "2" else "3d"
 
     return config
 

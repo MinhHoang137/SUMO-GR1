@@ -1,0 +1,367 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+
+Chương này trình bày các giải pháp kỹ thuật và đóng góp nổi bật của đồ án trong
+quá trình xây dựng hệ thống. Mỗi giải pháp được trình bày theo ba phần: vấn đề
+đặt ra, giải pháp, và kết quả đạt được. Các nội dung về kiến trúc và thiết kế
+tổng thể đã trình bày ở Chương 4; chương này tập trung vào những điểm mang tính
+giải quyết vấn đề và đóng gói thành giải pháp có thể tái sử dụng.
+
+\section{Dựng bản đồ ba chiều chính xác từ SUMO và OpenStreetMap}
+\label{sec:dung-ban-do}
+
+\subsection{Vấn đề}
+
+Yêu cầu cốt lõi của hệ thống là dựng lại mạng đường trong không gian ba chiều bám
+sát dữ liệu nguồn, cho cả mạng sinh tự động lẫn bản đồ thực tế từ OpenStreetMap.
+Dữ liệu mạng của \gls{SUMO} mô tả mỗi làn đường bằng một đường gấp khúc và mỗi
+nút giao bằng một đa giác hình dạng bất kỳ. Việc chuyển các mô tả này thành lưới
+đa giác ba chiều phát sinh nhiều khó khăn: dải mặt đường phải bám đúng đường gấp
+khúc và không bị bóp méo tại khúc cua; đa giác nút giao có thể lõm hoặc thậm chí
+tự cắt khi \gls{SUMO} gộp nhiều nút sát nhau; và mặt đường của các đoạn kề nhau
+phải khớp nhau để xe có thể di chuyển liên tục mà không vướng.
+
+\subsection{Giải pháp}
+
+Đồ án xây dựng hai thuật toán dựng hình riêng trong Unity cho hai loại đối tượng
+là đoạn đường và nút giao.
+
+\textbf{Thuật toán dựng đoạn đường.} Mỗi làn được dựng thành một dải lưới bám theo
+đường gấp khúc của nó. Tại mỗi đỉnh của đường gấp khúc, hệ thống tính một vector
+vuông góc với hướng đi để sinh ra hai đỉnh lưới ở hai mép làn. Ở các đỉnh giữa
+nằm trên khúc cua, vector vuông góc được lấy theo phân giác của hai đoạn kề và độ
+rộng được nhân thêm một hệ số theo góc cua, nhờ đó dải mặt đường không bị bóp lại
+ở chỗ gấp khúc. Trên cơ sở đó, hệ thống vẽ thêm vạch phân làn liền hoặc đứt đoạn
+và vạch biên. Để xe có thể chạy và đổi làn tự do trong lòng đường, mỗi đoạn được
+sinh một bộ va chạm gồm tấm sàn và hai vách hai bên. Vì hai đoạn đường kề nhau
+sinh vách sát nhau gây trùng lặp, hệ thống bổ sung một bước dọn vách: sau khi dựng,
+mỗi vách dò các vách lân cận bằng kiểm tra chồng lấn và tia quét; nếu phát hiện
+vách của đoạn khác sát bên, cả hai vách trùng được loại bỏ. Bước dọn này được hoãn
+một khung hình để bảo đảm mọi đoạn đã dựng xong và hệ vật lý đã cập nhật. Hình
+\ref{fig:edge-ribbon} minh họa cách dựng dải mặt đường và hiệu chỉnh tại khúc cua;
+Giải thuật \ref{alg:edge} tóm tắt bước sinh đỉnh lưới.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=1.2, >=Latex]
+		% Duong gap khuc (centerline)
+		\coordinate (P0) at (0,0);
+		\coordinate (P1) at (3,0);
+		\coordinate (P2) at (5,1.5);
+		\draw[dashed, gray] (P0) -- (P1) -- (P2);
+		\foreach \p in {P0,P1,P2} \fill[gray] (\p) circle (1.5pt);
+		\node[gray, below] at (P0) {\scriptsize $P_0$};
+		\node[gray, below right] at (P1) {\scriptsize $P_1$};
+		\node[gray, right] at (P2) {\scriptsize $P_2$};
+		% Mep trai/phai (ribbon)
+		\draw[thick] (0,0.4) -- (2.86,0.4) -- (4.76,1.82);
+		\draw[thick] (0,-0.4) -- (3.13,-0.4) -- (5.24,1.18);
+		% Tick noi 2 mep tai moi dinh
+		\draw (0,0.4) -- (0,-0.4);
+		\draw (2.86,0.4) -- (3.13,-0.4);
+		\draw (4.76,1.82) -- (5.24,1.18);
+		% Duong cheo tam giac hoa 1 quad
+		\draw[gray!60] (0,-0.4) -- (2.86,0.4);
+		% Ghi chu mep
+		\node[above] at (1.4,0.4) {\scriptsize mép trái};
+		\node[below] at (1.5,-0.4) {\scriptsize mép phải};
+		% Miter tai khuc cua
+		\draw[->, red] (P1) -- ++(0.55,0.18) node[right, font=\scriptsize, red] {phân giác};
+		\node[red, font=\scriptsize, align=center] at (3.5,-1.0) {khúc cua: nhân $1/\cos\alpha$\\để mesh không bị bóp};
+		\draw[red, ->] (3.5,-0.75) -- (2.95,-0.25);
+	\end{tikzpicture}
+	\caption{Dựng dải mặt đường bám đường gấp khúc và hiệu chỉnh tại khúc cua (bản nháp)}
+	\label{fig:edge-ribbon}
+\end{figure}
+
+\begin{algorithm}[H]
+	\caption{Sinh đỉnh lưới cho một làn đường}
+	\label{alg:edge}
+	\KwIn{Đường gấp khúc $P_0,\dots,P_{n-1}$; bề rộng làn $w$}
+	\KwOut{Danh sách đỉnh lưới hai mép làn}
+	\For{mỗi đỉnh $i$ của đường gấp khúc}{
+		Tính hướng đi $d$ tại $P_i$\;
+		\Indp đầu/cuối: theo đoạn kề; đỉnh giữa: phân giác hai đoạn\;
+		\Indm $r \leftarrow \mathrm{cross}(d, -\vec{y})$ \tcp*{vector vuông góc trong mặt phẳng ngang}
+		$dist \leftarrow w/2$\;
+		\If{$i$ là đỉnh giữa}{
+			$dist \leftarrow (w/2)/\cos\alpha$ \tcp*{$\alpha$: nửa góc cua, chống bóp mesh}
+		}
+		Phát hai đỉnh $P_i + r\cdot dist$ và $P_i - r\cdot dist$\;
+	}
+	Nối các cặp đỉnh liên tiếp: mỗi đoạn sinh hai tam giác\;
+\end{algorithm}
+
+\textbf{Thuật toán dựng nút giao.} Đa giác nút giao được tam giác hóa bằng kỹ
+thuật cắt tai (ear clipping) chiếu trên mặt phẳng ngang, nhờ đó giữ được hình
+dạng lõm của nút. Trong trường hợp đa giác tự cắt do \gls{SUMO} gộp nhiều nút sát
+nhau khiến cắt tai không hoàn tất, hệ thống tự chuyển sang phương án bao lồi
+(convex hull) để bảo đảm mặt nút vẫn được phủ kín thay vì bị rách. Mặt trên sau
+khi tam giác hóa được đùn xuống một đoạn để tạo thành khối ba chiều có mặt trên,
+mặt dưới và các mặt bên. Khối nút được gán một bộ va chạm dạng hộp bao để hệ vật
+lý hoạt động ổn định. Hình \ref{fig:junction-prism} minh họa quá trình tam giác
+hóa và đùn khối; Giải thuật \ref{alg:junction} tóm tắt các bước.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=0.95, >=Latex]
+		% (a) Da giac + tam giac hoa
+		\begin{scope}
+			\coordinate (A) at (0,0);
+			\coordinate (B) at (2,0);
+			\coordinate (C) at (2.6,1.4);
+			\coordinate (D) at (1,2.1);
+			\coordinate (E) at (-0.4,1.2);
+			\draw[thick] (A) -- (B) -- (C) -- (D) -- (E) -- cycle;
+			\draw[gray!70] (A) -- (C);
+			\draw[gray!70] (A) -- (D);
+			\node[font=\scriptsize] at (1,-0.6) {(a) tam giác hóa (ear clipping)};
+		\end{scope}
+		% Mui ten
+		\draw[->, thick] (3.2,1) -- (4.2,1);
+		% (b) Khoi 3D (prism)
+		\begin{scope}[xshift=5cm]
+			\coordinate (A) at (0,0);
+			\coordinate (B) at (2,0);
+			\coordinate (C) at (2.6,1.4);
+			\coordinate (D) at (1,2.1);
+			\coordinate (E) at (-0.4,1.2);
+			% mat tren
+			\draw[thick] (A) -- (B) -- (C) -- (D) -- (E) -- cycle;
+			% canh ben (dung xuong)
+			\foreach \p in {A,B,C,D,E} \draw[gray] (\p) -- ($(\p)+(0,-0.6)$);
+			% mat duoi
+			\draw[gray] ($(A)+(0,-0.6)$) -- ($(B)+(0,-0.6)$) -- ($(C)+(0,-0.6)$) -- ($(D)+(0,-0.6)$) -- ($(E)+(0,-0.6)$) -- cycle;
+			\node[font=\scriptsize] at (1,-1.2) {(b) đùn thành khối ba chiều};
+		\end{scope}
+	\end{tikzpicture}
+	\caption{Tam giác hóa đa giác nút giao rồi đùn thành khối ba chiều (bản nháp)}
+	\label{fig:junction-prism}
+\end{figure}
+
+\begin{algorithm}[H]
+	\caption{Dựng khối nút giao ba chiều}
+	\label{alg:junction}
+	\KwIn{Đa giác nút giao $V$; vector độ cao $\vec{h}$}
+	\KwOut{Lưới khối ba chiều của nút giao}
+	Chuẩn hóa $V$ về thứ tự chiều kim đồng hồ\;
+	$T \leftarrow \mathrm{EarClip}(V)$ \tcp*{tam giác hóa, giữ được hình lõm}
+	\If{$T$ chưa đầy đủ}{
+		$V \leftarrow \mathrm{ConvexHull}(V)$ \tcp*{đa giác tự cắt $\rightarrow$ bao lồi}
+		$T \leftarrow \mathrm{EarClip}(V)$\;
+	}
+	Mặt trên $\leftarrow T$\;
+	Mặt dưới $\leftarrow T$ dời theo $\vec{h}$ (đảo chiều pháp tuyến)\;
+	\ForEach{cạnh của $V$}{
+		Thêm hai tam giác tạo mặt bên\;
+	}
+\end{algorithm}
+
+Hai thuật toán này dùng chung cho cả mạng sinh tự động và mạng nhập từ
+OpenStreetMap, do dữ liệu sau khi chuyển đổi đều ở cùng một định dạng mạng của
+\gls{SUMO}. Nhờ đó, bản đồ thực tế cũng được dựng ba chiều bằng cùng một quy
+trình.
+
+\subsection{Kết quả đạt được}
+
+Hệ thống dựng được mạng đường ba chiều bám sát dữ liệu nguồn cho cả mạng sinh tự
+động và bản đồ thực tế từ OpenStreetMap. Mặt đường liền lạc tại khúc cua, nút giao
+được phủ kín kể cả với hình dạng phức tạp, và bề mặt va chạm cho phép xe di chuyển
+cùng đổi làn liên tục. Đây là nền tảng để hiển thị giao thông và để người dùng lái
+xe trong cảnh.
+
+\section{Tạo phương tiện của người dùng và chiếm quyền điều khiển}
+\label{sec:chiem-quyen}
+
+\subsection{Vấn đề}
+
+Để mang lại góc nhìn của người tham gia giao thông, hệ thống cần cho phép người
+dùng điều khiển trực tiếp một phương tiện trong cảnh, gồm hai tình huống: tạo một
+phương tiện riêng của người dùng, và giành quyền điều khiển một phương tiện vốn
+do \gls{SUMO} điều khiển. Khó khăn nằm ở chỗ một phương tiện do \gls{SUMO} điều
+khiển được cập nhật vị trí theo dữ liệu mô phỏng và không phản ứng vật lý; muốn
+lái thủ công thì phải chuyển nó sang chuyển động theo vật lý, đồng thời phản ánh
+vị trí mới về \gls{SUMO} để các xe khác nhận biết.
+
+\subsection{Giải pháp}
+
+Đồ án thiết kế một máy trạng thái xác định quyền điều khiển của mỗi phương tiện,
+trong đó quyền điều khiển và việc bật hay tắt vật lý được quyết định bởi trạng
+thái chứ không dựa vào sự hiện diện của thành phần. Khi người dùng chiếm quyền,
+phương tiện chuyển sang trạng thái do người dùng điều khiển: hệ thống bật thân
+cứng (Rigidbody) và các bộ va chạm bánh xe (Wheel Collider) để xe chuyển động
+theo vật lý, đồng thời ngừng cập nhật vị trí theo dữ liệu mô phỏng. Vị trí của xe
+do người dùng lái được gửi ngược về phía \gls{SUMO} để cập nhật vào mô phỏng,
+giúp các phương tiện khác phản ứng theo. Khi không còn do người dùng điều khiển,
+phương tiện tắt phần vật lý và trở lại chế độ cập nhật theo dữ liệu để bảo đảm
+hiệu năng. Cách bật tắt vật lý theo trạng thái như vậy được gọi là cơ chế lai,
+chỉ trả chi phí vật lý cho đúng phương tiện đang được lái. Bên cạnh đó, hệ thống
+cho phép sinh một phương tiện riêng của người dùng, là phương tiện luôn do người
+dùng điều khiển và không bị \gls{SUMO} chiếm lại.
+
+\subsection{Kết quả đạt được}
+
+Người dùng có thể chiếm quyền một phương tiện bất kỳ đang chạy trong mô phỏng và
+lái nó bằng bàn phím với chuyển động có tính vật lý, hoặc sinh một phương tiện
+riêng để lái. Các phương tiện do \gls{SUMO} điều khiển phản ứng với phương tiện
+người lái nhờ vị trí được phản ánh ngược về mô phỏng. Đây là tính năng tạo nên
+trải nghiệm theo góc nhìn người tham gia giao thông mà các công cụ quan sát thông
+thường không có.
+
+\section{Hệ thống va chạm giả lập tai nạn}
+\label{sec:va-cham}
+
+\subsection{Vấn đề}
+
+Khi người dùng lái xe trong dòng giao thông, một tình huống tự nhiên là va chạm
+với phương tiện khác. Hệ thống cần tái hiện hậu quả của va chạm một cách hợp lý:
+phương tiện bị tông phải dừng lại như một chiếc xe gặp tai nạn, gây ùn ứ cho các
+phương tiện phía sau, và sau một thời gian thì được dọn khỏi hiện trường. Thách
+thức là phương tiện bị tông vốn do \gls{SUMO} điều khiển và không phản ứng vật
+lý, nên cần được chuyển trạng thái ngay tại thời điểm va chạm; ngoài ra việc dọn
+xe phải đáng tin cậy ngay cả khi đối tượng tạm thời bị ẩn khỏi cảnh.
+
+\subsection{Giải pháp}
+
+Hệ thống phát hiện va chạm giữa phương tiện do người dùng điều khiển (hoặc xác xe)
+với phương tiện do \gls{SUMO} điều khiển. Phương tiện bị tông được chuyển sang
+trạng thái xác xe: nó được bật vật lý để bị xô đẩy theo va chạm, đồng thời phía
+\gls{SUMO} giữ nó đứng yên để tạo ùn ứ thực sự cho dòng xe phía sau. Mỗi xác xe
+được dọn sau một số bước mô phỏng định trước. Để việc dọn xe đáng tin cậy, bộ đếm
+số bước được quản lý tập trung theo bước mô phỏng thay vì đặt trên từng đối tượng,
+nhờ đó không bị sai lệch khi đối tượng tạm bị ẩn để tối ưu hiển thị. Khi đủ số
+bước, phương tiện được chuyển sang trạng thái bị hủy và được thu hồi.
+
+\subsection{Kết quả đạt được}
+
+Hệ thống tái hiện được tình huống tai nạn: xe bị tông dừng lại gây ùn ứ giống va
+chạm thực tế, sau đó tự được dọn khỏi hiện trường. Tính năng này làm phong phú
+các tình huống mà người dùng có thể quan sát và thử nghiệm, và là hệ quả tự nhiên
+của khả năng lái xe tương tác.
+
+\section{Trả quyền điều khiển và đưa phương tiện về làn đường}
+\label{sec:re-anchor}
+
+% [ĐỀ XUẤT THÊM] Mục này hoàn thiện câu chuyện lái xe (cùng với mục chiếm quyền và
+% va chạm). Nếu thầy thấy trùng, có thể gộp vào mục chiếm quyền.
+\subsection{Vấn đề}
+
+Sau khi lái một phương tiện đã chiếm quyền, người dùng cần trả nó về cho
+\gls{SUMO} để mô phỏng tiếp tục một cách tự nhiên. Vấn đề là sau quá trình lái tự
+do, vị trí của xe thường không còn nằm đúng trên làn đường của \gls{SUMO}. Nếu trả
+về ngay, xe có thể bị lệch khỏi mạng hoặc gây lỗi mô phỏng. Hệ thống cần phân biệt
+được trường hợp có thể đưa xe trở lại dòng giao thông với trường hợp xe đã đi quá
+xa và không thể đưa về.
+
+\subsection{Giải pháp}
+
+Khi người dùng trả quyền, hệ thống tìm làn đường gần nhất với vị trí hiện tại của
+xe. Nếu khoảng cách nằm trong một ngưỡng cho phép, hệ thống đưa xe về đúng làn,
+cấp cho nó một tuyến đường mới và trả quyền điều khiển lại cho \gls{SUMO}; phương
+tiện sau đó tiếp tục di chuyển tự động như một xe bình thường. Nếu vị trí xe vượt
+quá ngưỡng, hệ thống loại bỏ phương tiện thay vì cố đưa về. Ngưỡng khoảng cách
+được tách thành tham số riêng để dễ điều chỉnh. Trường hợp xe đã va chạm thì được
+chuyển sang xử lý xác xe thay vì trả về dòng giao thông.
+
+\subsection{Kết quả đạt được}
+
+Phương tiện sau khi lái có thể được trả về dòng giao thông và chạy tiếp một cách
+liền mạch khi còn gần làn đường, hoặc được loại bỏ gọn gàng khi đã đi quá xa. Giải
+pháp này khép kín vòng đời của một phương tiện do người dùng điều khiển, giúp việc
+lái xe không phá vỡ tính nhất quán của mô phỏng.
+
+\section{Lưu trữ kịch bản và phát lại}
+\label{sec:luu-tru}
+
+\subsection{Vấn đề}
+
+Để phục vụ phân tích, đối chiếu và trình bày, hệ thống cần lưu lại diễn biến của
+mỗi lần chạy và cho phép xem lại mà không phải chạy lại mô phỏng. Nếu mỗi loại dữ
+liệu được ghi rời rạc thì khó truy vết theo từng lần chạy; ngoài ra, mô phỏng dài
+sinh khối lượng dữ liệu lớn nên không thể giữ toàn bộ trong bộ nhớ trước khi ghi.
+
+\subsection{Giải pháp}
+
+Đồ án xây dựng cơ chế lưu trữ theo phiên, gom toàn bộ kết quả của một lần chạy vào
+một thư mục đặt theo tên bản đồ và thời điểm chạy, gồm nhật ký hành trình của xe,
+bản tóm tắt, dữ liệu mạng đường và chuỗi trạng thái theo từng bước. Chuỗi trạng
+thái được ghi theo cơ chế luồng với một vùng đệm: dữ liệu được ghi dần ra tệp khi
+vùng đệm đầy, nhờ đó không cần giữ toàn bộ trong bộ nhớ. Trên cơ sở chuỗi trạng
+thái đã lưu, hệ thống cung cấp chế độ phát lại đọc lại dữ liệu và tái hiện diễn
+biến trong Unity. Đáng chú ý, chế độ thời gian thực cũng ghi lại chuỗi trạng thái
+theo cùng định dạng, nên một lần chạy thời gian thực cũng có thể được phát lại về
+sau.
+
+\subsection{Kết quả đạt được}
+
+Mỗi lần chạy được lưu trọn vẹn trong một thư mục phiên, thuận tiện cho truy vết và
+so sánh. Người dùng có thể phát lại một kịch bản đã lưu mà không cần chạy lại mô
+phỏng, phục vụ tốt cho việc phân tích và trình bày kết quả.
+
+\section{Giao tiếp thời gian thực tin cậy bằng tách khung bản tin}
+\label{sec:tcp-framing}
+
+% [ĐỀ XUẤT THÊM] Đóng góp kỹ thuật nền cho toàn hệ thống thời gian thực.
+\subsection{Vấn đề}
+
+Unity nhận dữ liệu trạng thái theo từng bước từ phía Python qua TCP. Vì TCP là
+giao thức hướng luồng, một lần nhận có thể chỉ chứa một phần bản tin hoặc chứa
+nhiều bản tin gộp lại, dẫn tới lỗi khi phân tích dữ liệu. Hệ thống cần một cơ chế
+xác định ranh giới bản tin ổn định, đồng thời hỗ trợ cả bản tin dữ liệu lẫn bản
+tin điều khiển.
+
+\subsection{Giải pháp}
+
+Mỗi bản tin được gửi kèm một dấu hiệu kết thúc đặt ở cuối. Phía nhận duy trì một
+vùng đệm cho mỗi kết nối, đọc thêm dữ liệu cho tới khi gặp dấu hiệu kết thúc, tách
+ra đúng một bản tin hoàn chỉnh và giữ lại phần dư cho lần sau. Cách này xử lý đúng
+bản chất luồng của TCP, tránh cả hai lỗi bản tin bị cắt và nhiều bản tin dính
+nhau. Trên nền giao thức này, hệ thống truyền song song bản tin dữ liệu trạng thái
+và bản tin điều khiển như tạm dừng, tiếp tục, kết thúc và cập nhật tham số.
+
+\subsection{Kết quả đạt được}
+
+Kênh giao tiếp giữa Python và Unity hoạt động ổn định trong suốt quá trình mô
+phỏng thời gian thực, giảm lỗi phân tích dữ liệu và hỗ trợ điều khiển quá trình
+chạy một cách an toàn.
+
+\section{Tối ưu hiệu năng hiển thị quy mô lớn}
+\label{sec:toi-uu}
+
+% [ĐỀ XUẤT THÊM] Giải thích vì sao hệ thống hiển thị được nhiều phương tiện mà vẫn mượt.
+\subsection{Vấn đề}
+
+Hệ thống cần hiển thị đồng thời nhiều phương tiện trong khi vẫn duy trì tốc độ
+khung hình ổn định. Việc liên tục tạo và hủy đối tượng, cũng như vẽ toàn bộ đối
+tượng kể cả ngoài tầm quan sát, làm giảm hiệu năng đáng kể khi số lượng phương
+tiện tăng.
+
+\subsection{Giải pháp}
+
+Hệ thống áp dụng một số kỹ thuật tối ưu. Thứ nhất là tái sử dụng đối tượng: phương
+tiện rời mạng không bị hủy mà được thu hồi để dùng lại cho phương tiện mới, giảm
+chi phí tạo và hủy. Thứ hai là lọc theo vùng quan sát: chỉ hiển thị các đối tượng
+trong tầm nhìn quanh camera và tạm ẩn các đối tượng ở ngoài, riêng phương tiện
+đang được người dùng điều khiển luôn được giữ hiển thị. Thứ ba là giảm số lệnh vẽ
+để hạ tải cho khâu kết xuất. Để chuyển động mượt khi tốc độ khung hình cao, vị trí
+phương tiện được nội suy giữa hai bước mô phỏng liên tiếp ở phía hiển thị.
+
+\subsection{Kết quả đạt được}
+
+Nhờ các kỹ thuật trên, hệ thống duy trì được hiển thị ổn định khi số lượng phương
+tiện tăng, đồng thời chuyển động mượt mà ngay cả khi tốc độ khung hình cao hơn
+nhịp cập nhật của mô phỏng.
+
+\section{Kết chương}
+
+Chương này đã trình bày các giải pháp và đóng góp nổi bật của đồ án: hai thuật
+toán dựng đoạn đường và nút giao ba chiều bám sát dữ liệu, dùng chung cho mạng
+sinh tự động và bản đồ thực tế; cơ chế tạo phương tiện của người dùng và chiếm
+quyền điều khiển dựa trên máy trạng thái và bật tắt vật lý theo trạng thái; hệ
+thống va chạm giả lập tai nạn; cơ chế trả quyền và đưa phương tiện về làn; cơ chế
+lưu trữ phiên và phát lại; giao tiếp thời gian thực tin cậy bằng tách khung bản
+tin; và các kỹ thuật tối ưu hiệu năng hiển thị. Các giải pháp này vừa giải quyết
+các vấn đề kỹ thuật cụ thể, vừa tạo nên những tính năng làm nên giá trị của hệ
+thống. Chương tiếp theo tổng kết kết quả đạt được và đề xuất hướng phát triển.
+
+\end{document}

@@ -1,0 +1,335 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+
+Chương 3 đã trình bày các công nghệ nền tảng. Chương này trình bày cách thiết kế
+và hiện thực hệ thống dựa trên các công nghệ đó, gồm: kiến trúc tổng thể, thiết
+kế các mô-đun chính, máy trạng thái điều khiển phương tiện, hai luồng dữ liệu
+giữa mô phỏng và hiển thị, cùng kết quả thực nghiệm và đánh giá. Nội dung tập
+trung vào những điểm phản ánh đúng hiện thực của hệ thống thay vì mô tả lý thuyết
+chung.
+
+\section{Thiết kế kiến trúc}
+
+\subsection{Lựa chọn kiến trúc phần mềm}
+
+Hệ thống được xây dựng theo kiến trúc phân tầng kết hợp mô hình mô phỏng--hiển
+thị, trong đó phần mô phỏng giao thông chạy trên \gls{SUMO} (điều khiển bằng
+\gls{TraCI} trong Python) và phần hiển thị, tương tác chạy trên Unity. Hai phần
+giao tiếp qua kết nối TCP theo cơ chế truyền thông điệp dạng \gls{JSON}, có dấu
+hiệu kết thúc gói tin \texttt{<END>} để tách thông điệp trên luồng TCP.
+
+Kiến trúc này được chọn vì các lý do: tách biệt trách nhiệm giữa mô phỏng và hiển
+thị; dễ mở rộng thêm loại đối tượng hoặc chỉ số thống kê mà ít ảnh hưởng phần còn
+lại; và tương thích với công cụ, do \gls{SUMO} đã có \gls{TraCI} hỗ trợ điều
+khiển theo bước, còn Unity thuận lợi cho hiển thị thời gian thực và xử lý vật lý.
+Ở mức khái niệm, có thể ánh xạ theo mô hình Model--View--Controller: phần Model là
+trạng thái mô phỏng trong \gls{SUMO} cùng các tệp mạng và tuyến; phần View là các
+đối tượng và mô-đun dựng cảnh trong Unity; phần Controller là lớp giao tiếp TCP
+và bộ xử lý lệnh điều khiển.
+
+\subsection{Kiến trúc tổng quan}
+
+Hệ thống gồm ba tầng: tầng mô phỏng (Python kết hợp \gls{SUMO}/\gls{TraCI}) khởi
+tạo mạng, chạy mô phỏng theo bước, trích xuất trạng thái và ghi kết quả; tầng
+tích hợp (TCP cùng định dạng \gls{JSON}) đóng gói, tách khung và truyền thông
+điệp; tầng hiển thị (Unity) nhận dữ liệu, dựng và cập nhật đối tượng, cung cấp
+giao diện điều khiển và xử lý tương tác lái xe.
+
+Điểm đáng chú ý trong hiện thực là hệ thống dùng ba kênh TCP tách theo mục đích
+và hai luồng dữ liệu ngược chiều, như minh họa ở Hình \ref{fig:arch-detail}.
+Kênh chính truyền dữ liệu mô phỏng từ Python sang Unity; kênh cập nhật nhận dữ
+liệu phương tiện do người dùng lái từ Unity về Python; kênh điều khiển nhận các
+lệnh tạm dừng, tiếp tục, kết thúc và cập nhật tham số.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[every node/.style={font=\small}, node distance=1.0cm]
+		\node[draw, rounded corners, align=center, minimum height=1cm] (sumo) {SUMO};
+		\node[draw, rounded corners, align=center, minimum width=3cm, minimum height=1.6cm, right=2.2cm of sumo] (py) {Python\\(điều phối)};
+		\node[draw, rounded corners, align=center, minimum width=3cm, minimum height=1.6cm, right=4.2cm of py] (unity) {Unity\\(hiển thị \& tương tác)};
+		% TraCI
+		\draw[{Latex}-{Latex}] (sumo) -- node[midway, above, font=\scriptsize] {TraCI} (py);
+		% 3 kenh TCP
+		\draw[-{Latex}] ([yshift=14pt]py.east) -- ([yshift=14pt]unity.west)
+			node[midway, above, font=\scriptsize] {5050: dữ liệu mô phỏng};
+		\draw[{Latex}-] ([yshift=-2pt]py.east) -- ([yshift=-2pt]unity.west)
+			node[midway, above, font=\scriptsize] {5053: vị trí xe người lái};
+		\draw[{Latex}-] ([yshift=-16pt]py.east) -- ([yshift=-16pt]unity.west)
+			node[midway, below, font=\scriptsize] {5054: lệnh điều khiển};
+	\end{tikzpicture}
+	\caption{Kiến trúc chi tiết với ba kênh TCP và hai luồng dữ liệu (bản nháp)}
+	\label{fig:arch-detail}
+\end{figure}
+
+\subsection{Thiết kế các mô-đun chính}
+
+Phía Python đảm nhiệm mô phỏng và điều phối, gồm các mô-đun chính: mô-đun điều
+phối khởi tạo các kênh TCP và chạy vòng lặp mô phỏng; mô-đun mạng đóng gói và
+tách khung thông điệp; nhóm mô-đun đọc trạng thái chuyển dữ liệu xe, đèn tín hiệu
+và người đi bộ từ \gls{TraCI} sang định dạng chuẩn; mô-đun cập nhật phương tiện
+xử lý dữ liệu xe do người dùng lái gửi lên; nhóm mô-đun sinh mạng và tuyến tạo
+kịch bản mô phỏng; và mô-đun lưu trữ phiên ghi kết quả của mỗi lần chạy.
+
+Phía Unity đảm nhiệm hiển thị và tương tác, gồm các nhóm mô-đun chính trình bày
+trong Bảng \ref{tab:unity-modules}.
+
+\begin{table}[H]
+	\centering
+	\caption{Các nhóm mô-đun chính phía Unity}
+	\label{tab:unity-modules}
+	\begin{tabular}{p{0.26\textwidth} p{0.64\textwidth}}
+		\hline
+		\textbf{Nhóm mô-đun} & \textbf{Nhiệm vụ} \\
+		\hline
+		Mạng (Network) & Kết nối TCP, nhận dữ liệu mạng đường và dữ liệu mô phỏng. \\
+		Giao thông (Traffic) & Quản lý vòng đời và cập nhật phương tiện, đèn tín hiệu, người đi bộ; nội suy chuyển động. \\
+		Phương tiện người lái (UnityVehicle) & Chiếm quyền, lái bằng vật lý, gửi dữ liệu xe lên server, xử lý va chạm. \\
+		Tối ưu (Optimization) & Lọc đối tượng theo vùng quan sát, giảm số lệnh vẽ. \\
+		Giao diện (UI) & Điều khiển camera, tạm dừng, tốc độ, nút chiếm/trả quyền. \\
+		Mô phỏng (Simulation) & Điều phối chế độ thời gian thực và chế độ phát lại. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Thiết kế chi tiết}
+
+\subsection{Máy trạng thái điều khiển phương tiện}
+
+Điểm thiết kế cốt lõi của phần tương tác là một máy trạng thái xác định quyền
+điều khiển và hành vi của mỗi phương tiện. Mỗi phương tiện luôn ở một trong bốn
+trạng thái: được \gls{SUMO} điều khiển, được người dùng điều khiển, trở thành xác
+xe sau va chạm, hoặc bị hủy. Quyền điều khiển và việc bật/tắt vật lý được quyết
+định hoàn toàn bởi trạng thái này, thay vì dựa vào sự hiện diện của thành phần.
+Hình \ref{fig:existstate} mô tả máy trạng thái.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[every node/.style={font=\small}, >=Latex,
+		st/.style={draw, rounded corners, align=center, minimum width=2.6cm, minimum height=0.9cm}]
+		\node[st] (server) {Do SUMO\\điều khiển};
+		\node[st, right=3.5cm of server] (client) {Do người dùng\\điều khiển};
+		\node[st, below=2.2cm of client] (wreck) {Xác xe};
+		\node[st, below=2.2cm of server] (dead) {Bị hủy};
+		\draw[->] (server) -- node[above, font=\scriptsize, align=center] {chiếm\\quyền} (client);
+		\draw[->] (client.north) to[out=120,in=60,looseness=1.4] node[above, font=\scriptsize, align=center] {trả quyền (đưa về làn)} (server.north);
+		\draw[->] (server) -- node[left, font=\scriptsize, align=center] {bị tông} (wreck);
+		\draw[->] (client) -- node[right, font=\scriptsize, align=center] {trả quyền\\khi đã va chạm} (wreck);
+		\draw[->] (wreck) -- node[below, font=\scriptsize, align=center] {sau N bước} (dead);
+		\draw[->] (client.south west) -- node[above, font=\scriptsize, align=center, sloped] {thả quá xa làn} (dead.north east);
+		\draw[->] (dead.south) to[out=-90,in=-90,looseness=1.2] node[below, font=\scriptsize] {tái sử dụng} (server.south);
+	\end{tikzpicture}
+	\caption{Máy trạng thái điều khiển phương tiện (bản nháp)}
+	\label{fig:existstate}
+\end{figure}
+
+Khi một phương tiện do \gls{SUMO} điều khiển, vị trí của nó được cập nhật theo dữ
+liệu mô phỏng và phần vật lý được tắt. Khi người dùng chiếm quyền, hệ thống bật
+vật lý để người dùng lái; vị trí xe được phản ánh ngược về \gls{SUMO} để các xe
+khác phản ứng. Khi một xe đang do người dùng điều khiển hoặc một xác xe va chạm
+với xe do \gls{SUMO} điều khiển, xe bị tông chuyển thành xác xe, bị đông cứng
+trong mô phỏng để gây ùn ứ, và tự bị hủy sau một số bước định trước. Khi trả
+quyền mà xe không va chạm, hệ thống đưa xe trở lại làn gần nhất; nếu quá xa, xe bị
+hủy. Trạng thái bị hủy đưa phương tiện về bộ nhớ tái sử dụng. Chi tiết cơ chế
+chuyển đổi vật lý và đưa xe về làn được trình bày trong Chương 5.
+
+\subsection{Hai luồng dữ liệu giữa mô phỏng và hiển thị}
+
+Hệ thống có hai luồng dữ liệu ngược chiều. Luồng tải xuống truyền trạng thái mô
+phỏng từ Python sang Unity theo từng bước, gồm chỉ số bước hiện tại, trạng thái
+đèn tín hiệu và danh sách đối tượng giao thông; trong đó mỗi đối tượng chứa định
+danh, loại, vị trí, hướng và một số cờ trạng thái. Luồng tải lên truyền dữ liệu
+các phương tiện do người dùng điều khiển từ Unity về Python theo lô trong một
+thông điệp, gồm định danh, vị trí, hướng, tốc độ và trạng thái tồn tại của xe.
+Phía Python dùng luồng tải lên để phản ánh xe người lái vào \gls{SUMO} và để đối
+soát danh sách phương tiện đang được quản lý.
+
+\subsection{Thiết kế một số lớp chủ đạo}
+
+Trong phạm vi báo cáo, một số lớp chủ đạo được trình bày như sau.
+
+\begin{itemize}[leftmargin=2em]
+	\item \texttt{TrafficerManager} (Unity): quản lý vòng đời phương tiện theo dữ
+	liệu tải xuống, tạo, cập nhật và thu hồi đối tượng; đếm tập trung số bước để
+	hủy xác xe nhằm tránh lỗi khi đối tượng bị tạm ẩn.
+	\item \texttt{UnityVehicle} (Unity): xử lý chiếm quyền, trả quyền và chuyển xe
+	thành xác xe; bật/tắt vật lý theo trạng thái; thu thập dữ liệu xe để gửi lên.
+	\item \texttt{WheelController} (Unity): điều khiển bốn bánh xe gồm tăng tốc,
+	đánh lái và phanh khi xe ở chế độ lái.
+	\item \texttt{VehicleSender} (Unity): gửi dữ liệu phương tiện theo lô, giữ lô
+	mới nhất để truyền lên server.
+	\item \texttt{SimulationSession} (Python): gom toàn bộ kết quả của một lần chạy
+	vào một thư mục phiên và ghi chuỗi trạng thái theo bước dưới dạng luồng.
+\end{itemize}
+
+\subsection{Lưu trữ dữ liệu}
+
+Hệ thống không dùng cơ sở dữ liệu truyền thống mà lưu dữ liệu dưới dạng tệp. Dữ
+liệu cấu hình và mạng mô phỏng là các tệp của \gls{SUMO}. Dữ liệu kết quả của mỗi
+lần chạy được gom vào một thư mục phiên đặt theo tên bản đồ và thời điểm chạy, gồm
+nhật ký hành trình của xe, bản tóm tắt, dữ liệu mạng đường và chuỗi trạng thái
+theo từng bước. Cách lưu này phù hợp với mục tiêu mô phỏng, hiển thị và thu thập
+thống kê theo từng lần chạy, đồng thời cho phép phát lại.
+
+\section{Xây dựng ứng dụng}
+
+\subsection{Thư viện và công cụ sử dụng}
+
+Bảng \ref{tab:tools} liệt kê các công cụ chính được sử dụng trong dự án.
+
+\begin{table}[H]
+	\centering
+	\caption{Danh sách thư viện và công cụ sử dụng}
+	\label{tab:tools}
+	\begin{tabular}{p{0.34\textwidth} p{0.30\textwidth} p{0.26\textwidth}}
+		\hline
+		\textbf{Mục đích} & \textbf{Công cụ} & \textbf{Phiên bản} \\
+		\hline
+		Mô phỏng giao thông vi mô & Eclipse SUMO & 1.24.0 \\
+		Điều khiển mô phỏng & TraCI (Python) & đi kèm SUMO \\
+		Ngôn ngữ điều phối & Python & 3.x \\
+		Hiển thị 3D và tương tác & Unity Editor & 6000.3.9f1 \\
+		Phân tích JSON trong Unity & Newtonsoft.Json & 3.2.x \\
+		Môi trường phát triển & Visual Studio Code & --- \\
+		Quản lý phiên bản & Git & --- \\
+		Hệ điều hành thử nghiệm & Windows & 10/11 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\subsection{Kết quả đạt được và thống kê mã nguồn}
+
+Sản phẩm chính gồm: bộ sinh mạng và tuyến cho \gls{SUMO} (từ lưới mê cung hoặc từ
+bản đồ OpenStreetMap); ứng dụng Unity hiển thị mô phỏng ba chiều có tương tác lái
+xe; và bộ lưu trữ phiên cùng nhật ký kết quả. Bảng \ref{tab:loc} thống kê nhanh
+quy mô mã nguồn do nhóm tự viết, không tính thư viện bên thứ ba.
+
+\begin{table}[H]
+	\centering
+	\caption{Thống kê quy mô mã nguồn}
+	\label{tab:loc}
+	\begin{tabular}{p{0.40\textwidth} c c}
+		\hline
+		\textbf{Thành phần} & \textbf{Số tệp} & \textbf{Số dòng} \\
+		\hline
+		Python (mô phỏng và điều phối) & 38 & 5365 \\
+		Unity (mã nguồn C\#) & 96 & 7556 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\subsection{Minh họa các chức năng chính}
+
+Các chức năng chính đã hiện thực gồm: sinh mạng đường từ lưới mê cung hoặc bản đồ
+thực tế; chạy mô phỏng và đồng bộ trạng thái sang Unity theo thời gian thực; hiển
+thị phương tiện, đèn tín hiệu và người đi bộ trong không gian ba chiều; chiếm
+quyền điều khiển và lái xe thủ công; xử lý va chạm sinh xác xe và trả quyền đưa xe
+về làn; cùng các thao tác điều khiển quá trình chạy. Các hình minh họa dưới đây
+thể hiện một số chức năng tiêu biểu.
+
+\begin{figure}[H]
+	\centering
+	\fbox{\parbox[c][3.2cm][c]{0.85\linewidth}{\centering \textbf{[Chèn ảnh]} Cảnh giao thông 3D trong Unity: phương tiện, đèn tín hiệu và người đi bộ.}}
+	\caption{Minh họa cảnh giao thông ba chiều (cần chèn ảnh chụp)}
+	\label{fig:demo-scene}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\fbox{\parbox[c][3.2cm][c]{0.85\linewidth}{\centering \textbf{[Chèn ảnh]} Chế độ lái xe: người dùng chiếm quyền và lái một phương tiện; cảnh va chạm và xác xe gây ùn ứ.}}
+	\caption{Minh họa chế độ lái xe và xử lý va chạm (cần chèn ảnh chụp)}
+	\label{fig:demo-drive}
+\end{figure}
+
+\section{Kiểm thử}
+
+Do hệ thống có tính tích hợp cao giữa \gls{SUMO} và Unity, việc kiểm thử được
+thực hiện theo hai hướng: kiểm thử chức năng thủ công theo use case và kiểm thử
+hộp đen cho các mô-đun xử lý dữ liệu và giao thức. Bảng \ref{tab:testcases} liệt
+kê một số trường hợp kiểm thử tiêu biểu.
+
+\begin{table}[H]
+	\centering
+	\caption{Một số trường hợp kiểm thử tiêu biểu}
+	\label{tab:testcases}
+	\begin{tabular}{p{0.08\textwidth} p{0.34\textwidth} p{0.46\textwidth}}
+		\hline
+		\textbf{Mã} & \textbf{Mục tiêu} & \textbf{Dữ liệu vào / Kỳ vọng} \\
+		\hline
+		TC01 & Tách khung thông điệp TCP & Gửi hai thông điệp liên tiếp trong một lần gửi; phía nhận tách đúng hai thông điệp. \\
+		TC02 & Nhận dữ liệu mạng đường một lần & Unity yêu cầu dữ liệu mạng; nhận đủ và dựng cảnh đúng. \\
+		TC03 & Hiển thị trạng thái đèn & Mô phỏng trả về chuỗi trạng thái đèn; Unity hiển thị đúng đỏ/vàng/xanh. \\
+		TC04 & Chiếm quyền và lái xe & Người dùng chiếm một xe; xe chuyển sang lái bằng vật lý, các xe khác phản ứng theo. \\
+		TC05 & Va chạm sinh xác xe & Xe người lái tông xe của mô phỏng; xe bị tông thành xác xe và biến mất sau N bước. \\
+		TC06 & Trả quyền và đưa về làn & Thả xe gần làn: xe chạy lại tự động; thả xe quá xa làn: xe bị hủy. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Trong điều kiện chạy thử nghiệm, các trường hợp trên đạt yêu cầu. Hiện tượng lệch
+đồng bộ chủ yếu xuất hiện khi tốc độ mô phỏng đặt quá cao; khi điều chỉnh tốc độ
+hợp lý, quan sát ổn định hơn.
+
+\section{Thực nghiệm và đánh giá}
+
+\subsection{Môi trường và kịch bản thực nghiệm}
+
+Hệ thống được thử nghiệm trên máy cá nhân chạy Windows với hai tiến trình: tiến
+trình Python kết hợp \gls{SUMO} và tiến trình Unity. Hai nhóm kịch bản được sử
+dụng: nhóm kịch bản sinh từ lưới mê cung với kích thước tăng dần nhằm khảo sát
+khả năng chịu tải theo số lượng đối tượng; và nhóm kịch bản từ bản đồ thực tế
+OpenStreetMap nhằm kiểm chứng khả năng dựng cảnh và hiển thị trên dữ liệu thật.
+
+\subsection{Phương pháp đánh giá}
+
+Việc đánh giá tập trung vào ba khía cạnh. Thứ nhất là tính đúng đắn của hiển thị,
+được kiểm chứng bằng cách đối chiếu cảnh ba chiều trong Unity với giao diện hai
+chiều của \gls{SUMO} trên cùng một kịch bản. Thứ hai là hiệu năng hiển thị, đo
+bằng tốc độ khung hình khi số lượng phương tiện thay đổi. Thứ ba là tính ổn định
+của tương tác, quan sát qua các thao tác chiếm quyền, lái xe, va chạm và trả
+quyền.
+
+\subsection{Kết quả}
+
+% [GHI CHÚ] Cần điền số liệu đo thực tế (tốc độ khung hình theo số lượng xe, độ
+% trễ đồng bộ) và ảnh chụp đối chiếu. Bảng dưới là khung để điền kết quả.
+Bảng \ref{tab:perf} là khung ghi nhận kết quả hiệu năng theo quy mô kịch bản; các
+giá trị cụ thể được điền sau khi đo trên môi trường thực nghiệm.
+
+\begin{table}[H]
+	\centering
+	\caption{Khung ghi nhận hiệu năng theo quy mô kịch bản}
+	\label{tab:perf}
+	\begin{tabular}{p{0.30\textwidth} c c c}
+		\hline
+		\textbf{Kịch bản} & \textbf{Số phương tiện} & \textbf{Tốc độ khung hình} & \textbf{Ghi chú} \\
+		\hline
+		Mê cung nhỏ & --- & --- & --- \\
+		Mê cung trung bình & --- & --- & --- \\
+		Mê cung lớn & --- & --- & --- \\
+		Bản đồ OpenStreetMap & --- & --- & --- \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Trên cơ sở quan sát trong quá trình phát triển, hệ thống dựng được mạng đường từ
+cả hai nguồn dữ liệu, tái hiện chuyển động của phương tiện và người đi bộ một cách
+ổn định, và cho phép người dùng tương tác lái xe trong cảnh. Việc lọc đối tượng
+theo vùng quan sát và tái sử dụng đối tượng giúp duy trì hiệu năng khi số lượng
+phương tiện tăng. Các số liệu định lượng chi tiết sẽ được bổ sung sau khi hoàn
+tất quá trình đo trên môi trường thực nghiệm.
+
+\subsection{Triển khai}
+
+Trong phạm vi đồ án, hệ thống chạy theo mô hình một máy và một người dùng. Quy
+trình chạy gồm các bước: chuẩn bị kịch bản và khởi chạy tiến trình Python kết hợp
+\gls{SUMO} thông qua giao diện khởi chạy; sau đó chạy ứng dụng Unity để kết nối,
+nhận dữ liệu và hiển thị. Ba kênh TCP được dùng tương ứng cho dữ liệu mô phỏng, dữ liệu
+phương tiện do người dùng lái và lệnh điều khiển. Kết quả mỗi lần chạy được lưu
+cục bộ theo từng phiên để phục vụ phân tích và phát lại.
+
+Chương này đã trình bày thiết kế kiến trúc ba tầng với ba kênh TCP và hai luồng
+dữ liệu, máy trạng thái điều khiển phương tiện, thiết kế các mô-đun và lớp chủ
+đạo, cùng phương pháp kiểm thử, thực nghiệm và triển khai. Các giải pháp kỹ thuật
+nổi bật phát sinh trong quá trình thiết kế được trình bày chi tiết trong Chương 5.
+
+\end{document}

@@ -1,0 +1,5 @@
+PWD d:/Projects/SUMO_Unity/SUMO-GR1/BaoCao_DATN
+INPUT d:/Language/Latex/texlive/2026/texmf.cnf
+INPUT d:/Language/Latex/texlive/2026/texmf-dist/web2c/texmf.cnf
+INPUT d:/Language/Latex/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt
+INPUT d:/Projects/SUMO_Unity/SUMO-GR1/BaoCao_DATN/DoAn.tex

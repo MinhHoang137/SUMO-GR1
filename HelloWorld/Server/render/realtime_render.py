@@ -55,7 +55,7 @@ time_step = 0.05  # Giãn cách thời gian thực (giây) giữa các simulatio
 time_step_lock = threading.Lock()
 # Pause/resume simulation (thread-safe). Unity should control this via commands.
 pause_event = threading.Event()  # set => paused, clear => running
-run_with_gui = False
+show_sumo_gui = False  # True => mở thêm cửa sổ sumo-gui (2D) song song Unity (3D); False => chỉ 3D
 has_ped = False
 sim_count = 1
 ped_impatience = None
@@ -158,7 +158,8 @@ def run_simulation(client_socket: socket.socket):
     print("Launching SUMO simulation...")
     # --ignore-route-errors: nếu còn person/xe nào không route được (vd vỉa hè cụm junction
     # bị ngắt), SUMO bỏ qua thay vì quit cả mô phỏng. Net-an-toàn lúc demo hội đồng.
-    traci.start(["sumo-gui", "--junction-taz", "--ignore-route-errors", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
+    sumo_binary = "sumo-gui" if show_sumo_gui else "sumo"
+    traci.start([sumo_binary, "--junction-taz", "--ignore-route-errors", "-c", "./SUMO_xml/HelloWorld.sumocfg"])
     print(f"[MONITOR] TIME_STEP: {time_step}", flush=True)
     step_index = 0
     trip_logger = VehicleTripCsvLogger(simulation_session.csv_path if simulation_session else "result/trips.csv")
@@ -195,17 +196,16 @@ def run_simulation(client_socket: socket.socket):
             if simulation_session:
                 simulation_session.record_frame(data)
 
-            if run_with_gui:
-                network.send_data(client_socket, data)
+            # Realtime luôn có Unity là client → luôn stream và giãn nhịp.
+            network.send_data(client_socket, data)
 
-            if run_with_gui:
-                with time_step_lock:
-                    current_time_step = time_step
-                # a = thời gian đã trôi của vòng lặp; b = phần còn lại để a + b = time_step.
-                elapsed = time.perf_counter() - loop_start
-                remaining = current_time_step - elapsed
-                if remaining > 0:
-                    sleep(remaining)
+            with time_step_lock:
+                current_time_step = time_step
+            # a = thời gian đã trôi của vòng lặp; b = phần còn lại để a + b = time_step.
+            elapsed = time.perf_counter() - loop_start
+            remaining = current_time_step - elapsed
+            if remaining > 0:
+                sleep(remaining)
     except Exception as e:
         print(f"Error during simulation: {e}")
     finally:
@@ -259,7 +259,10 @@ def initialize_map_and_routes(maze_file, num_lanes, config):
             print("[Error] Failed to convert OSM file to SUMO network.")
             sys.exit(1)
     else:
-        if not create_map_from_maze_file(maze_file, num_lanes):
+        # Benchmark: sinh mạng theo kiểu vét cạn (mỗi ô '.' là một node) để tạo mạng dày,
+        # đúng tinh thần đo tải hệ thống. KHÔNG dùng create_map_from_maze_file (sinh mạng
+        # thưa, tối ưu node) cho tệp .map nữa.
+        if not naive_create_map(maze_file, num_lanes):
             print("[Error] Failed to create map from maze file.")
             sys.exit(1)
 
@@ -362,11 +365,8 @@ def start_network_services(config):
 
     server_thread = async_task(network.server_thread, server_socket, client_thread_function, daemon=False)
     
-    if config["run_with_gui"]:
-        subprocess.Popen([os.path.abspath(os.path.join(os.path.dirname(__file__), target_exe))])
-        pass
-    else:
-        run_simulation_thread = async_task(run_simulation, None, daemon=False)
+    # Realtime luôn khởi chạy Unity (3D). Chế độ headless đã được thay bằng pre-render.
+    subprocess.Popen([os.path.abspath(os.path.join(os.path.dirname(__file__), target_exe))])
 
     receive_thread = async_task(receive, receive_socket, daemon=False)
     listen_thread = async_task(listen_for_control_commands, cmd_socket, daemon=False)
@@ -381,24 +381,24 @@ def start_network_services(config):
     }
 
 def run_realtime(maze_file, num_lanes, config):
-    global has_ped, ped_impatience, maze_file_path, run_with_gui, simulation_session
+    global has_ped, ped_impatience, maze_file_path, show_sumo_gui, simulation_session
 
     maze_file_path = maze_file
     has_ped = config["has_ped"]
     ped_impatience = config["ped_impatience"]
-    run_with_gui = config["run_with_gui"]
+    show_sumo_gui = config.get("gui_mode") == "2d3d"  # mặc định chỉ 3D
 
     initialize_map_and_routes(maze_file_path, num_lanes, config)
 
     simulation_session = SimulationSession(maze_file_path, has_ped=has_ped)
     print(f"Session directory: {simulation_session.session_dir}")
 
-    # Lưu road data ngay sau khi map được tạo (không-GUI mode không có client gọi send_road_data).
-    if not run_with_gui:
-        crossroads = CrossRoadReader.read_all_junctions()
-        edges = EdgeReader.read_edges()
-        crossings = CrossingReader.read_crossings()
-        simulation_session.save_road_data({"jd": crossroads, "ed": edges, "cd": crossings})
+    # Lưu road data ngay sau khi map được tạo để session luôn đầy đủ
+    # (Unity cũng sẽ yêu cầu road data qua RoadDataRequest khi kết nối).
+    crossroads = CrossRoadReader.read_all_junctions()
+    edges = EdgeReader.read_edges()
+    crossings = CrossingReader.read_crossings()
+    simulation_session.save_road_data({"jd": crossroads, "ed": edges, "cd": crossings})
 
     network_context = start_network_services(config)
 

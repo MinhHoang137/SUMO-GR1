@@ -54,11 +54,13 @@ class AppLauncher:
         self.osm_ped_impatience = tk.StringVar(value="0.5")
 
         # ── Shared vars ───────────────────────────────────────────────
-        self.run_with_gui = tk.BooleanVar(value=True)
+        # Chế độ hiển thị realtime: 1 = chỉ 3D (Unity), 2 = cả 2D (sumo-gui) và 3D.
+        self.gui_mode = tk.IntVar(value=1)
         self.server_process = None
 
         self._build_ui()
         self._toggle_mode()
+        self._toggle_gui()
         self.root.protocol("WM_DELETE_WINDOW", self._on_closing)
 
     # ═════════════════════════════════════════════════════════════════
@@ -96,8 +98,12 @@ class AppLauncher:
         ttk.Entry(main_frame, textvariable=self.map_file, width=40).grid(row=1, column=1, padx=5, pady=5)
         ttk.Button(main_frame, text="Browse", command=self._browse_map).grid(row=1, column=2, pady=5)
 
-        ttk.Label(main_frame, text="Num Lanes:").grid(row=2, column=0, sticky=tk.W, pady=5)
-        ttk.Spinbox(main_frame, from_=1, to=10, textvariable=self.num_lanes, width=10).grid(row=2, column=1, sticky=tk.W, padx=5, pady=5)
+        ttk.Label(main_frame, text="Num Lanes (xe/bên):").grid(row=2, column=0, sticky=tk.W, pady=5)
+        lane_frame = ttk.Frame(main_frame)
+        lane_frame.grid(row=2, column=1, sticky=tk.W, padx=5, pady=5)
+        ttk.Spinbox(lane_frame, from_=1, to=3, textvariable=self.num_lanes, width=10).pack(side=tk.LEFT)
+        ttk.Label(lane_frame, text="(1–3 làn xe mỗi bên, +1 làn đi bộ)",
+                  foreground="#666").pack(side=tk.LEFT, padx=6)
 
         ttk.Label(main_frame, text="Simulation Mode:").grid(row=3, column=0, sticky=tk.W, pady=5)
         mode_frame = ttk.Frame(main_frame)
@@ -110,8 +116,8 @@ class AppLauncher:
         ttk.Label(main_frame, text="Render Mode:").grid(row=4, column=0, sticky=tk.W, pady=5)
         render_frame = ttk.Frame(main_frame)
         render_frame.grid(row=4, column=1, sticky=tk.W)
-        ttk.Radiobutton(render_frame, text="Realtime", variable=self.render_mode, value=1).pack(side=tk.LEFT, padx=5)
-        ttk.Radiobutton(render_frame, text="Pre-render", variable=self.render_mode, value=2).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(render_frame, text="Realtime", variable=self.render_mode, value=1, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(render_frame, text="Pre-render", variable=self.render_mode, value=2, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
 
         # Benchmark frame
         self.bench_frame = ttk.LabelFrame(main_frame, text="Benchmark Mode Options", padding=10)
@@ -168,6 +174,13 @@ class AppLauncher:
         else:
             for child in self.bench_frame.winfo_children(): child.configure(state='disabled')
             for child in self.vrp_frame.winfo_children(): child.configure(state='normal')
+
+    def _toggle_gui(self):
+        # Chế độ hiển thị chỉ áp dụng cho realtime; pre-render luôn headless.
+        state = 'normal' if self.render_mode.get() == 1 else 'disabled'
+        if hasattr(self, 'gui_3d_rb'):
+            self.gui_3d_rb.configure(state=state)
+            self.gui_2d3d_rb.configure(state=state)
 
     def _toggle_ped(self):
         if self.has_ped.get():
@@ -238,8 +251,8 @@ class AppLauncher:
         ttk.Label(frame, text="Render Mode:").grid(row=8, column=0, sticky=tk.W, pady=4)
         render_frame = ttk.Frame(frame)
         render_frame.grid(row=8, column=1, columnspan=4, sticky=tk.W)
-        ttk.Radiobutton(render_frame, text="Realtime", variable=self.render_mode, value=1).pack(side=tk.LEFT, padx=5)
-        ttk.Radiobutton(render_frame, text="Pre-render", variable=self.render_mode, value=2).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(render_frame, text="Realtime", variable=self.render_mode, value=1, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(render_frame, text="Pre-render", variable=self.render_mode, value=2, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
 
     def _browse_osm(self):
         init_dir = os.path.join(self.server_dir, "osm")
@@ -260,8 +273,13 @@ class AppLauncher:
         shared = ttk.Frame(parent, padding=(15, 10, 15, 5))
         shared.pack(fill=tk.X)
 
-        ttk.Checkbutton(shared, text="Run with GUI (Start Unity Client Automatically)",
-                        variable=self.run_with_gui).pack(anchor=tk.W, pady=(0, 5))
+        gui_frame = ttk.Frame(shared)
+        gui_frame.pack(anchor=tk.W, pady=(0, 5))
+        ttk.Label(gui_frame, text="Chế độ hiển thị (Realtime):").pack(side=tk.LEFT, padx=(0, 8))
+        self.gui_3d_rb = ttk.Radiobutton(gui_frame, text="Chỉ 3D", variable=self.gui_mode, value=1)
+        self.gui_3d_rb.pack(side=tk.LEFT, padx=4)
+        self.gui_2d3d_rb = ttk.Radiobutton(gui_frame, text="Cả 2D và 3D", variable=self.gui_mode, value=2)
+        self.gui_2d3d_rb.pack(side=tk.LEFT, padx=4)
 
         monitor = ttk.LabelFrame(shared, text="Simulation Monitor", padding=10)
         monitor.pack(fill=tk.X, pady=5)
@@ -313,8 +331,9 @@ class AppLauncher:
         else:
             inputs.append(str(self.num_clients.get()))
             inputs.append(str(self.num_staff.get()))
-        inputs.append("y" if self.run_with_gui.get() else "n")
         inputs.append(str(self.render_mode.get()))
+        if self.render_mode.get() == 1:  # realtime mới cần chọn chế độ hiển thị
+            inputs.append(str(self.gui_mode.get()))
 
         self._launch_main(self.map_file.get(), self.num_lanes.get(), inputs)
 
@@ -380,10 +399,9 @@ class AppLauncher:
                 )
                 return
             # Custom Script mode: pass folder path, main.py detect isdir
-            inputs = [
-                "y" if self.run_with_gui.get() else "n",
-                str(self.render_mode.get()),
-            ]
+            inputs = [str(self.render_mode.get())]
+            if self.render_mode.get() == 1:  # realtime mới cần chọn chế độ hiển thị
+                inputs.append(str(self.gui_mode.get()))
             self._launch_main(self.sumo_xml_dir, self.num_lanes.get(), inputs)
 
         self.root.after(0, after_build)

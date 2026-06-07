@@ -1,0 +1,87 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+
+\section{Kết luận}
+
+Trong phạm vi đề tài, đồ án đã xây dựng được một hệ thống mô phỏng và hiển thị
+giao thông trong không gian ba chiều, trong đó \gls{SUMO} đảm nhiệm mô phỏng vi
+mô, Python điều khiển mô phỏng theo từng bước thời gian thông qua \gls{TraCI}, và
+Unity đảm nhiệm dựng cảnh, hiển thị theo thời gian thực và xử lý tương tác. So
+với cách quan sát kết quả mô phỏng truyền thống vốn chủ yếu dựa trên góc nhìn 2D
+từ trên cao, hệ thống của đồ án không chỉ tự động hóa luồng dữ liệu và đồng bộ
+theo bước mô phỏng mà còn cho phép người dùng trải nghiệm theo góc nhìn của người
+tham gia giao thông, qua đó hỗ trợ quan sát và phân tích trực quan hơn trong các
+kịch bản có mật độ đối tượng cao hoặc khi cần thuyết minh kết quả.
+
+Về kết quả đạt được, đồ án đã hoàn thành các nhóm chức năng chính sau:
+
+\begin{itemize}[leftmargin=2em]
+	\item \textbf{Kết nối và đồng bộ thời gian thực}: triển khai kênh giao tiếp
+	giữa Unity và Python qua TCP cùng cơ chế tách khung bản tin bằng dấu hiệu kết
+	thúc \texttt{<END>} để khắc phục đặc thù truyền theo luồng của TCP; hỗ trợ
+	đồng thời bản tin dữ liệu trạng thái và bản tin điều khiển.
+	\item \textbf{Tự động dựng cảnh từ dữ liệu mạng đường}: dựng mạng đường trong
+	không gian ba chiều từ kịch bản sinh tự động theo lưới mê cung phục vụ kiểm
+	thử, hoặc từ bản đồ thực tế OpenStreetMap, giảm đáng kể thao tác thủ công khi
+	thay đổi kịch bản.
+	\item \textbf{Hiển thị đa đối tượng theo thời gian}: tạo, cập nhật và thu hồi
+	phương tiện, đèn tín hiệu và người đi bộ theo vòng đời mô phỏng; áp dụng nội
+	suy chuyển động để hiển thị mượt khi tốc độ khung hình cao.
+	\item \textbf{Tương tác lái xe}: cho phép người dùng chiếm quyền điều khiển
+	một phương tiện và lái thủ công bằng cơ chế vật lý; xử lý va chạm để chuyển
+	xe bị tông thành trạng thái ``xác xe'' gây ùn ứ; và trả quyền điều khiển kèm
+	cơ chế đưa xe trở lại làn đường gần nhất để mô phỏng tiếp tục, hoặc loại bỏ xe
+	khi không thể đưa về làn.
+	\item \textbf{Hai chế độ vận hành và lưu trữ phiên}: hỗ trợ chế độ thời gian
+	thực và chế độ phát lại; gom toàn bộ kết quả của mỗi lần chạy vào một thư mục
+	phiên thống nhất (nhật ký hành trình, dữ liệu mạng, chuỗi trạng thái theo bước
+	và bản tóm tắt), phục vụ truy vết và phát lại.
+	\item \textbf{Điều khiển vận hành}: cung cấp các thao tác điều khiển camera,
+	tạm dừng và tiếp tục, điều chỉnh tốc độ mô phỏng lúc đang chạy, và lọc đối
+	tượng hiển thị theo vùng quan sát nhằm duy trì hiệu năng.
+\end{itemize}
+
+Bên cạnh các kết quả đạt được, hệ thống vẫn còn một số hạn chế cần tiếp tục hoàn
+thiện. Thứ nhất, giao thức truyền thông hiện tại ưu tiên tính đơn giản nên khi số
+lượng đối tượng lớn có thể phát sinh tải xử lý và băng thông, làm giảm tốc độ cập
+nhật. Thứ hai, mô hình vật lý cho chế độ lái còn ở mức cơ bản, chưa phản ánh đầy
+đủ động lực học của phương tiện; cơ chế đưa xe trở lại làn đường sử dụng ngưỡng
+khoảng cách cố định nên trong một số tình huống phức tạp có thể chưa tối ưu. Thứ
+ba, hệ thống hiện chạy trên một máy và hỗ trợ một người dùng cho mỗi phiên mô
+phỏng, chưa hỗ trợ nhiều người dùng cùng tham gia một phiên.
+
+Từ quá trình thực hiện, đồ án rút ra một số kinh nghiệm chính: (i) trong hệ thống
+thời gian thực, cần thiết kế cơ chế phân định ranh giới thông điệp rõ ràng khi
+dùng TCP để tránh các lỗi khó truy vết; (ii) việc chuẩn hóa dữ liệu và thống nhất
+hệ tọa độ, đơn vị ngay từ đầu giúp giảm đáng kể công sức tích hợp giữa mô phỏng
+và hiển thị; và (iii) khi xe được điều khiển theo nhiều trạng thái khác nhau,
+việc quản lý vòng đời và quyền điều khiển một cách tập trung là then chốt để hệ
+thống vận hành ổn định.
+
+\section{Hướng phát triển}
+
+Trong thời gian tới, đồ án có thể được phát triển theo các hướng chính sau:
+
+\begin{itemize}[leftmargin=2em]
+	\item \textbf{Tối ưu truyền thông và hiệu năng}: giảm chi phí đóng gói và phân
+	tích dữ liệu bằng định dạng nhị phân hoặc nén, hoặc chỉ truyền phần thay đổi
+	theo từng bước; bổ sung cơ chế đo độ trễ đầu--cuối để đánh giá chất lượng đồng
+	bộ khi số lượng đối tượng tăng.
+	\item \textbf{Hỗ trợ nhiều người dùng đồng thời}: mở rộng kiến trúc để nhiều
+	máy hiển thị cùng tham gia một phiên mô phỏng, mỗi người điều khiển một phương
+	tiện riêng; đây là tính năng chưa có trong phiên bản hiện tại và đòi hỏi cơ
+	chế đồng bộ quyền điều khiển và trạng thái giữa các máy.
+	\item \textbf{Nâng cấp mô hình lái và xử lý va chạm}: cải thiện động lực học
+	phương tiện cho chế độ lái thủ công; tinh chỉnh cơ chế đưa xe trở lại làn
+	đường theo ngữ cảnh thay vì ngưỡng khoảng cách cố định, giúp xe hòa lại dòng
+	giao thông tự nhiên hơn.
+	\item \textbf{Mở rộng kịch bản và đánh giá định lượng}: xây dựng bộ kịch bản
+	chuẩn theo nhiều kích thước mạng và mật độ phương tiện; chuẩn hóa các thước đo
+	như tốc độ khung hình, độ trễ và thời gian di chuyển, đồng thời tự động hóa
+	quá trình chạy thực nghiệm để có cơ sở so sánh khách quan.
+	\item \textbf{Cải thiện chất lượng phần mềm}: bổ sung kiểm thử cho các mô-đun
+	sinh mạng, sinh tuyến và đóng gói giao thức; chuẩn hóa cấu hình chạy và tài
+	liệu hóa giao thức nhằm thuận tiện cho việc bảo trì và mở rộng về sau.
+\end{itemize}
+
+\end{document}

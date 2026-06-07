@@ -1,5 +1,6 @@
 
 import os
+import warnings
 import xml.etree.ElementTree as ET
 import math
 from SUMO_xml import write_to_xml, map_header
@@ -148,7 +149,7 @@ def get_node_position_list(grid, mW, mH, numLanes=4):
 
     return node_position_list
 
-def write_maze_edges_to_xml(grid, pos_map, mH, mW, output_path, numLanes=4, carSpeed=13.9, pedSpeed=1.4):
+def write_maze_edges_to_xml(grid, pos_map, mH, mW, output_path, numLanes=4, carSpeed=13.9, pedSpeed=1.4, car_lanes_per_dir=None):
     """
     Ghi danh sách các cạnh của mê cung vào file .edg.xml theo cú pháp SUMO.
 
@@ -164,9 +165,11 @@ def write_maze_edges_to_xml(grid, pos_map, mH, mW, output_path, numLanes=4, carS
         mH (int): Chiều cao lưới.
         mW (int): Chiều rộng lưới.
         output_path (str): Đường dẫn tới file .edg.xml cần ghi.
-        numLanes (int): Tổng số làn cho mỗi cạnh (cả 2 chiều).
+        numLanes (int): Tổng số làn cho mỗi cạnh (cả 2 chiều) — ngữ nghĩa cũ.
         carSpeed (float): Tốc độ tối đa cho làn xe (m/s).
         pedSpeed (float): Tốc độ tối đa cho làn đi bộ (m/s).
+        car_lanes_per_dir (int|None): Ngữ nghĩa mới — số làn XE mỗi chiều (mỗi bên),
+            luôn kèm 1 làn đi bộ. Nếu khác None sẽ ghi đè 'numLanes'.
     """
     edges = []
 
@@ -193,7 +196,7 @@ def write_maze_edges_to_xml(grid, pos_map, mH, mW, output_path, numLanes=4, carS
                     edges.append((s_id, t_id))
                     break
 
-    write_to_xml.write_edges_to_xml(edges, output_path, True, numLanes=numLanes, carSpeed=carSpeed, pedSpeed=pedSpeed)
+    write_to_xml.write_edges_to_xml(edges, output_path, True, numLanes=numLanes, carSpeed=carSpeed, pedSpeed=pedSpeed, car_lanes_per_dir=car_lanes_per_dir)
 
 
 def visualize_network(nod_file_path, edg_file_path, show_id=True, figsize=(10, 10)):
@@ -265,9 +268,16 @@ def visualize_network(nod_file_path, edg_file_path, show_id=True, figsize=(10, 1
 # cách dùng hàm: create_map_from_maze_file("duongdan/to/mapfile.map", 2)
 # số làn (numLanes) là tổng số làn (cả 2 chiều), là số cuối cùng trong tên tệp .map
 # cần nhập chính xác, nếu không sẽ không tạo được bản đồ đúng
+#
+# ⚠️ DEPRECATED: KHÔNG DÙNG NỮA. Luồng sinh bản đồ maze hiện dùng
+# naive_map_creator.naive_create_map (xem realtime_render.py / pre_render.py).
+# Hàm này được giữ lại chỉ để tham khảo, sẽ bị xoá trong tương lai.
 def create_map_from_maze_file(filepath, numLanes, practiceNumLanes=8):
     """
-    Tạo bản đồ từ tệp lưới (maze file) theo định dạng SUMO.
+    [DEPRECATED] Tạo bản đồ từ tệp lưới (maze file) theo định dạng SUMO.
+
+    .. deprecated::
+        Không còn được sử dụng. Dùng ``naive_map_creator.naive_create_map`` thay thế.
 
     Args:
         filepath (str): Đường dẫn tới tệp lưới.
@@ -277,6 +287,12 @@ def create_map_from_maze_file(filepath, numLanes, practiceNumLanes=8):
     Returns:
         None
     """
+    warnings.warn(
+        "create_map_from_maze_file() đã deprecated; dùng "
+        "naive_map_creator.naive_create_map() thay thế.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     print(f"Đang xử lý tệp: {filepath}\n")
     
     # Gọi hàm để phân tích tệp

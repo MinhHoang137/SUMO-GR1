@@ -1,0 +1,159 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+
+\section{Đặt vấn đề}
+\label{section:1.1}
+
+Trong bối cảnh đô thị hóa nhanh và mật độ phương tiện gia tăng, bài toán tổ
+chức và quản lý giao thông ngày càng trở nên phức tạp, đòi hỏi các phương pháp
+phân tích có căn cứ dữ liệu để hỗ trợ quy hoạch, đánh giá phương án tổ chức
+giao thông và kiểm chứng các giả thuyết kỹ thuật. Trên thực tế, việc thử nghiệm
+trực tiếp ngoài hiện trường thường tốn kém, khó kiểm soát biến số, và có thể
+tiềm ẩn rủi ro về an toàn. Vì vậy, mô phỏng giao thông trở thành một công cụ
+quan trọng, giúp tái hiện nhiều kịch bản khác nhau trong điều kiện có thể kiểm
+soát, từ đó hỗ trợ quá trình ra quyết định.
+
+Trong nhóm các công cụ mô phỏng, \gls{SUMO} (Simulation of Urban MObility) là
+một nền tảng mô phỏng vi mô được sử dụng rộng rãi, cho phép mô tả mạng đường,
+luồng phương tiện và cơ chế điều khiển (như tín hiệu đèn) với mức độ chi tiết
+cao. Kết quả mô phỏng có thể cung cấp dữ liệu theo thời gian về vị trí, tốc độ,
+hướng di chuyển của phương tiện, cũng như các thông tin liên quan đến trạng thái
+mạng. Tuy nhiên, dữ liệu đầu ra này thường có khối lượng lớn và giàu tính kỹ
+thuật, khiến việc quan sát và khai thác hiệu quả trở thành một thách thức, đặc
+biệt khi người dùng cần đánh giá trực quan cấu trúc không gian hoặc diễn biến ở
+các khu vực có hình học phức tạp.
+
+Việc quan sát kết quả mô phỏng bằng giao diện 2D truyền thống thường đáp ứng tốt
+các thao tác cơ bản, nhưng vẫn gặp hạn chế khi cần: (i) nhận thức không gian tại
+các nút giao nhiều nhánh hoặc có tổ chức làn phức tạp; (ii) theo dõi đồng thời
+nhiều đối tượng trong bối cảnh mật độ cao; và (iii) trình bày kết quả cho nhóm
+người dùng không chuyên hoặc trong các hoạt động trao đổi, thuyết minh phương
+án. Bản chất của góc nhìn 2D là góc nhìn từ trên cao: nó cho phép người quản lý
+giám sát giao thông thấy được toàn cảnh mạng đường và dòng phương tiện, nhưng
+lại không tái hiện được góc nhìn của người trực tiếp tham gia giao thông --- tức
+là cách mà đường sá, biển báo, tín hiệu và các phương tiện khác hiện ra trước
+mắt một người đang di chuyển trong mạng. Trong các trường hợp này, góc nhìn 3D
+có thể giúp người quan sát nắm bắt tốt hơn mối quan hệ không gian giữa đường,
+làn, phương tiện và tín hiệu điều khiển, đồng thời tạo điều kiện cho các hình
+thức tương tác và trải nghiệm theo góc nhìn người tham gia giao thông.
+
+Mặc dù vậy, các giải pháp hiển thị 3D trong thực tế thường gặp những rào cản như
+phụ thuộc vào bản đồ dựng sẵn (tĩnh), cần nhiều thao tác thủ công khi thay đổi
+kịch bản, hoặc khó mở rộng khi số lượng đối tượng và loại đối tượng tăng lên.
+Ngoài ra, phần lớn giải pháp chỉ dừng ở mức quan sát thụ động, chưa cho phép
+người dùng tương tác trực tiếp với phương tiện trong cảnh để khảo sát các tình
+huống giả định. Việc chuyển dữ liệu mô phỏng sang môi trường 3D cũng phát sinh
+các vấn đề kỹ thuật như ánh xạ hình học từ mô tả mạng đường (đa tuyến) sang mô
+hình cảnh, chuyển đổi hệ tọa độ, đồng bộ thời gian giữa bước mô phỏng và khung
+hình hiển thị, và đảm bảo hiệu năng khi cập nhật số lượng lớn đối tượng theo
+thời gian.
+
+Do đó, việc xây dựng một hệ thống hiển thị giao thông 3D dựa trên dữ liệu đầu ra
+của \gls{SUMO}, có khả năng tự động dựng cảnh theo bản đồ mô phỏng, cập nhật
+trạng thái theo thời gian và cho phép tương tác, là cần thiết để nâng cao hiệu
+quả quan sát, phân tích và truyền đạt kết quả mô phỏng. Hệ thống này đóng vai
+trò cầu nối giữa dữ liệu mô phỏng (mang tính kỹ thuật) và nhu cầu khai thác trực
+quan, giúp người dùng tiếp cận, kiểm chứng và trình bày kịch bản giao thông một
+cách trực quan và nhất quán.
+
+\section{Mục tiêu và phạm vi đề tài}
+\label{section:1.2}
+
+Từ các vấn đề nêu ở phần \ref{section:1.1}, đồ án hướng tới mục tiêu xây dựng một
+hệ thống hiển thị mô phỏng giao thông trong không gian 3D, trong đó dữ liệu được
+lấy trực tiếp từ quá trình chạy mô phỏng của \gls{SUMO}. Trọng tâm của hệ thống
+là hình thành một quy trình chuyển đổi dữ liệu mạng đường và dữ liệu mô phỏng
+sang các đối tượng 3D trong Unity một cách nhất quán, đồng thời bổ sung khả năng
+tương tác để người dùng không chỉ quan sát mà còn có thể can thiệp vào diễn biến
+giao thông.
+
+Về mục tiêu cụ thể, đồ án tập trung vào bốn nhóm mục tiêu chính. Thứ nhất, xây
+dựng cơ chế dựng mạng đường trong không gian 3D từ dữ liệu của \gls{SUMO}, bảo
+đảm các đối tượng được dựng bám sát dữ liệu nguồn; mạng đường có thể được sinh
+tự động từ lưới mê cung phục vụ kiểm thử hoặc nhập từ bản đồ thực tế
+OpenStreetMap. Thứ hai, xây dựng cơ chế thu thập dữ liệu động theo thời gian
+thông qua \gls{TraCI}, nhằm lấy trạng thái của phương tiện, đèn tín hiệu và
+người đi bộ theo từng bước mô phỏng. Thứ ba, thiết kế cơ chế cập nhật và hiển
+thị trạng thái trong Unity theo thời gian, bảo đảm chuyển động thể hiện đúng quỹ
+đạo tổng quát và duy trì hiệu năng ổn định khi số lượng đối tượng tăng. Thứ tư,
+xây dựng khả năng tương tác cho phép người dùng chiếm quyền điều khiển một
+phương tiện và lái thủ công bằng vật lý, xử lý va chạm và trả quyền điều khiển
+để phương tiện hòa trở lại dòng giao thông do \gls{SUMO} quản lý.
+
+Trong phạm vi của đề tài, hệ thống tập trung vào các thành phần cốt lõi gồm: (i)
+dựng cảnh 3D từ dữ liệu mạng đường, bao gồm các đoạn đường và các yếu tố hình
+học phục vụ quan sát; (ii) biểu diễn phương tiện và người đi bộ như các thực thể
+di chuyển theo trạng thái thời gian; (iii) biểu diễn các tín hiệu điều khiển ở
+mức phù hợp với dữ liệu có thể truy xuất; (iv) chuẩn hóa, ánh xạ dữ liệu sang hệ
+tọa độ của Unity để bảo đảm tính nhất quán; và (v) hỗ trợ tương tác lái xe ở mức
+một người dùng cho mỗi phiên mô phỏng. Phần đánh giá được thực hiện thông qua
+các kịch bản mô phỏng mẫu nhằm kiểm chứng tính đúng đắn của việc ánh xạ dữ liệu,
+khả năng tái hiện diễn biến theo thời gian và tính ổn định của hiển thị.
+
+Ngoài phạm vi của đồ án là các bài toán tối ưu điều khiển giao thông, hiệu
+chỉnh hay tham số hóa mô hình mô phỏng của \gls{SUMO}, cũng như hỗ trợ nhiều
+người dùng đồng thời trong cùng một phiên. Trong phạm vi này, hệ thống đóng vai
+trò là lớp trực quan hóa, tương tác và hỗ trợ phân tích dựa trên dữ liệu mô
+phỏng sẵn có, qua đó tăng khả năng quan sát và trình bày kịch bản thay vì can
+thiệp vào thuật toán mô phỏng.
+
+\section{Định hướng giải pháp}
+\label{section:1.3}
+
+Để hiện thực hóa mục tiêu ở phần \ref{section:1.2}, đồ án lựa chọn hướng tiếp cận
+dựa trên chuỗi công cụ: \gls{SUMO} dùng để mô phỏng giao thông vi mô và sinh dữ
+liệu; Python kết hợp \gls{TraCI} dùng để truy xuất trạng thái mô phỏng theo thời
+gian; Unity dùng để dựng cảnh, hiển thị 3D và xử lý tương tác. Lựa chọn này phù
+hợp vì \gls{SUMO} cung cấp dữ liệu mô phỏng có cấu trúc rõ ràng và phổ biến,
+trong khi Unity là môi trường phát triển 3D mạnh, hỗ trợ dựng cảnh, quản lý đối
+tượng, camera, vật lý và tương tác, qua đó nâng cao khả năng quan sát và can
+thiệp trực quan.
+
+Trên cơ sở đó, giải pháp được triển khai theo một quy trình tổng quát gồm các
+thành phần chính. Thứ nhất, mô-đun chuẩn bị dữ liệu sinh mạng đường (từ mê cung
+hoặc từ OpenStreetMap) cùng tuyến đường cho phương tiện và người đi bộ, tạo
+thành kịch bản mô phỏng đầu vào cho \gls{SUMO}. Thứ hai, mô-đun thu thập dữ liệu
+động kết nối với phiên mô phỏng qua \gls{TraCI} để lấy trạng thái theo từng bước,
+sau đó chuẩn hóa thành một định dạng trao đổi thống nhất và truyền sang Unity qua
+TCP/IP. Thứ ba, mô-đun hiển thị trong Unity nhận dữ liệu, ánh xạ hệ tọa độ, tạo
+và cập nhật các đối tượng 3D, đồng thời nội suy chuyển động để hiển thị mượt. Thứ
+tư, mô-đun tương tác cho phép người dùng chiếm quyền điều khiển một phương tiện,
+lái bằng vật lý, xử lý va chạm để sinh trạng thái ``xác xe'', và trả quyền điều
+khiển kèm cơ chế đưa xe trở lại làn đường để mô phỏng tiếp tục.
+
+Trong quá trình triển khai, một yêu cầu quan trọng là bảo đảm tính nhất quán của
+dữ liệu giữa các mô-đun: dữ liệu hình học mạng đường cần dùng chung chuẩn tọa độ
+với dữ liệu phương tiện; các đối tượng trong Unity cần có vòng đời phù hợp với
+trạng thái mô phỏng (tạo mới khi xuất hiện, cập nhật khi di chuyển, loại bỏ khi
+rời mạng). Đồng thời, để bảo đảm khả năng mở rộng, giải pháp ưu tiên tách biệt
+phần thu thập/chuẩn hóa dữ liệu (Python) khỏi phần hiển thị (Unity), giúp giảm
+phụ thuộc và thuận tiện khi thay đổi kịch bản hoặc nền tảng hiển thị.
+
+Đóng góp chính của đồ án là đề xuất và hiện thực một quy trình chuyển đổi dữ liệu
+mô phỏng từ \gls{SUMO} sang môi trường hiển thị 3D trong Unity theo hướng tự
+động, giảm thao tác thủ công khi thay đổi kịch bản; đồng thời bổ sung khả năng
+tương tác lái xe, xử lý va chạm và trả quyền điều khiển vốn ít gặp ở các giải
+pháp hiển thị thông thường. Kết quả thử nghiệm trên các kịch bản mẫu cho thấy hệ
+thống có thể dựng được mạng đường từ dữ liệu đầu vào, biểu diễn chuyển động của
+phương tiện và người đi bộ một cách ổn định, và cho phép người dùng can thiệp
+vào diễn biến giao thông, tạo cơ sở cho việc quan sát và phân tích trực quan.
+
+\section{Bố cục đồ án}
+\label{section:1.4}
+
+Phần còn lại của báo cáo đồ án tốt nghiệp này được tổ chức như sau. Chương 2
+trình bày khảo sát hiện trạng và phân tích yêu cầu của hệ thống, trong đó so
+sánh các công cụ hiển thị mô phỏng hiện có, xác định các tác nhân, mô tả tổng
+quan chức năng qua biểu đồ use case và đặc tả chi tiết các use case quan trọng
+cùng các yêu cầu phi chức năng. Chương 3 giới thiệu nền tảng lý thuyết và các
+công nghệ được sử dụng, bao gồm \gls{SUMO}, \gls{TraCI}, Python và Unity, đồng
+thời phân tích vai trò của từng thành phần và lý do lựa chọn so với các phương án
+thay thế. Chương 4 trình bày phân tích thiết kế, triển khai và đánh giá hệ thống,
+tập trung vào kiến trúc tổng thể, các mô-đun chính, cơ chế đồng bộ dữ liệu và
+kết quả thực nghiệm trên các kịch bản mẫu. Chương 5 trình bày các giải pháp kỹ
+thuật và đóng góp nổi bật của đồ án, trong đó có cơ chế giao tiếp thời gian thực,
+cơ chế chiếm quyền điều khiển và xử lý va chạm, cũng như cơ chế trả quyền và lưu
+trữ phiên mô phỏng. Cuối cùng, Chương 6 tổng kết các kết quả đạt được, các đóng
+góp chính của đồ án và đề xuất hướng phát triển trong tương lai.
+
+\end{document}

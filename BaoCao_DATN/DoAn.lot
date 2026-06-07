@@ -1,0 +1,26 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces So sánh các công cụ quan sát mô phỏng giao thông}}{6}{table.caption.8}%
+\contentsline {table}{\numberline {2.2}{\ignorespaces Danh sách use case của hệ thống}}{7}{table.caption.10}%
+\contentsline {table}{\numberline {2.3}{\ignorespaces Đặc tả use case UC6 -- Chạy mô phỏng thời gian thực}}{10}{table.caption.16}%
+\contentsline {table}{\numberline {2.4}{\ignorespaces Đặc tả use case UC3 -- Sinh tuyến đường cho phương tiện}}{11}{table.caption.17}%
+\contentsline {table}{\numberline {2.5}{\ignorespaces Đặc tả use case UC17 -- Chiếm quyền điều khiển và lái xe}}{11}{table.caption.18}%
+\contentsline {table}{\numberline {2.6}{\ignorespaces Đặc tả use case UC18 -- Trả quyền điều khiển phương tiện}}{13}{table.caption.20}%
+\contentsline {table}{\numberline {2.7}{\ignorespaces Đặc tả use case UC14 -- Tạm dừng và tiếp tục mô phỏng}}{14}{table.caption.22}%
+\contentsline {table}{\numberline {2.8}{\ignorespaces Đặc tả use case UC2 -- Nhập bản đồ từ OpenStreetMap}}{15}{table.caption.23}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {3.1}{\ignorespaces Đầu vào và đầu ra của SUMO trong hệ thống}}{19}{table.caption.25}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Một số trường dữ liệu trao đổi giữa Python và Unity}}{23}{table.caption.27}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces Các nhóm mô-đun chính phía Unity}}{25}{table.caption.29}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Danh sách thư viện và công cụ sử dụng}}{27}{table.caption.31}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Thống kê quy mô mã nguồn}}{28}{table.caption.32}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Một số trường hợp kiểm thử tiêu biểu}}{29}{table.caption.35}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Khung ghi nhận hiệu năng theo quy mô kịch bản}}{30}{table.caption.36}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {A.1}{\ignorespaces Table to test captions and labels.}}{47}{table.caption.43}%
+\addvspace {10\p@ }
+\contentsfinish 
+\contentsfinish 

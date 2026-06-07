@@ -1,0 +1,249 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+
+Phụ lục này đặc tả chi tiết các use case còn lại của hệ thống, ngoài sáu use case
+nghiệp vụ chính đã được đặc tả trong Chương 2 (UC2, UC3, UC6, UC14, UC17, UC18).
+Mỗi use case được mô tả theo cùng một khuôn dạng gồm: tên, tác nhân, mô tả, tiền
+điều kiện, luồng sự kiện chính, luồng sự kiện phụ và hậu điều kiện. Tác nhân
+chính của hệ thống là Người dùng; trình mô phỏng \gls{SUMO} tham gia với vai trò
+hệ thống ngoài ở những use case có tương tác với mô phỏng.
+
+\section{Đặc tả use case Tạo bản đồ từ lưới mê cung}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Tạo bản đồ từ lưới mê cung \\
+		\textbf{Tác nhân} & Người dùng \\
+		\textbf{Mô tả} & Hệ thống sinh mạng đường của \gls{SUMO} từ một tệp lưới ký tự, trong đó ô tường và ô lối đi được mô tả bằng các ký hiệu quy ước. \\
+		\textbf{Tiền điều kiện} & Người dùng có tệp lưới mê cung hợp lệ và đã chọn số làn đường. \\
+		\textbf{Luồng chính} & (1) Người dùng chọn tệp lưới và số làn. (2) Hệ thống đọc kích thước và ma trận lưới. (3) Hệ thống tạo nút giao cho các ô lối đi và sinh cạnh nối các ô kề nhau. (4) Hệ thống ghi các tệp mô tả nút, cạnh và điểm qua đường. (5) Hệ thống biên dịch thành tệp mạng đường hoàn chỉnh. \\
+		\textbf{Luồng phụ} & (2a) Tệp lưới sai định dạng: hệ thống báo lỗi và dừng. (5a) Biên dịch mạng thất bại: hệ thống báo lỗi và dừng. \\
+		\textbf{Hậu điều kiện} & Tệp mạng đường được tạo, sẵn sàng cho bước sinh tuyến. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Sinh tuyến đường cho người đi bộ}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Sinh tuyến đường cho người đi bộ \\
+		\textbf{Tác nhân} & Người dùng \\
+		\textbf{Mô tả} & Hệ thống sinh các tuyến di chuyển cho người đi bộ và thiết lập tham số hành vi chờ đợi tại điểm qua đường. \\
+		\textbf{Tiền điều kiện} & Đã có mạng đường có làn dành cho người đi bộ. \\
+		\textbf{Luồng chính} & (1) Người dùng bật tùy chọn sinh người đi bộ và đặt mức độ thiếu kiên nhẫn. (2) Hệ thống chọn các cặp điểm đầu--cuối cho người đi bộ. (3) Hệ thống ghi các tuyến người đi bộ vào tệp tuyến đường cùng tham số đã đặt. \\
+		\textbf{Luồng phụ} & (1a) Người dùng tắt tùy chọn người đi bộ: hệ thống bỏ qua bước sinh tuyến người đi bộ. \\
+		\textbf{Hậu điều kiện} & Tệp tuyến đường có thêm các tuyến người đi bộ. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Cấu hình tham số mô phỏng}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Cấu hình tham số mô phỏng \\
+		\textbf{Tác nhân} & Người dùng \\
+		\textbf{Mô tả} & Người dùng thiết lập các tham số cho lần chạy thông qua giao diện khởi chạy. \\
+		\textbf{Tiền điều kiện} & Giao diện khởi chạy đã sẵn sàng. \\
+		\textbf{Luồng chính} & (1) Người dùng chọn nguồn bản đồ, số làn và số lượng cặp điểm đầu--cuối. (2) Người dùng chọn kiểu phân chia cặp điểm và bật/tắt người đi bộ. (3) Người dùng chọn chế độ render (thời gian thực hoặc phát lại); riêng thời gian thực chọn thêm chế độ hiển thị (chỉ 3D hoặc cả 2D và 3D). (4) Hệ thống ghi nhận cấu hình cho lần chạy. \\
+		\textbf{Luồng phụ} & (1a) Giá trị nhập không hợp lệ: hệ thống dùng giá trị mặc định hoặc yêu cầu nhập lại. \\
+		\textbf{Hậu điều kiện} & Cấu hình được lưu, sẵn sàng để khởi chạy mô phỏng. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Chạy mô phỏng chế độ phát lại}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Chạy mô phỏng chế độ phát lại \\
+		\textbf{Tác nhân} & Người dùng, SUMO \\
+		\textbf{Mô tả} & Hệ thống chạy trước toàn bộ mô phỏng, ghi lại trạng thái từng bước, sau đó ứng dụng hiển thị đọc dữ liệu để phát lại. \\
+		\textbf{Tiền điều kiện} & Đã có kịch bản mô phỏng hợp lệ. \\
+		\textbf{Luồng chính} & (1) Người dùng chọn chế độ phát lại và khởi chạy. (2) Hệ thống chạy mô phỏng đến khi kết thúc và ghi trạng thái từng bước ra tệp kịch bản. (3) Hệ thống lưu dữ liệu mạng đường. (4) Ứng dụng hiển thị đọc tệp kịch bản và phát lại diễn biến. \\
+		\textbf{Luồng phụ} & (2a) Quá trình chạy bị ngắt giữa chừng: hệ thống lưu phần dữ liệu đã ghi được trước khi dừng. \\
+		\textbf{Hậu điều kiện} & Tệp kịch bản được tạo và có thể phát lại nhiều lần. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Chạy kèm giao diện sumo-gui}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Chạy kèm giao diện sumo-gui \\
+		\textbf{Tác nhân} & Người dùng, SUMO \\
+		\textbf{Mô tả} & Ở chế độ thời gian thực, người dùng chọn một trong hai chế độ hiển thị: chỉ ba chiều, hoặc đồng thời cả giao diện hai chiều của \gls{SUMO} và hiển thị ba chiều để đối chiếu. \\
+		\textbf{Tiền điều kiện} & Mô phỏng chạy ở chế độ thời gian thực. \\
+		\textbf{Luồng chính} & (1) Người dùng chọn chế độ hiển thị ``cả 2D và 3D''. (2) Hệ thống khởi chạy \gls{SUMO} ở chế độ có giao diện. (3) Cửa sổ hai chiều hiển thị đồng thời với hiển thị ba chiều. \\
+		\textbf{Luồng phụ} & (1a) Chọn chế độ ``chỉ 3D'': \gls{SUMO} chạy ẩn, người dùng vẫn quan sát qua hiển thị ba chiều của Unity. \\
+		\textbf{Hậu điều kiện} & Người dùng quan sát mô phỏng qua chế độ hiển thị đã chọn. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Chạy kịch bản định tuyến giao hàng}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Chạy kịch bản định tuyến giao hàng \\
+		\textbf{Tác nhân} & Người dùng \\
+		\textbf{Mô tả} & Hệ thống sinh kịch bản trong đó các phương tiện xuất phát từ một điểm tập kết đi phục vụ nhiều điểm khách hàng theo lộ trình được tính toán. \\
+		\textbf{Tiền điều kiện} & Đã có mạng đường hợp lệ. \\
+		\textbf{Luồng chính} & (1) Người dùng chọn chế độ định tuyến giao hàng, số điểm khách hàng và số phương tiện. (2) Hệ thống dựng đồ thị mạng đường và chọn điểm tập kết cùng các điểm khách hàng. (3) Hệ thống phân bổ và tối ưu lộ trình cho từng phương tiện. (4) Hệ thống ghi các lộ trình ra tệp tuyến đường. \\
+		\textbf{Luồng phụ} & (2a) Mạng không có nút hợp lệ: hệ thống báo lỗi và dừng. \\
+		\textbf{Hậu điều kiện} & Tệp tuyến đường theo lộ trình giao hàng được tạo, sẵn sàng chạy. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Hiển thị phương tiện theo thời gian}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Hiển thị phương tiện theo thời gian \\
+		\textbf{Tác nhân} & Người dùng \\
+		\textbf{Mô tả} & Ứng dụng hiển thị tạo, cập nhật và thu hồi các đối tượng phương tiện ba chiều theo dữ liệu trạng thái nhận được. \\
+		\textbf{Tiền điều kiện} & Mô phỏng đang chạy và dữ liệu trạng thái đang được truyền tới. \\
+		\textbf{Luồng chính} & (1) Ứng dụng nhận danh sách phương tiện theo từng bước. (2) Với phương tiện mới, ứng dụng tạo đối tượng và gán mô hình. (3) Với phương tiện đã có, ứng dụng cập nhật vị trí và hướng, đồng thời nội suy chuyển động giữa các bước. (4) Với phương tiện không còn xuất hiện, ứng dụng thu hồi đối tượng để tái sử dụng. \\
+		\textbf{Luồng phụ} & (3a) Số lượng phương tiện lớn: ứng dụng áp dụng tái sử dụng đối tượng để duy trì hiệu năng. \\
+		\textbf{Hậu điều kiện} & Cảnh ba chiều phản ánh đúng tập phương tiện hiện có và chuyển động của chúng. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Hiển thị đèn tín hiệu}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Hiển thị đèn tín hiệu \\
+		\textbf{Tác nhân} & Người dùng \\
+		\textbf{Mô tả} & Ứng dụng hiển thị trạng thái đèn tín hiệu tại các nút giao theo dữ liệu trạng thái nhận được. \\
+		\textbf{Tiền điều kiện} & Mô phỏng đang chạy và mạng đường có đèn tín hiệu. \\
+		\textbf{Luồng chính} & (1) Ứng dụng nhận trạng thái đèn của từng nút giao theo từng bước. (2) Ứng dụng xác định vị trí đặt đèn dựa trên hình học làn đường được điều khiển. (3) Ứng dụng hiển thị màu đèn tương ứng với trạng thái đỏ, vàng hoặc xanh. \\
+		\textbf{Luồng phụ} & (1a) Nút giao không có đèn: ứng dụng bỏ qua, không hiển thị đèn cho nút đó. \\
+		\textbf{Hậu điều kiện} & Trạng thái đèn tín hiệu được hiển thị đồng bộ với mô phỏng. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Hiển thị người đi bộ}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Hiển thị người đi bộ \\
+		\textbf{Tác nhân} & Người dùng \\
+		\textbf{Mô tả} & Ứng dụng hiển thị các đối tượng người đi bộ ba chiều di chuyển theo dữ liệu trạng thái nhận được. \\
+		\textbf{Tiền điều kiện} & Mô phỏng đang chạy và kịch bản có người đi bộ. \\
+		\textbf{Luồng chính} & (1) Ứng dụng nhận danh sách người đi bộ theo từng bước. (2) Ứng dụng tạo, cập nhật và thu hồi đối tượng người đi bộ tương tự như với phương tiện. (3) Ứng dụng thể hiện chuyển động của người đi bộ. \\
+		\textbf{Luồng phụ} & (2a) Khi mô phỏng tạm dừng, đối tượng người đi bộ phải đứng yên, không thực hiện chuyển động tại chỗ. \\
+		\textbf{Hậu điều kiện} & Người đi bộ được hiển thị đồng bộ với mô phỏng. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Điều khiển camera quan sát}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Điều khiển camera quan sát \\
+		\textbf{Tác nhân} & Người dùng \\
+		\textbf{Mô tả} & Người dùng thay đổi góc nhìn quan sát cảnh ba chiều, gồm chế độ tự do và chế độ bám theo một phương tiện. \\
+		\textbf{Tiền điều kiện} & Cảnh ba chiều đang được hiển thị. \\
+		\textbf{Luồng chính} & (1) Người dùng chọn chế độ camera. (2) Ở chế độ tự do, người dùng di chuyển và xoay góc nhìn theo ý muốn. (3) Ở chế độ bám theo, camera đi theo phương tiện được chọn. \\
+		\textbf{Luồng phụ} & (3a) Phương tiện đang bám theo rời khỏi mô phỏng: camera chuyển về chế độ tự do. \\
+		\textbf{Hậu điều kiện} & Góc nhìn quan sát thay đổi theo lựa chọn của người dùng. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Điều chỉnh tốc độ mô phỏng}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Điều chỉnh tốc độ mô phỏng \\
+		\textbf{Tác nhân} & Người dùng, SUMO \\
+		\textbf{Mô tả} & Người dùng thay đổi tốc độ chạy của mô phỏng trong khi đang chạy. \\
+		\textbf{Tiền điều kiện} & Mô phỏng đang chạy ở chế độ thời gian thực. \\
+		\textbf{Luồng chính} & (1) Người dùng đặt giá trị giãn cách thời gian giữa các bước. (2) Hệ thống cập nhật tham số một cách an toàn cho tiến trình mô phỏng. (3) Mô phỏng chạy nhanh hơn hoặc chậm hơn theo giá trị mới. \\
+		\textbf{Luồng phụ} & (1a) Giá trị không hợp lệ: hệ thống bỏ qua và giữ nguyên tốc độ hiện tại. \\
+		\textbf{Hậu điều kiện} & Tốc độ chạy mô phỏng thay đổi theo thiết lập của người dùng. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Lọc đối tượng hiển thị theo vùng}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Lọc đối tượng hiển thị theo vùng \\
+		\textbf{Tác nhân} & Người dùng \\
+		\textbf{Mô tả} & Ứng dụng chỉ hiển thị các đối tượng nằm trong vùng quan sát và tạm ẩn các đối tượng ở ngoài để duy trì hiệu năng. \\
+		\textbf{Tiền điều kiện} & Cảnh ba chiều đang hiển thị nhiều đối tượng. \\
+		\textbf{Luồng chính} & (1) Hệ thống xác định vùng quan sát quanh camera. (2) Hệ thống hiển thị các đối tượng trong vùng và tạm ẩn các đối tượng ngoài vùng. (3) Khi camera di chuyển, hệ thống cập nhật lại tập đối tượng được hiển thị. \\
+		\textbf{Luồng phụ} & (2a) Đối tượng đang được người dùng điều khiển không bị tạm ẩn dù ra ngoài vùng. \\
+		\textbf{Hậu điều kiện} & Số đối tượng được vẽ giảm đi, hiệu năng được duy trì. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Xử lý va chạm sinh xác xe}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Xử lý va chạm sinh xác xe \\
+		\textbf{Tác nhân} & Người dùng, SUMO \\
+		\textbf{Mô tả} & Khi phương tiện do người dùng điều khiển va chạm với một phương tiện đang do \gls{SUMO} điều khiển, phương tiện bị tông chuyển sang trạng thái xác xe gây ùn ứ và tự biến mất sau một số bước. \\
+		\textbf{Tiền điều kiện} & Người dùng đang điều khiển một phương tiện; tồn tại phương tiện khác do \gls{SUMO} điều khiển. \\
+		\textbf{Luồng chính} & (1) Hệ thống phát hiện va chạm giữa hai phương tiện. (2) Hệ thống chuyển phương tiện bị tông sang trạng thái xác xe và bật vật lý để nó bị đẩy. (3) Phía mô phỏng giữ phương tiện này đứng yên, tạo ùn ứ cho các phương tiện phía sau. (4) Sau một số bước mô phỏng định trước, hệ thống loại bỏ xác xe. \\
+		\textbf{Luồng phụ} & (4a) Mô phỏng tạm dừng: bộ đếm số bước dừng lại, việc loại bỏ xác xe cũng tạm hoãn. \\
+		\textbf{Hậu điều kiện} & Phương tiện bị tông trở thành xác xe rồi biến mất; dòng giao thông phản ánh tình huống ùn ứ. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Lưu trữ và kết thúc phiên mô phỏng}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Lưu trữ và kết thúc phiên mô phỏng \\
+		\textbf{Tác nhân} & Người dùng, SUMO \\
+		\textbf{Mô tả} & Hệ thống kết thúc phiên mô phỏng một cách an toàn và lưu toàn bộ kết quả của lần chạy vào một thư mục phiên thống nhất. \\
+		\textbf{Tiền điều kiện} & Một phiên mô phỏng đang chạy hoặc đã chạy xong. \\
+		\textbf{Luồng chính} & (1) Người dùng gửi lệnh kết thúc, hoặc mô phỏng tự kết thúc khi hết phương tiện. (2) Hệ thống dừng tiến trình mô phỏng và đóng các kênh kết nối. (3) Hệ thống ghi nhật ký hành trình, dữ liệu mạng, chuỗi trạng thái theo bước và bản tóm tắt vào thư mục phiên. \\
+		\textbf{Luồng phụ} & (2a) Dừng đột ngột: hệ thống vẫn cố gắng ghi phần dữ liệu đã có để tránh mất mát. \\
+		\textbf{Hậu điều kiện} & Phiên mô phỏng kết thúc gọn; toàn bộ kết quả được lưu để truy vết và phát lại. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\end{document}

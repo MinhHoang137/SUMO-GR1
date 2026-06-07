@@ -59,7 +59,7 @@ def write_nodes_to_xml(pos_map, output_path, scale=10):
 
 
 
-def write_edges_to_xml(edges, output_path, has_ped_lane=False, numLanes=4, carSpeed=13.9, pedSpeed=1.4):
+def write_edges_to_xml(edges, output_path, has_ped_lane=False, numLanes=4, carSpeed=13.9, pedSpeed=1.4, car_lanes_per_dir=None):
     """
     Ghi danh sách các cạnh vào file .edg.xml theo cú pháp SUMO.
 
@@ -67,20 +67,28 @@ def write_edges_to_xml(edges, output_path, has_ped_lane=False, numLanes=4, carSp
         edges (list[tuple]): Danh sách các cạnh dưới dạng (from_id, to_id).
         output_path (str): Đường dẫn tới file .edg.xml cần ghi.
         has_ped_lane (bool): Có tạo làn đi bộ không.
-        numLanes (int): Tổng số làn cho mỗi cạnh (cả 2 chiều).
+        numLanes (int): Tổng số làn cho mỗi cạnh (cả 2 chiều) — ngữ nghĩa cũ.
         carSpeed (float): Tốc độ tối đa cho làn xe (m/s).
         pedSpeed (float): Tốc độ tối đa cho làn đi bộ (m/s).
+        car_lanes_per_dir (int|None): Nếu được cung cấp, ngữ nghĩa MỚI: số làn XE
+            cho MỖI chiều (mỗi bên). Mỗi chiều luôn kèm đúng 1 làn đi bộ (index 0).
+            => lanes_per_direction = car_lanes_per_dir + 1. Ghi đè 'numLanes'.
     """
     root = ET.Element("edges")
     e_cnt = 0
 
-    # ✅ Không vẽ nếu numLanes < 2
-    if numLanes < 2:
-        print("⚠️ Số làn nhỏ hơn 2 — không xuất cạnh nào.")
-        return
-    if numLanes < 4:
-        numLanes += 2  # thêm 2 làn để dành cho đi bộ
-    lanes_per_direction = int(numLanes / 2)
+    if car_lanes_per_dir is not None:
+        # Ngữ nghĩa mới: mỗi chiều = 1 làn đi bộ + N làn xe.
+        n_car = max(1, int(car_lanes_per_dir))
+        lanes_per_direction = n_car + 1
+    else:
+        # ✅ Ngữ nghĩa cũ: numLanes là tổng số làn cả 2 chiều.
+        if numLanes < 2:
+            print("⚠️ Số làn nhỏ hơn 2 — không xuất cạnh nào.")
+            return
+        if numLanes < 4:
+            numLanes += 2  # thêm 2 làn để dành cho đi bộ
+        lanes_per_direction = int(numLanes / 2)
 
     # ✅ Tạo XML cho từng cạnh (2 chiều)
     for (from_id, to_id) in edges:

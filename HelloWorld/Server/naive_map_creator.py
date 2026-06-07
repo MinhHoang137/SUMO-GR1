@@ -111,27 +111,38 @@ def get_node_pos_map(grid, width, height):
                 
     return pos_map
 
-def naive_create_map_files(input_map_path, output_nod_path, output_edge_path, output_con_path, numLanes=8):
+# Số làn xe tối thiểu / tối đa cho mỗi bên (mỗi chiều). Mỗi bên luôn kèm 1 làn đi bộ.
+MIN_CAR_LANES_PER_SIDE = 1
+MAX_CAR_LANES_PER_SIDE = 3
+
+def naive_create_map_files(input_map_path, output_nod_path, output_edge_path, output_con_path, numLanes=1):
     """
     Tạo tệp .net.xml và .edg.xml từ tệp .map đơn giản.
-    
+
     Args:
         input_map_path (str): Đường dẫn tới tệp .map đầu vào.
         output_nod_path (str): Đường dẫn tới tệp .nod.xml đầu ra.
         output_edge_path (str): Đường dẫn tới tệp .edg.xml đầu ra.
         output_con_path (str): Đường dẫn tới tệp .con.xml đầu ra.
-        numLanes (int): Số làn cho mỗi cạnh.
+        numLanes (int): Số làn XE cho MỖI bên (mỗi chiều), kẹp trong [1, 3].
+            Mỗi bên còn có thêm đúng 1 làn đi bộ (index 0).
     """
     grid, width, height = parse_map_file(input_map_path)
-    
+
     if grid is None:
         print("Không thể tạo bản đồ do lỗi đọc tệp .map.")
         return False
-    
+
+    # Kẹp số làn xe mỗi bên về [1, 3] cho hợp lệ.
+    car_lanes_per_side = max(MIN_CAR_LANES_PER_SIDE, min(MAX_CAR_LANES_PER_SIDE, int(numLanes)))
+    print(f"Mỗi bên: {car_lanes_per_side} làn xe + 1 làn đi bộ "
+          f"(= {car_lanes_per_side + 1} làn/chiều).")
+
     pos_map = get_node_pos_map(grid, width, height)
-    
+
     write_to_xml.write_nodes_to_xml(pos_map, output_nod_path, scale=40.0)
-    write_maze_edges_to_xml(grid, pos_map, height, width, output_edge_path, numLanes = numLanes)
+    write_maze_edges_to_xml(grid, pos_map, height, width, output_edge_path,
+                            car_lanes_per_dir=car_lanes_per_side)
     write_to_xml.write_crossings_to_con_xml(output_nod_path, output_edge_path, output_con_path)
     print("Đã tạo tệp .nod.xml, .edg.xml và .con.xml thành công.")
     return True
@@ -142,7 +153,7 @@ def naive_create_map(maze_file_path, num_lanes):
     
     Tham số:
         maze_file_path: Đường dẫn tới tệp mê cung (.map).
-        num_lanes: Số làn cho mỗi cạnh.
+        num_lanes: Số làn XE cho MỖI bên (mỗi chiều), kẹp [1, 3]; mỗi bên kèm 1 làn đi bộ.
     """
     output_nod_path = "SUMO_xml/HelloWorld.nod.xml"
     output_edge_path = "SUMO_xml/HelloWorld.edg.xml"
