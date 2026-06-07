@@ -107,11 +107,15 @@ Lợi ích nhỏ nhưng dễ làm, giảm GC spike.
 
 → *Kỳ vọng: giảm CPU Unity rõ rệt khi đông xe, hết rớt frame, độ trễ ổn định hơn. Không đổi giao thức.*
 
-### Giai đoạn 2 — Tối ưu server, vẫn giữ giao thức JSON
-- [ ] **P0** Chuyển `read_trafficers`/đọc person sang **TraCI subscriptions**.
-- [ ] Đo `elapsed` mỗi vòng (đã có `loop_start`) → log để xác nhận cải thiện.
+### Giai đoạn 2 — Tối ưu server, vẫn giữ giao thức JSON ✅ ĐÃ LÀM
+- [x] **P0** Chuyển `read_trafficers` (xe + người) sang **TraCI subscriptions**: subscribe mỗi đối tượng
+      1 lần, mỗi step chỉ `getAllSubscriptionResults()` (1 round-trip) thay vì ~4N lệnh riêng lẻ.
+      Tự đồng bộ tập subscribe (subscribe id mới, tỉa id đã rời); có fallback đọc trực tiếp nếu thiếu.
+- [x] **Đã đo & kiểm chứng** (scenario HelloWorld, ~90 xe, 200 step, localhost):
+      - Đúng đắn: 2763 phép đọc, **0 sai lệch** vị trí/tốc độ vs đọc trực tiếp, không thiếu xe.
+      - Hiệu năng: đọc trực tiếp 3769ms → subscription **372ms** → **~10× nhanh hơn** (chênh tăng theo mật độ xe).
 
-→ *Kỳ vọng: thời gian xử lý 1 step giảm mạnh khi N lớn; giữ được `time_step` nhỏ.*
+→ *Đạt: thời gian xử lý 1 step giảm mạnh; `elapsed` mỗi vòng nhỏ hơn nhiều → giữ được `time_step` nhỏ.*
 
 ### Giai đoạn 3 — Giảm khối lượng truyền (đổi giao thức, làm 2 đầu đồng bộ)
 - [ ] **P1** Nén gzip/zlib payload download (kèm cờ để bật/tắt khi debug).
