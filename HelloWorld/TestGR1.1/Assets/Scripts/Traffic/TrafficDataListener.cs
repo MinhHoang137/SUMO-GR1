@@ -67,6 +67,8 @@ public class TrafficDataListener : MonoBehaviour
 	{
 		try
 		{
+			// Server nén luồng stream (tiền tố GZ:) → giải nén về JSON trước khi parse.
+			jsonContent = Network.MaybeDecompress(jsonContent);
 			data = JsonConvert.DeserializeObject<TrafficDataList>(jsonContent);
 			if (data != null) { 
 				UnityMainThreadDispatcher.Instance().Enqueue(() =>

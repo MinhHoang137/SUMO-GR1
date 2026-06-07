@@ -48,6 +48,9 @@ public class TrafficerManager : MonoBehaviour
 	private Dictionary<string, Trafficer> trafficerDict = new Dictionary<string, Trafficer>();
 	private Dictionary<string, Queue<Trafficer>> trafficerPool = new Dictionary<string, Queue<Trafficer>>();
 
+	// Snapshot tái dùng cho ProcessData — tránh cấp phát List mới mỗi packet server (giảm GC).
+	private readonly List<Trafficer> trafficerSnapshot = new List<Trafficer>();
+
 	private void Awake()
 	{
 		if (Instance == null)
@@ -64,7 +67,11 @@ public class TrafficerManager : MonoBehaviour
 			// Nếu là replay, xóa hết trafficer hiện tại trước khi tạo mới
 			DisposeAllTrafficers();
 		}
-		List<Trafficer> trafficerList = new List<Trafficer>(trafficerDict.Values);
+		// Snapshot tái dùng: clear rồi nạp lại (giải phóng khỏi việc cấp phát List mới mỗi packet).
+		// Cần snapshot vì các vòng dưới có sửa trafficerDict (recycle).
+		List<Trafficer> trafficerList = trafficerSnapshot;
+		trafficerList.Clear();
+		foreach (var t in trafficerDict.Values) trafficerList.Add(t);
 		// Vòng 1: đánh dấu "chưa thấy frame này" cho các xe do server điều khiển.
 		// Bỏ qua xe client sở hữu (đang lái / xác xe) — vòng đời của chúng không do server quyết.
 		foreach (var trafficer in trafficerList)

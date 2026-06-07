@@ -98,29 +98,46 @@ Lợi ích nhỏ nhưng dễ làm, giảm GC spike.
 
 ## 3. Lộ trình thực hiện theo giai đoạn
 
-### Giai đoạn 1 — Sửa nhanh, rủi ro thấp, lợi ích cao
-- [ ] **P0** Viết lại `Network.ReadMessage` (buffer bền + quét incremental + giữ phần dư). *Sửa cả
-      bug rớt frame.*
-- [ ] **P1** Bật `TCP_NODELAY` hai đầu.
-- [ ] **P2** Tái dùng list trong `ProcessData`; bỏ/giảm so sánh `lastJson`.
+### Giai đoạn 1 — Sửa nhanh, rủi ro thấp, lợi ích cao ✅ ĐÃ LÀM
+- [x] **P0** Viết lại `Network.ReadMessage` (buffer bền per-connection + quét marker incremental ở mức
+      byte + giữ phần dư sau marker). *Sửa cả bug rớt frame khi gói TCP dính nhau; bỏ quét O(n²).*
+- [x] **P1** Bật `TCP_NODELAY`: Unity `client.NoDelay=true` (`CreateTcpClient`); server `setsockopt` trên socket đã accept.
+- [x] **P2** Tái dùng list snapshot trong `ProcessData` (clear+nạp lại thay vì `new` mỗi packet).
+      *(`lastJson` giữ nguyên làm dedup an toàn — chi phí thấp, không đổi hành vi.)*
 
 → *Kỳ vọng: giảm CPU Unity rõ rệt khi đông xe, hết rớt frame, độ trễ ổn định hơn. Không đổi giao thức.*
 
-### Giai đoạn 2 — Tối ưu server, vẫn giữ giao thức JSON
-- [ ] **P0** Chuyển `read_trafficers`/đọc person sang **TraCI subscriptions**.
-- [ ] Đo `elapsed` mỗi vòng (đã có `loop_start`) → log để xác nhận cải thiện.
+### Giai đoạn 2 — Tối ưu server, vẫn giữ giao thức JSON ✅ ĐÃ LÀM
+- [x] **P0** Chuyển `read_trafficers` (xe + người) sang **TraCI subscriptions**: subscribe mỗi đối tượng
+      1 lần, mỗi step chỉ `getAllSubscriptionResults()` (1 round-trip) thay vì ~4N lệnh riêng lẻ.
+      Tự đồng bộ tập subscribe (subscribe id mới, tỉa id đã rời); có fallback đọc trực tiếp nếu thiếu.
+- [x] **Đã đo & kiểm chứng** (scenario HelloWorld, ~90 xe, 200 step, localhost):
+      - Đúng đắn: 2763 phép đọc, **0 sai lệch** vị trí/tốc độ vs đọc trực tiếp, không thiếu xe.
+      - Hiệu năng: đọc trực tiếp 3769ms → subscription **372ms** → **~10× nhanh hơn** (chênh tăng theo mật độ xe).
 
-→ *Kỳ vọng: thời gian xử lý 1 step giảm mạnh khi N lớn; giữ được `time_step` nhỏ.*
+→ *Đạt: thời gian xử lý 1 step giảm mạnh; `elapsed` mỗi vòng nhỏ hơn nhiều → giữ được `time_step` nhỏ.*
 
-### Giai đoạn 3 — Giảm khối lượng truyền (đổi giao thức, làm 2 đầu đồng bộ)
-- [ ] **P1** Nén gzip/zlib payload download (kèm cờ để bật/tắt khi debug).
-- [ ] **P1** Area-of-Interest theo camera (Unity gửi vị trí qua cổng cmd; server lọc bán kính).
-- [ ] (Tùy chọn) Delta encoding nếu AoI chưa đủ.
+### Giai đoạn 3 — Nén luồng stream realtime ✅ ĐÃ LÀM (chỉ nén; bỏ AoI cho đỡ lỗi)
+- [x] **P1** Nén payload download: server `_compress_payload` = **raw-DEFLATE + base64**, tiền tố `GZ:`.
+      - Chọn base64 + giữ framing `<END>` sẵn có (không đổi tầng khung) → **rủi ro thấp**, không cần
+        viết lại reader/sender binary. Đánh đổi: base64 phình +33% (vẫn nén ròng nhiều lần).
+      - Raw deflate (wbits âm) để Unity `DeflateStream` giải nén trực tiếp (không header zlib/gzip).
+      - Cờ `network.COMPRESS_DOWNLOAD` bật/tắt; Unity `Network.MaybeDecompress` tự nhận tiền tố `GZ:`
+        → **tương thích ngược** (tắt nén hoặc road data không nén vẫn chạy).
+      - Chỉ nén gói **traffic stream mỗi step** (gói lớn, lặp lại nhiều). Road data & replay không đụng.
+- [x] **Đã kiểm chứng** (payload ~120 xe): framing-safe (`<END>` không xung đột base64), roundtrip khớp
+      gốc với giải nén kiểu .NET (raw-inflate). Tỉ lệ ~3× với float ngẫu nhiên — dữ liệu SUMO thật
+      (id tuần tự, vị trí tương tự) sẽ cao hơn.
+- [~] **AoI theo camera** — **BỎ** ở giai đoạn này (theo yêu cầu: đỡ phát sinh lỗi). Có thể làm sau.
+- [ ] (Tùy chọn) Delta encoding — để sau.
 
-→ *Kỳ vọng: băng thông giảm nhiều lần; parse phía Unity nhẹ hơn.*
+→ *Đạt: băng thông & khối lượng parse phía Unity giảm nhiều lần, không đổi tầng framing.*
 
-### Giai đoạn 4 — Nâng cấp định dạng (lớn, cân nhắc sau)
+### Giai đoạn 4 — Nâng cấp định dạng (lớn) — ⏸ HOÃN
 - [ ] Cân nhắc MessagePack/binary thay JSON nếu vẫn nghẽn serialize/parse.
+
+> **Quyết định (2026-06-08):** dừng sau Giai đoạn 1–3. Ưu tiên thay đổi ở mức vừa phải, rủi ro thấp.
+> Giai đoạn 4 là thay đổi lớn (đổi định dạng cả 2 đầu) → chỉ làm nếu đo thấy vẫn nghẽn serialize/parse.
 
 ---
 

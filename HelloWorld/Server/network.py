@@ -3,6 +3,8 @@ import math
 import socket
 import subprocess
 import sys
+import zlib
+import base64
 from time import sleep
 import time
 import errno
@@ -10,6 +12,21 @@ import threading
 
 END_MARKER = '<END>'
 BUFFER_SIZE = 131072  # 128 KB
+
+# Nén luồng stream realtime (download SUMO→Unity). Payload JSON rất "phình"; nén raw-DEFLATE
+# rồi base64 (text-safe để đi qua framing <END> sẵn có, không cần đổi tầng khung).
+# Tiền tố GZ_PREFIX để Unity tự nhận biết gói đã nén; gói không có tiền tố = JSON thường (tương thích ngược).
+COMPRESS_DOWNLOAD = True   # cờ bật/tắt nén — đặt False để debug bằng JSON thô.
+GZ_PREFIX = 'GZ:'
+_COMPRESS_LEVEL = 6        # cân bằng tỉ lệ nén / CPU
+
+
+def _compress_payload(data_str: str) -> str:
+    """JSON string -> 'GZ:' + base64(raw-deflate). Raw deflate (wbits âm) để .NET DeflateStream
+    (Unity) giải nén trực tiếp, không cần header zlib/gzip."""
+    co = zlib.compressobj(_COMPRESS_LEVEL, zlib.DEFLATED, -zlib.MAX_WBITS)
+    comp = co.compress(data_str.encode('utf-8')) + co.flush()
+    return GZ_PREFIX + base64.b64encode(comp).decode('ascii')
 
 # Per-socket receive buffers to handle TCP stream framing.
 # TCP can coalesce multiple application messages into one recv, so we must
@@ -54,11 +71,14 @@ def _recv_next_message(client_socket: socket.socket) -> str:
         # consider errors='replace'. For JSON/control messages, strict is preferred.
         buffer += data.decode('utf-8')
 
-def send_data(client_socket: socket.socket, data) -> bool:
-    """Gửi dữ liệu theo cụm"""
+def send_data(client_socket: socket.socket, data, compress: bool = False) -> bool:
+    """Gửi dữ liệu theo cụm. compress=True → nén raw-deflate+base64 (tiền tố GZ:)."""
     try:
+        data_str = json.dumps(data)
+        if compress:
+            data_str = _compress_payload(data_str)
         # Ghép END_MARKER vào payload để tránh phải gửi một gói rời
-        data_str = json.dumps(data) + END_MARKER
+        data_str = data_str + END_MARKER
         total_size = len(data_str)
         num_packets = math.ceil(total_size / BUFFER_SIZE)
 
@@ -112,6 +132,13 @@ def server_thread(server_socket: socket.socket, client_handler):
     while True:
         try:
             client_socket, addr = server_socket.accept()
+            if client_socket:
+                # Tắt Nagle trên kết nối đã chấp nhận: stream realtime nhịp ~50ms cần độ trễ thấp,
+                # không để TCP gộp/giữ gói tới ~40ms.
+                try:
+                    client_socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                except Exception as e:
+                    print(f"[Warn] Could not set TCP_NODELAY: {e}")
             if not client_socket:
                 try:
                     print(f"Error accepting connection on server socket: {server_socket} | Address: {server_socket.getsockname()}")
