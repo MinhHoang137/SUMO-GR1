@@ -52,10 +52,10 @@ trả quyền & re-anchor, người đi bộ 3D, hai chế độ Realtime/Pre-re
 Bốn nhóm để phân rã:
 
 - **A. Chuẩn bị kịch bản & bản đồ** (UC1–UC5)
-- **B. Vận hành mô phỏng** (UC6–UC9)
-- **C. Quan sát & trực quan hóa 3D** (UC10–UC13)
-- **D. Lái xe tương tác** (UC14–UC17)
-- **E. Kết quả & kết thúc** (UC18)
+- **B. Vận hành mô phỏng** (UC6–UC9) — UC6/UC7 «include» hiển thị xe, đèn, người đi bộ
+- **C. Quan sát & điều khiển** (UC10–UC13)
+- **D. Lái xe tương tác** (UC14–UC15)
+- **E. Kết quả & lưu trữ** (UC16–UC17)
 
 ---
 
@@ -68,24 +68,20 @@ Bốn nhóm để phân rã:
 | UC3 | Sinh tuyến đường cho xe | Người dùng | Chọn kiểu phân chia OD (CS/SS/IO/OI), lọc cặp khả thi bằng BFS | `Server/main.py`, `SUMO_xml/route_gen.py` |
 | UC4 | Sinh tuyến đường cho người đi bộ | Người dùng | Bật/tắt người đi bộ, đặt `impatience` tại điểm qua đường | `main.py` (`has_ped`, `ped_impatience`) |
 | UC5 | Cấu hình tham số mô phỏng | Người dùng | Số làn, số cặp nút, chế độ GUI, chế độ render | `launcher.py`, `main.py` (`setup_simulation_config`) |
-| UC6 | Chạy mô phỏng chế độ Realtime | Người dùng | Stream trạng thái mỗi step qua TCP, Unity hiển thị tức thời | `render/realtime_render.py`, `Simulation/Realtime/` |
-| UC7 | Chạy mô phỏng chế độ Pre-render (replay) | Người dùng | Ghi `scenario.json` (từng step) rồi phát lại trong Unity | `render/pre_render.py`, `render/scenario_recorder.py`, `Simulation/PreRender/` |
+| UC6 | Chạy mô phỏng chế độ Realtime | Người dùng | Stream trạng thái mỗi step qua TCP, Unity hiển thị tức thời; «include» hiển thị xe 3D, đèn giao thông, người đi bộ | `render/realtime_render.py`, `Simulation/Realtime/`, `TrafficerManager.cs`, `trafficLight.py`, `crossing.py` |
+| UC7 | Chạy mô phỏng chế độ Pre-render (replay) | Người dùng | Ghi `scenario.json` (từng step) rồi phát lại trong Unity; «include» hiển thị xe 3D, đèn giao thông, người đi bộ | `render/pre_render.py`, `render/scenario_recorder.py`, `Simulation/PreRender/` |
 | UC8 | Chạy mô phỏng với SUMO-GUI | Người dùng | Bật cửa sổ sumo-gui song song để đối chiếu | `launcher.py` (`run_with_gui`) |
 | UC9 | Chạy chế độ VRP (định tuyến phương tiện) | Người dùng | Sinh kịch bản giao hàng (client/staff/company) | `Server/VRP/`, `main.py` (mode 2) |
-| UC10 | Hiển thị phương tiện 3D theo thời gian | Người dùng | Tạo/cập nhật/thu hồi xe theo ID; nội suy vị trí & hướng | `Traffic/Trafficer/`, `TrafficerManager.cs` |
-| UC11 | Hiển thị đèn giao thông | Người dùng | Map trạng thái RYG sang đèn 3D theo lane shape | `Server/Traffic/trafficLight.py`, `Traffic/TrafficLight/` |
-| UC12 | Hiển thị người đi bộ 3D | Người dùng | Render người đi bộ, đồng bộ pause (không "đi tại chỗ") | `Server/Traffic/crossing.py`, `PedestrianVisual` |
-| UC13 | Điều khiển camera quan sát | Người dùng | Camera tự do / bám xe, đổi chế độ | `UI/CameraController.cs`, `CameraControllerUI.cs` |
-| UC14 | Tạm dừng / tiếp tục mô phỏng | Người dùng | Gửi lệnh Pause/Resume qua kênh điều khiển | `Simulation/Realtime/PauseSO`, `realtime_render.py` |
-| UC15 | Điều chỉnh tốc độ mô phỏng | Người dùng | Đổi `timeStep`/hệ số tốc độ lúc đang chạy | `UI/SpeedMultiplierUI.cs`, `Traffic/SpeedMultiplier.cs` |
-| UC16 | Lọc đối tượng hiển thị theo vùng | Người dùng | Cull đối tượng ngoài tầm để tối ưu hiệu năng | `Optimization/FilterTransform.cs`, `FilterUI.cs` |
-| UC17 | Chiếm quyền điều khiển & lái xe thủ công | Người dùng | Chọn xe server → `TakeControl` → lái bằng bàn phím (physics) | `UnityVehicle.cs`, `WheelController.cs`, `UI/VehicleTakeoverUI.cs` |
-| UC18 | Trả quyền điều khiển xe (re-anchor / hủy) | Người dùng | Thả xe → SUMO snap về lane gần nhất & chạy lại, hoặc hủy nếu quá xa | `UnityVehicle.ReleaseControl`, `Server/Traffic/unity_vehicle.py` |
+| UC10 | Điều khiển camera quan sát | Người dùng | Camera tự do / bám xe, đổi chế độ | `UI/CameraController.cs`, `CameraControllerUI.cs` |
+| UC11 | Tạm dừng / tiếp tục mô phỏng | Người dùng | Gửi lệnh Pause/Resume qua kênh điều khiển; người đi bộ không trôi khi pause | `Simulation/Realtime/PauseSO`, `realtime_render.py` |
+| UC12 | Điều chỉnh tốc độ mô phỏng | Người dùng | Đổi `timeStep`/hệ số tốc độ lúc đang chạy | `UI/SpeedMultiplierUI.cs`, `Traffic/SpeedMultiplier.cs` |
+| UC13 | Lọc đối tượng hiển thị theo vùng | Người dùng | Cull đối tượng ngoài tầm để tối ưu hiệu năng | `Optimization/FilterTransform.cs`, `FilterUI.cs` |
+| UC14 | Chiếm quyền điều khiển & lái xe thủ công | Người dùng | Chọn xe server → `TakeControl` → lái bằng bàn phím (physics) | `UnityVehicle.cs`, `WheelController.cs`, `UI/VehicleTakeoverUI.cs` |
+| UC15 | Trả quyền điều khiển xe (re-anchor / hủy) | Người dùng | Thả xe → SUMO snap về lane gần nhất & chạy lại, hoặc hủy nếu quá xa | `UnityVehicle.ReleaseControl`, `Server/Traffic/unity_vehicle.py` |
+| UC16 | Gây va chạm sinh xác xe | Người dùng | Va chạm vật lý → `BecomeWreck`, xe mất điều khiển, despawn sau N bước | `UnityVehicle.OnCollisionEnter`, `unity_vehicle.py` (state 3) |
+| UC17 | Ghi & lưu trữ phiên mô phỏng | Người dùng | `SimulationSession` gom `trips.csv`, `summary.json`, `road_data.json`, `scenario.json` vào `result/{map}-{timestamp}/`; realtime cũng phát lại được | `render/scenario_recorder.py` |
 
-> **Use case bổ sung (dự phòng nâng lên 20 nếu cần):**
-> UC19 — *Gây va chạm sinh xác xe* (`OnCollisionEnter` → `BecomeWreck`, despawn sau N bước, `unity_vehicle.py` state 3);
-> UC20 — *Ghi & lưu trữ phiên mô phỏng* (`render/scenario_recorder.py` — `SimulationSession` gom `trips.csv`, `summary.json`, `road_data.json`, `scenario.json` vào một thư mục `result/{map}-{timestamp}/`; realtime cũng persistable & phát lại được).
-> Khuyến nghị giữ **18 chính + 2 dự phòng = 20** để đạt mốc trên của yêu cầu.
+> **Tổng: 17 use case** (trong khoảng 10–20 theo yêu cầu). UC6/UC7 đã «include» hành vi hiển thị xe, đèn, người đi bộ — các hành vi này là side effect tự động của hệ thống, không phải hành động của người dùng, nên không tách thành use case riêng.
 
 ---
 
@@ -96,12 +92,12 @@ Chọn 6 use case "xương sống" và có luồng phát sinh phong phú:
 
 1. **UC6 – Chạy mô phỏng Realtime** (luồng phụ: mất kết nối TCP, gói JSON phân mảnh).
 2. **UC3 – Sinh tuyến đường cho xe** (luồng phụ: cặp OD không liên thông → lọc bỏ).
-3. **UC17 – Chiếm quyền & lái xe** (luồng phụ: xe đang lái bị tông → latch `hasCrashed`).
-4. **UC18 – Trả quyền & re-anchor** (luồng phụ: thả quá xa lane → hủy xe).
-5. **UC14 – Tạm dừng/tiếp tục** (đồng bộ `pause_event` ↔ Unity, người đi bộ không trôi).
+3. **UC14 – Chiếm quyền & lái xe** (luồng phụ: xe đang lái bị tông → latch `hasCrashed`).
+4. **UC15 – Trả quyền & re-anchor** (luồng phụ: thả quá xa lane → hủy xe).
+5. **UC11 – Tạm dừng/tiếp tục** (đồng bộ `pause_event` ↔ Unity, người đi bộ không trôi).
 6. **UC2 – Nhập bản đồ OSM** (luồng phụ: OSM lỗi/không build được mạng).
 
-> Vẽ **biểu đồ hoạt động** kèm theo cho UC17 và UC18 (luồng phức tạp, có nhánh trạng thái
+> Vẽ **biểu đồ hoạt động** kèm theo cho UC14 và UC15 (luồng phức tạp, có nhánh trạng thái
 > `ServerControlled / ClientControlled / Wrecked / Destroyed` — xem máy trạng thái `ExistState` trong `CLAUDE.md`).
 
 ---

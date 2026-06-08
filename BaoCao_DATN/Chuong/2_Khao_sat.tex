@@ -90,9 +90,12 @@ mô phỏng \gls{SUMO}} đóng vai trò một tác nhân phụ (hệ thống ngo
 nhiệm sinh dữ liệu mô phỏng vi mô và thực thi các lệnh điều khiển nhận được.
 
 Các use case của hệ thống được nhóm thành năm nhóm chức năng: chuẩn bị kịch bản
-và bản đồ, vận hành mô phỏng, quan sát và trực quan hóa, lái xe tương tác, và
-kết quả. Biểu đồ use case tổng quát ở Hình \ref{fig:uc-tongquat} thể hiện quan hệ
-giữa tác nhân với năm nhóm chức năng này.
+và bản đồ, vận hành mô phỏng, quan sát và điều khiển, lái xe tương tác, và kết
+quả. Lưu ý việc hiển thị phương tiện, đèn tín hiệu và người đi bộ là hành vi tự
+động của hệ thống xảy ra trong quá trình chạy mô phỏng (nhóm B), không phải thao
+tác độc lập của người dùng; chúng được mô hình hóa là quan hệ \textit{«include»}
+bên trong UC6 và UC7. Biểu đồ use case tổng quát ở Hình \ref{fig:uc-tongquat}
+thể hiện quan hệ giữa tác nhân với năm nhóm chức năng này.
 
 \begin{figure}[H]
 	\centering
@@ -108,9 +111,9 @@ giữa tác nhân với năm nhóm chức năng này.
 		% Nhom chuc nang
 		\node[ucbox] (g1) at (5.5,0.2) {A. Chuẩn bị kịch bản \& bản đồ};
 		\node[ucbox] (g2) at (5.5,-1.1) {B. Vận hành mô phỏng};
-		\node[ucbox] (g3) at (5.5,-2.4) {C. Quan sát \& trực quan hóa 3D};
+		\node[ucbox] (g3) at (5.5,-2.4) {C. Quan sát \& điều khiển};
 		\node[ucbox] (g4) at (5.5,-3.7) {D. Lái xe tương tác};
-		\node[ucbox] (g5) at (5.5,-4.9) {E. Kết quả \& kết thúc};
+		\node[ucbox] (g5) at (5.5,-4.9) {E. Kết quả \& lưu trữ};
 		% Lien ket
 		\draw (op) -- (g1.west);
 		\draw (op) -- (g2.west);
@@ -146,20 +149,17 @@ làm cơ sở cho các biểu đồ phân rã ở các mục tiếp theo.
 		UC7 & Chạy mô phỏng chế độ phát lại & Người dùng \\
 		UC8 & Chạy kèm giao diện sumo-gui & Người dùng \\
 		UC9 & Chạy kịch bản định tuyến giao hàng & Người dùng \\
-		\multicolumn{3}{l}{\textit{C. Quan sát \& trực quan hóa 3D}} \\
-		UC10 & Hiển thị phương tiện theo thời gian & Người dùng \\
-		UC11 & Hiển thị đèn tín hiệu & Người dùng \\
-		UC12 & Hiển thị người đi bộ & Người dùng \\
-		UC13 & Điều khiển camera quan sát & Người dùng \\
+		\multicolumn{3}{l}{\textit{C. Quan sát \& điều khiển}} \\
+		UC10 & Điều khiển camera quan sát & Người dùng \\
+		UC11 & Tạm dừng / tiếp tục mô phỏng & Người dùng \\
+		UC12 & Điều chỉnh tốc độ mô phỏng & Người dùng \\
+		UC13 & Lọc đối tượng hiển thị theo vùng & Người dùng \\
 		\multicolumn{3}{l}{\textit{D. Lái xe tương tác}} \\
-		UC14 & Tạm dừng / tiếp tục mô phỏng & Người dùng \\
-		UC15 & Điều chỉnh tốc độ mô phỏng & Người dùng \\
-		UC16 & Lọc đối tượng hiển thị theo vùng & Người dùng \\
-		UC17 & Chiếm quyền điều khiển và lái xe & Người dùng \\
-		UC18 & Trả quyền điều khiển phương tiện & Người dùng \\
-		\multicolumn{3}{l}{\textit{E. Kết quả \& kết thúc}} \\
-		UC19 & Xử lý va chạm sinh xác xe & Người dùng \\
-		UC20 & Lưu trữ và kết thúc phiên mô phỏng & Người dùng \\
+		UC14 & Chiếm quyền điều khiển và lái xe & Người dùng \\
+		UC15 & Trả quyền điều khiển phương tiện & Người dùng \\
+		\multicolumn{3}{l}{\textit{E. Kết quả \& lưu trữ}} \\
+		UC16 & Xử lý va chạm sinh xác xe & Người dùng \\
+		UC17 & Ghi và lưu trữ phiên mô phỏng & Người dùng \\
 		\hline
 	\end{tabular}
 \end{table}
@@ -193,21 +193,30 @@ hành tạo mạng đường (từ lưới mê cung hoặc từ bản đồ Open
 
 Nhóm này gồm các use case khởi chạy mô phỏng theo các chế độ khác nhau: thời gian
 thực, phát lại, kèm giao diện \texttt{sumo-gui} để đối chiếu, và kịch bản định
-tuyến giao hàng. Các use case này tương tác với trình mô phỏng \gls{SUMO}. Hình
-\ref{fig:uc-nhomB} thể hiện nhóm chức năng này.
+tuyến giao hàng. Các use case này tương tác với trình mô phỏng \gls{SUMO}. UC6 và
+UC7 tự động bao gồm việc hiển thị phương tiện, đèn tín hiệu và người đi bộ dưới
+dạng quan hệ \textit{«include»}. Hình \ref{fig:uc-nhomB} thể hiện nhóm chức năng
+này.
 
 \begin{figure}[H]
 	\centering
 	\begin{tikzpicture}
 		\pic at (0,-1.6) {actor}; \coordinate (op) at (0,-1.6);
 		\node[align=center, font=\small] at (0,-2.7) {Người dùng};
-		\pic at (10,-1.6) {actor}; \coordinate (sumo) at (10,-1.6);
-		\node[align=center, font=\small] at (10,-2.7) {SUMO};
-		\node[uc] (u6) at (5,0)    {UC6. Chạy thời\\gian thực};
-		\node[uc] (u7) at (5,-1.5) {UC7. Chạy chế độ\\phát lại};
-		\node[uc] (u8) at (5,-3)   {UC8. Chạy kèm\\sumo-gui};
-		\node[uc] (u9) at (5,-4.5) {UC9. Kịch bản\\giao hàng};
+		\pic at (11,-1.6) {actor}; \coordinate (sumo) at (11,-1.6);
+		\node[align=center, font=\small] at (11,-2.7) {SUMO};
+		\node[uc] (u6) at (4.5,0)    {UC6. Chạy thời\\gian thực};
+		\node[uc] (u7) at (4.5,-1.5) {UC7. Chạy chế độ\\phát lại};
+		\node[uc] (u8) at (4.5,-3)   {UC8. Chạy kèm\\sumo-gui};
+		\node[uc] (u9) at (4.5,-4.5) {UC9. Kịch bản\\giao hàng};
+		% include sub-use-cases
+		\node[uc, minimum width=2.6cm, font=\tiny] (inc1) at (8.5,0.6)  {Hiển thị phương tiện};
+		\node[uc, minimum width=2.6cm, font=\tiny] (inc2) at (8.5,-0.4) {Hiển thị đèn tín hiệu};
+		\node[uc, minimum width=2.6cm, font=\tiny] (inc3) at (8.5,-1.4) {Hiển thị người đi bộ};
 		\foreach \u in {u6,u7,u8,u9} {\draw (op) -- (\u.west); \draw (\u.east) -- (sumo);}
+		\draw[dashed,-{Latex}] (u6.east) -- node[above, font=\tiny] {«include»} (inc1.west);
+		\draw[dashed,-{Latex}] (u6.east) -- (inc2.west);
+		\draw[dashed,-{Latex}] (u7.east) -- (inc3.west);
 	\end{tikzpicture}
 	\caption{Use case nhóm Vận hành mô phỏng (bản nháp)}
 	\label{fig:uc-nhomB}

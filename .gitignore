@@ -117,3 +117,30 @@ dist/
 # Ignore imported SUMO-to-Unity workspace
 /SUMO-GR1-osm-to-unity/
 
+
+.fake
+
+# LaTeX generated files
+*.aux
+*.bbl
+*.blg
+*.brf
+*.bcf
+*-blx.bib
+*.run.xml
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex.gz(busy)
+*.pdfsync
+*.toc
+*.lof
+*.lot
+*.idx
+*.ind
+*.ilg
+*.out
+*.nav
+*.snm
+*.vrb
+pdflatex*.fls
