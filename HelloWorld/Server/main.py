@@ -49,9 +49,12 @@ def setup_simulation_config(is_custom: bool = False):
         num_pairs_input = input("Số lượng cặp nút giao thông cần tạo (mặc định 20): ")
         config["num_pairs"] = int(num_pairs_input) if num_pairs_input else 20
         config["car_cr_type"] = input(f"Loại phân chia nút giao thông cho xe ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ") or CS
-        
+
         if config["car_cr_type"] not in [CS, SS, IO, OI]:
             config["car_cr_type"] = CS
+
+        _car_period = input("Tần suất sinh xe (giây giữa 2 lần khởi hành, mặc định 30): ")
+        config["car_period"] = float(_car_period) if _car_period else 30.0
 
         ped_option = input("Tạo tuyến đường cho người đi bộ không? (y/n, mặc định y): ")
         config["has_ped"] = ped_option.lower() != 'n'
@@ -59,11 +62,18 @@ def setup_simulation_config(is_custom: bool = False):
         if config["has_ped"]:
             ped_cr_type = input(f"Loại phân chia cho người đi bộ ({CS}, {SS}, {IO}, {OI}) (mặc định {CS}): ")
             config["ped_cr_type"] = ped_cr_type if ped_cr_type in [CS, SS, IO, OI] else CS
-            
+
             _ped_imp = input("Mức độ thiếu kiên nhẫn của người đi bộ (0.0 đến 1.0, mặc định 0.5): ")
             config["ped_impatience"] = float(_ped_imp) if _ped_imp else 0.5
+
+            _ped_period = input("Tần suất sinh người đi bộ (giây giữa 2 lần khởi hành, mặc định 30): ")
+            config["ped_period"] = float(_ped_period) if _ped_period else 30.0
         else:
             config["ped_impatience"] = None
+            config["ped_period"] = 30.0
+
+        _end_time = input("Độ dài mô phỏng — thời điểm dừng sinh agent (giây, mặc định 3600): ")
+        config["end_time"] = float(_end_time) if _end_time else 3600.0
     else:
         # VRP mode không mặc định sinh người đi bộ
         config["has_ped"] = False

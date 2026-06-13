@@ -41,6 +41,9 @@ class AppLauncher:
         self.ped_impatience = tk.DoubleVar(value=0.5)
         self.num_clients = tk.IntVar(value=10)
         self.num_staff = tk.IntVar(value=3)
+        self.car_period = tk.DoubleVar(value=30.0)   # tần suất sinh xe (s)
+        self.ped_period = tk.DoubleVar(value=30.0)   # tần suất sinh người đi bộ (s)
+        self.sim_duration = tk.DoubleVar(value=3600.0)  # độ dài mô phỏng (s)
 
         # ── Tab 2 (OSM) vars ──────────────────────────────────────────
         self.osm_net_path = os.path.join(self.sumo_xml_dir, "HelloWorld.net.xml")
@@ -52,6 +55,9 @@ class AppLauncher:
         self.osm_gen_car = tk.BooleanVar(value=True)
         self.osm_gen_ped = tk.BooleanVar(value=True)
         self.osm_ped_impatience = tk.StringVar(value="0.5")
+        self.osm_car_period = tk.StringVar(value="30")    # tần suất sinh xe (s)
+        self.osm_ped_period = tk.StringVar(value="30")    # tần suất sinh người đi bộ (s)
+        self.osm_sim_duration = tk.StringVar(value="3600")  # độ dài mô phỏng (s)
 
         # ── Shared vars ───────────────────────────────────────────────
         # Chế độ hiển thị realtime: 1 = chỉ 3D (Unity), 2 = cả 2D (sumo-gui) và 3D.
@@ -130,20 +136,34 @@ class AppLauncher:
         ttk.Combobox(self.bench_frame, textvariable=self.car_cr_type,
                      values=["CS", "SS", "IO", "OI"], width=8, state="readonly").grid(row=1, column=1, sticky=tk.W, pady=2)
 
+        ttk.Label(self.bench_frame, text="Tần suất sinh xe (s):").grid(row=2, column=0, sticky=tk.W, pady=2)
+        ttk.Spinbox(self.bench_frame, from_=1, to=600, increment=1,
+                    textvariable=self.car_period, width=10).grid(row=2, column=1, sticky=tk.W, pady=2)
+
         ttk.Checkbutton(self.bench_frame, text="Create pedestrians?",
-                        variable=self.has_ped, command=self._toggle_ped).grid(row=2, column=0, columnspan=2, sticky=tk.W, pady=5)
+                        variable=self.has_ped, command=self._toggle_ped).grid(row=3, column=0, columnspan=2, sticky=tk.W, pady=5)
 
         self.ped_cr_lbl = ttk.Label(self.bench_frame, text="Ped Crossroad Type:")
-        self.ped_cr_lbl.grid(row=3, column=0, sticky=tk.W, pady=2)
+        self.ped_cr_lbl.grid(row=4, column=0, sticky=tk.W, pady=2)
         self.ped_cr_cb = ttk.Combobox(self.bench_frame, textvariable=self.ped_cr_type,
                                        values=["CS", "SS", "IO", "OI"], width=8, state="readonly")
-        self.ped_cr_cb.grid(row=3, column=1, sticky=tk.W, pady=2)
+        self.ped_cr_cb.grid(row=4, column=1, sticky=tk.W, pady=2)
 
         self.ped_imp_lbl = ttk.Label(self.bench_frame, text="Ped Impatience (0-1):")
-        self.ped_imp_lbl.grid(row=4, column=0, sticky=tk.W, pady=2)
+        self.ped_imp_lbl.grid(row=5, column=0, sticky=tk.W, pady=2)
         self.ped_imp_sb = ttk.Spinbox(self.bench_frame, from_=0.0, to=1.0,
                                        increment=0.1, textvariable=self.ped_impatience, width=10)
-        self.ped_imp_sb.grid(row=4, column=1, sticky=tk.W, pady=2)
+        self.ped_imp_sb.grid(row=5, column=1, sticky=tk.W, pady=2)
+
+        self.ped_period_lbl = ttk.Label(self.bench_frame, text="Tần suất sinh người đi bộ (s):")
+        self.ped_period_lbl.grid(row=6, column=0, sticky=tk.W, pady=2)
+        self.ped_period_sb = ttk.Spinbox(self.bench_frame, from_=1, to=600, increment=1,
+                                          textvariable=self.ped_period, width=10)
+        self.ped_period_sb.grid(row=6, column=1, sticky=tk.W, pady=2)
+
+        ttk.Label(self.bench_frame, text="Độ dài mô phỏng (s):").grid(row=7, column=0, sticky=tk.W, pady=2)
+        ttk.Spinbox(self.bench_frame, from_=60, to=86400, increment=60,
+                    textvariable=self.sim_duration, width=10).grid(row=7, column=1, sticky=tk.W, pady=2)
 
         # VRP frame
         self.vrp_frame = ttk.LabelFrame(main_frame, text="VRP Mode Options", padding=10)
@@ -188,11 +208,15 @@ class AppLauncher:
             self.ped_cr_cb.configure(state='readonly')
             self.ped_imp_lbl.configure(state='normal')
             self.ped_imp_sb.configure(state='normal')
+            self.ped_period_lbl.configure(state='normal')
+            self.ped_period_sb.configure(state='normal')
         else:
             self.ped_cr_lbl.configure(state='disabled')
             self.ped_cr_cb.configure(state='disabled')
             self.ped_imp_lbl.configure(state='disabled')
             self.ped_imp_sb.configure(state='disabled')
+            self.ped_period_lbl.configure(state='disabled')
+            self.ped_period_sb.configure(state='disabled')
 
     # ═════════════════════════════════════════════════════════════════
     # Tab 2 — OSM .osm
@@ -247,10 +271,23 @@ class AppLauncher:
         ttk.Label(types_frame, text="Impatience:").pack(side=tk.LEFT)
         ttk.Entry(types_frame, textvariable=self.osm_ped_impatience, width=6).pack(side=tk.LEFT, padx=4)
 
+        ttk.Label(frame, text="Tần suất sinh (s):").grid(row=8, column=0, sticky=tk.W, pady=4)
+        period_frame = ttk.Frame(frame)
+        period_frame.grid(row=8, column=1, columnspan=4, sticky=tk.W)
+        ttk.Label(period_frame, text="Xe:").pack(side=tk.LEFT)
+        ttk.Entry(period_frame, textvariable=self.osm_car_period, width=6).pack(side=tk.LEFT, padx=(2, 12))
+        ttk.Label(period_frame, text="Người đi bộ:").pack(side=tk.LEFT)
+        ttk.Entry(period_frame, textvariable=self.osm_ped_period, width=6).pack(side=tk.LEFT, padx=2)
+
+        ttk.Label(frame, text="Độ dài mô phỏng (s):").grid(row=9, column=0, sticky=tk.W, pady=4)
+        ttk.Entry(frame, textvariable=self.osm_sim_duration, width=10).grid(row=9, column=1, sticky=tk.W, padx=5, pady=4)
+        ttk.Label(frame, text="(thời điểm dừng sinh xe/người)",
+                  foreground="#666").grid(row=9, column=2, columnspan=3, sticky=tk.W)
+
         # Render Mode — share self.render_mode với Tab Maze để 2 tab đồng bộ
-        ttk.Label(frame, text="Render Mode:").grid(row=8, column=0, sticky=tk.W, pady=4)
+        ttk.Label(frame, text="Render Mode:").grid(row=10, column=0, sticky=tk.W, pady=4)
         render_frame = ttk.Frame(frame)
-        render_frame.grid(row=8, column=1, columnspan=4, sticky=tk.W)
+        render_frame.grid(row=10, column=1, columnspan=4, sticky=tk.W)
         ttk.Radiobutton(render_frame, text="Realtime", variable=self.render_mode, value=1, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
         ttk.Radiobutton(render_frame, text="Pre-render", variable=self.render_mode, value=2, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
 
@@ -324,10 +361,13 @@ class AppLauncher:
         if self.sim_mode.get() == 1:
             inputs.append(str(self.num_pairs.get()))
             inputs.append(self.car_cr_type.get())
+            inputs.append(str(self.car_period.get()))
             inputs.append("y" if self.has_ped.get() else "n")
             if self.has_ped.get():
                 inputs.append(self.ped_cr_type.get())
                 inputs.append(str(self.ped_impatience.get()))
+                inputs.append(str(self.ped_period.get()))
+            inputs.append(str(self.sim_duration.get()))
         else:
             inputs.append(str(self.num_clients.get()))
             inputs.append(str(self.num_staff.get()))
@@ -350,11 +390,17 @@ class AppLauncher:
             n_junc = int(self.osm_num_junctions.get())
             k_edges = int(self.osm_edges_per_route.get())
             ped_imp = float(self.osm_ped_impatience.get())
+            car_period = float(self.osm_car_period.get())
+            ped_period = float(self.osm_ped_period.get())
+            end_time = float(self.osm_sim_duration.get())
         except ValueError:
-            messagebox.showerror("Error", "Số junction / edges / impatience phải là số hợp lệ.")
+            messagebox.showerror("Error", "Số junction / edges / impatience / tần suất / độ dài phải là số hợp lệ.")
             return
         if n_junc <= 0 or k_edges <= 0:
             messagebox.showerror("Error", "Số junction và edges/route phải > 0.")
+            return
+        if car_period <= 0 or ped_period <= 0 or end_time <= 0:
+            messagebox.showerror("Error", "Tần suất sinh và độ dài mô phỏng phải > 0.")
             return
 
         os.makedirs(self.sumo_xml_dir, exist_ok=True)
@@ -364,6 +410,7 @@ class AppLauncher:
             "algorithm": self.osm_algorithm.get(),
             "gen_car": self.osm_gen_car.get(), "gen_ped": self.osm_gen_ped.get(),
             "ped_impatience": ped_imp,
+            "car_period": car_period, "ped_period": ped_period, "end_time": end_time,
         }
         self.status_lbl.configure(text=f"Status: BUILDING OSM ({params['mode'].upper()})…",
                                   foreground="orange")
@@ -384,6 +431,9 @@ class AppLauncher:
                 gen_car=params["gen_car"],
                 gen_ped=params["gen_ped"],
                 ped_impatience=params["ped_impatience"],
+                car_period=params["car_period"],
+                ped_period=params["ped_period"],
+                end_time=params["end_time"],
             )
         except Exception as e:
             print(f"[Error] {e}")

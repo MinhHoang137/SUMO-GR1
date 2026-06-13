@@ -258,7 +258,7 @@ def out_in_gen(crossroads, num_pairs):
     return start, end
 
 def create_routes(num_pairs, car_cr_type, has_ped=True, ped_cr_type="CS", ped_impatience=0.5,
-                  edge_file_path=None):
+                  edge_file_path=None, car_period=30.0, ped_period=30.0, end_time=3600.0):
     """
     Tạo file .rou.xml chứa các tuyến đường cho xe và người đi bộ dựa trên loại phân chia nút giao thông.
     Args:
@@ -270,6 +270,9 @@ def create_routes(num_pairs, car_cr_type, has_ped=True, ped_cr_type="CS", ped_im
         edge_file_path (str|None): File dùng để kiểm tra tính khả thi của tuyến đường.
             - Mặc định (None): dùng HelloWorld.edg.xml (maze mode).
             - Truyền HelloWorld.net.xml khi dùng OSM để lấy đúng junction IDs.
+        car_period (float): Tần suất sinh xe (giây giữa 2 lần khởi hành mỗi flow).
+        ped_period (float): Tần suất sinh người đi bộ (giây giữa 2 lần khởi hành mỗi flow).
+        end_time (float): Độ dài mô phỏng — thời điểm dừng sinh agent (giây).
     """
     CS = "CS"
     SS = "SS"
@@ -290,7 +293,8 @@ def create_routes(num_pairs, car_cr_type, has_ped=True, ped_cr_type="CS", ped_im
     else:
         print(f"không xác định car_cr_type: {car_cr_type}. Sử dụng cross_side_gen làm mặc định.")
         start_list, end_list = cross_side_gen(crossroads, num_pairs)
-    write_to_xml.write_car_route_to_xml(start_list, end_list, rou_path, edge_file_path=_edge_path)
+    write_to_xml.write_car_route_to_xml(start_list, end_list, rou_path, period=car_period,
+                                        end_time=end_time, edge_file_path=_edge_path)
     if has_ped:
         if ped_cr_type == CS:
             start_list, end_list = cross_side_gen(crossroads, num_pairs)
@@ -303,7 +307,9 @@ def create_routes(num_pairs, car_cr_type, has_ped=True, ped_cr_type="CS", ped_im
         else:
             print(f"không xác định ped_cr_type: {ped_cr_type}. Sử dụng cross_side_gen làm mặc định.")
             start_list, end_list = cross_side_gen(crossroads, num_pairs)
-        write_to_xml.write_ped_route_to_xml(start_list, end_list, rou_path, impatience=ped_impatience, edge_file_path=_edge_path)
+        write_to_xml.write_ped_route_to_xml(start_list, end_list, rou_path, period=ped_period,
+                                            impatience=ped_impatience, end_time=end_time,
+                                            edge_file_path=_edge_path)
     
 
 

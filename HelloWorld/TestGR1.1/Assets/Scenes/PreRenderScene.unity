@@ -2287,8 +2287,8 @@ MonoBehaviour:
     m_FrameInfluence: 0.100000024
     m_JitterScale: 1
     m_MipBias: 0
-    m_VarianceClampScale: 0.9
-    m_ContrastAdaptiveSharpening: 0
+    m_VarianceClampScale: 1.2
+    m_ContrastAdaptiveSharpening: 1
   m_Version: 2
 --- !u!114 &330585548
 MonoBehaviour:

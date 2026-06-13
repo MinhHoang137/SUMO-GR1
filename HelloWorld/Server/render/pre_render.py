@@ -78,14 +78,19 @@ def initialize_map_and_routes(maze_file, num_lanes, config):
                     config["has_ped"],
                     config["ped_cr_type"],
                     config["ped_impatience"],
-                    edge_file_path=_edge_file
+                    edge_file_path=_edge_file,
+                    car_period=config.get("car_period", 30.0),
+                    ped_period=config.get("ped_period", 30.0),
+                    end_time=config.get("end_time", 3600.0),
                 )
             else:
                 create_routes(
                     config["num_pairs"],
                     config["car_cr_type"],
                     config["has_ped"],
-                    edge_file_path=_edge_file
+                    edge_file_path=_edge_file,
+                    car_period=config.get("car_period", 30.0),
+                    end_time=config.get("end_time", 3600.0),
                 )
     elif config["mode"] == "vrp":
         vrp_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "VRP")

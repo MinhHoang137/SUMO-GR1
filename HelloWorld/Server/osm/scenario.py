@@ -168,7 +168,8 @@ def generate_routes(net_path: str,
                     gen_car: bool = True,
                     gen_ped: bool = True,
                     ped_impatience: float = 0.5,
-                    period: float = 30.0,
+                    car_period: float = 30.0,
+                    ped_period: float = 30.0,
                     begin: float = 0.0,
                     end_time: float = 3600.0,
                     seed: Optional[int] = None) -> bool:
@@ -220,7 +221,7 @@ def generate_routes(net_path: str,
                     "type": "car",
                     "begin": f"{begin:.2f}",
                     "end": f"{end_time:.2f}",
-                    "period": f"{period:.2f}",
+                    "period": f"{car_period:.2f}",
                     "departLane": "best",
                     "departSpeed": "max",
                 })
@@ -234,7 +235,7 @@ def generate_routes(net_path: str,
                     "type": vtype_ped,
                     "begin": f"{begin:.2f}",
                     "end": f"{end_time:.2f}",
-                    "period": f"{period:.2f}",
+                    "period": f"{ped_period:.2f}",
                 })
                 ET.SubElement(pf, "walk", {"edges": " ".join(edges)})
                 ped_count += 1
@@ -383,6 +384,9 @@ def build_scenario(osm_file: str,
                    gen_car: bool = True,
                    gen_ped: bool = True,
                    ped_impatience: float = 0.5,
+                   car_period: float = 30.0,
+                   ped_period: float = 30.0,
+                   end_time: float = 3600.0,
                    seed: Optional[int] = None) -> bool:
     ok = convert_osm_to_net_3d_roads(osm_file, net_path, mode=mode)
     if not ok:
@@ -397,6 +401,9 @@ def build_scenario(osm_file: str,
         gen_car=gen_car,
         gen_ped=gen_ped,
         ped_impatience=ped_impatience,
+        car_period=car_period,
+        ped_period=ped_period,
+        end_time=end_time,
         seed=seed,
     )
     if not ok:
@@ -435,6 +442,12 @@ if __name__ == "__main__":
     parser.add_argument("--no-car", action="store_true")
     parser.add_argument("--no-ped", action="store_true")
     parser.add_argument("--ped-impatience", type=float, default=0.5)
+    parser.add_argument("--car-period", type=float, default=30.0,
+                        help="Tần suất sinh xe (giây giữa 2 lần khởi hành mỗi flow)")
+    parser.add_argument("--ped-period", type=float, default=30.0,
+                        help="Tần suất sinh người đi bộ (giây giữa 2 lần khởi hành mỗi flow)")
+    parser.add_argument("--end-time", type=float, default=3600.0,
+                        help="Độ dài mô phỏng — thời điểm dừng sinh agent (giây)")
     parser.add_argument("--seed", type=int, default=None)
     args = parser.parse_args()
 
@@ -447,5 +460,8 @@ if __name__ == "__main__":
         gen_car=not args.no_car,
         gen_ped=not args.no_ped,
         ped_impatience=args.ped_impatience,
+        car_period=args.car_period,
+        ped_period=args.ped_period,
+        end_time=args.end_time,
         seed=args.seed,
     )
