@@ -77,19 +77,25 @@ Giải thuật \ref{alg:edge} tóm tắt bước sinh đỉnh lưới.
 \begin{algorithm}[H]
 	\caption{Sinh đỉnh lưới cho một làn đường}
 	\label{alg:edge}
-	\KwIn{Đường gấp khúc $P_0,\dots,P_{n-1}$; bề rộng làn $w$}
-	\KwOut{Danh sách đỉnh lưới hai mép làn}
-	\For{mỗi đỉnh $i$ của đường gấp khúc}{
-		Tính hướng đi $d$ tại $P_i$\;
-		\Indp đầu/cuối: theo đoạn kề; đỉnh giữa: phân giác hai đoạn\;
-		\Indm $r \leftarrow \mathrm{cross}(d, -\vec{y})$ \tcp*{vector vuông góc trong mặt phẳng ngang}
-		$dist \leftarrow w/2$\;
-		\If{$i$ là đỉnh giữa}{
-			$dist \leftarrow (w/2)/\cos\alpha$ \tcp*{$\alpha$: nửa góc cua, chống bóp mesh}
-		}
-		Phát hai đỉnh $P_i + r\cdot dist$ và $P_i - r\cdot dist$\;
+	\KwIn{Đường gấp khúc $P_0,\dots,P_{n-1}\in\mathbb{R}^3$; bề rộng làn $w$}
+	\KwOut{Hai dãy đỉnh mép $\{L_i\},\{R_i\}$ và tập tam giác $T$}
+	$e_i \leftarrow \dfrac{P_{i+1}-P_i}{\lVert P_{i+1}-P_i\rVert},\quad i=0,\dots,n-2$ \tcp*{vector đơn vị mỗi đoạn}
+	\For{$i \leftarrow 0$ \KwTo $n-1$}{
+		$d_i \leftarrow
+		\begin{cases}
+			e_0, & i=0\\[2pt]
+			e_{n-2}, & i=n-1\\[2pt]
+			\dfrac{e_{i-1}+e_i}{\lVert e_{i-1}+e_i\rVert}, & 0<i<n-1
+		\end{cases}$ \tcp*{hướng (phân giác tại đỉnh giữa)}
+		$r_i \leftarrow \dfrac{d_i \times (-\hat{y})}{\lVert d_i \times (-\hat{y})\rVert}$ \tcp*{pháp tuyến ngang}
+		$\delta_i \leftarrow
+		\begin{cases}
+			w/2, & i\in\{0,n-1\}\\[2pt]
+			\dfrac{w}{2\cos\alpha_i}, & 0<i<n-1
+		\end{cases}$ \quad với $\cos\alpha_i = \sqrt{\tfrac{1+e_{i-1}\cdot e_i}{2}}$\;
+		$L_i \leftarrow P_i + \delta_i\, r_i,\qquad R_i \leftarrow P_i - \delta_i\, r_i$\;
 	}
-	Nối các cặp đỉnh liên tiếp: mỗi đoạn sinh hai tam giác\;
+	$T \leftarrow \bigcup_{i=0}^{n-2}\big\{(L_i,R_i,L_{i+1}),\,(R_i,R_{i+1},L_{i+1})\big\}$ \tcp*{mỗi đoạn $\to$ 2 tam giác}
 \end{algorithm}
 
 \textbf{Thuật toán dựng nút giao.} Đa giác nút giao được tam giác hóa bằng kỹ
@@ -142,19 +148,19 @@ hóa và đùn khối; Giải thuật \ref{alg:junction} tóm tắt các bước
 \begin{algorithm}[H]
 	\caption{Dựng khối nút giao ba chiều}
 	\label{alg:junction}
-	\KwIn{Đa giác nút giao $V$; vector độ cao $\vec{h}$}
-	\KwOut{Lưới khối ba chiều của nút giao}
-	Chuẩn hóa $V$ về thứ tự chiều kim đồng hồ\;
-	$T \leftarrow \mathrm{EarClip}(V)$ \tcp*{tam giác hóa, giữ được hình lõm}
-	\If{$T$ chưa đầy đủ}{
+	\KwIn{Đa giác nút giao $V=(v_0,\dots,v_{m-1})$; vector độ cao $\vec{h}$}
+	\KwOut{Tập tam giác lưới khối ba chiều $\mathcal{T}$}
+	$A(V) \leftarrow \tfrac{1}{2}\sum_{i=0}^{m-1}\big(x_i y_{i+1}-x_{i+1}y_i\big)$ \tcp*{diện tích có dấu, chỉ số mod $m$}
+	\If{$A(V) > 0$}{$V \leftarrow (v_{m-1},\dots,v_0)$ \tcp*{đảo về thứ tự cùng chiều kim đồng hồ}}
+	$T \leftarrow \mathrm{EarClip}(V)$ \tcp*{tam giác hóa, giữ hình lõm}
+	\If{$|T| < m-2$}{
 		$V \leftarrow \mathrm{ConvexHull}(V)$ \tcp*{đa giác tự cắt $\rightarrow$ bao lồi}
 		$T \leftarrow \mathrm{EarClip}(V)$\;
 	}
-	Mặt trên $\leftarrow T$\;
-	Mặt dưới $\leftarrow T$ dời theo $\vec{h}$ (đảo chiều pháp tuyến)\;
-	\ForEach{cạnh của $V$}{
-		Thêm hai tam giác tạo mặt bên\;
-	}
+	$T_{\text{trên}} \leftarrow T$\;
+	$T_{\text{dưới}} \leftarrow \big\{\,(c+\vec{h},\,b+\vec{h},\,a+\vec{h}) : (a,b,c)\in T\,\big\}$ \tcp*{dời $\vec{h}$, đảo pháp tuyến}
+	$T_{\text{bên}} \leftarrow \bigcup_{i=0}^{m-1}\big\{(v_i,v_{i+1},v_{i+1}+\vec{h}),\,(v_i,v_{i+1}+\vec{h},v_i+\vec{h})\big\}$\;
+	$\mathcal{T} \leftarrow T_{\text{trên}} \cup T_{\text{dưới}} \cup T_{\text{bên}}$\;
 \end{algorithm}
 
 Hai thuật toán này dùng chung cho cả mạng sinh tự động và mạng nhập từ
@@ -261,7 +267,41 @@ cấp cho nó một tuyến đường mới và trả quyền điều khiển l�
 tiện sau đó tiếp tục di chuyển tự động như một xe bình thường. Nếu vị trí xe vượt
 quá ngưỡng, hệ thống loại bỏ phương tiện thay vì cố đưa về. Ngưỡng khoảng cách
 được tách thành tham số riêng để dễ điều chỉnh. Trường hợp xe đã va chạm thì được
-chuyển sang xử lý xác xe thay vì trả về dòng giao thông.
+chuyển sang xử lý xác xe thay vì trả về dòng giao thông. Quy trình xử lý khi trả
+quyền được tóm tắt ở Hình \ref{fig:reanchor-flow}.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[node distance=1.0cm and 2.2cm, >=Latex,
+		every node/.style={font=\footnotesize},
+		startstop/.style={draw, rounded corners=8pt, fill=black!5, align=center,
+			minimum width=3cm, minimum height=0.8cm},
+		process/.style={draw, align=center, minimum width=3.4cm, minimum height=0.8cm, fill=black!2},
+		decision/.style={draw, diamond, aspect=2.2, align=center, inner sep=1pt, fill=black!2},
+		arrow/.style={-{Latex}}]
+		% main column
+		\node[startstop] (start) {Người dùng trả quyền};
+		\node[decision, below=of start] (crash) {Đã va chạm?};
+		\node[process, below=of crash] (findlane) {Tìm làn gần nhất\\với vị trí xe};
+		\node[decision, below=of findlane] (thr) {Khoảng cách\\$\le$ ngưỡng?};
+		\node[process, below=of thr] (reanchor) {Đưa về làn, cấp tuyến mới,\\trả quyền cho SUMO};
+		\node[startstop, below=of reanchor] (run) {Xe chạy tự động tiếp};
+		% right branches
+		\node[process, right=of crash] (wreck) {Chuyển sang\\xử lý xác xe};
+		\node[process, right=of thr] (remove) {Loại bỏ\\phương tiện};
+		% main flow
+		\draw[arrow] (start) -- (crash);
+		\draw[arrow] (crash) -- node[left, font=\scriptsize]{không} (findlane);
+		\draw[arrow] (findlane) -- (thr);
+		\draw[arrow] (thr) -- node[left, font=\scriptsize]{có} (reanchor);
+		\draw[arrow] (reanchor) -- (run);
+		% branch flow
+		\draw[arrow] (crash) -- node[above, font=\scriptsize]{có} (wreck);
+		\draw[arrow] (thr) -- node[above, font=\scriptsize]{không} (remove);
+	\end{tikzpicture}
+	\caption{Biểu đồ hoạt động xử lý khi người dùng trả quyền điều khiển (bản nháp)}
+	\label{fig:reanchor-flow}
+\end{figure}
 
 \subsection{Kết quả đạt được}
 
