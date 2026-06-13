@@ -9,7 +9,7 @@ chức và quản lý giao thông ngày càng trở nên phức tạp, đòi h�
 phân tích có căn cứ dữ liệu để hỗ trợ quy hoạch, đánh giá phương án tổ chức
 giao thông và kiểm chứng các giả thuyết kỹ thuật. Trên thực tế, việc thử nghiệm
 trực tiếp ngoài hiện trường thường tốn kém, khó kiểm soát biến số, và có thể
-tiềm ẩn rủi ro về an toàn. Vì vậy, mô phỏng giao thông trở thành một công cụ
+tiềm ẩn rủi ro về nhân mạng. Vì vậy, mô phỏng giao thông trở thành một công cụ
 quan trọng, giúp tái hiện nhiều kịch bản khác nhau trong điều kiện có thể kiểm
 soát, từ đó hỗ trợ quá trình ra quyết định.
 
@@ -105,10 +105,15 @@ thiệp vào thuật toán mô phỏng.
 dựa trên chuỗi công cụ: \gls{SUMO} dùng để mô phỏng giao thông vi mô và sinh dữ
 liệu; Python kết hợp \gls{TraCI} dùng để truy xuất trạng thái mô phỏng theo thời
 gian; Unity dùng để dựng cảnh, hiển thị 3D và xử lý tương tác. Lựa chọn này phù
-hợp vì \gls{SUMO} cung cấp dữ liệu mô phỏng có cấu trúc rõ ràng và phổ biến,
-trong khi Unity là môi trường phát triển 3D mạnh, hỗ trợ dựng cảnh, quản lý đối
-tượng, camera, vật lý và tương tác, qua đó nâng cao khả năng quan sát và can
-thiệp trực quan.
+hợp vì \gls{SUMO} là phần mềm mã nguồn mở, được sử dụng rộng rãi trong giới
+nghiên cứu và học thuật, đồng thời cung cấp dữ liệu mô phỏng có cấu trúc rõ ràng
+và phổ biến; trong khi Unity là môi trường phát triển 3D mạnh, hỗ trợ dựng cảnh,
+quản lý đối tượng, camera, vật lý và tương tác, qua đó nâng cao khả năng quan sát
+và can thiệp trực quan. Sự kết hợp giữa hai nền tảng này hướng tới phục vụ đồng
+thời hai nhóm người dùng: nhóm nghiên cứu và học tập vốn quen thuộc với \gls{SUMO}
+nay có thêm khả năng quan sát, trình bày kịch bản một cách trực quan; và nhóm
+phát triển trò chơi (game) vốn quen thuộc với Unity nay có thể tận dụng dữ liệu
+giao thông được mô phỏng sát thực tế làm nền tảng cho các sản phẩm tương tác.
 
 Trên cơ sở đó, giải pháp được triển khai theo một quy trình tổng quát gồm các
 thành phần chính. Thứ nhất, mô-đun chuẩn bị dữ liệu sinh mạng đường (từ mê cung

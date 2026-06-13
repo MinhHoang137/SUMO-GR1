@@ -56,7 +56,10 @@ tượng vẫn còn dư địa cải thiện về tải xử lý và băng thôn
 đủ động lực học của phương tiện; cơ chế đưa xe trở lại làn đường sử dụng ngưỡng
 khoảng cách cố định nên trong một số tình huống phức tạp có thể chưa tối ưu. Thứ
 ba, hệ thống hiện chạy trên một máy và hỗ trợ một người dùng cho mỗi phiên mô
-phỏng, chưa hỗ trợ nhiều người dùng cùng tham gia một phiên.
+phỏng, chưa hỗ trợ nhiều người dùng cùng tham gia một phiên. Thứ tư, hệ thống va
+chạm giả lập tai nạn hiện mới chỉ xử lý va chạm giữa xe với xe, chưa hỗ trợ va
+chạm giữa người đi bộ với xe, nên chưa tái hiện được đầy đủ các tình huống tai
+nạn liên quan đến người tham gia giao thông.
 
 Từ quá trình thực hiện, đồ án rút ra một số kinh nghiệm chính: (i) trong hệ thống
 thời gian thực, cần thiết kế cơ chế phân định ranh giới thông điệp rõ ràng khi
@@ -71,6 +74,10 @@ thống vận hành ổn định.
 Trong thời gian tới, đồ án có thể được phát triển theo các hướng chính sau:
 
 \begin{itemize}[leftmargin=2em]
+	\item \textbf{Mở rộng số loại phương tiện}: bổ sung thêm nhiều chủng loại
+	phương tiện (như xe máy, xe tải, xe buýt) bên cạnh các loại hiện có, kèm theo
+	mô hình ba chiều và đặc tính di chuyển riêng cho từng loại, nhằm phản ánh sát
+	hơn sự đa dạng của dòng giao thông thực tế.
 	\item \textbf{Tối ưu truyền thông và hiệu năng}: tiếp nối các tối ưu đã có
 	(subscription, nén dữ liệu, đo độ trễ đầu--cuối), giảm thêm chi phí đóng gói
 	và phân tích bằng định dạng nhị phân thay cho văn bản \gls{JSON}, chỉ truyền
@@ -83,7 +90,8 @@ Trong thời gian tới, đồ án có thể được phát triển theo các h�
 	\item \textbf{Nâng cấp mô hình lái và xử lý va chạm}: cải thiện động lực học
 	phương tiện cho chế độ lái thủ công; tinh chỉnh cơ chế đưa xe trở lại làn
 	đường theo ngữ cảnh thay vì ngưỡng khoảng cách cố định, giúp xe hòa lại dòng
-	giao thông tự nhiên hơn.
+	giao thông tự nhiên hơn; đồng thời mở rộng hệ thống va chạm để xử lý cả va
+	chạm giữa người đi bộ với xe, không chỉ giới hạn ở va chạm giữa xe với xe.
 	\item \textbf{Mở rộng kịch bản và đánh giá định lượng}: xây dựng bộ kịch bản
 	chuẩn theo nhiều kích thước mạng và mật độ phương tiện; chuẩn hóa các thước đo
 	như tốc độ khung hình, độ trễ và thời gian di chuyển, đồng thời tự động hóa
