@@ -1,0 +1,315 @@
+fileFormatVersion: 2
+guid: 8c649c20e470ecc429a02da476600ff5
+ModelImporter:
+  serializedVersion: 24200
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CP
+    second: {fileID: 2100000, guid: d1c93f66dbd00434fac39a67b3cc7444, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Carabon
+    second: {fileID: 2100000, guid: fa0ab4f486f6cfd4ebb58e125f6a1e25, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cloth1
+    second: {fileID: 2100000, guid: 0f39ad2f3d08d4b4db827216994dd969, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cloth2
+    second: {fileID: 2100000, guid: 889abe0d7a6125b4ba61d9a04c8aa607, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Emotion1
+    second: {fileID: 2100000, guid: f93f280a729677e46a444c311087f2f5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Emotion2
+    second: {fileID: 2100000, guid: 83b692f598514d148837572f6bd80714, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Eye
+    second: {fileID: 2100000, guid: 9e00ed9b7b1ae7b44bc773e36a07d8ca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: EyeHi
+    second: {fileID: 2100000, guid: dc4989e45fa2b924c85e3b12f6177c6a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: EyeShadow(Hide)
+    second: {fileID: 2100000, guid: 0075650e74faa2b48899bcd2e5257bcc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: EyeWhite
+    second: {fileID: 2100000, guid: 52b506bebd86f324e87d0c015d7311a6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Eyebrow
+    second: {fileID: 2100000, guid: bfc6adf684947754289d46b19d15da0e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: EyebrowShadow
+    second: {fileID: 2100000, guid: a2993eb3b44626c4e80c3317ec31f63e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Eyelash
+    second: {fileID: 2100000, guid: 20d2cb10ec653224dba6ae11dd0bbf71, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Face
+    second: {fileID: 2100000, guid: 9bf2c018f069bf5438205dd384b7842f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Hair_Back
+    second: {fileID: 2100000, guid: d113b0423c18e8543a84fa8fe3e35be5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Hair_Front
+    second: {fileID: 2100000, guid: 7daf2e55cb3987944a534d15428a1b04, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mat01
+    second: {fileID: 2100000, guid: cc800da7d886206469ce3f6e7f2864d9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mouth
+    second: {fileID: 2100000, guid: 4f05a2a450863ad4695d752cf450ee02, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Skin_Body
+    second: {fileID: 2100000, guid: 6efbce3c028155647b732755d3d4cda6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Teeth
+    second: {fileID: 2100000, guid: bec226009c061074f8a8b542af996aa5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Tongue
+    second: {fileID: 2100000, guid: 6af7706c54d23d14dadde9854bb47450, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: asterion_Vehicle_Exterior_mm_badges1
+    second: {fileID: 2100000, guid: 544a66e806c5a8d44ab593ab8de9b282, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: asterion_Vehicle_Exterior_mm_cab1
+    second: {fileID: 2100000, guid: be205d1bd8479624e91e3d18d81da874, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: asterion_Vehicle_Exterior_mm_chassis1
+    second: {fileID: 2100000, guid: 816db638cdda10447a225fcae24db243, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: asterion_Vehicle_Exterior_mm_ext1
+    second: {fileID: 2100000, guid: 2f70204c91c54c14a8d50cebdb9e39cb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: asterion_Vehicle_Exterior_mm_lights1
+    second: {fileID: 2100000, guid: 97780f355b47ad441ab96ebb959469ae, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: asterion_Vehicle_Exterior_mm_misc1
+    second: {fileID: 2100000, guid: b4e9984393f2b9d44a790efb3ecba380, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: asterion_Vehicle_Exterior_mm_rotor1
+    second: {fileID: 2100000, guid: 25a52fd73bf00374fbb860067e387609, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: asterion_Vehicle_Exterior_mm_tyre1
+    second: {fileID: 2100000, guid: 77b1dae473abe2948964127ff8ac82a7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: asterion_Vehicle_Exterior_mm_wheel1
+    second: {fileID: 2100000, guid: f6d53b1ad793c1544be43ab151357f29, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: asterion_Vehicle_Exterior_mm_windows1
+    second: {fileID: 2100000, guid: 67582f1e757c7b5479421e5ecd738f0a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glass_llight
+    second: {fileID: 2100000, guid: 1aa63ade55518ed4daaf0d1a10ce7a04, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glass_surr
+    second: {fileID: 2100000, guid: 677a074bc625f4e4ead6bf03309a1d18, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: int1
+    second: {fileID: 2100000, guid: e28e4814cc5d21342a7d0e977e270045, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: light_emiss
+    second: {fileID: 2100000, guid: eda97becaabeaa1468c8442fb83ce552, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mat02_1
+    second: {fileID: 2100000, guid: 186e489b2c516584498dbd6e3b38d6e9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mat02_2
+    second: {fileID: 2100000, guid: 4475e4595f485bc40a38868e73b2601e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mat03
+    second: {fileID: 2100000, guid: caf541b66ce846d409cae858cd5a4d11, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mat04
+    second: {fileID: 2100000, guid: d8d0601096df6334eb5d66adf3ac482d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: red_gllass
+    second: {fileID: 2100000, guid: 3007f10b3f0b41645a386efb1406135c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: sw
+    second: {fileID: 2100000, guid: 92f2fa3eeffb94d4d872b01a180cbf9b, type: 2}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
