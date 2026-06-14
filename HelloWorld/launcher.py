@@ -246,12 +246,12 @@ class AppLauncher:
                         variable=self.osm_mode, value="3d").pack(anchor=tk.W)
 
         ttk.Label(frame, text="Số junction:").grid(row=4, column=0, sticky=tk.W, pady=4)
-        ttk.Entry(frame, textvariable=self.osm_num_junctions, width=10).grid(row=4, column=1, sticky=tk.W, padx=5, pady=4)
+        ttk.Spinbox(frame, textvariable=self.osm_num_junctions, from_=0, to=9999, width=8).grid(row=4, column=1, sticky=tk.W, padx=5, pady=4)
         ttk.Label(frame, text="(lấy tối đa nếu vượt số khả dụng)",
                   foreground="#666").grid(row=4, column=2, columnspan=3, sticky=tk.W)
 
         ttk.Label(frame, text="Độ dài tuyến:").grid(row=5, column=0, sticky=tk.W, pady=4)
-        ttk.Entry(frame, textvariable=self.osm_edges_per_route, width=10).grid(row=5, column=1, sticky=tk.W, padx=5, pady=4)
+        ttk.Spinbox(frame, textvariable=self.osm_edges_per_route, from_=1, to=30, width=8).grid(row=5, column=1, sticky=tk.W, padx=5, pady=4)
         ttk.Label(frame, text="(số đoạn đường liên tiếp mỗi xe/người đi qua)",
                   foreground="#666").grid(row=5, column=2, columnspan=3, sticky=tk.W)
 
@@ -269,18 +269,18 @@ class AppLauncher:
         ttk.Checkbutton(types_frame, text="Xe", variable=self.osm_gen_car).pack(side=tk.LEFT, padx=(0, 12))
         ttk.Checkbutton(types_frame, text="Người đi bộ", variable=self.osm_gen_ped).pack(side=tk.LEFT, padx=(0, 12))
         ttk.Label(types_frame, text="Impatience:").pack(side=tk.LEFT)
-        ttk.Entry(types_frame, textvariable=self.osm_ped_impatience, width=6).pack(side=tk.LEFT, padx=4)
+        ttk.Spinbox(types_frame, textvariable=self.osm_ped_impatience, from_=0.0, to=1.0, increment=0.1, width=6).pack(side=tk.LEFT, padx=4)
 
         ttk.Label(frame, text="Tần suất sinh (s):").grid(row=8, column=0, sticky=tk.W, pady=4)
         period_frame = ttk.Frame(frame)
         period_frame.grid(row=8, column=1, columnspan=4, sticky=tk.W)
         ttk.Label(period_frame, text="Xe:").pack(side=tk.LEFT)
-        ttk.Entry(period_frame, textvariable=self.osm_car_period, width=6).pack(side=tk.LEFT, padx=(2, 12))
+        ttk.Spinbox(period_frame, textvariable=self.osm_car_period, from_=0, to=3600, width=6).pack(side=tk.LEFT, padx=(2, 12))
         ttk.Label(period_frame, text="Người đi bộ:").pack(side=tk.LEFT)
-        ttk.Entry(period_frame, textvariable=self.osm_ped_period, width=6).pack(side=tk.LEFT, padx=2)
+        ttk.Spinbox(period_frame, textvariable=self.osm_ped_period, from_=0, to=3600, width=6).pack(side=tk.LEFT, padx=2)
 
         ttk.Label(frame, text="Độ dài mô phỏng (s):").grid(row=9, column=0, sticky=tk.W, pady=4)
-        ttk.Entry(frame, textvariable=self.osm_sim_duration, width=10).grid(row=9, column=1, sticky=tk.W, padx=5, pady=4)
+        ttk.Spinbox(frame, textvariable=self.osm_sim_duration, from_=0, to=86400, increment=60, width=8).grid(row=9, column=1, sticky=tk.W, padx=5, pady=4)
         ttk.Label(frame, text="(thời điểm dừng sinh xe/người)",
                   foreground="#666").grid(row=9, column=2, columnspan=3, sticky=tk.W)
 

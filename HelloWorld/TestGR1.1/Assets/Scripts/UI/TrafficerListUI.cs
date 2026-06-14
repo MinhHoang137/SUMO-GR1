@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class TrafficerListUI : MonoBehaviour
 {
+	[Tooltip("nút bật/tắt hiển thị danh sách trafficer, mặt chữ là \"người/xe\"")]
     [SerializeField] private Button showHideToggle;
     [SerializeField] private GameObject scrollView;
     [SerializeField] private RectTransform itemHolder;

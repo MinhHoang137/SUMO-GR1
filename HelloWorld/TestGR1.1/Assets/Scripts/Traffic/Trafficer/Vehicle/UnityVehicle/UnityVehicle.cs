@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.Events;
 using System;
 
 [RequireComponent(typeof(Trafficer))]
@@ -11,19 +11,12 @@ public class UnityVehicle : MonoBehaviour
 	private WheelController wheels;
 	[SerializeField] private PauseSO pauseSO;
 
-	[SerializeField] private float speedMultiplier = 1;
-	[SerializeField] private float rotateMultiplier = 5f;
-
-	[Header("Sensors")]
-	[SerializeField] private List<Sensor> forwardSensor;
-	[SerializeField] private List<Sensor> leftSensor;
-	[SerializeField] private List<Sensor> rightSensor;
-	[SerializeField] private List<Sensor> backSensor;
-
 	[Header("DevMode")]
 	[SerializeField] private bool devMode = false;
 
-	private Vector3 moving;
+	[Header("Events")]
+	// Bắn khi xe trở thành xác xe (sau va chạm) — dùng để bật icon "xe hỏng".
+	[SerializeField] private UnityEvent onBecomeWreck;
 
 	// Chunk 4: theo dõi va chạm và thời điểm wreck
 	public int wreckStartStep;
@@ -99,6 +92,7 @@ public class UnityVehicle : MonoBehaviour
 		// ApplyMode đã đặt rb về dynamic → AddForce mới có tác dụng
 		if (rb != null && impulse != Vector3.zero)
 			rb.AddForce(impulse, ForceMode.Impulse);
+		onBecomeWreck?.Invoke();
 	}
 
 	// Hybrid: chỉ bật vật lý (Rigidbody dynamic + wheel collider) ở chế độ client/wreck.
@@ -181,85 +175,6 @@ public class UnityVehicle : MonoBehaviour
 		wheels.Steer(input.x);
 		wheels.UpdatePoses();
 	}
-	private Vector3 CustomMove()
-	{
-		Vector3 input = GameInput.Instance.GetMovementInput();
-		moving = Vector3.zero;
-		if (input.z > 0.01f && CanMoveForward())
-		{
-			moving = new Vector3(moving.x, 0, input.z);
-		}
-		if (input.x > 0.01f && CanMoveRight())
-		{
-			moving = new Vector3(input.x, 0, moving.z);
-		}
-		if (input.x < -0.01f && CanMoveLeft())
-		{
-			moving = new Vector3(input.x, 0, moving.z);
-		}
-		if (input.z < -0.01f && CanMoveBack())
-		{
-			moving = new Vector3(moving.x, 0, input.z);
-		}
-		
-		Vector3 nextPosition = transform.position;
-		if (Mathf.Abs(moving.z) >= 0.01f)
-		{
-			nextPosition += moving.z * trafficer.GetSpeed() * speedMultiplier * Time.deltaTime * transform.forward;
-			trafficer.SetNextForward(Vector3.Slerp(trafficer.GetNextForward(), moving.x * transform.right, Time.deltaTime * rotateMultiplier));
-		}
-		// Debug.Log($"Moving: {moving}, Next Position: {nextPosition}, Speed: {trafficer.GetSpeed()}");
-		return nextPosition;
-	}
-
-	private bool CanMoveForward()
-	{
-		if (devMode) return true;
-		foreach (Sensor sensor in forwardSensor)
-		{
-			if (!sensor.CanMove())
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-	private bool CanMoveLeft()
-	{
-		if (devMode) return true;
-		foreach (Sensor sensor in leftSensor)
-		{
-			if (!sensor.CanMove())
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-	private bool CanMoveRight()
-	{
-		if (devMode) return true;
-		foreach (Sensor sensor in rightSensor)
-		{
-			if (!sensor.CanMove())
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-	private bool CanMoveBack()
-	{
-		if (devMode) return true;
-		foreach (Sensor sensor in backSensor)
-		{
-			if (!sensor.CanMove())
-			{
-				return false;
-			}
-		}
-		return true;
-	}
 	private void OnCollisionEnter(Collision collision)
 	{
 		// Chỉ xe dynamic (client/wreck) mới xử lý — xe kinematic không gây wreck
@@ -278,6 +193,12 @@ public class UnityVehicle : MonoBehaviour
 
 		// Truyền xung lực để xác xe văng theo hướng va chạm
 		otherUV.BecomeWreck(collision.relativeVelocity);
+	}
+
+	public void ResetFromPool()
+	{
+		wreckStartStep = 0;
+		hasCrashed = false;
 	}
 
 	public void SetState(ExistState state)

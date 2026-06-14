@@ -14,21 +14,6 @@ public class OptionUI : MonoBehaviour
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	void Start()
 	{
-		// QualitySettings.vSyncCount = 1;
-		GameInput.Instance.OnToggleOptions += (sender, args) =>
-		{
-			gameObject.SetActive(!gameObject.activeSelf);
-			if (gameObject.activeSelf)
-			{
-				// previousMouseEnabled = GameInput.Instance.MouseEnabled;
-				// GameInput.Instance.SetMouse(true);
-			}
-			else
-			{
-				// GameInput.Instance.SetMouse(previousMouseEnabled);
-			};
-			
-		};
 		StartCoroutine(ManipulateAction.Delay(() =>
 		{
 			gameObject.SetActive(false);

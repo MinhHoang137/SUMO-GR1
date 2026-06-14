@@ -33,7 +33,7 @@ def convert_osm_to_net_3d_roads(osm_file, output_net_file=None, mode="3d"):
         # --- BỀ RỘNG LÀN ---
         # OSM thường không khai báo width → netconvert dùng mặc định 3.2m.
         # Nới lên 4.0m để xe (to gần bằng lòng đường) còn chỗ lái.
-        "--default.lanewidth", "3.2",
+        "--default.lanewidth", "3.2",  # Mặc định của netconvert
 
         # --- LÀM GỌN VÀ TỐI ƯU MẠNG LƯỚI ---
         "--geometry.remove",

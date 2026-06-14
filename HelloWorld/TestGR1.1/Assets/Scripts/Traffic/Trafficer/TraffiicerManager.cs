@@ -41,6 +41,8 @@ public class TrafficerManager : MonoBehaviour
 	// Độ trễ end-to-end (mili-giây) của step gần nhất = thời điểm nhận tại Unity - timestamp server gửi ("ts").
 	// Yêu cầu đồng hồ 2 máy đồng bộ; localhost (cùng máy) thì chính xác.
 	public long LatencyMs { get; private set; }
+	public int CarCount {get; private set;} = 0;
+	public int PedestrianCount {get; private set;} = 0;
 	// Số bước SUMO xác xe tồn tại trước khi bị despawn.
 	[SerializeField, Min(0)] private int wreckLifetimeSteps = 150;
 	[SerializeField] private TrafficerKeyPrefabSO trafficerKeyPrefabSO;
@@ -72,6 +74,7 @@ public class TrafficerManager : MonoBehaviour
 		List<Trafficer> trafficerList = trafficerSnapshot;
 		trafficerList.Clear();
 		foreach (var t in trafficerDict.Values) trafficerList.Add(t);
+
 		// Vòng 1: đánh dấu "chưa thấy frame này" cho các xe do server điều khiển.
 		// Bỏ qua xe client sở hữu (đang lái / xác xe) — vòng đời của chúng không do server quyết.
 		foreach (var trafficer in trafficerList)
@@ -125,6 +128,15 @@ public class TrafficerManager : MonoBehaviour
 		}
 	}
 
+	// Cập nhật bộ đếm khi 1 trafficer được thêm (+1) hoặc gỡ (-1).
+	// Phân loại xe/người không đổi trong vòng đời nên đếm theo sự kiện add/remove là chính xác,
+	// rẻ hơn quét toàn bộ dict mỗi packet server.
+	private void ApplyCountDelta(Trafficer trafficer, int delta)
+	{
+		if (trafficer.TryGetComponent<UnityVehicle>(out _)) CarCount += delta;
+		else if (trafficer.TryGetComponent<Pedestrian>(out _)) PedestrianCount += delta;
+	}
+
 	// Gọi sau khi xử lý xong dữ liệu 1 step. Tính độ trễ end-to-end so với timestamp server
 	// rồi bắn OnLatencyChanged. serverTimeMs <= 0 (vd replay không có "ts") → bỏ qua.
 	public void ReportStepLatency(long serverTimeMs)
@@ -163,33 +175,25 @@ public class TrafficerManager : MonoBehaviour
 		trafficer.transform.SetParent(transform);
 		trafficer.gameObject.SetActive(true);
 		
-		if (!trafficerDict.ContainsKey(trafficer.GetId()))
-		{
-			trafficerDict.Add(trafficer.GetId(), trafficer);
-			OnAddTrafficer?.Invoke(this, new TrafficerEventArgs(trafficer));
-		}
+		AddTrafficer(trafficer);
 		return trafficer;
 	}
 
 	private void RecycleTrafficer(Trafficer trafficer)
 	{
-		trafficerDict.Remove(trafficer.GetId());
-		OnRemoveTrafficer?.Invoke(this, new TrafficerEventArgs(trafficer));
+		RemoveTrafficer(trafficer);
 		trafficer.gameObject.SetActive(false);
 
 		if (!trafficer.isStandaloneClient)
 		{
-			// Pool by type
-			string poolKey = "v";
-			if (trafficer.name.ToLower().Contains("p"))
-			{
-				poolKey = "p";
-			}
+			// Key = TYPE (phần trước dấu '_' trong name "TYPE_id"), khớp với GetTrafficerFromPool.
+			string poolKey = trafficer.name.Contains('_')
+				? trafficer.name.Split('_')[0]
+				: trafficer.name;
 
 			if (!trafficerPool.ContainsKey(poolKey))
-			{
 				trafficerPool[poolKey] = new Queue<Trafficer>();
-			}
+
 			trafficerPool[poolKey].Enqueue(trafficer);
 		}
 	}
@@ -203,7 +207,10 @@ public class TrafficerManager : MonoBehaviour
 
 		if (trafficerPool[type].Count > 0)
 		{
-			return trafficerPool[type].Dequeue();
+			Trafficer pooled = trafficerPool[type].Dequeue();
+			pooled.ResetFromPool();
+			if (pooled.TryGetComponent(out UnityVehicle uv)) uv.ResetFromPool();
+			return pooled;
 		}
 		else
 		{
@@ -216,6 +223,7 @@ public class TrafficerManager : MonoBehaviour
 		if (!trafficerDict.ContainsKey(trafficer.GetId()))
 		{
 			trafficerDict.Add(trafficer.GetId(), trafficer);
+			ApplyCountDelta(trafficer, +1);
 			OnAddTrafficer?.Invoke(this, new TrafficerEventArgs(trafficer));
 		}
 		else
@@ -239,6 +247,7 @@ public class TrafficerManager : MonoBehaviour
 		if (trafficerDict.ContainsKey(trafficer.GetId()))
 		{
 			trafficerDict.Remove(trafficer.GetId());
+			ApplyCountDelta(trafficer, -1);
 			OnRemoveTrafficer?.Invoke(this, new TrafficerEventArgs(trafficer));
 		}
 		else

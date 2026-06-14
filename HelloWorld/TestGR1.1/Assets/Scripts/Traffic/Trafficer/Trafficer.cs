@@ -132,6 +132,13 @@ public class Trafficer : MonoBehaviour
 		return nextForward;
 	}
 
+	public virtual void ResetFromPool()
+	{
+		existState = ExistState.ServerControlled;
+		seenThisFrame = true;
+		isStandaloneClient = false;
+	}
+
 	public void Set(TrafficerData trafficerData)
 	{
 		SetId(trafficerData.id);

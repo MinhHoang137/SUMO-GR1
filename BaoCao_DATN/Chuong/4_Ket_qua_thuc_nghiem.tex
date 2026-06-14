@@ -284,6 +284,108 @@ phiên tiêu biểu được minh họa ở Hình \ref{fig:session-tree}.
 	\label{fig:session-tree}
 \end{figure}
 
+\subsection{Thiết kế giao diện người dùng}
+\label{subsec:thiet-ke-giao-dien}
+
+Khác với các ứng dụng hướng biểu mẫu, giao diện của hệ thống được thiết kế xoay
+quanh việc \emph{quan sát và tương tác với cảnh ba chiều}, nên thành phần trung
+tâm không phải là các ô nhập liệu mà là khung nhìn (camera) cùng một lớp điều
+khiển gọn nhẹ phủ lên trên. Giao diện được tổ chức theo nguyên tắc: ưu tiên
+không gian hiển thị cho cảnh, các bảng điều khiển chỉ hiện khi cần và có thể ẩn
+đi; thao tác chính dùng chuột và bàn phím; và các nút mang tính ngữ cảnh, chỉ
+xuất hiện khi thực sự áp dụng được cho đối tượng đang chọn.
+
+\textbf{Chế độ hiển thị.} Hệ thống có hai chế độ với bố cục giao diện riêng: chế
+độ thời gian thực (hiển thị mô phỏng đang chạy, kèm các lệnh điều khiển quá
+trình chạy) và chế độ phát lại (đọc lại một phiên đã lưu). Trước khi vào cảnh,
+người dùng chọn chế độ, bản đồ và tham số mô phỏng ở bước cấu hình khởi chạy.
+
+\textbf{Camera và góc nhìn.} Camera hỗ trợ hai góc nhìn nhằm phục vụ cả nhu cầu
+giám sát tổng thể lẫn trải nghiệm của người tham gia giao thông:
+\begin{itemize}[leftmargin=2em]
+	\item \textbf{Góc nhìn tự do}: camera bay tự do trên cao, di chuyển bằng phím
+	(\texttt{WASD}) và xoay bằng chuột, với tốc độ di chuyển và độ nhạy chuột
+	điều chỉnh được. Đây là góc nhìn để quan sát toàn cảnh mạng đường và dòng
+	giao thông.
+	\item \textbf{Góc nhìn gắn vào phương tiện}: camera gắn vào một phương tiện
+	cụ thể để nhìn theo nó. Người dùng chọn phương tiện bằng cách trỏ và bấm
+	(point-and-select), hoặc chọn ngẫu nhiên một phương tiện đang được hiển thị trong danh sách. 
+	Đây là góc nhìn tạo nên trải nghiệm theo người tham
+	gia giao thông và là tiền đề cho thao tác chiếm quyền điều khiển.
+\end{itemize}
+Trạng thái camera hiện hành (tự do hay đang gắn vào phương tiện nào) được hiển
+thị thường trực để người dùng định hướng.
+
+\textbf{Lớp điều khiển và bảng thông tin (HUD).} Phủ trên khung nhìn là một lớp
+giao diện gọn nhẹ. Góc dưới bên trái là bảng thông tin hiển thị trạng thái
+camera (tự do hay đang gắn vào phương tiện nào) cùng các chỉ số tổng quan của
+phiên chạy: độ trễ đầu--cuối, số phương tiện và số người đi bộ. Góc dưới bên
+phải là hàng nút điều khiển chính gồm: nút \emph{chiếm/trả quyền điều khiển}
+mang tính ngữ cảnh (chỉ hiện khi camera đang gắn vào một phương tiện có thể lái,
+và tự đổi nhãn giữa ``Chiếm quyền'' và ``Trả quyền'' theo trạng thái xe); nút
+\emph{tạm dừng/tiếp tục} mô phỏng; nút \emph{Tạo xe Unity} để sinh một phương
+tiện riêng do người dùng điều khiển (và đổi thành ``Hủy xe Unity'' để loại bỏ
+nó); và nút \emph{Người/Xe} để ẩn/hiện danh sách các đối tượng giao thông
+(phương tiện và người đi bộ) đang có trong cảnh theo mã định danh, chọn một mục
+trong danh sách sẽ gắn camera vào đúng đối tượng tương ứng. Hình
+\ref{fig:ui-layout} minh họa bố cục giao diện trong cảnh.
+
+Ngoài hàng nút chính, các thiết lập ít dùng hơn được đặt trong các bảng tùy
+chọn mở bằng phím \texttt{Esc}, gồm: điều chỉnh tốc độ mô phỏng, tốc độ và độ
+nhạy của camera, tùy chọn lọc theo vùng quan sát phục vụ tối ưu hiển thị, và
+lệnh kết thúc phiên chạy. Khi một bảng tùy chọn mở, con trỏ chuột được mở khóa
+để thao tác và được khóa lại khi đóng để tiếp tục điều khiển camera; ngoài ra
+bảng hướng dẫn phím điều khiển cũng có thể bật/tắt khi cần.
+
+\begin{figure}[H]
+	\centering
+	\resizebox{0.98\linewidth}{!}{%
+	\begin{tikzpicture}[>=Latex, font=\footnotesize,
+		btn/.style={draw=black!45, rounded corners=3pt, fill=black!12,
+			minimum height=0.6cm, inner xsep=6pt, align=center, font=\scriptsize},
+		item/.style={draw=black!40, fill=white, rounded corners=1pt,
+			minimum width=1.95cm, minimum height=0.44cm, inner sep=1pt,
+			font=\scriptsize\ttfamily},
+		anno/.style={font=\scriptsize\itshape, text=black!55}]
+		\def\W{16.5} \def\Hh{9.3}
+		% --- Khung nhin ba chieu (viewport): nen dong nhat, khong co duong chan troi ---
+		\fill[blue!8] (0,0) rectangle (\W,\Hh);
+		\draw[black!55] (0,0) rectangle (\W,\Hh);              % viền khung nhìn
+		% --- Tam ngam (crosshair) o giua khung nhin ---
+		\coordinate (c) at (\W/2,\Hh/2);
+		\draw[black!70, line width=0.6pt] ($(c)+(-0.30,0)$) -- ($(c)+(-0.10,0)$);
+		\draw[black!70, line width=0.6pt] ($(c)+(0.10,0)$)  -- ($(c)+(0.30,0)$);
+		\draw[black!70, line width=0.6pt] ($(c)+(0,-0.30)$) -- ($(c)+(0,-0.10)$);
+		\draw[black!70, line width=0.6pt] ($(c)+(0,0.10)$)  -- ($(c)+(0,0.30)$);
+		% --- Bang thong tin & trang thai camera (goc duoi trai, tu co vua khit) ---
+		\node[anchor=south west, text=white, fill=black!58, rounded corners=2pt,
+			inner sep=5pt, align=left, font=\scriptsize] (info) at (0.15,0.2)
+			{{\footnotesize\bfseries Trạng thái camera: Tự do}\\[2pt]
+			 Độ trễ: 10\,ms \quad Số xe: 100 \quad Số người: 1000};
+		% --- Lop dieu khien (goc duoi phai): neo tu mep phai, noi lien co khe ho ---
+		\node[btn, anchor=east] (b4) at (\W-0.2,0.85) {Người/Xe};
+		\node[btn, anchor=east] (b3) at ([xshift=-0.18cm]b4.west) {Tạo xe Unity};
+		\node[btn, anchor=east] (b2) at ([xshift=-0.18cm]b3.west) {Tạm dừng};
+		\node[btn, anchor=east] (b1) at ([xshift=-0.18cm]b2.west) {Chiếm quyền};
+		% --- Danh sach Trafficer (hien khi bam Nguoi/Xe), xep ngay tren cac nut ---
+		\foreach \name [count=\i from 0] in {f\_1.0, f\_10.0, f\_14.0, f\_15.0, f\_16.0, f\_2.0} {
+			\node[item, anchor=south east] at (\W-0.2, 1.35 + \i*0.5) {\name};
+		}
+		% --- Chu thich ---
+		\node[anno, anchor=west] (a1) at (\W/2+0.55,\Hh/2+0.5)
+			{tâm ngắm: trỏ--chọn phương tiện};
+		\draw[black!45, ->] (a1.west) -- ($(c)+(0.34,0.16)$);
+		\node[anno, anchor=south west] at (0.15,1.95) {bảng thông tin \& trạng thái camera};
+		\node[anno, anchor=south west] at ($(b1.north west)+(0,0.12)$) {lớp điều khiển};
+		% chu thich danh sach Trafficer
+		\node[anno, anchor=east, align=right] (la) at (13.8,3.1)
+			{\emph{Người/Xe}: mở/đóng danh sách Trafficer;\\chọn một mục để gắn camera vào đối tượng};
+		\draw[black!45, ->] (la.east) -- (\W-2.25,3.1);
+	\end{tikzpicture}}
+	\caption{Bố cục giao diện người dùng trong cảnh ba chiều (bản nháp)}
+	\label{fig:ui-layout}
+\end{figure}
+
 \section{Xây dựng ứng dụng}
 
 \subsection{Thư viện và công cụ sử dụng}
@@ -342,16 +444,23 @@ thể hiện một số chức năng tiêu biểu.
 
 \begin{figure}[H]
 	\centering
-	\fbox{\parbox[c][3.2cm][c]{0.85\linewidth}{\centering \textbf{[Chèn ảnh]} Cảnh giao thông 3D trong Unity: phương tiện, đèn tín hiệu và người đi bộ.}}
-	\caption{Minh họa cảnh giao thông ba chiều (cần chèn ảnh chụp)}
+	\includegraphics[width=0.92\linewidth]{Hinhve/hinh4.8-anh-goc-nhin-3d-tu-tren-cao.png}
+	\caption{Minh họa cảnh giao thông ba chiều trong Unity: góc nhìn từ trên cao}
 	\label{fig:demo-scene}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\fbox{\parbox[c][3.2cm][c]{0.85\linewidth}{\centering \textbf{[Chèn ảnh]} Chế độ lái xe: người dùng chiếm quyền và lái một phương tiện; cảnh va chạm và xác xe gây ùn ứ.}}
-	\caption{Minh họa chế độ lái xe và xử lý va chạm (cần chèn ảnh chụp)}
+	\fbox{\parbox[c][3.2cm][c]{0.85\linewidth}{\centering \textbf{[Chèn ảnh]} Chế độ lái xe: người dùng chiếm quyền và lái một phương tiện trong cảnh giao thông.}}
+	\caption{Minh họa chế độ lái xe thủ công (cần chèn ảnh chụp)}
 	\label{fig:demo-drive}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.92\linewidth]{Hinhve/hinh4.10-va-cham-gay-un-tac.png}
+	\caption{Minh họa xử lý va chạm: xác xe nằm lại gây ùn ứ dòng giao thông}
+	\label{fig:demo-crash}
 \end{figure}
 
 \section{Kiểm thử}
