@@ -1,0 +1,19 @@
+@startuml hinh2.7-usecase-nhom-E
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecaseBorderColor #333333
+skinparam usecaseBackgroundColor #FEFECE
+skinparam actorBorderColor #333333
+skinparam ArrowColor #333333
+
+actor "Người dùng" as User
+
+rectangle "E. Kết quả & lưu trữ" {
+  usecase "UC15. Xử lý va chạm\nsinh xác xe" as UC15
+  usecase "UC16. Ghi và lưu trữ\nphiên mô phỏng" as UC16
+}
+
+User -- UC15
+User -- UC16
+
+@enduml

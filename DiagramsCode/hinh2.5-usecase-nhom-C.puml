@@ -1,0 +1,23 @@
+@startuml hinh2.5-usecase-nhom-C
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecaseBorderColor #333333
+skinparam usecaseBackgroundColor #FEFECE
+skinparam actorBorderColor #333333
+skinparam ArrowColor #333333
+
+actor "Người dùng" as User
+
+rectangle "C. Quan sát & điều khiển" {
+  usecase "UC9. Điều khiển\ncamera quan sát" as UC9
+  usecase "UC10. Tạm dừng /\ntiếp tục" as UC10
+  usecase "UC11. Điều chỉnh\ntốc độ" as UC11
+  usecase "UC12. Lọc đối tượng\nhiển thị" as UC12
+}
+
+User -- UC9
+User -- UC10
+User -- UC11
+User -- UC12
+
+@enduml

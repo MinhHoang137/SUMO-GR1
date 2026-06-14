@@ -1,0 +1,31 @@
+@startuml hinh2.2-usecase-tong-quat
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecaseBorderColor #333333
+skinparam usecaseBackgroundColor #FEFECE
+skinparam actorBorderColor #333333
+skinparam ArrowColor #333333
+skinparam packageBorderColor #666666
+skinparam packageFontStyle bold
+
+actor "Người dùng" as User
+actor "SUMO\n(hệ thống ngoài)" as SUMO
+
+rectangle "Hệ thống mô phỏng--hiển thị 3D" {
+  usecase "A. Chuẩn bị kịch bản & bản đồ" as A
+  usecase "B. Vận hành mô phỏng" as B
+  usecase "C. Quan sát & điều khiển" as C
+  usecase "D. Lái xe tương tác" as D
+  usecase "E. Kết quả & lưu trữ" as E
+}
+
+User -- A
+User -- B
+User -- C
+User -- D
+User -- E
+
+B -- SUMO
+D -- SUMO
+
+@enduml

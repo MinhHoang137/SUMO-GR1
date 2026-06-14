@@ -1,4 +1,4 @@
-\documentclass[../DoAn.tex]{subfiles}
+﻿\documentclass[../DoAn.tex]{subfiles}
 \begin{document}
 
 Chương 2 đã phân tích yêu cầu và mô tả các chức năng của hệ thống. Chương này
@@ -39,7 +39,7 @@ chiếm quyền điều khiển một phương tiện, dữ liệu còn đi theo
 gửi vị trí phương tiện do người dùng lái về Python để phản ánh vào \gls{SUMO}.
 Hình \ref{fig:congnghe-architecture} minh họa kiến trúc tổng quát này.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\begin{tikzpicture}[every node/.style={font=\small}]
 		\node[draw, rounded corners, minimum width=2.6cm, minimum height=1.1cm, align=center] (sumo) {SUMO\\(mô phỏng vi mô)};
@@ -104,7 +104,7 @@ và phân bố.
 số mô phỏng như thời gian bắt đầu, kết thúc, độ dài bước thời gian và chế độ xuất
 dữ liệu. Việc chuẩn hóa tham số giúp các thí nghiệm có thể chạy lại và so sánh.
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\caption{Đầu vào và đầu ra của SUMO trong hệ thống}
 	\label{tab:sumo-io}
@@ -162,7 +162,7 @@ thái đèn tín hiệu. Mỗi vòng lặp tương ứng với một bước th�
 thành luồng dữ liệu theo chuỗi thời gian. Hình \ref{fig:traci-loop} minh họa vòng
 lặp này.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\begin{tikzpicture}[node distance=0.7cm and 1.4cm, every node/.style={font=\small}]
 		\node[draw, rounded corners, align=center] (con) {Kết nối\\SUMO};
@@ -310,7 +310,7 @@ này được thiết kế độc lập với engine: các trường phản ánh
 hình học nguồn, còn các bước chuyển đổi sang hệ trục ba chiều, tỉ lệ hiển thị và
 nội suy theo khung hình do phía hiển thị đảm nhiệm.
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\caption{Một số trường dữ liệu trao đổi giữa Python và Unity}
 	\label{tab:data-schema}

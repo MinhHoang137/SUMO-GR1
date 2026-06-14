@@ -1,0 +1,120 @@
+<mxGraphModel>
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- States -->
+    <mxCell id="SERVER" value="Do SUMO&#xa;điều khiển"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;arcSize=20;"
+      vertex="1" parent="1">
+      <mxGeometry x="80" y="200" width="180" height="70" as="geometry" />
+    </mxCell>
+
+    <mxCell id="CLIENT" value="Do người dùng&#xa;điều khiển"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;arcSize=20;"
+      vertex="1" parent="1">
+      <mxGeometry x="540" y="200" width="180" height="70" as="geometry" />
+    </mxCell>
+
+    <mxCell id="WRECK" value="Xác xe"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=13;arcSize=20;"
+      vertex="1" parent="1">
+      <mxGeometry x="540" y="440" width="180" height="70" as="geometry" />
+    </mxCell>
+
+    <mxCell id="DEAD" value="Bị hủy"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=13;arcSize=20;"
+      vertex="1" parent="1">
+      <mxGeometry x="80" y="440" width="180" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- SERVER -> CLIENT: chiếm quyền (trên, đi từ trái sang phải) -->
+    <mxCell id="e1" value="chiếm quyền"
+      style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=11;exitX=1;exitY=0.35;exitDx=0;exitDy=0;entryX=0;entryY=0.35;entryDx=0;entryDy=0;"
+      edge="1" source="SERVER" target="CLIENT" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint as="offset" x="0" y="-12" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- CLIENT -> SERVER: trả quyền (dưới, vòng qua trên) -->
+    <mxCell id="e2" value="trả quyền (đưa về làn)"
+      style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=11;exitX=0;exitY=0.65;exitDx=0;exitDy=0;entryX=1;entryY=0.65;entryDx=0;entryDy=0;"
+      edge="1" source="CLIENT" target="SERVER" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="540" y="258" />
+          <mxPoint x="310" y="258" />
+          <mxPoint x="310" y="140" />
+          <mxPoint x="460" y="140" />
+          <mxPoint x="460" y="258" />
+          <mxPoint x="260" y="258" />
+        </Array>
+        <mxPoint as="offset" x="0" y="14" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- SERVER -> WRECK: bị tông (trái xuống phải, chéo qua giữa) -->
+    <mxCell id="e3" value="bị tông"
+      style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=11;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;"
+      edge="1" source="SERVER" target="WRECK" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="170" y="340" />
+          <mxPoint x="480" y="340" />
+          <mxPoint x="480" y="475" />
+        </Array>
+        <mxPoint as="offset" x="40" y="0" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- CLIENT -> WRECK: trả quyền khi đã va chạm (thẳng xuống) -->
+    <mxCell id="e4" value="trả quyền khi đã va chạm"
+      style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=11;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;"
+      edge="1" source="CLIENT" target="WRECK" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="760" y="235" />
+          <mxPoint x="760" y="440" />
+        </Array>
+        <mxPoint as="offset" x="20" y="0" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- WRECK -> DEAD: sau N bước (phải sang trái) -->
+    <mxCell id="e5" value="sau N bước"
+      style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=11;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;"
+      edge="1" source="WRECK" target="DEAD" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint as="offset" x="0" y="-12" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- CLIENT -> DEAD: thả quá xa làn (chéo) -->
+    <mxCell id="e6" value="thả quá xa làn"
+      style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=11;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;"
+      edge="1" source="CLIENT" target="DEAD" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="540" y="560" />
+          <mxPoint x="170" y="560" />
+        </Array>
+        <mxPoint as="offset" x="-40" y="0" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- DEAD -> SERVER: tái sử dụng (phải sang trái, vòng dưới) -->
+    <mxCell id="e7" value="tái sử dụng"
+      style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=11;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;"
+      edge="1" source="DEAD" target="SERVER" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="170" y="640" />
+          <mxPoint x="170" y="640" />
+        </Array>
+        <mxPoint as="offset" x="0" y="20" />
+      </mxGeometry>
+    </mxCell>
+
+  </root>
+</mxGraphModel>

@@ -1,8 +1,8 @@
-\documentclass[../DoAn.tex]{subfiles}
+﻿\documentclass[../DoAn.tex]{subfiles}
 \begin{document}
 
 Phụ lục này đặc tả chi tiết các use case còn lại của hệ thống, ngoài sáu use case
-nghiệp vụ chính đã được đặc tả trong Chương 2 (UC2, UC3, UC6, UC14, UC17, UC18).
+nghiệp vụ chính đã được đặc tả trong Chương 2 (UC2, UC3, UC6, UC10, UC13, UC14).
 Mỗi use case được mô tả theo cùng một khuôn dạng gồm: tên, tác nhân, mô tả, tiền
 điều kiện, luồng sự kiện chính, luồng sự kiện phụ và hậu điều kiện. Tác nhân
 chính của hệ thống là Người dùng; trình mô phỏng \gls{SUMO} tham gia với vai trò
@@ -10,7 +10,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 
 \section{Đặc tả use case Tạo bản đồ từ lưới mê cung}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
@@ -27,7 +27,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 
 \section{Đặc tả use case Sinh tuyến đường cho người đi bộ}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
@@ -44,7 +44,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 
 \section{Đặc tả use case Cấu hình tham số mô phỏng}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
@@ -61,7 +61,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 
 \section{Đặc tả use case Chạy mô phỏng chế độ phát lại}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
@@ -78,7 +78,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 
 \section{Đặc tả use case Chạy kèm giao diện sumo-gui}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
@@ -93,26 +93,9 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 	\end{tabular}
 \end{table}
 
-\section{Đặc tả use case Chạy kịch bản định tuyến giao hàng}
-
-\begin{table}[H]
-	\centering
-	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
-		\hline
-		\textbf{Tên} & Chạy kịch bản định tuyến giao hàng \\
-		\textbf{Tác nhân} & Người dùng \\
-		\textbf{Mô tả} & Hệ thống sinh kịch bản trong đó các phương tiện xuất phát từ một điểm tập kết đi phục vụ nhiều điểm khách hàng theo lộ trình được tính toán. \\
-		\textbf{Tiền điều kiện} & Đã có mạng đường hợp lệ. \\
-		\textbf{Luồng chính} & (1) Người dùng chọn chế độ định tuyến giao hàng, số điểm khách hàng và số phương tiện. (2) Hệ thống dựng đồ thị mạng đường và chọn điểm tập kết cùng các điểm khách hàng. (3) Hệ thống phân bổ và tối ưu lộ trình cho từng phương tiện. (4) Hệ thống ghi các lộ trình ra tệp tuyến đường. \\
-		\textbf{Luồng phụ} & (2a) Mạng không có nút hợp lệ: hệ thống báo lỗi và dừng. \\
-		\textbf{Hậu điều kiện} & Tệp tuyến đường theo lộ trình giao hàng được tạo, sẵn sàng chạy. \\
-		\hline
-	\end{tabular}
-\end{table}
-
 \section{Đặc tả use case Hiển thị phương tiện theo thời gian}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
@@ -129,7 +112,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 
 \section{Đặc tả use case Hiển thị đèn tín hiệu}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
@@ -146,7 +129,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 
 \section{Đặc tả use case Hiển thị người đi bộ}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
@@ -163,7 +146,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 
 \section{Đặc tả use case Điều khiển camera quan sát}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
@@ -180,7 +163,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 
 \section{Đặc tả use case Điều chỉnh tốc độ mô phỏng}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
@@ -197,7 +180,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 
 \section{Đặc tả use case Lọc đối tượng hiển thị theo vùng}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
@@ -214,7 +197,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 
 \section{Đặc tả use case Xử lý va chạm sinh xác xe}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
@@ -231,7 +214,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 
 \section{Đặc tả use case Lưu trữ và kết thúc phiên mô phỏng}
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline

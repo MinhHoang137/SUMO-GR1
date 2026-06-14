@@ -41,7 +41,7 @@ Kênh chính truyền dữ liệu mô phỏng từ Python sang Unity; kênh cậ
 liệu phương tiện do người dùng lái từ Unity về Python; kênh điều khiển nhận các
 lệnh tạm dừng, tiếp tục, kết thúc và cập nhật tham số.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\begin{tikzpicture}[every node/.style={font=\small}, node distance=1.0cm]
 		\node[draw, rounded corners, align=center, minimum height=1cm] (sumo) {SUMO};
@@ -73,7 +73,7 @@ kịch bản mô phỏng; và mô-đun lưu trữ phiên ghi kết quả của m
 Phía Unity đảm nhiệm hiển thị và tương tác, gồm các nhóm mô-đun chính trình bày
 trong Bảng \ref{tab:unity-modules}.
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\caption{Các nhóm mô-đun chính phía Unity}
 	\label{tab:unity-modules}
@@ -94,7 +94,7 @@ trong Bảng \ref{tab:unity-modules}.
 Cách phân chia mô-đun và quan hệ phụ thuộc giữa hai phía được minh họa ở Hình
 \ref{fig:packages}.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\begin{tikzpicture}[every node/.style={font=\footnotesize},
 		pkg/.style={draw, rounded corners=1pt, minimum width=3.4cm, minimum height=0.7cm,
@@ -136,23 +136,10 @@ xe sau va chạm, hoặc bị hủy. Quyền điều khiển và việc bật/t�
 định hoàn toàn bởi trạng thái này, thay vì dựa vào sự hiện diện của thành phần.
 Hình \ref{fig:existstate} mô tả máy trạng thái.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
-	\begin{tikzpicture}[every node/.style={font=\small}, >=Latex,
-		st/.style={draw, rounded corners, align=center, minimum width=2.6cm, minimum height=0.9cm}]
-		\node[st] (server) {Do SUMO\\điều khiển};
-		\node[st, right=3.5cm of server] (client) {Do người dùng\\điều khiển};
-		\node[st, below=2.2cm of client] (wreck) {Xác xe};
-		\node[st, below=2.2cm of server] (dead) {Bị hủy};
-		\draw[->] (server) -- node[above, font=\scriptsize, align=center] {chiếm\\quyền} (client);
-		\draw[->] (client.north) to[out=120,in=60,looseness=1.4] node[above, font=\scriptsize, align=center] {trả quyền (đưa về làn)} (server.north);
-		\draw[->] (server) -- node[left, font=\scriptsize, align=center] {bị tông} (wreck);
-		\draw[->] (client) -- node[right, font=\scriptsize, align=center] {trả quyền\\khi đã va chạm} (wreck);
-		\draw[->] (wreck) -- node[below, font=\scriptsize, align=center] {sau N bước} (dead);
-		\draw[->] (client.south west) -- node[above, font=\scriptsize, align=center, sloped] {thả quá xa làn} (dead.north east);
-		\draw[->] (dead.south) to[out=-90,in=-90,looseness=1.2] node[below, font=\scriptsize] {tái sử dụng} (server.south);
-	\end{tikzpicture}
-	\caption{Máy trạng thái điều khiển phương tiện (bản nháp)}
+	\includegraphics[width=0.78\linewidth]{Hinhve/hinh4.3-may-trang-thai-1-phuong-tien.png}
+	\caption{Máy trạng thái điều khiển phương tiện}
 	\label{fig:existstate}
 \end{figure}
 
@@ -178,7 +165,7 @@ Phía Python dùng luồng tải lên để phản ánh xe người lái vào \g
 soát danh sách phương tiện đang được quản lý. Trình tự trao đổi thông điệp trong
 mỗi bước mô phỏng được minh họa ở Hình \ref{fig:dataflow-seq}.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\begin{tikzpicture}[every node/.style={font=\footnotesize}, >=Latex]
 		% header boxes
@@ -223,7 +210,7 @@ Trong phạm vi báo cáo, một số lớp chủ đạo được trình bày nh
 
 Quan hệ giữa các lớp chủ đạo phía Unity được minh họa ở Hình \ref{fig:class-core}.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\begin{tikzpicture}[
 		every node/.style={font=\footnotesize}, >=Latex,
@@ -256,7 +243,7 @@ theo từng bước. Cách lưu này phù hợp với mục tiêu mô phỏng, h
 thống kê theo từng lần chạy, đồng thời cho phép phát lại. Cấu trúc một thư mục
 phiên tiêu biểu được minh họa ở Hình \ref{fig:session-tree}.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\begin{tikzpicture}[>=Latex,
 		fname/.style={font=\footnotesize\ttfamily, anchor=west, inner sep=1pt},
@@ -337,7 +324,7 @@ lệnh kết thúc phiên chạy. Khi một bảng tùy chọn mở, con trỏ c
 để thao tác và được khóa lại khi đóng để tiếp tục điều khiển camera; ngoài ra
 bảng hướng dẫn phím điều khiển cũng có thể bật/tắt khi cần.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\resizebox{0.98\linewidth}{!}{%
 	\begin{tikzpicture}[>=Latex, font=\footnotesize,
@@ -392,7 +379,7 @@ bảng hướng dẫn phím điều khiển cũng có thể bật/tắt khi cầ
 
 Bảng \ref{tab:tools} liệt kê các công cụ chính được sử dụng trong dự án.
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\caption{Danh sách thư viện và công cụ sử dụng}
 	\label{tab:tools}
@@ -419,7 +406,7 @@ bản đồ OpenStreetMap); ứng dụng Unity hiển thị mô phỏng ba chi�
 xe; và bộ lưu trữ phiên cùng nhật ký kết quả. Bảng \ref{tab:loc} thống kê nhanh
 quy mô mã nguồn do nhóm tự viết, không tính thư viện bên thứ ba.
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\caption{Thống kê quy mô mã nguồn}
 	\label{tab:loc}
@@ -442,22 +429,22 @@ quyền điều khiển và lái xe thủ công; xử lý va chạm sinh xác xe
 về làn; cùng các thao tác điều khiển quá trình chạy. Các hình minh họa dưới đây
 thể hiện một số chức năng tiêu biểu.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.92\linewidth]{Hinhve/hinh4.8-anh-goc-nhin-3d-tu-tren-cao.png}
+	\includegraphics[width=0.78\linewidth]{Hinhve/hinh4.8-anh-goc-nhin-3d-tu-tren-cao.png}
 	\caption{Minh họa cảnh giao thông ba chiều trong Unity: góc nhìn từ trên cao}
 	\label{fig:demo-scene}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
-	\begin{subfigure}[b]{0.85\linewidth}
+	\begin{subfigure}[b]{0.72\linewidth}
 		\includegraphics[width=\linewidth]{Hinhve/hinh4.9.2-goc-nhin-cua-1-xe-tu-hanh-boi-may-chu.png}
 		\caption{Quan sát xe tự hành, nút ``Chiếm quyền'' hiện ra}
 		\label{fig:demo-drive-observe}
 	\end{subfigure}
-	\vspace{0.5em}
-	\begin{subfigure}[b]{0.85\linewidth}
+	\vspace{0.3em}
+	\begin{subfigure}[b]{0.72\linewidth}
 		\includegraphics[width=\linewidth]{Hinhve/hinh4.9-goc-nhin-trong-xe.png}
 		\caption{Đang lái xe (camera gắn CLIENT\_CAR)}
 		\label{fig:demo-drive-active}
@@ -466,9 +453,9 @@ thể hiện một số chức năng tiêu biểu.
 	\label{fig:demo-drive}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.92\linewidth]{Hinhve/hinh4.10-va-cham-gay-un-tac.png}
+	\includegraphics[width=0.78\linewidth]{Hinhve/hinh4.10-va-cham-gay-un-tac.png}
 	\caption{Minh họa xử lý va chạm: xác xe nằm lại gây ùn ứ dòng giao thông}
 	\label{fig:demo-crash}
 \end{figure}
@@ -480,7 +467,7 @@ thực hiện theo hai hướng: kiểm thử chức năng thủ công theo use 
 hộp đen cho các mô-đun xử lý dữ liệu và giao thức. Bảng \ref{tab:testcases} liệt
 kê một số trường hợp kiểm thử tiêu biểu.
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\caption{Một số trường hợp kiểm thử tiêu biểu}
 	\label{tab:testcases}
@@ -528,7 +515,7 @@ quyền.
 Bảng \ref{tab:perf} là khung ghi nhận kết quả hiệu năng theo quy mô kịch bản; các
 giá trị cụ thể được điền sau khi đo trên môi trường thực nghiệm.
 
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
 	\caption{Khung ghi nhận hiệu năng theo quy mô kịch bản}
 	\label{tab:perf}

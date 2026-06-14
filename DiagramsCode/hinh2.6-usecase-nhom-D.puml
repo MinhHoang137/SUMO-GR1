@@ -1,0 +1,22 @@
+@startuml hinh2.6-usecase-nhom-D
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecaseBorderColor #333333
+skinparam usecaseBackgroundColor #FEFECE
+skinparam actorBorderColor #333333
+skinparam ArrowColor #333333
+
+actor "Người dùng" as User
+actor "SUMO" as SUMO
+
+rectangle "D. Lái xe tương tác" {
+  usecase "UC13. Chiếm quyền\nvà lái xe" as UC13
+  usecase "UC14. Trả quyền\nđiều khiển" as UC14
+}
+
+User -- UC13
+User -- UC14
+UC13 -- SUMO
+UC14 -- SUMO
+
+@enduml

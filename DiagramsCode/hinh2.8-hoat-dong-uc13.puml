@@ -1,0 +1,24 @@
+@startuml hinh2.8-hoat-dong-uc13
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam ActivityBackgroundColor #FEFECE
+skinparam ActivityBorderColor #333333
+skinparam ArrowColor #333333
+skinparam ActivityDiamondBackgroundColor #FEFECE
+skinparam ActivityDiamondBorderColor #333333
+
+start
+
+:Chọn xe & yêu cầu chiếm quyền;
+:Chuyển sang chế độ người dùng, bật vật lý;
+:Người dùng điều khiển bằng bàn phím;
+:Phản ánh vị trí xe sang SUMO;
+
+if (Có va chạm?) then (Có)
+  :Đánh dấu trạng thái va chạm;
+else (Không)
+endif
+
+stop
+
+@enduml
