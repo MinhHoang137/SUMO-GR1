@@ -1,7 +1,9 @@
-"""SUMO-Unity System Launcher — 2 tab simulation:
+"""SUMO-Unity System Launcher — 3 tab simulation:
     Tab 1: chạy mô phỏng từ maze (.map).
     Tab 2: chạy mô phỏng từ OSM (.osm) — tự build .net.xml + .rou.xml + .sumocfg
            vào Server/SUMO_xml/ rồi launch ở chế độ Custom Script.
+    Tab 3: chạy kịch bản do người dùng tự dựng bằng netedit — chỉ cần trỏ thư mục
+           chứa .net.xml + .rou.xml (+ tuỳ chọn .sumocfg).
 
 Phần shared (dưới notebook): Run with GUI, Monitor, Start Server, Stop All —
 dispatch theo tab đang active."""
@@ -47,6 +49,9 @@ class AppLauncher:
 
         # ── Tab 2 (OSM) vars ──────────────────────────────────────────
         self.osm_net_path = os.path.join(self.sumo_xml_dir, "HelloWorld.net.xml")
+
+        # ── Tab 3 (Custom Script) vars ────────────────────────────────
+        self.custom_folder = tk.StringVar()
         self.osm_file = tk.StringVar()
         self.osm_mode = tk.StringVar(value="2d")
         self.osm_num_junctions = tk.StringVar(value="20")
@@ -82,11 +87,14 @@ class AppLauncher:
 
         maze_tab = ttk.Frame(self.notebook)
         osm_tab = ttk.Frame(self.notebook)
+        custom_tab = ttk.Frame(self.notebook)
         self.notebook.add(maze_tab, text="Maze (.map) Simulation")
         self.notebook.add(osm_tab, text="OSM (.osm) Simulation")
+        self.notebook.add(custom_tab, text="Custom Script (netedit)")
 
         self._build_maze_tab(maze_tab)
         self._build_osm_tab(osm_tab)
+        self._build_custom_tab(custom_tab)
         self._build_shared_section(root_frame)
 
     # ═════════════════════════════════════════════════════════════════
@@ -303,6 +311,53 @@ class AppLauncher:
             self.osm_file.set(path)
 
     # ═════════════════════════════════════════════════════════════════
+    # Tab 3 — Custom Script (netedit)
+    # ═════════════════════════════════════════════════════════════════
+
+    def _build_custom_tab(self, parent):
+        frame = ttk.Frame(parent, padding=15)
+        frame.pack(fill=tk.BOTH, expand=True)
+        frame.columnconfigure(1, weight=1)
+
+        # Hướng dẫn
+        info = ttk.LabelFrame(frame, text="Hướng dẫn", padding=10)
+        info.grid(row=0, column=0, columnspan=3, sticky=tk.EW, pady=(0, 10))
+        ttk.Label(info, text=(
+            "1. Dùng netedit để tạo mạng lưới đường (network) và tuyến đường (routes).\n"
+            "2. Export ra .net.xml và .rou.xml vào cùng 1 thư mục.\n"
+            "3. Chọn thư mục đó bên dưới rồi nhấn Start Server."
+        ), justify=tk.LEFT, foreground="#333").pack(anchor=tk.W)
+
+        ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=1, column=0, columnspan=3, sticky=tk.EW, pady=8)
+
+        ttk.Label(frame, text="Thư mục kịch bản:").grid(row=2, column=0, sticky=tk.W, pady=4)
+        ttk.Entry(frame, textvariable=self.custom_folder).grid(row=2, column=1, sticky=tk.EW, padx=5, pady=4)
+        ttk.Button(frame, text="Browse", command=self._browse_custom_folder).grid(row=2, column=2, pady=4)
+
+        ttk.Label(frame, text="→ Bắt buộc:", foreground="#555").grid(row=3, column=0, sticky=tk.W, pady=2)
+        ttk.Label(frame, text=".net.xml  và  .rou.xml  (+ tuỳ chọn: .sumocfg)",
+                  foreground="#555").grid(row=3, column=1, columnspan=2, sticky=tk.W, padx=5)
+
+        ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=4, column=0, columnspan=3, sticky=tk.EW, pady=8)
+
+        # Render Mode — chia sẻ cùng self.render_mode với 2 tab kia
+        ttk.Label(frame, text="Render Mode:").grid(row=5, column=0, sticky=tk.W, pady=4)
+        render_frame = ttk.Frame(frame)
+        render_frame.grid(row=5, column=1, columnspan=2, sticky=tk.W)
+        ttk.Radiobutton(render_frame, text="Realtime", variable=self.render_mode,
+                        value=1, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(render_frame, text="Pre-render", variable=self.render_mode,
+                        value=2, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
+
+    def _browse_custom_folder(self):
+        path = filedialog.askdirectory(
+            initialdir=self.base_dir,
+            title="Chọn thư mục chứa kịch bản netedit (.net.xml + .rou.xml)",
+        )
+        if path:
+            self.custom_folder.set(path)
+
+    # ═════════════════════════════════════════════════════════════════
     # Shared section (dưới notebook)
     # ═════════════════════════════════════════════════════════════════
 
@@ -345,8 +400,10 @@ class AppLauncher:
         active = self.notebook.index(self.notebook.select())
         if active == 0:
             self._start_from_maze()
-        else:
+        elif active == 1:
             self._start_from_osm()
+        else:
+            self._start_from_custom()
 
     # ── Tab 1 path: maze .map ────────────────────────────────────────
     def _start_from_maze(self):
@@ -456,7 +513,39 @@ class AppLauncher:
 
         self.root.after(0, after_build)
 
-    # ── Subprocess + monitor (chung cho cả 2 tab) ────────────────────
+    # ── Tab 3 path: Custom Script (netedit) ─────────────────────────
+    def _start_from_custom(self):
+        folder = self.custom_folder.get().strip()
+        if not folder:
+            messagebox.showerror("Error", "Hãy chọn thư mục chứa kịch bản netedit.")
+            return
+        if not os.path.isdir(folder):
+            messagebox.showerror("Error", "Thư mục không tồn tại.")
+            return
+
+        # Kiểm tra sơ bộ sự tồn tại file bắt buộc trước khi launch
+        has_net = any(f.lower().endswith(".net.xml") for f in os.listdir(folder))
+        has_rou = any(f.lower().endswith(".rou.xml") for f in os.listdir(folder))
+        if not has_net or not has_rou:
+            missing = []
+            if not has_net:
+                missing.append(".net.xml")
+            if not has_rou:
+                missing.append(".rou.xml")
+            messagebox.showerror(
+                "Error",
+                f"Thư mục thiếu file bắt buộc: {', '.join(missing)}\n"
+                "Hãy export kịch bản từ netedit vào thư mục đã chọn.",
+            )
+            return
+
+        inputs = [str(self.render_mode.get())]
+        if self.render_mode.get() == 1:  # realtime mới cần chọn chế độ hiển thị
+            inputs.append(str(self.gui_mode.get()))
+        # num_lanes không dùng trong custom mode; truyền 1 cho đúng cú pháp main.py
+        self._launch_main(folder, 1, inputs)
+
+    # ── Subprocess + monitor (chung cho cả 3 tab) ────────────────────
     def _launch_main(self, map_path, num_lanes, inputs):
         try:
             python_cmd = "python" if getattr(sys, 'frozen', False) else sys.executable
