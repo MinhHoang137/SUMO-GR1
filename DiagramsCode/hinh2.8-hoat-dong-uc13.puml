@@ -6,19 +6,33 @@ skinparam ActivityBorderColor #333333
 skinparam ArrowColor #333333
 skinparam ActivityDiamondBackgroundColor #FEFECE
 skinparam ActivityDiamondBorderColor #333333
+skinparam SwimlaneBorderColor #666666
+skinparam SwimlaneTitleFontSize 13
 
+|Người dùng|
 start
+:Chọn xe & yêu cầu chiếm quyền điều khiển;
 
-:Chọn xe & yêu cầu chiếm quyền;
-:Chuyển sang chế độ người dùng, bật vật lý;
-:Người dùng điều khiển bằng bàn phím;
-:Phản ánh vị trí xe sang SUMO;
+|Hệ thống|
+:Chuyển xe sang chế độ điều khiển bởi người dùng;\nBật mô phỏng vật lý;
 
-if (Có va chạm?) then (Có)
-  :Đánh dấu trạng thái va chạm;
-else (Không)
-endif
+repeat
 
+  |Người dùng|
+  :Nhấn phím điều khiển xe;
+
+  |Hệ thống|
+  :Cập nhật vật lý, tính toán chuyển động;
+  :Phản ánh vị trí xe lên máy chủ mô phỏng;
+
+  if (Có va chạm vật lý?) then (Có)
+    :Đánh dấu xe bị phá hủy;\nLên lịch xóa khỏi mô phỏng;
+  else (Không)
+  endif
+
+repeat while (Người dùng tiếp tục lái?) is (Có) not (Không)
+
+|Người dùng|
 stop
 
 @enduml

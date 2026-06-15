@@ -3,6 +3,7 @@ import json
 import math
 import threading
 import os
+import random
 import xml.etree.ElementTree as ET
 import network
 
@@ -21,7 +22,7 @@ vehicles_lock = threading.Lock()
 managed_ids = set()  # id xe đang do client chi phối (mirror/freeze) — dùng để reconcile khi vắng khỏi batch
 wrecked_ids = set()  # id xe đang ở trạng thái Wrecked — để tô màu cam một lần
 
-SNAP_THRESHOLD = 20.0  # m: khoảng cách tối đa cho phép snap xe về lane khi re-anchor
+SNAP_THRESHOLD = 1000  # m: khoảng cách tối đa cho phép snap xe về lane khi re-anchor
 
 
 def _pick_edge_from_netxml(net_xml_path: str) -> str:
@@ -88,6 +89,23 @@ def _lane_pos_to_xy(traci, lane_id: str, pos: float):
     return shape[-1]  # quá cuối lane → trả điểm cuối
 
 
+def _find_long_route(traci, from_edge: str, min_edges: int = 3, max_attempts: int = 30):
+    """Tìm tuyến đường có ít nhất min_edges cạnh từ from_edge.
+
+    Thử ngẫu nhiên tối đa max_attempts cạnh đích; trả về list[str] hoặc None nếu không tìm được.
+    """
+    all_edges = [e for e in traci.edge.getIDList() if not e.startswith(':') and e != from_edge]
+    candidates = random.sample(all_edges, min(max_attempts, len(all_edges)))
+    for to_edge in candidates:
+        try:
+            result = traci.simulation.findRoute(from_edge, to_edge)
+            if result and len(result.edges) >= min_edges:
+                return list(result.edges)
+        except Exception:
+            continue
+    return None
+
+
 def _remove_vehicle(traci, veh_id: str):
     try:
         if veh_id in traci.vehicle.getIDList():
@@ -129,7 +147,13 @@ def _re_anchor(traci, veh_id: str, pos: list):
 
     try:
         traci.vehicle.moveTo(veh_id, lane_id, lane_pos)
-        traci.vehicle.rerouteTraveltime(veh_id)
+        route_edges = _find_long_route(traci, edge_id, min_edges=3)
+        if route_edges:
+            traci.vehicle.setRoute(veh_id, route_edges)
+            print(f"  [<] Route {len(route_edges)} cạnh: {route_edges[0]} … {route_edges[-1]}")
+        else:
+            traci.vehicle.rerouteTraveltime(veh_id)
+            print(f"  [<] Route fallback rerouteTraveltime")
         traci.vehicle.setSpeedMode(veh_id, 31)
         traci.vehicle.setLaneChangeMode(veh_id, 1621)
         traci.vehicle.setSpeed(veh_id, -1)

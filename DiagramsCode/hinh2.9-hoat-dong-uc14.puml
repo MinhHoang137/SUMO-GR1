@@ -6,19 +6,22 @@ skinparam ActivityBorderColor #333333
 skinparam ArrowColor #333333
 skinparam ActivityDiamondBackgroundColor #FEFECE
 skinparam ActivityDiamondBorderColor #333333
+skinparam SwimlaneBorderColor #666666
+skinparam SwimlaneTitleFontSize 13
 
+|Người dùng|
 start
+:Yêu cầu trả quyền điều khiển;
 
-:Người dùng yêu cầu trả quyền;
-
-if (Xe bị va chạm?) then (Có)
-  :Chuyển xử lý xác xe (UC15);
+|Hệ thống|
+if (Xe đã bị va chạm phá hủy?) then (Có)
+  :Chuyển sang luồng xử lý xác xe (UC15);
 else (Không)
-  :Tìm làn đường gần nhất;
-  if (Trong ngưỡng khoảng cách?) then (Có)
-    :Đưa về làn, cấp tuyến,\ntrả quyền cho SUMO;
+  :Truy vấn máy chủ tìm làn đường gần nhất;
+  if (Khoảng cách trong ngưỡng cho phép?) then (Có)
+    :Đặt lại xe vào làn đường;\nCấp tuyến đường mới,\ntrả quyền cho máy chủ mô phỏng;
   else (Không)
-    :Loại bỏ phương tiện;
+    :Loại bỏ phương tiện khỏi mô phỏng;
   endif
 endif
 
