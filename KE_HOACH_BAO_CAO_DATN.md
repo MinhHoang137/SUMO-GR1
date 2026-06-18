@@ -3,7 +3,7 @@
 
 > Tài liệu này là **kế hoạch viết** (không phải bản thảo cuối). Nó ánh xạ cấu trúc template
 > `SOICT_DATN_Application_VIE_Template`, chỉ rõ nội dung nào tái sử dụng từ `Report_old`,
-> nội dung nào phải viết mới từ dự án `HelloWorld`, và đặc biệt liệt kê **18 use case** để
+> nội dung nào phải viết mới từ dự án `HelloWorld`, và đặc biệt liệt kê **17 use case** để
 > đưa vào Chương 2 (yêu cầu của đề bài: 10–20 use case).
 
 ---
@@ -16,9 +16,13 @@
 | `Report_old/Chuong/*.tex` | Nội dung đã viết tốt cho Chương 1, 3, 5 → **tái sử dụng & cập nhật**. |
 | `HelloWorld/` (mã nguồn + `CLAUDE.md`) | Nguồn sự thật cho chức năng, kiến trúc, use case, kết quả thực nghiệm. |
 
+> **Cấu trúc thư mục mã nguồn chính (`HelloWorld/`):**
+> - `Server/` — mã nguồn Python (TraCI, điều phối mô phỏng, giao tiếp TCP).
+> - `TestGR1.1/` — Unity client (hiển thị 3D, tương tác lái xe).
+
 **Khác biệt quan trọng cần xử lý:** `Report_old` mô tả hệ thống *hiển thị 3D cơ bản* (SUMO→TraCI/Python→Unity).
 Nhưng `HelloWorld` đã mở rộng đáng kể: **chiếm quyền điều khiển xe (takeover), va chạm → sinh xác xe (wreck),
-trả quyền & re-anchor, người đi bộ 3D, hai chế độ Realtime/Pre-render, nhập bản đồ OSM, chế độ VRP**.
+trả quyền & re-anchor, người đi bộ 3D, hai chế độ Realtime/Pre-render, nhập bản đồ OSM, nạp kịch bản tự dựng từ netedit, chế độ VRP**.
 → Báo cáo mới phải bổ sung các chức năng này, đặc biệt vào Chương 2 (use case), Chương 4 (thiết kế) và Chương 5 (đóng góp).
 
 ---
@@ -51,27 +55,27 @@ trả quyền & re-anchor, người đi bộ 3D, hai chế độ Realtime/Pre-re
 
 Bốn nhóm để phân rã:
 
-- **A. Chuẩn bị kịch bản & bản đồ** (UC1–UC5)
-- **B. Vận hành mô phỏng** (UC6–UC9) — UC6/UC7 «include» hiển thị xe, đèn, người đi bộ
+- **A. Chuẩn bị kịch bản & bản đồ** (UC1–UC6)
+- **B. Vận hành mô phỏng** (UC7–UC9) — UC7/UC8 «include» hiển thị xe, đèn, người đi bộ
 - **C. Quan sát & điều khiển** (UC10–UC13)
 - **D. Lái xe tương tác** (UC14–UC15)
 - **E. Kết quả & lưu trữ** (UC16–UC17)
 
 ---
 
-## 5. Danh sách 18 use case (đưa vào Chương 2 — mục 2.2)
+## 5. Danh sách 17 use case (đưa vào Chương 2 — mục 2.2)
 
 | # | Use case | Tác nhân | Mô tả ngắn | Bằng chứng trong mã nguồn |
 |---|----------|----------|------------|---------------------------|
 | UC1 | Tạo bản đồ benchmark từ mê cung | Người dùng | Nạp lưới ký tự `.map` (`@`=tường, `.`=lối đi), vét cạn node → sinh `.nod/.edg/.con.xml` | `Server/naive_map_creator.py`, `SUMO_xml/` |
 | UC2 | Nhập bản đồ từ OpenStreetMap | Người dùng | Chọn `.osm` → tự build `.net.xml`/`.rou.xml`/`.sumocfg` (Tab OSM) | `osm_launcher.py`, `launcher.py` (Tab 2) |
-| UC3 | Sinh tuyến đường cho xe | Người dùng | Chọn kiểu phân chia OD (CS/SS/IO/OI), lọc cặp khả thi bằng BFS | `Server/main.py`, `SUMO_xml/route_gen.py` |
-| UC4 | Sinh tuyến đường cho người đi bộ | Người dùng | Bật/tắt người đi bộ, đặt `impatience` tại điểm qua đường | `main.py` (`has_ped`, `ped_impatience`) |
-| UC5 | Cấu hình tham số mô phỏng | Người dùng | Số làn, số cặp nút, chế độ GUI, chế độ render | `launcher.py`, `main.py` (`setup_simulation_config`) |
-| UC6 | Chạy mô phỏng chế độ Realtime | Người dùng | Stream trạng thái mỗi step qua TCP, Unity hiển thị tức thời; «include» hiển thị xe 3D, đèn giao thông, người đi bộ | `render/realtime_render.py`, `Simulation/Realtime/`, `TrafficerManager.cs`, `trafficLight.py`, `crossing.py` |
-| UC7 | Chạy mô phỏng chế độ Pre-render (replay) | Người dùng | Ghi `scenario.json` (từng step) rồi phát lại trong Unity; «include» hiển thị xe 3D, đèn giao thông, người đi bộ | `render/pre_render.py`, `render/scenario_recorder.py`, `Simulation/PreRender/` |
-| UC8 | Chạy mô phỏng với SUMO-GUI | Người dùng | Bật cửa sổ sumo-gui song song để đối chiếu | `launcher.py` (`run_with_gui`) |
-| UC9 | Chạy chế độ VRP (định tuyến phương tiện) | Người dùng | Sinh kịch bản giao hàng (client/staff/company) | `Server/VRP/`, `main.py` (mode 2) |
+| UC3 | Nạp kịch bản tự dựng từ netedit | Người dùng | Chọn thư mục chứa `.net.xml` + `.rou.xml` do người dùng tạo bằng netedit → launcher xác thực & khởi chạy (Tab Custom Script) | `launcher.py` (Tab 3), `Server/custom_script.py`, `main.py` (`is_custom`) |
+| UC4 | Sinh tuyến đường cho xe | Người dùng | Chọn kiểu phân chia OD (CS/SS/IO/OI), lọc cặp khả thi bằng BFS | `Server/main.py`, `SUMO_xml/route_gen.py` |
+| UC5 | Sinh tuyến đường cho người đi bộ | Người dùng | Bật/tắt người đi bộ, đặt `impatience` tại điểm qua đường | `main.py` (`has_ped`, `ped_impatience`) |
+| UC6 | Cấu hình tham số mô phỏng | Người dùng | Số làn, số cặp nút, chế độ GUI, chế độ render | `launcher.py`, `main.py` (`setup_simulation_config`) |
+| UC7 | Chạy mô phỏng chế độ Realtime | Người dùng | Stream trạng thái mỗi step qua TCP, Unity hiển thị tức thời; «include» hiển thị xe 3D, đèn giao thông, người đi bộ | `render/realtime_render.py`, `Simulation/Realtime/`, `TrafficerManager.cs`, `trafficLight.py`, `crossing.py` |
+| UC8 | Chạy mô phỏng chế độ Pre-render (replay) | Người dùng | Ghi `scenario.json` (từng step) rồi phát lại trong Unity; «include» hiển thị xe 3D, đèn giao thông, người đi bộ | `render/pre_render.py`, `render/scenario_recorder.py`, `Simulation/PreRender/` |
+| UC9 | Chạy mô phỏng với SUMO-GUI | Người dùng | Bật cửa sổ sumo-gui song song để đối chiếu | `launcher.py` (`run_with_gui`) |
 | UC10 | Điều khiển camera quan sát | Người dùng | Camera tự do / bám xe, đổi chế độ | `UI/CameraController.cs`, `CameraControllerUI.cs` |
 | UC11 | Tạm dừng / tiếp tục mô phỏng | Người dùng | Gửi lệnh Pause/Resume qua kênh điều khiển; người đi bộ không trôi khi pause | `Simulation/Realtime/PauseSO`, `realtime_render.py` |
 | UC12 | Điều chỉnh tốc độ mô phỏng | Người dùng | Đổi `timeStep`/hệ số tốc độ lúc đang chạy | `UI/SpeedMultiplierUI.cs`, `Traffic/SpeedMultiplier.cs` |
@@ -81,7 +85,7 @@ Bốn nhóm để phân rã:
 | UC16 | Gây va chạm sinh xác xe | Người dùng | Va chạm vật lý → `BecomeWreck`, xe mất điều khiển, despawn sau N bước | `UnityVehicle.OnCollisionEnter`, `unity_vehicle.py` (state 3) |
 | UC17 | Ghi & lưu trữ phiên mô phỏng | Người dùng | `SimulationSession` gom `trips.csv`, `summary.json`, `road_data.json`, `scenario.json` vào `result/{map}-{timestamp}/`; realtime cũng phát lại được | `render/scenario_recorder.py` |
 
-> **Tổng: 17 use case** (trong khoảng 10–20 theo yêu cầu). UC6/UC7 đã «include» hành vi hiển thị xe, đèn, người đi bộ — các hành vi này là side effect tự động của hệ thống, không phải hành động của người dùng, nên không tách thành use case riêng.
+> **Tổng: 17 use case** (trong khoảng 10–20 theo yêu cầu). UC7/UC8 đã «include» hành vi hiển thị xe, đèn, người đi bộ — các hành vi này là side effect tự động của hệ thống, không phải hành động của người dùng, nên không tách thành use case riêng.
 
 ---
 
@@ -90,8 +94,8 @@ Bốn nhóm để phân rã:
 Template yêu cầu đặc tả chi tiết **4–7 use case quan trọng nhất** (tên, luồng chính/phụ, tiền/hậu điều kiện).
 Chọn 6 use case "xương sống" và có luồng phát sinh phong phú:
 
-1. **UC6 – Chạy mô phỏng Realtime** (luồng phụ: mất kết nối TCP, gói JSON phân mảnh).
-2. **UC3 – Sinh tuyến đường cho xe** (luồng phụ: cặp OD không liên thông → lọc bỏ).
+1. **UC7 – Chạy mô phỏng Realtime** (luồng phụ: mất kết nối TCP, gói JSON phân mảnh).
+2. **UC4 – Sinh tuyến đường cho xe** (luồng phụ: cặp OD không liên thông → lọc bỏ).
 3. **UC14 – Chiếm quyền & lái xe** (luồng phụ: xe đang lái bị tông → latch `hasCrashed`).
 4. **UC15 – Trả quyền & re-anchor** (luồng phụ: thả quá xa lane → hủy xe).
 5. **UC11 – Tạm dừng/tiếp tục** (đồng bộ `pause_event` ↔ Unity, người đi bộ không trôi).
@@ -175,8 +179,8 @@ trau chuốt) — cần vẽ lại đẹp bằng công cụ UML (draw.io / StarU
 - 🟡 Biểu đồ use case tổng quát + 5 biểu đồ phân rã (nhóm A–E) — **đã vẽ nháp TikZ** trong Chương 2
   (Hình `fig:uc-tongquat`, `fig:uc-nhomA..E`). Actor hiện là hình que TikZ; bố cục thẳng hàng đơn giản.
   Cần vẽ lại: gom nhóm gọn hơn, thêm quan hệ «include»/«extend» nếu cần, canh đẹp.
-- 🟡 Biểu đồ hoạt động UC17 (lái xe) và UC18 (trả quyền/re-anchor) — **đã vẽ nháp TikZ**
-  (Hình `fig:act-uc17`, `fig:act-uc18`). Cần vẽ lại đẹp, thêm swimlane nếu muốn phân vai Unity/SUMO.
+- 🟡 Biểu đồ hoạt động UC14 (lái xe) và UC15 (trả quyền/re-anchor) — **đã vẽ nháp TikZ**
+  (Hình `fig:act-uc14`, `fig:act-uc15`). Cần vẽ lại đẹp, thêm swimlane nếu muốn phân vai Unity/SUMO.
 - ✅ Bảng so sánh công cụ mô phỏng (mục 2.1, `tab:khaosat-sosanh`) — đã có, dùng được luôn.
 - 🟡 Sơ đồ kiến trúc tổng quát + vòng lặp TraCI (Chương 3, `fig:congnghe-architecture`, `fig:traci-loop`)
   — **đã vẽ nháp TikZ**; vẽ lại đẹp khi hoàn thiện.
@@ -200,8 +204,8 @@ trau chuốt) — cần vẽ lại đẹp bằng công cụ UML (draw.io / StarU
 2. ✅ Viết Chương 0 (Lời cảm ơn, Tóm tắt) và Chương 1 (Giới thiệu).
 3. **Viết Chương 6 (Kết luận & hướng phát triển)** — GVHD yêu cầu làm sớm cùng Tóm tắt,
    vì hai phần này định khung "đã làm gì / đạt gì / còn gì" cho cả báo cáo.
-4. ✅ Viết Chương 2 (use case) — gồm 20 use case, đặc tả chi tiết 6 use case + biểu đồ nháp.
-5. ✅ Viết Phụ lục B (đặc tả đầy đủ 14 use case còn lại).
+4. ✅ Viết Chương 2 (use case) — gồm 17 use case, đặc tả chi tiết 6 use case + biểu đồ nháp.
+5. ✅ Viết Phụ lục B (đặc tả đầy đủ 11 use case còn lại).
 6. ✅ Viết Chương 3 (công nghệ) — tái sử dụng + bổ sung mục Unity Physics & luồng 2 chiều.
 7. ✅ Viết Chương 4 (thiết kế + thực nghiệm) — kiến trúc 3 cổng, máy trạng thái, module, kiểm thử.
    **Còn thiếu (cần làm tay):** chụp ảnh màn hình (`fig:demo-*`) và đo + điền số liệu hiệu năng (`tab:perf`).

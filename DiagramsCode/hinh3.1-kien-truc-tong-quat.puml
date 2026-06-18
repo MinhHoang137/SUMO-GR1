@@ -1,0 +1,25 @@
+@startuml hinh3.1-kien-truc-tong-quat
+left to right direction
+
+skinparam defaultFontSize 13
+skinparam defaultFontName Arial
+skinparam ArrowColor #555555
+skinparam ArrowThickness 1.5
+
+skinparam component {
+    BackgroundColor #dae8fc
+    BorderColor     #6c8ebf
+    BorderThickness 1.5
+    FontColor       #1a1a1a
+}
+
+component "SUMO\n(mô phỏng vi mô)" as SUMO
+component "TraCI / Python\n(điều phối)"    as PY
+component "Unity\n(hiển thị 3D)"          as UNITY
+
+SUMO  --> PY    : trạng thái
+PY    --> SUMO  : điều khiển
+PY    --> UNITY : dữ liệu hiển thị
+UNITY --> PY    : vị trí xe lái
+
+@enduml

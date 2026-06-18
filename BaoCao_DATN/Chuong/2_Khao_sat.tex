@@ -102,7 +102,7 @@ và bản đồ, vận hành mô phỏng, quan sát và điều khiển, lái xe
 quả. Lưu ý việc hiển thị phương tiện, đèn tín hiệu và người đi bộ là hành vi tự
 động của hệ thống xảy ra trong quá trình chạy mô phỏng (nhóm B), không phải thao
 tác độc lập của người dùng; chúng được mô hình hóa là quan hệ \textit{«include»}
-bên trong UC6 và UC7. Biểu đồ use case tổng quát ở Hình \ref{fig:uc-tongquat}
+bên trong UC7 và UC8. Biểu đồ use case tổng quát ở Hình \ref{fig:uc-tongquat}
 thể hiện quan hệ giữa tác nhân với năm nhóm chức năng này.
 
 \begin{figure}[H]
@@ -126,24 +126,25 @@ làm cơ sở cho các biểu đồ phân rã ở các mục tiếp theo.
 		\multicolumn{3}{l}{\textit{A. Chuẩn bị kịch bản \& bản đồ}} \\
 		UC1 & Tạo bản đồ từ lưới mê cung & Người dùng \\
 		UC2 & Nhập bản đồ từ OpenStreetMap & Người dùng \\
-		UC3 & Sinh tuyến đường cho phương tiện & Người dùng \\
-		UC4 & Sinh tuyến đường cho người đi bộ & Người dùng \\
-		UC5 & Cấu hình tham số mô phỏng & Người dùng \\
+		UC3 & Nạp kịch bản tự dựng từ netedit & Người dùng \\
+		UC4 & Sinh tuyến đường cho phương tiện & Người dùng \\
+		UC5 & Sinh tuyến đường cho người đi bộ & Người dùng \\
+		UC6 & Cấu hình tham số mô phỏng & Người dùng \\
 		\multicolumn{3}{l}{\textit{B. Vận hành mô phỏng}} \\
-		UC6 & Chạy mô phỏng thời gian thực & Người dùng \\
-		UC7 & Chạy mô phỏng chế độ phát lại & Người dùng \\
-		UC8 & Chạy kèm giao diện sumo-gui & Người dùng \\
+		UC7 & Chạy mô phỏng thời gian thực & Người dùng \\
+		UC8 & Chạy mô phỏng chế độ phát lại & Người dùng \\
+		UC9 & Chạy kèm giao diện sumo-gui & Người dùng \\
 		\multicolumn{3}{l}{\textit{C. Quan sát \& điều khiển}} \\
-		UC9 & Điều khiển camera quan sát & Người dùng \\
-		UC10 & Tạm dừng / tiếp tục mô phỏng & Người dùng \\
-		UC11 & Điều chỉnh tốc độ mô phỏng & Người dùng \\
-		UC12 & Lọc đối tượng hiển thị theo vùng & Người dùng \\
+		UC10 & Điều khiển camera quan sát & Người dùng \\
+		UC11 & Tạm dừng / tiếp tục mô phỏng & Người dùng \\
+		UC12 & Điều chỉnh tốc độ mô phỏng & Người dùng \\
+		UC13 & Lọc đối tượng hiển thị theo vùng & Người dùng \\
 		\multicolumn{3}{l}{\textit{D. Lái xe tương tác}} \\
-		UC13 & Chiếm quyền điều khiển và lái xe & Người dùng \\
-		UC14 & Trả quyền điều khiển phương tiện & Người dùng \\
+		UC14 & Chiếm quyền điều khiển và lái xe & Người dùng \\
+		UC15 & Trả quyền điều khiển phương tiện & Người dùng \\
 		\multicolumn{3}{l}{\textit{E. Kết quả \& lưu trữ}} \\
-		UC15 & Xử lý va chạm sinh xác xe & Người dùng \\
-		UC16 & Ghi và lưu trữ phiên mô phỏng & Người dùng \\
+		UC16 & Xử lý va chạm sinh xác xe & Người dùng \\
+		UC17 & Ghi và lưu trữ phiên mô phỏng & Người dùng \\
 		\hline
 	\end{tabular}
 \end{table}
@@ -168,8 +169,8 @@ hành tạo mạng đường (từ lưới mê cung hoặc từ bản đồ Open
 
 Nhóm này gồm các use case khởi chạy mô phỏng theo các chế độ khác nhau: thời gian
 thực, phát lại, và kèm giao diện \texttt{sumo-gui} để đối chiếu. Các use case này
-tương tác với trình mô phỏng \gls{SUMO}. UC6 và
-UC7 tự động bao gồm việc hiển thị phương tiện, đèn tín hiệu và người đi bộ dưới
+tương tác với trình mô phỏng \gls{SUMO}. UC7 và
+UC8 tự động bao gồm việc hiển thị phương tiện, đèn tín hiệu và người đi bộ dưới
 dạng quan hệ \textit{«include»}. Hình \ref{fig:uc-nhomB} thể hiện nhóm chức năng
 này.
 
@@ -252,12 +253,12 @@ dùng có dữ liệu bản đồ thực tế.
 
 \subsection{Đặc tả use case Sinh tuyến đường cho phương tiện}
 
-Bảng dưới đây đặc tả use case UC3 -- bước tiếp theo sau khi đã có mạng đường,
+Bảng dưới đây đặc tả use case UC4 -- bước tiếp theo sau khi đã có mạng đường,
 sinh các tuyến di chuyển cho phương tiện trong kịch bản.
 
 \begin{table}[H]
 	\centering
-	\caption{Đặc tả use case UC3 -- Sinh tuyến đường cho phương tiện}
+	\caption{Đặc tả use case UC4 -- Sinh tuyến đường cho phương tiện}
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
 		\textbf{Tên} & Sinh tuyến đường cho phương tiện \\
@@ -273,12 +274,12 @@ sinh các tuyến di chuyển cho phương tiện trong kịch bản.
 
 \subsection{Đặc tả use case Chạy mô phỏng thời gian thực}
 
-Bảng dưới đây đặc tả use case UC6 -- use case cốt lõi của hệ thống, kết nối
+Bảng dưới đây đặc tả use case UC7 -- use case cốt lõi của hệ thống, kết nối
 Python với \gls{SUMO} và truyền dữ liệu liên tục sang ứng dụng Unity để hiển thị.
 
 \begin{table}[H]
 	\centering
-	\caption{Đặc tả use case UC6 -- Chạy mô phỏng thời gian thực}
+	\caption{Đặc tả use case UC7 -- Chạy mô phỏng thời gian thực}
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
 		\textbf{Tên} & Chạy mô phỏng thời gian thực \\
@@ -294,12 +295,12 @@ Python với \gls{SUMO} và truyền dữ liệu liên tục sang ứng dụng U
 
 \subsection{Đặc tả use case Tạm dừng và tiếp tục mô phỏng}
 
-Bảng dưới đây đặc tả use case UC10 -- thao tác điều khiển quá trình chạy mô
+Bảng dưới đây đặc tả use case UC11 -- thao tác điều khiển quá trình chạy mô
 phỏng, đảm bảo đồng bộ trạng thái giữa \gls{SUMO} và ứng dụng hiển thị.
 
 \begin{table}[H]
 	\centering
-	\caption{Đặc tả use case UC10 -- Tạm dừng và tiếp tục mô phỏng}
+	\caption{Đặc tả use case UC11 -- Tạm dừng và tiếp tục mô phỏng}
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
 		\textbf{Tên} & Tạm dừng và tiếp tục mô phỏng \\
@@ -315,13 +316,13 @@ phỏng, đảm bảo đồng bộ trạng thái giữa \gls{SUMO} và ứng d�
 
 \subsection{Đặc tả use case Chiếm quyền điều khiển và lái xe}
 
-Bảng dưới đây đặc tả use case UC13. Do use case này có luồng trạng thái phức tạp
+Bảng dưới đây đặc tả use case UC14. Do use case này có luồng trạng thái phức tạp
 (chuyển đổi giữa điều khiển tự động và thủ công, xử lý va chạm), biểu đồ hoạt
-động ở Hình \ref{fig:act-uc13} mô tả chi tiết các nhánh.
+động ở Hình \ref{fig:act-uc14} mô tả chi tiết các nhánh.
 
 \begin{table}[H]
 	\centering
-	\caption{Đặc tả use case UC13 -- Chiếm quyền điều khiển và lái xe}
+	\caption{Đặc tả use case UC14 -- Chiếm quyền điều khiển và lái xe}
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
 		\textbf{Tên} & Chiếm quyền điều khiển và lái xe \\
@@ -329,7 +330,7 @@ Bảng dưới đây đặc tả use case UC13. Do use case này có luồng tr�
 		\textbf{Mô tả} & Người dùng chọn một phương tiện đang do \gls{SUMO} điều khiển và chuyển nó sang chế độ lái thủ công bằng vật lý. \\
 		\textbf{Tiền điều kiện} & Mô phỏng đang chạy; tồn tại phương tiện có thể chiếm quyền. \\
 		\textbf{Luồng chính} & (1) Người dùng chọn phương tiện và yêu cầu chiếm quyền. (2) Hệ thống chuyển phương tiện sang chế độ điều khiển bởi người dùng và bật vật lý. (3) Người dùng điều khiển bằng bàn phím. (4) Hệ thống phản ánh vị trí xe sang \gls{SUMO} để các xe khác phản ứng. \\
-		\textbf{Luồng phụ} & (3a) Xe đang lái va chạm với xe khác: hệ thống đánh dấu trạng thái va chạm để xử lý khi trả quyền (xem UC15). \\
+		\textbf{Luồng phụ} & (3a) Xe đang lái va chạm với xe khác: hệ thống đánh dấu trạng thái va chạm để xử lý khi trả quyền (xem UC16). \\
 		\textbf{Hậu điều kiện} & Phương tiện ở trạng thái do người dùng điều khiển. \\
 		\hline
 	\end{tabular}
@@ -337,20 +338,20 @@ Bảng dưới đây đặc tả use case UC13. Do use case này có luồng tr�
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.55\textwidth]{Hinhve/hinh2.8-chiemquyen.png}
+	\includegraphics[width=0.7\textwidth]{Hinhve/hinh2.8-chiemquyen.png}
 	\caption{Biểu đồ hoạt động use case Chiếm quyền và lái xe}
-	\label{fig:act-uc13}
+	\label{fig:act-uc14}
 \end{figure}
 
 \subsection{Đặc tả use case Trả quyền điều khiển phương tiện}
 
-Bảng dưới đây đặc tả use case UC14. Hình \ref{fig:act-uc14} mô tả luồng hoạt
+Bảng dưới đây đặc tả use case UC15. Hình \ref{fig:act-uc15} mô tả luồng hoạt
 động với các nhánh xử lý tùy theo trạng thái xe (va chạm, trong ngưỡng, ngoài
 ngưỡng).
 
 \begin{table}[H]
 	\centering
-	\caption{Đặc tả use case UC14 -- Trả quyền điều khiển phương tiện}
+	\caption{Đặc tả use case UC15 -- Trả quyền điều khiển phương tiện}
 	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
 		\hline
 		\textbf{Tên} & Trả quyền điều khiển phương tiện \\
@@ -358,7 +359,7 @@ ngưỡng).
 		\textbf{Mô tả} & Người dùng thả một phương tiện đang lái; hệ thống đưa xe trở lại làn đường để \gls{SUMO} tiếp tục điều khiển, hoặc loại bỏ xe nếu không thể đưa về làn. \\
 		\textbf{Tiền điều kiện} & Phương tiện đang ở trạng thái do người dùng điều khiển. \\
 		\textbf{Luồng chính} & (1) Người dùng yêu cầu trả quyền. (2) Hệ thống tìm làn đường gần nhất với vị trí hiện tại của xe. (3) Nếu khoảng cách trong ngưỡng cho phép, hệ thống đưa xe về làn, cấp tuyến mới và trả quyền cho \gls{SUMO}. (4) Phương tiện tiếp tục di chuyển tự động. \\
-		\textbf{Luồng phụ} & (2a) Xe ở trạng thái va chạm: chuyển sang xử lý xác xe thay vì trả về \gls{SUMO} (UC15). (3a) Vị trí xe quá xa mọi làn đường: hệ thống loại bỏ phương tiện. \\
+		\textbf{Luồng phụ} & (2a) Xe ở trạng thái va chạm: chuyển sang xử lý xác xe thay vì trả về \gls{SUMO} (UC16). (3a) Vị trí xe quá xa mọi làn đường: hệ thống loại bỏ phương tiện. \\
 		\textbf{Hậu điều kiện} & Phương tiện được trả về \gls{SUMO} hoặc bị loại bỏ. \\
 		\hline
 	\end{tabular}
@@ -366,9 +367,9 @@ ngưỡng).
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.75\textwidth]{Hinhve/hinh2.9-traquyen.png}
+	\includegraphics[width=1\textwidth]{Hinhve/hinh2.9-traquyen.png}
 	\caption{Biểu đồ hoạt động use case Trả quyền điều khiển}
-	\label{fig:act-uc14}
+	\label{fig:act-uc15}
 \end{figure}
 
 \section{Yêu cầu phi chức năng}
@@ -399,7 +400,7 @@ ba chiều.
 
 Chương này đã khảo sát hiện trạng các công cụ quan sát mô phỏng giao thông, chỉ
 ra khoảng trống về khả năng hiển thị ba chiều có tương tác theo góc nhìn người
-tham gia giao thông, và phân tích yêu cầu của hệ thống thông qua mười sáu use case
+tham gia giao thông, và phân tích yêu cầu của hệ thống thông qua mười bảy use case
 thuộc năm nhóm chức năng. Các use case quan trọng đã được đặc tả chi tiết kèm
 biểu đồ hoạt động cho những luồng phức tạp. Các yêu cầu này là cơ sở để lựa chọn
 công nghệ ở Chương 3 và thiết kế hệ thống ở Chương 4.

@@ -11,9 +11,10 @@ actor "Người dùng" as User
 rectangle "A. Chuẩn bị kịch bản & bản đồ" {
   usecase "UC1. Tạo bản đồ\ntừ mê cung" as UC1
   usecase "UC2. Nhập bản đồ\nOpenStreetMap" as UC2
-  usecase "UC3. Sinh tuyến\ncho phương tiện" as UC3
-  usecase "UC4. Sinh tuyến\ncho người đi bộ" as UC4
-  usecase "UC5. Cấu hình\ntham số mô phỏng" as UC5
+  usecase "UC3. Nạp kịch bản\ntự dựng (netedit)" as UC3
+  usecase "UC4. Sinh tuyến\ncho phương tiện" as UC4
+  usecase "UC5. Sinh tuyến\ncho người đi bộ" as UC5
+  usecase "UC6. Cấu hình\ntham số mô phỏng" as UC6
 }
 
 User -- UC1
@@ -21,5 +22,6 @@ User -- UC2
 User -- UC3
 User -- UC4
 User -- UC5
+User -- UC6
 
 @enduml

@@ -39,18 +39,10 @@ chiếm quyền điều khiển một phương tiện, dữ liệu còn đi theo
 gửi vị trí phương tiện do người dùng lái về Python để phản ánh vào \gls{SUMO}.
 Hình \ref{fig:congnghe-architecture} minh họa kiến trúc tổng quát này.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
-	\begin{tikzpicture}[every node/.style={font=\small}]
-		\node[draw, rounded corners, minimum width=2.6cm, minimum height=1.1cm, align=center] (sumo) {SUMO\\(mô phỏng vi mô)};
-		\node[draw, rounded corners, minimum width=2.6cm, minimum height=1.1cm, align=center, right=2.8cm of sumo] (py) {TraCI / Python\\(điều phối)};
-		\node[draw, rounded corners, minimum width=2.6cm, minimum height=1.1cm, align=center, right=2.8cm of py] (unity) {Unity\\(hiển thị 3D)};
-		\draw[-{Latex}] ([yshift=4pt]sumo.east) -- ([yshift=4pt]py.west) node[midway, above, font=\scriptsize] {trạng thái};
-		\draw[-{Latex}] ([yshift=-4pt]py.west) -- ([yshift=-4pt]sumo.east) node[midway, below, font=\scriptsize] {điều khiển};
-		\draw[-{Latex}] ([yshift=4pt]py.east) -- ([yshift=4pt]unity.west) node[midway, above, font=\scriptsize] {dữ liệu hiển thị};
-		\draw[-{Latex}] ([yshift=-4pt]unity.west) -- ([yshift=-4pt]py.east) node[midway, below, font=\scriptsize] {vị trí xe lái};
-	\end{tikzpicture}
-	\caption{Kiến trúc tổng quát hệ thống mô phỏng và hiển thị 3D (bản nháp)}
+	\includegraphics[width=0.85\linewidth]{Hinhve/hinh3.1-kien-truc-tong-quat.png}
+	\caption{Kiến trúc tổng quát hệ thống mô phỏng và hiển thị 3D}
 	\label{fig:congnghe-architecture}
 \end{figure}
 
@@ -162,19 +154,10 @@ thái đèn tín hiệu. Mỗi vòng lặp tương ứng với một bước th�
 thành luồng dữ liệu theo chuỗi thời gian. Hình \ref{fig:traci-loop} minh họa vòng
 lặp này.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
-	\begin{tikzpicture}[node distance=0.7cm and 1.4cm, every node/.style={font=\small}]
-		\node[draw, rounded corners, align=center] (con) {Kết nối\\SUMO};
-		\node[draw, rounded corners, align=center, right=of con] (step) {Tiến một\\bước};
-		\node[draw, rounded corners, align=center, right=of step] (get) {Lấy trạng\\thái};
-		\node[draw, rounded corners, align=center, right=of get] (send) {Gửi sang\\Unity};
-		\draw[-{Latex}] (con) -- (step);
-		\draw[-{Latex}] (step) -- (get);
-		\draw[-{Latex}] (get) -- (send);
-		\draw[-{Latex}] (send.south) -- ++(0,-0.7) -| node[near start, below, font=\scriptsize] {lặp đến khi hết mô phỏng} (step.south);
-	\end{tikzpicture}
-	\caption{Vòng lặp điều khiển và thu thập dữ liệu bằng TraCI (bản nháp)}
+	\includegraphics[width=0.36\linewidth]{Hinhve/hinh3.2-control-loop.png}
+	\caption{Vòng lặp điều khiển và thu thập dữ liệu bằng TraCI}
 	\label{fig:traci-loop}
 \end{figure}
 

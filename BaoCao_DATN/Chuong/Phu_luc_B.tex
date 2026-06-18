@@ -2,7 +2,7 @@
 \begin{document}
 
 Phụ lục này đặc tả chi tiết các use case còn lại của hệ thống, ngoài sáu use case
-nghiệp vụ chính đã được đặc tả trong Chương 2 (UC2, UC3, UC6, UC10, UC13, UC14).
+nghiệp vụ chính đã được đặc tả trong Chương 2 (UC2, UC4, UC7, UC11, UC14, UC15).
 Mỗi use case được mô tả theo cùng một khuôn dạng gồm: tên, tác nhân, mô tả, tiền
 điều kiện, luồng sự kiện chính, luồng sự kiện phụ và hậu điều kiện. Tác nhân
 chính của hệ thống là Người dùng; trình mô phỏng \gls{SUMO} tham gia với vai trò
@@ -21,6 +21,23 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
 		\textbf{Luồng chính} & (1) Người dùng chọn tệp lưới và số làn. (2) Hệ thống đọc kích thước và ma trận lưới. (3) Hệ thống tạo nút giao cho các ô lối đi và sinh cạnh nối các ô kề nhau. (4) Hệ thống ghi các tệp mô tả nút, cạnh và điểm qua đường. (5) Hệ thống biên dịch thành tệp mạng đường hoàn chỉnh. \\
 		\textbf{Luồng phụ} & (2a) Tệp lưới sai định dạng: hệ thống báo lỗi và dừng. (5a) Biên dịch mạng thất bại: hệ thống báo lỗi và dừng. \\
 		\textbf{Hậu điều kiện} & Tệp mạng đường được tạo, sẵn sàng cho bước sinh tuyến. \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Đặc tả use case Nạp kịch bản tự dựng từ netedit}
+
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+		\hline
+		\textbf{Tên} & Nạp kịch bản tự dựng từ netedit \\
+		\textbf{Tác nhân} & Người dùng \\
+		\textbf{Mô tả} & Người dùng cung cấp kịch bản do mình tự dựng bằng netedit; hệ thống xác thực và nạp vào để chạy mô phỏng mà không cần qua bước sinh tuyến tự động. \\
+		\textbf{Tiền điều kiện} & Người dùng đã dựng kịch bản bằng netedit và xuất ra thư mục chứa ít nhất tệp \texttt{.net.xml} và \texttt{.rou.xml}. \\
+		\textbf{Luồng chính} & (1) Người dùng chọn Tab ``Custom Script (netedit)'' trong giao diện khởi chạy. (2) Người dùng chọn thư mục chứa kịch bản. (3) Hệ thống kiểm tra sự tồn tại của \texttt{.net.xml} và \texttt{.rou.xml}. (4) Hệ thống sao chép các tệp vào thư mục chuẩn và ghi tệp cấu hình mô phỏng. (5) Hệ thống khởi chạy mô phỏng với kịch bản đã nạp. \\
+		\textbf{Luồng phụ} & (3a) Thư mục thiếu \texttt{.net.xml} hoặc \texttt{.rou.xml}: hệ thống báo lỗi và yêu cầu chọn lại. \\
+		\textbf{Hậu điều kiện} & Kịch bản do người dùng cung cấp được nạp thành công, sẵn sàng để chạy mô phỏng. \\
 		\hline
 	\end{tabular}
 \end{table}

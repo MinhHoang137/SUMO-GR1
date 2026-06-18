@@ -1,4 +1,4 @@
-@startuml hinh2.9-hoat-dong-uc14
+@startuml hinh2.9-hoat-dong-uc15
 skinparam defaultFontName Arial
 skinparam defaultFontSize 13
 skinparam ActivityBackgroundColor #FEFECE
@@ -15,7 +15,7 @@ start
 
 |Hệ thống|
 if (Xe đã bị va chạm phá hủy?) then (Có)
-  :Chuyển sang luồng xử lý xác xe (UC15);
+  :Chuyển sang luồng xử lý xác xe (UC16);
 else (Không)
   :Truy vấn máy chủ tìm làn đường gần nhất;
   if (Khoảng cách trong ngưỡng cho phép?) then (Có)

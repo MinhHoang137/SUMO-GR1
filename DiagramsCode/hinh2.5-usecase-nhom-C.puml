@@ -9,15 +9,15 @@ skinparam ArrowColor #333333
 actor "Người dùng" as User
 
 rectangle "C. Quan sát & điều khiển" {
-  usecase "UC9. Điều khiển\ncamera quan sát" as UC9
-  usecase "UC10. Tạm dừng /\ntiếp tục" as UC10
-  usecase "UC11. Điều chỉnh\ntốc độ" as UC11
-  usecase "UC12. Lọc đối tượng\nhiển thị" as UC12
+  usecase "UC10. Điều khiển\ncamera quan sát" as UC10
+  usecase "UC11. Tạm dừng /\ntiếp tục" as UC11
+  usecase "UC12. Điều chỉnh\ntốc độ" as UC12
+  usecase "UC13. Lọc đối tượng\nhiển thị" as UC13
 }
 
-User -- UC9
 User -- UC10
 User -- UC11
 User -- UC12
+User -- UC13
 
 @enduml
