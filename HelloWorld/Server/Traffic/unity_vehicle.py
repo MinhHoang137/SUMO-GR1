@@ -277,9 +277,14 @@ def process_vehicle_updates(traci):
                 traci.vehicle.setLaneChangeMode(veh_id, 0)
 
                 if state == 3:
-                    # Xác xe: đông cứng tại chỗ → các xe sau dồn lại gây ùn ứ.
+                    # Xác xe: đông cứng tại chỗ không phải là không di chuyển, mà là nó không thể tự di chuyển nữa
+                    # Do đó, vẫn mirror vị trí client gửi nhưng set tốc độ = 0 để SUMO không di chuyển.
                     # Despawn do client điều khiển (gửi state 0 khi hết N bước).
                     traci.vehicle.setSpeed(veh_id, 0)
+                    traci.vehicle.moveToXY(vehID=veh_id,
+                                       edgeID="", laneIndex=0,
+                                       x=pos[0], y=pos[1],
+                                       angle=angle, keepRoute=0)
                     if veh_id not in wrecked_ids:
                         traci.vehicle.setColor(veh_id, (255, 165, 0, 255))  # cam: xác xe
                         wrecked_ids.add(veh_id)

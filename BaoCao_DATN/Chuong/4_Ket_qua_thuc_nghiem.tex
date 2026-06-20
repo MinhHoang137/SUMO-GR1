@@ -98,6 +98,43 @@ Cách phân chia mô-đun và quan hệ phụ thuộc giữa hai phía được 
 
 \section{Thiết kế chi tiết}
 
+\subsection{Thiết kế module dựng bản đồ 3D}
+
+Module dựng bản đồ 3D chịu trách nhiệm xây dựng cảnh ba chiều nền --- gồm mặt
+đường, nút giao, vạch sang đường và công trình --- từ dữ liệu mạng đường của
+\gls{SUMO}. Module này chỉ chạy \emph{một lần} khi khởi chạy, trước khi vòng
+lặp mô phỏng bắt đầu, và hoạt động hoàn toàn tách biệt với vòng lặp đó.
+
+\textbf{Phía Python.} Khi Unity gửi yêu cầu \texttt{"RoadDataRequest"} qua cổng
+5050, \texttt{render\_map.py} gọi tuần tự bốn nguồn dữ liệu: lớp
+\texttt{EdgeReader} (\texttt{edgeType0.py}) trích xuất đa tuyến trung tâm và
+chiều rộng từng làn đường từ tệp \texttt{.net.xml} của \gls{SUMO}; lớp
+\texttt{CrossRoadReader} (\texttt{crossRoad.py}) trích xuất hình dạng đa giác
+nút giao; lớp \texttt{CrossingReader} (\texttt{crossing.py}) trích xuất vạch
+sang đường; và một hàm riêng đọc đa giác công trình từ tệp OpenStreetMap nếu
+bản đồ có nguồn gốc OSM. Toàn bộ dữ liệu được đóng gói thành một gói \gls{JSON}
+và gửi về Unity qua cổng 5050; đồng thời ghi ra tệp \texttt{road\_data.json}
+trong thư mục phiên để phục vụ kiểm tra.
+
+\textbf{Phía Unity.} Hình~\ref{fig:class-road} trình bày cấu trúc lớp module
+phía Unity. \texttt{RoadDataListener} nhận gói \gls{JSON}, giải tuần tự hóa vào
+lớp trung gian \texttt{RoadData}, rồi chép dữ liệu sang \texttt{RoadDataSO}
+--- một ScriptableObject đóng vai trò kho dữ liệu dùng chung cho bốn lớp Maker.
+Mỗi Maker đọc \texttt{RoadDataSO} trong \texttt{Start()} và dựng Mesh cho một
+loại đối tượng địa lý: \texttt{EdgeMaker} cho mặt đường, \texttt{JunctionMaker}
+cho nút giao, \texttt{CrossingMaker} cho vạch sang đường, và
+\texttt{BuildingMaker} cho công trình (chỉ hoạt động với bản đồ OSM). Sau khi
+bốn Maker hoàn tất, cảnh ba chiều nền sẵn sàng để vòng lặp mô phỏng cập nhật
+phương tiện lên trên. Chi tiết thuật toán dựng Mesh được trình bày trong
+Chương~5.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.2.1-so-do-lop-ban-do-unity.png}
+	\caption{Sơ đồ lớp module dựng bản đồ 3D phía Unity}
+	\label{fig:class-road}
+\end{figure}
+
 \subsection{Máy trạng thái điều khiển phương tiện}
 
 Điểm thiết kế cốt lõi của phần tương tác là một máy trạng thái xác định quyền
@@ -149,9 +186,9 @@ luồng tải lên.
 	\label{fig:dataflow-seq}
 \end{figure}
 
-\subsection{Thiết kế một số lớp chủ đạo}
+\subsection{Thiết kế module giao thông}
 
-Trong phạm vi báo cáo, một số lớp chủ đạo được trình bày như sau.
+Trong phạm vi báo cáo, một số lớp chủ đạo của module giao thông được trình bày như sau.
 
 \begin{itemize}[leftmargin=2em]
 	\item \texttt{TrafficerManager} (Unity): quản lý vòng đời phương tiện theo dữ
@@ -168,8 +205,12 @@ Trong phạm vi báo cáo, một số lớp chủ đạo được trình bày nh
 	\texttt{TrafficerManager}, đóng gói thành lô và chuyển cho \texttt{VehicleSender};
 	ngoài ra gửi tín hiệu one-shot trả quyền (state\,=\,1) để server xóa xe ngay.
 	\item \texttt{SimulationSession} (Python): gom toàn bộ kết quả của một lần chạy
-	vào thư mục phiên \texttt{result/\{bản\_đồ\}-\{thời\_điểm\}/} và ghi chuỗi
-	trạng thái theo bước dưới dạng luồng đệm vào \texttt{scenario.json}.
+	vào thư mục phiên \texttt{result/\{bản\_đồ\}-\{thời\_điểm\}/}; mở tệp
+	\texttt{scenario.json} ở chế độ streaming và ghi từng khung trạng thái qua
+	\texttt{record\_frame()}, tự đẩy đệm khi đạt ngưỡng 10\,MB.
+	\item \texttt{TrafficerData}, \texttt{TrafficLightData} (Python): lớp dữ liệu
+	đóng gói trạng thái phương tiện và đèn tín hiệu sau mỗi bước mô phỏng;
+	phương thức \texttt{to\_dict()} chuyển sang \gls{JSON} để gửi qua TCP.
 \end{itemize}
 
 Quan hệ giữa các lớp chủ đạo phía Unity được minh họa ở Hình \ref{fig:class-core}.
@@ -177,8 +218,23 @@ Quan hệ giữa các lớp chủ đạo phía Unity được minh họa ở Hì
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.2.4-so-do-lop-unity.png}
-	\caption{Sơ đồ lớp các lớp chủ đạo phía Unity. Lớp \texttt{SimulationSession} thuộc phía Python, không liên kết trực tiếp với nhóm lớp này.}
+	\caption{Sơ đồ lớp các lớp chủ đạo phía Unity (nhóm quản lý phương tiện và điều khiển lái).}
 	\label{fig:class-core}
+\end{figure}
+
+Phía Python server, các lớp và mô-đun giao thông được tổ chức thành ba nhóm:
+tầng dữ liệu gồm \texttt{TrafficerData} và \texttt{TrafficLightData} đóng gói
+trạng thái từng đối tượng; tầng đọc trạng thái gồm các mô-đun
+\texttt{trafficer.py}, \texttt{unity\_vehicle.py} và \texttt{trafficLight.py}
+gọi \gls{TraCI} để trích xuất dữ liệu mỗi bước; và lớp \texttt{SimulationSession}
+quản lý toàn bộ đầu ra của một phiên chạy vào thư mục riêng.
+Hình~\ref{fig:class-traffic-server} minh họa quan hệ giữa các thành phần này.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.2.5-so-do-lop-traffic-server.png}
+	\caption{Sơ đồ lớp và mô-đun giao thông phía Python server}
+	\label{fig:class-traffic-server}
 \end{figure}
 
 \subsection{Lưu trữ dữ liệu}

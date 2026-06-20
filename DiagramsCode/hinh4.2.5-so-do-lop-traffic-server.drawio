@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="5.0">
   <diagram id="diagram_traffic_server" name="hinh4.2.5-so-do-lop-traffic-server">
-    <mxGraphModel dx="1285" dy="1673" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="1607" dy="1867" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -23,10 +23,10 @@
           <mxGeometry height="115" width="250" x="40" y="540" as="geometry" />
         </mxCell>
         <mxCell id="MUVEH" parent="1" style="shape=component;align=center;verticalAlign=middle;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="&lt;b&gt;unity_vehicle.py&lt;/b&gt;&lt;br&gt;«module»&lt;br&gt;&lt;hr&gt;process_vehicle_updates(traci)&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(26, 26, 26), rgb(215, 215, 215));&quot;&gt;_remove_vehicle()&amp;nbsp;&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="115" width="280" x="310" y="410" as="geometry" />
+          <mxGeometry height="115" width="280" x="307.5" y="420" as="geometry" />
         </mxCell>
         <mxCell id="MTFL" parent="1" style="shape=component;align=center;verticalAlign=middle;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="&lt;b&gt;trafficLight.py&lt;/b&gt;&lt;br/&gt;«module»&lt;br/&gt;&lt;hr/&gt;read_traffic_lights(traci)" vertex="1">
-          <mxGeometry height="115" width="250" x="610" y="290" as="geometry" />
+          <mxGeometry height="115" width="250" x="600" y="305" as="geometry" />
         </mxCell>
         <mxCell id="e_traff_tfd" edge="1" parent="1" source="MTRAFF" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#555555;strokeWidth=2;fontFamily=Arial;fontSize=12;dashed=1;endArrow=open;endFill=0;" target="TFD" value="tạo / đóng gói">
           <mxGeometry relative="1" as="geometry">
@@ -53,8 +53,20 @@
         <mxCell id="e_tld_tcp" edge="1" parent="1" source="TLD" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;strokeWidth=2;fontFamily=Arial;fontSize=12;dashed=1;endArrow=open;endFill=0;" target="TCP_NOTE" value="to_dict()→JSON">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="LEG" parent="1" style="text;html=1;align=left;fontFamily=Arial;fontSize=12;strokeColor=none;fillColor=none;" value="Hộp vàng: class / dataclass Python&lt;br/&gt;Hộp xanh: module Python (function-level)&lt;br/&gt;- - nét đứt: dependency (tạo / dùng / gửi)" vertex="1">
-          <mxGeometry height="56" width="420" x="30" y="710" as="geometry" />
+        <mxCell id="SS" parent="1" style="swimlane;fontFamily=Arial;fontSize=14;fontStyle=0;startSize=54;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&#39;font-size:12px&#39;&gt;«class»&lt;/font&gt;&lt;br/&gt;&lt;b&gt;SimulationSession&lt;/b&gt;" vertex="1">
+          <mxGeometry height="240" width="270" x="610" y="-115" as="geometry" />
+        </mxCell>
+        <mxCell id="SS_c" parent="SS" style="text;html=1;align=left;fontFamily=Arial;fontSize=13;spacingLeft=6;strokeColor=none;fillColor=none;" value="+ MAX_BUFFER_SIZE : int&lt;br/&gt;+ csv_path : str&lt;br/&gt;+ road_data_path : str&lt;br/&gt;+ scenario_path : str&lt;br/&gt;+ session_dir : str&lt;hr/&gt;+ open()&lt;br/&gt;+ record_frame(data)&lt;br/&gt;+ save_road_data(data)&lt;br/&gt;+ close()" vertex="1">
+          <mxGeometry height="186" width="270" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="FILE_NOTE" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1.5;fontFamily=Arial;fontSize=13;" value="result/{bản_đồ}-{timestamp}/&lt;br/&gt;trips.csv · summary.json&lt;br/&gt;road_data.json · scenario.json" vertex="1">
+          <mxGeometry height="75" width="270" x="610" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ss_file" edge="1" parent="1" source="SS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#82b366;strokeWidth=2;fontFamily=Arial;fontSize=12;dashed=1;endArrow=open;endFill=0;" target="FILE_NOTE" value="ghi tệp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LEG" parent="1" style="text;html=1;align=left;fontFamily=Arial;fontSize=12;strokeColor=none;fillColor=none;" value="Hộp vàng: class / dataclass Python&lt;br/&gt;Hộp xanh: module Python (function-level)&lt;br/&gt;Hộp xanh lá: tệp/thư mục đầu ra&lt;br/&gt;- - nét đứt: dependency (tạo / dùng / gửi / ghi)" vertex="1">
+          <mxGeometry height="70" width="450" x="30" y="710" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
