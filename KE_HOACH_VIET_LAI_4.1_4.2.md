@@ -216,10 +216,14 @@ sang tên file mới theo bảng 3a. **Không đổi bất kỳ thứ gì khác*
 3. ✅ Sửa các `\includegraphics` trong tex sang tên file mới
 4. ✅ Biên dịch thử — PDF 68 trang, không lỗi tham chiếu hình
 
-**Bước 1 — Cập nhật drawio hinh4.1.2 (sơ đồ module):**
-- Thêm box `ROAD` vào khối Unity
-- Cập nhật nhãn cạnh liên khung PY→UN
-- Export PNG → `BaoCao_DATN/Hinhve/hinh4.1.2-so-do-goi-module.png`
+**Bước 1 — Cập nhật drawio hinh4.1.2 (sơ đồ module):** ✅ XONG (chờ export PNG)
+- ✅ Thêm box `ROAD` (Dựng bản đồ 3D · RoadDataListener · Maker) vào khối Unity
+- ✅ Thêm cạnh UNET → ROAD nhãn "road_data (một lần)"
+- ✅ Cập nhật nhãn cạnh liên khung PY→UN: thêm "road_data (một lần)"
+- ✅ Dịch TRAFFIC/VEH/UI/OPT xuống 70px, mở rộng khối Unity thêm 100px
+- ✅ Cập nhật bảng `tab:unity-modules`: thêm hàng "Dựng bản đồ 3D (Road)"
+- ✅ Mở rộng đoạn văn 4.1.3 phía Unity: thêm mô tả nhóm bản đồ
+- ⏳ Export PNG → `BaoCao_DATN/Hinhve/hinh4.1.2-so-do-goi-module.png` (cần mở draw.io thủ công)
 
 **Bước 2 — Vẽ mới drawio hinh4.2.1 (pipeline bản đồ):**
 - Tạo `DiagramsCode/hinh4.2.1-pipeline-dung-ban-do.drawio`

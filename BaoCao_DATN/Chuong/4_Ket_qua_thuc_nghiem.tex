@@ -61,8 +61,11 @@ cho kịch bản mô phỏng; và mô-đun \emph{Lưu phiên} ghi kết quả m�
 thư mục phiên gồm nhật ký hành trình, bản tóm tắt, dữ liệu mạng đường và chuỗi
 trạng thái theo bước.
 
-Phía Unity đảm nhiệm hiển thị và tương tác, gồm các nhóm mô-đun chính trình bày
-trong Bảng \ref{tab:unity-modules}.
+Phía Unity đảm nhiệm hiển thị và tương tác, gồm bảy nhóm mô-đun chính trình bày
+trong Bảng \ref{tab:unity-modules}. Trong đó, nhóm mô-đun \emph{Dựng bản đồ 3D}
+nhận dữ liệu mạng đường từ Python một lần khi khởi chạy và dựng lưới đa giác cho
+mặt đường, nút giao, vạch sang đường và công trình, tạo nên cảnh ba chiều nền cho
+toàn bộ phiên mô phỏng.
 
 \begin{table}[htbp]
 	\centering
@@ -73,6 +76,7 @@ trong Bảng \ref{tab:unity-modules}.
 		\textbf{Nhóm mô-đun} & \textbf{Nhiệm vụ} \\
 		\hline
 		Mạng (Network) & Kết nối TCP, nhận dữ liệu mạng đường và dữ liệu mô phỏng. \\
+		Dựng bản đồ 3D (Road) & Nhận dữ liệu mạng đường một lần khi khởi chạy; dựng Mesh mặt đường, nút giao, vạch sang đường và công trình. \\
 		Giao thông (Traffic) & Quản lý vòng đời và cập nhật phương tiện, đèn tín hiệu, người đi bộ; nội suy chuyển động. \\
 		Phương tiện người lái (UnityVehicle) & Chiếm quyền, lái bằng vật lý, gửi dữ liệu xe lên server, xử lý va chạm. \\
 		Tối ưu (Optimization) & Lọc đối tượng theo vùng quan sát, giảm số lệnh vẽ. \\
