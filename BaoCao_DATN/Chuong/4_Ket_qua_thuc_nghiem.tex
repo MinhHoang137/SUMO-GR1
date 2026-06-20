@@ -43,7 +43,7 @@ lệnh tạm dừng, tiếp tục, kết thúc và cập nhật tham số.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.85\linewidth]{Hinhve/hinh4.1-thiet-ke-kien-truc-chi-tiet.png}
+	\includegraphics[width=0.85\linewidth]{Hinhve/hinh4.1.1-thiet-ke-kien-truc-chi-tiet.png}
 	\caption{Kiến trúc chi tiết với ba kênh TCP và hai luồng dữ liệu}
 	\label{fig:arch-detail}
 \end{figure}
@@ -61,8 +61,11 @@ cho kịch bản mô phỏng; và mô-đun \emph{Lưu phiên} ghi kết quả m�
 thư mục phiên gồm nhật ký hành trình, bản tóm tắt, dữ liệu mạng đường và chuỗi
 trạng thái theo bước.
 
-Phía Unity đảm nhiệm hiển thị và tương tác, gồm các nhóm mô-đun chính trình bày
-trong Bảng \ref{tab:unity-modules}.
+Phía Unity đảm nhiệm hiển thị và tương tác, gồm bảy nhóm mô-đun chính trình bày
+trong Bảng \ref{tab:unity-modules}. Trong đó, nhóm mô-đun \emph{Dựng bản đồ 3D}
+nhận dữ liệu mạng đường từ Python một lần khi khởi chạy và dựng lưới đa giác cho
+mặt đường, nút giao, vạch sang đường và công trình, tạo nên cảnh ba chiều nền cho
+toàn bộ phiên mô phỏng.
 
 \begin{table}[htbp]
 	\centering
@@ -73,6 +76,7 @@ trong Bảng \ref{tab:unity-modules}.
 		\textbf{Nhóm mô-đun} & \textbf{Nhiệm vụ} \\
 		\hline
 		Mạng (Network) & Kết nối TCP, nhận dữ liệu mạng đường và dữ liệu mô phỏng. \\
+		Dựng bản đồ 3D (Road) & Nhận dữ liệu mạng đường một lần khi khởi chạy; dựng Mesh mặt đường, nút giao, vạch sang đường và công trình. \\
 		Giao thông (Traffic) & Quản lý vòng đời và cập nhật phương tiện, đèn tín hiệu, người đi bộ; nội suy chuyển động. \\
 		Phương tiện người lái (UnityVehicle) & Chiếm quyền, lái bằng vật lý, gửi dữ liệu xe lên server, xử lý va chạm. \\
 		Tối ưu (Optimization) & Lọc đối tượng theo vùng quan sát, giảm số lệnh vẽ. \\
@@ -87,12 +91,49 @@ Cách phân chia mô-đun và quan hệ phụ thuộc giữa hai phía được 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.75\linewidth]{Hinhve/hinh4.2-so-do-goi-module.png}
+	\includegraphics[width=0.75\linewidth]{Hinhve/hinh4.1.2-so-do-goi-module.png}
 	\caption{Sơ đồ gói các nhóm mô-đun hai phía và quan hệ phụ thuộc}
 	\label{fig:packages}
 \end{figure}
 
 \section{Thiết kế chi tiết}
+
+\subsection{Thiết kế module dựng bản đồ 3D}
+
+Module dựng bản đồ 3D chịu trách nhiệm xây dựng cảnh ba chiều nền --- gồm mặt
+đường, nút giao, vạch sang đường và công trình --- từ dữ liệu mạng đường của
+\gls{SUMO}. Module này chỉ chạy \emph{một lần} khi khởi chạy, trước khi vòng
+lặp mô phỏng bắt đầu, và hoạt động hoàn toàn tách biệt với vòng lặp đó.
+
+\textbf{Phía Python.} Khi Unity gửi yêu cầu \texttt{"RoadDataRequest"} qua cổng
+5050, \texttt{render\_map.py} gọi tuần tự bốn nguồn dữ liệu: lớp
+\texttt{EdgeReader} (\texttt{edgeType0.py}) trích xuất đa tuyến trung tâm và
+chiều rộng từng làn đường từ tệp \texttt{.net.xml} của \gls{SUMO}; lớp
+\texttt{CrossRoadReader} (\texttt{crossRoad.py}) trích xuất hình dạng đa giác
+nút giao; lớp \texttt{CrossingReader} (\texttt{crossing.py}) trích xuất vạch
+sang đường; và một hàm riêng đọc đa giác công trình từ tệp OpenStreetMap nếu
+bản đồ có nguồn gốc OSM. Toàn bộ dữ liệu được đóng gói thành một gói \gls{JSON}
+và gửi về Unity qua cổng 5050; đồng thời ghi ra tệp \texttt{road\_data.json}
+trong thư mục phiên để phục vụ kiểm tra.
+
+\textbf{Phía Unity.} Hình~\ref{fig:class-road} trình bày cấu trúc lớp module
+phía Unity. \texttt{RoadDataListener} nhận gói \gls{JSON}, giải tuần tự hóa vào
+lớp trung gian \texttt{RoadData}, rồi chép dữ liệu sang \texttt{RoadDataSO}
+--- một ScriptableObject đóng vai trò kho dữ liệu dùng chung cho bốn lớp Maker.
+Mỗi Maker đọc \texttt{RoadDataSO} trong \texttt{Start()} và dựng Mesh cho một
+loại đối tượng địa lý: \texttt{EdgeMaker} cho mặt đường, \texttt{JunctionMaker}
+cho nút giao, \texttt{CrossingMaker} cho vạch sang đường, và
+\texttt{BuildingMaker} cho công trình (chỉ hoạt động với bản đồ OSM). Sau khi
+bốn Maker hoàn tất, cảnh ba chiều nền sẵn sàng để vòng lặp mô phỏng cập nhật
+phương tiện lên trên. Chi tiết thuật toán dựng Mesh được trình bày trong
+Chương~5.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.2.1-so-do-lop-ban-do-unity.png}
+	\caption{Sơ đồ lớp module dựng bản đồ 3D phía Unity}
+	\label{fig:class-road}
+\end{figure}
 
 \subsection{Máy trạng thái điều khiển phương tiện}
 
@@ -105,7 +146,7 @@ Hình \ref{fig:existstate} mô tả máy trạng thái.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.3-may-trang-thai-1-phuong-tien.png}
+	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.2.2-may-trang-thai-1-phuong-tien.png}
 	\caption{Máy trạng thái điều khiển phương tiện}
 	\label{fig:existstate}
 \end{figure}
@@ -140,14 +181,14 @@ luồng tải lên.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.4-trinh-tu-trao-doi.png}
+	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.2.3-trinh-tu-trao-doi.png}
 	\caption{Trình tự trao đổi thông điệp giữa mô phỏng và hiển thị trong một bước}
 	\label{fig:dataflow-seq}
 \end{figure}
 
-\subsection{Thiết kế một số lớp chủ đạo}
+\subsection{Thiết kế module giao thông}
 
-Trong phạm vi báo cáo, một số lớp chủ đạo được trình bày như sau.
+Trong phạm vi báo cáo, một số lớp chủ đạo của module giao thông được trình bày như sau.
 
 \begin{itemize}[leftmargin=2em]
 	\item \texttt{TrafficerManager} (Unity): quản lý vòng đời phương tiện theo dữ
@@ -164,17 +205,36 @@ Trong phạm vi báo cáo, một số lớp chủ đạo được trình bày nh
 	\texttt{TrafficerManager}, đóng gói thành lô và chuyển cho \texttt{VehicleSender};
 	ngoài ra gửi tín hiệu one-shot trả quyền (state\,=\,1) để server xóa xe ngay.
 	\item \texttt{SimulationSession} (Python): gom toàn bộ kết quả của một lần chạy
-	vào thư mục phiên \texttt{result/\{bản\_đồ\}-\{thời\_điểm\}/} và ghi chuỗi
-	trạng thái theo bước dưới dạng luồng đệm vào \texttt{scenario.json}.
+	vào thư mục phiên \texttt{result/\{bản\_đồ\}-\{thời\_điểm\}/}; mở tệp
+	\texttt{scenario.json} ở chế độ streaming và ghi từng khung trạng thái qua
+	\texttt{record\_frame()}, tự đẩy đệm khi đạt ngưỡng 10\,MB.
+	\item \texttt{TrafficerData}, \texttt{TrafficLightData} (Python): lớp dữ liệu
+	đóng gói trạng thái phương tiện và đèn tín hiệu sau mỗi bước mô phỏng;
+	phương thức \texttt{to\_dict()} chuyển sang \gls{JSON} để gửi qua TCP.
 \end{itemize}
 
 Quan hệ giữa các lớp chủ đạo phía Unity được minh họa ở Hình \ref{fig:class-core}.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.5-so-do-lop-unity.png}
-	\caption{Sơ đồ lớp các lớp chủ đạo phía Unity. Lớp \texttt{SimulationSession} thuộc phía Python, không liên kết trực tiếp với nhóm lớp này.}
+	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.2.4-so-do-lop-unity.png}
+	\caption{Sơ đồ lớp các lớp chủ đạo phía Unity (nhóm quản lý phương tiện và điều khiển lái).}
 	\label{fig:class-core}
+\end{figure}
+
+Phía Python server, các lớp và mô-đun giao thông được tổ chức thành ba nhóm:
+tầng dữ liệu gồm \texttt{TrafficerData} và \texttt{TrafficLightData} đóng gói
+trạng thái từng đối tượng; tầng đọc trạng thái gồm các mô-đun
+\texttt{trafficer.py}, \texttt{unity\_vehicle.py} và \texttt{trafficLight.py}
+gọi \gls{TraCI} để trích xuất dữ liệu mỗi bước; và lớp \texttt{SimulationSession}
+quản lý toàn bộ đầu ra của một phiên chạy vào thư mục riêng.
+Hình~\ref{fig:class-traffic-server} minh họa quan hệ giữa các thành phần này.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.2.5-so-do-lop-traffic-server.png}
+	\caption{Sơ đồ lớp và mô-đun giao thông phía Python server}
+	\label{fig:class-traffic-server}
 \end{figure}
 
 \subsection{Lưu trữ dữ liệu}
@@ -189,7 +249,7 @@ phiên tiêu biểu được minh họa ở Hình \ref{fig:session-tree}.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.95\linewidth]{Hinhve/hinh4.6-cau-truc-thu-muc-phien.png}
+	\includegraphics[width=0.95\linewidth]{Hinhve/hinh4.2.6-cau-truc-thu-muc-phien.png}
 	\caption{Cấu trúc một thư mục phiên tiêu biểu, đặt tên theo bản đồ và thời điểm chạy. Tệp \texttt{trips.csv} đổi thành \texttt{trips-ped.csv} khi kịch bản có người đi bộ.}
 	\label{fig:session-tree}
 \end{figure}
@@ -249,7 +309,7 @@ bảng hướng dẫn phím điều khiển cũng có thể bật/tắt khi cầ
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.98\linewidth]{Hinhve/hinh4.7-bo-cuc-giao-dien.png}
+	\includegraphics[width=0.98\linewidth]{Hinhve/hinh4.2.7-bo-cuc-giao-dien.png}
 	\caption{Bố cục giao diện người dùng trong cảnh ba chiều}
 	\label{fig:ui-layout}
 \end{figure}
@@ -312,7 +372,7 @@ thể hiện một số chức năng tiêu biểu.
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.78\linewidth]{Hinhve/hinh4.8-anh-goc-nhin-3d-tu-tren-cao.png}
+	\includegraphics[width=0.78\linewidth]{Hinhve/hinh4.3.1-anh-goc-nhin-3d-tu-tren-cao.png}
 	\caption{Minh họa cảnh giao thông ba chiều trong Unity: góc nhìn từ trên cao}
 	\label{fig:demo-scene}
 \end{figure}
@@ -320,13 +380,13 @@ thể hiện một số chức năng tiêu biểu.
 \begin{figure}[htbp]
 	\centering
 	\begin{subfigure}[b]{0.72\linewidth}
-		\includegraphics[width=\linewidth]{Hinhve/hinh4.9.2-goc-nhin-cua-1-xe-tu-hanh-boi-may-chu.png}
+		\includegraphics[width=\linewidth]{Hinhve/hinh4.3.2a-goc-nhin-cua-1-xe-tu-hanh-boi-may-chu.png}
 		\caption{Quan sát xe tự hành, nút ``Chiếm quyền'' hiện ra}
 		\label{fig:demo-drive-observe}
 	\end{subfigure}
 	\vspace{0.3em}
 	\begin{subfigure}[b]{0.72\linewidth}
-		\includegraphics[width=\linewidth]{Hinhve/hinh4.9-goc-nhin-trong-xe.png}
+		\includegraphics[width=\linewidth]{Hinhve/hinh4.3.2b-goc-nhin-trong-xe.png}
 		\caption{Đang lái xe (camera gắn CLIENT\_CAR)}
 		\label{fig:demo-drive-active}
 	\end{subfigure}
@@ -336,7 +396,7 @@ thể hiện một số chức năng tiêu biểu.
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.78\linewidth]{Hinhve/hinh4.10-va-cham-gay-un-tac.png}
+	\includegraphics[width=0.78\linewidth]{Hinhve/hinh4.3.3-va-cham-gay-un-tac.png}
 	\caption{Minh họa xử lý va chạm: xác xe nằm lại gây ùn ứ dòng giao thông}
 	\label{fig:demo-crash}
 \end{figure}
