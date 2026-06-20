@@ -16,6 +16,27 @@ import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 
 
+class ClampedSpinbox(ttk.Spinbox):
+    """Spinbox tự snap về [from_, to] khi người dùng rời field (FocusOut)."""
+    def __init__(self, parent, **kw):
+        lo = kw.get('from_', 0)
+        hi = kw.get('to', 100)
+        var = kw.get('textvariable')
+        super().__init__(parent, **kw)
+        self._lo = lo
+        self._hi = hi
+        self._is_int = not (isinstance(lo, float) or isinstance(hi, float)
+                            or isinstance(var, tk.DoubleVar))
+        self.bind('<FocusOut>', self._clamp)
+
+    def _clamp(self, _e=None):
+        try:
+            v = max(float(self._lo), min(float(self._hi), float(self.get())))
+            self.set(int(round(v)) if self._is_int else v)
+        except (ValueError, tk.TclError):
+            self.set(self._lo)
+
+
 class AppLauncher:
     def __init__(self, root):
         self.root = root
@@ -115,7 +136,7 @@ class AppLauncher:
         ttk.Label(main_frame, text="Num Lanes (xe/bên):").grid(row=2, column=0, sticky=tk.W, pady=5)
         lane_frame = ttk.Frame(main_frame)
         lane_frame.grid(row=2, column=1, sticky=tk.W, padx=5, pady=5)
-        ttk.Spinbox(lane_frame, from_=1, to=3, textvariable=self.num_lanes, width=10).pack(side=tk.LEFT)
+        ClampedSpinbox(lane_frame, from_=1, to=3, textvariable=self.num_lanes, width=10).pack(side=tk.LEFT)
         ttk.Label(lane_frame, text="(1–3 làn xe mỗi bên, +1 làn đi bộ)",
                   foreground="#666").pack(side=tk.LEFT, padx=6)
 
@@ -138,14 +159,14 @@ class AppLauncher:
         self.bench_frame.grid(row=5, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=10)
 
         ttk.Label(self.bench_frame, text="Number of Pairs:").grid(row=0, column=0, sticky=tk.W, pady=2)
-        ttk.Spinbox(self.bench_frame, from_=1, to=1000, textvariable=self.num_pairs, width=10).grid(row=0, column=1, sticky=tk.W, pady=2)
+        ClampedSpinbox(self.bench_frame, from_=1, to=1000, textvariable=self.num_pairs, width=10).grid(row=0, column=1, sticky=tk.W, pady=2)
 
         ttk.Label(self.bench_frame, text="Car Crossroad Type:").grid(row=1, column=0, sticky=tk.W, pady=2)
         ttk.Combobox(self.bench_frame, textvariable=self.car_cr_type,
                      values=["CS", "SS", "IO", "OI"], width=8, state="readonly").grid(row=1, column=1, sticky=tk.W, pady=2)
 
         ttk.Label(self.bench_frame, text="Tần suất sinh xe (s):").grid(row=2, column=0, sticky=tk.W, pady=2)
-        ttk.Spinbox(self.bench_frame, from_=1, to=600, increment=1,
+        ClampedSpinbox(self.bench_frame, from_=1, to=600, increment=1,
                     textvariable=self.car_period, width=10).grid(row=2, column=1, sticky=tk.W, pady=2)
 
         ttk.Checkbutton(self.bench_frame, text="Create pedestrians?",
@@ -159,18 +180,18 @@ class AppLauncher:
 
         self.ped_imp_lbl = ttk.Label(self.bench_frame, text="Ped Impatience (0-1):")
         self.ped_imp_lbl.grid(row=5, column=0, sticky=tk.W, pady=2)
-        self.ped_imp_sb = ttk.Spinbox(self.bench_frame, from_=0.0, to=1.0,
+        self.ped_imp_sb = ClampedSpinbox(self.bench_frame, from_=0.0, to=1.0,
                                        increment=0.1, textvariable=self.ped_impatience, width=10)
         self.ped_imp_sb.grid(row=5, column=1, sticky=tk.W, pady=2)
 
         self.ped_period_lbl = ttk.Label(self.bench_frame, text="Tần suất sinh người đi bộ (s):")
         self.ped_period_lbl.grid(row=6, column=0, sticky=tk.W, pady=2)
-        self.ped_period_sb = ttk.Spinbox(self.bench_frame, from_=1, to=600, increment=1,
+        self.ped_period_sb = ClampedSpinbox(self.bench_frame, from_=1, to=600, increment=1,
                                           textvariable=self.ped_period, width=10)
         self.ped_period_sb.grid(row=6, column=1, sticky=tk.W, pady=2)
 
         ttk.Label(self.bench_frame, text="Độ dài mô phỏng (s):").grid(row=7, column=0, sticky=tk.W, pady=2)
-        ttk.Spinbox(self.bench_frame, from_=60, to=86400, increment=60,
+        ClampedSpinbox(self.bench_frame, from_=60, to=86400, increment=60,
                     textvariable=self.sim_duration, width=10).grid(row=7, column=1, sticky=tk.W, pady=2)
 
         # VRP frame
@@ -178,10 +199,10 @@ class AppLauncher:
         self.vrp_frame.grid(row=6, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=5)
 
         ttk.Label(self.vrp_frame, text="Number of Clients:").grid(row=0, column=0, sticky=tk.W, pady=2)
-        ttk.Spinbox(self.vrp_frame, from_=1, to=1000, textvariable=self.num_clients, width=10).grid(row=0, column=1, sticky=tk.W, pady=2)
+        ClampedSpinbox(self.vrp_frame, from_=1, to=1000, textvariable=self.num_clients, width=10).grid(row=0, column=1, sticky=tk.W, pady=2)
 
         ttk.Label(self.vrp_frame, text="Number of Staff:").grid(row=1, column=0, sticky=tk.W, pady=2)
-        ttk.Spinbox(self.vrp_frame, from_=1, to=100, textvariable=self.num_staff, width=10).grid(row=1, column=1, sticky=tk.W, pady=2)
+        ClampedSpinbox(self.vrp_frame, from_=1, to=100, textvariable=self.num_staff, width=10).grid(row=1, column=1, sticky=tk.W, pady=2)
 
     def _browse_map(self):
         init_dir = os.path.join(self.server_dir, "map")
@@ -254,12 +275,12 @@ class AppLauncher:
                         variable=self.osm_mode, value="3d").pack(anchor=tk.W)
 
         ttk.Label(frame, text="Số junction:").grid(row=4, column=0, sticky=tk.W, pady=4)
-        ttk.Spinbox(frame, textvariable=self.osm_num_junctions, from_=0, to=9999, width=8).grid(row=4, column=1, sticky=tk.W, padx=5, pady=4)
+        ClampedSpinbox(frame, textvariable=self.osm_num_junctions, from_=0, to=9999, width=8).grid(row=4, column=1, sticky=tk.W, padx=5, pady=4)
         ttk.Label(frame, text="(lấy tối đa nếu vượt số khả dụng)",
                   foreground="#666").grid(row=4, column=2, columnspan=3, sticky=tk.W)
 
         ttk.Label(frame, text="Độ dài tuyến:").grid(row=5, column=0, sticky=tk.W, pady=4)
-        ttk.Spinbox(frame, textvariable=self.osm_edges_per_route, from_=1, to=30, width=8).grid(row=5, column=1, sticky=tk.W, padx=5, pady=4)
+        ClampedSpinbox(frame, textvariable=self.osm_edges_per_route, from_=1, to=30, width=8).grid(row=5, column=1, sticky=tk.W, padx=5, pady=4)
         ttk.Label(frame, text="(số đoạn đường liên tiếp mỗi xe/người đi qua)",
                   foreground="#666").grid(row=5, column=2, columnspan=3, sticky=tk.W)
 
@@ -277,18 +298,18 @@ class AppLauncher:
         ttk.Checkbutton(types_frame, text="Xe", variable=self.osm_gen_car).pack(side=tk.LEFT, padx=(0, 12))
         ttk.Checkbutton(types_frame, text="Người đi bộ", variable=self.osm_gen_ped).pack(side=tk.LEFT, padx=(0, 12))
         ttk.Label(types_frame, text="Impatience:").pack(side=tk.LEFT)
-        ttk.Spinbox(types_frame, textvariable=self.osm_ped_impatience, from_=0.0, to=1.0, increment=0.1, width=6).pack(side=tk.LEFT, padx=4)
+        ClampedSpinbox(types_frame, textvariable=self.osm_ped_impatience, from_=0.0, to=1.0, increment=0.1, width=6).pack(side=tk.LEFT, padx=4)
 
         ttk.Label(frame, text="Tần suất sinh (s):").grid(row=8, column=0, sticky=tk.W, pady=4)
         period_frame = ttk.Frame(frame)
         period_frame.grid(row=8, column=1, columnspan=4, sticky=tk.W)
         ttk.Label(period_frame, text="Xe:").pack(side=tk.LEFT)
-        ttk.Spinbox(period_frame, textvariable=self.osm_car_period, from_=0, to=3600, width=6).pack(side=tk.LEFT, padx=(2, 12))
+        ClampedSpinbox(period_frame, textvariable=self.osm_car_period, from_=0, to=3600, width=6).pack(side=tk.LEFT, padx=(2, 12))
         ttk.Label(period_frame, text="Người đi bộ:").pack(side=tk.LEFT)
-        ttk.Spinbox(period_frame, textvariable=self.osm_ped_period, from_=0, to=3600, width=6).pack(side=tk.LEFT, padx=2)
+        ClampedSpinbox(period_frame, textvariable=self.osm_ped_period, from_=0, to=3600, width=6).pack(side=tk.LEFT, padx=2)
 
         ttk.Label(frame, text="Độ dài mô phỏng (s):").grid(row=9, column=0, sticky=tk.W, pady=4)
-        ttk.Spinbox(frame, textvariable=self.osm_sim_duration, from_=0, to=86400, increment=60, width=8).grid(row=9, column=1, sticky=tk.W, padx=5, pady=4)
+        ClampedSpinbox(frame, textvariable=self.osm_sim_duration, from_=0, to=86400, increment=60, width=8).grid(row=9, column=1, sticky=tk.W, padx=5, pady=4)
         ttk.Label(frame, text="(thời điểm dừng sinh xe/người)",
                   foreground="#666").grid(row=9, column=2, columnspan=3, sticky=tk.W)
 

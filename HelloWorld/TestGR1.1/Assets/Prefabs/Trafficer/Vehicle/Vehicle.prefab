@@ -599,6 +599,7 @@ GameObject:
   - component: {fileID: 2072834613958318885}
   - component: {fileID: 1704537091116626375}
   - component: {fileID: 3545682479688531744}
+  - component: {fileID: 558852940650623968}
   m_Layer: 9
   m_Name: Vehicle
   m_TagString: Untagged
@@ -787,6 +788,18 @@ MonoBehaviour:
   frontRightWheel: {fileID: 2747901789868676847}
   rearLeftWheel: {fileID: 7868170421424700919}
   rearRightWheel: {fileID: 2375648380520492913}
+--- !u!114 &558852940650623968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3077825237559346182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b858a74cccfa51449966f2e31ca9c71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FilterTrafficer
 --- !u!1 &3902958007662858814
 GameObject:
   m_ObjectHideFlags: 0
