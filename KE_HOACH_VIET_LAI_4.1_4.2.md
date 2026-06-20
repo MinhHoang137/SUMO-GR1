@@ -43,25 +43,32 @@ File: `DiagramsCode/hinh4.2.drawio`
 
 Sau khi sửa drawio → export PNG → thay thế `BaoCao_DATN/Hinhve/hinh4.2-so-do-goi-module.png`.
 
-### 1b. Cập nhật bảng tab:unity-modules (trong tex)
+### 1b. Cập nhật đoạn văn + bảng tab:unity-modules (trong tex)
 
-Thêm một hàng vào `\begin{tabular}` ở mục 4.1.3:
+**Hiện trạng:** đoạn văn phía Unity trong 4.1.3 chỉ có một câu dẫn vào bảng
+(`"Phía Unity đảm nhiệm hiển thị và tương tác, gồm các nhóm mô-đun chính trình bày
+trong Bảng X."`). Bảng có 6 hàng, **không có hàng nào về dựng bản đồ**.
+Phía Python đã được mô tả chi tiết 6 nhóm bằng văn xuôi — phía Unity cần bổ sung
+tương tự.
 
+**Việc cần làm:**
+
+1. **Thêm hàng vào bảng** — sau hàng "Mạng (Network)":
 ```latex
-Dựng bản đồ 3D (Road) & Nhận \texttt{road\_data.json} một lần khi khởi động;
-dựng Mesh mặt đường, nút giao, vạch sang đường và công trình từ dữ liệu mạng. \\
+Dựng bản đồ 3D (Road) & Nhận dữ liệu mạng đường một lần khi khởi chạy;
+dựng Mesh mặt đường, nút giao, vạch sang đường và công trình. \\
 ```
 
-**Vị trí chèn:** sau hàng "Mạng (Network)" vì pipeline bản đồ chạy ngay sau khi kết nối mạng.
+2. **Mở rộng đoạn văn phía Unity** — hiện chỉ 1 câu, bổ sung thêm câu mô tả
+nhóm bản đồ (tương tự cách Python được mô tả bằng văn xuôi):
 
-### 1c. Bổ sung 1 câu vào đoạn văn mục 4.1.3
+> "Trong đó, nhóm mô-đun \emph{Dựng bản đồ 3D} nhận dữ liệu mạng đường từ
+> Python một lần khi khởi chạy và dựng lưới đa giác cho mặt đường, nút giao,
+> vạch sang đường và công trình, tạo nên cảnh ba chiều nền cho toàn bộ phiên."
 
-Tại đoạn mô tả phía Unity (hiện kết thúc ở "... cung cấp giao diện điều khiển và xử lý
-tương tác lái xe"), thêm một câu trước hoặc sau câu kết:
-
-> "Ngoài các nhóm trên, nhóm mô-đun \emph{Dựng bản đồ 3D} nhận dữ liệu mạng đường
-> từ Python một lần khi khởi chạy và dựng lưới đa giác cho mặt đường, nút giao,
-> vạch sang đường và công trình, tạo nên cảnh ba chiều nền cho toàn bộ phiên mô phỏng."
+3. **Caption hình 4.1.2** — cân nhắc cập nhật caption từ `"Sơ đồ gói các nhóm
+mô-đun hai phía và quan hệ phụ thuộc"` thành phản ánh đủ 7 nhóm Unity (sau khi
+drawio được cập nhật).
 
 ---
 
