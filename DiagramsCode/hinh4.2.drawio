@@ -1,115 +1,118 @@
-<mxfile host="Electron" modified="2026-03-30T00:00:00.000Z" agent="5.0" version="21.0.0" type="device">
+<mxfile host="app.diagrams.net" agent="5.0">
   <diagram id="diagram_1" name="hinh4.2-so-do-goi-module">
-    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+    <mxGraphModel dx="2477" dy="829" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        
-        <mxCell id="PY" value="Python — Mô phỏng &amp; điều phối" style="shape=folder;whiteSpace=wrap;html=1;fillColor=#f0f4ff;strokeColor=#4a6fa5;strokeWidth=2;fontColor=#1a1a1a;fontStyle=1;fontSize=13;fontFamily=Arial;tabWidth=220;tabHeight=25;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;" vertex="1" parent="1">
-          <mxGeometry x="40" y="40" width="440" height="520" as="geometry" />
+        <mxCell id="PY" parent="1" style="shape=folder;whiteSpace=wrap;html=1;fillColor=#f0f4ff;strokeColor=#4a6fa5;strokeWidth=2;fontColor=#1a1a1a;fontStyle=1;fontSize=15;fontFamily=Arial;tabWidth=320;tabHeight=30;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;" value="&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; Python — Mô phỏng &amp;amp; điều phối" vertex="1">
+          <mxGeometry height="520" width="520" x="-40" y="40" as="geometry" />
         </mxCell>
-        
-        <mxCell id="COORD" value="Điều phối" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="180" y="100" width="160" height="60" as="geometry" />
+        <mxCell id="COORD" parent="1" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="Điều phối" vertex="1">
+          <mxGeometry height="60" width="160" x="180" y="100" as="geometry" />
         </mxCell>
-        
-        <mxCell id="PNET" value="Mạng&lt;br&gt;(tách khung · nén)" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="80" y="220" width="160" height="60" as="geometry" />
+        <mxCell id="PNET" parent="1" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="Mạng&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;(tách khung · nén)" vertex="1">
+          <mxGeometry height="60" width="160" x="80" y="220" as="geometry" />
         </mxCell>
-        
-        <mxCell id="READ" value="Đọc trạng thái&lt;br&gt;(xe · đèn · người đi bộ)" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="280" y="220" width="160" height="60" as="geometry" />
+        <mxCell id="READ" parent="1" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="Đọc trạng thái&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; (xe · đèn · người đi bộ)" vertex="1">
+          <mxGeometry height="60" width="190" x="280" y="220" as="geometry" />
         </mxCell>
-        
-        <mxCell id="UPD" value="Xử lý xe lái" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="80" y="340" width="160" height="60" as="geometry" />
+        <mxCell id="UPD" parent="1" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="Xử lý xe lái" vertex="1">
+          <mxGeometry height="60" width="160" x="-30" y="395" as="geometry" />
         </mxCell>
-        
-        <mxCell id="GEN" value="Sinh bản đồ &amp;amp; tuyến" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="280" y="340" width="160" height="60" as="geometry" />
+        <mxCell id="GEN" parent="1" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;Sinh bản đồ &amp;amp; tuyến" vertex="1">
+          <mxGeometry height="60" width="160" x="300" y="365" as="geometry" />
         </mxCell>
-        
-        <mxCell id="SESS" value="Lưu phiên" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="180" y="460" width="160" height="60" as="geometry" />
+        <mxCell id="SESS" parent="1" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="Lưu phiên" vertex="1">
+          <mxGeometry height="60" width="160" x="180" y="490" as="geometry" />
         </mxCell>
-
-        <mxCell id="e1" value="stream trạng thái (5050)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;" edge="1" parent="1" source="COORD" target="PNET">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e2" value="TraCI mỗi bước" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;" edge="1" parent="1" source="COORD" target="READ">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e3" value="cập nhật xe lái" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;" edge="1" parent="1" source="COORD" target="UPD">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e4" value="khởi tạo kịch bản" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;" edge="1" parent="1" source="COORD" target="GEN">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e5" value="ghi frame &amp;amp; road data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;" edge="1" parent="1" source="COORD" target="SESS">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e6" value="thread nhận (5053)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;" edge="1" parent="1" source="PNET" target="UPD">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <mxCell id="UN" value="Unity — Hiển thị &amp; tương tác" style="shape=folder;whiteSpace=wrap;html=1;fillColor=#f0f4ff;strokeColor=#4a6fa5;strokeWidth=2;fontColor=#1a1a1a;fontStyle=1;fontSize=13;fontFamily=Arial;tabWidth=200;tabHeight=25;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;" vertex="1" parent="1">
-          <mxGeometry x="620" y="40" width="440" height="520" as="geometry" />
-        </mxCell>
-        
-        <mxCell id="SIM" value="Simulation&lt;br&gt;(Realtime · Replay)" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="660" y="100" width="160" height="60" as="geometry" />
-        </mxCell>
-        
-        <mxCell id="UNET" value="Network&lt;br&gt;(nhận · giải nén)" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="860" y="100" width="160" height="60" as="geometry" />
-        </mxCell>
-        
-        <mxCell id="TRAFFIC" value="Traffic&lt;br&gt;(TrafficerManager · TrafficLight)" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="860" y="220" width="160" height="60" as="geometry" />
-        </mxCell>
-        
-        <mxCell id="VEH" value="UnityVehicle&lt;br&gt;(chiếm quyền · xác xe · gửi batch)" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="860" y="340" width="160" height="60" as="geometry" />
-        </mxCell>
-        
-        <mxCell id="UI" value="UI&lt;br&gt;(Camera · HUD · nút điều khiển)" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="660" y="340" width="160" height="60" as="geometry" />
-        </mxCell>
-        
-        <mxCell id="OPT" value="Optimization&lt;br&gt;(lọc vùng · giảm draw call)" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="660" y="460" width="160" height="60" as="geometry" />
-        </mxCell>
-
-        <mxCell id="e7" value="khởi tạo kết nối TCP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;" edge="1" parent="1" source="SIM" target="UNET">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e8" value="cấp dữ liệu mỗi bước" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;" edge="1" parent="1" source="UNET" target="TRAFFIC">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e9" value="quản lý vòng đời xe" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;" edge="1" parent="1" source="TRAFFIC" target="VEH">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e10" value="lắng nghe di chuyển camera" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;" edge="1" parent="1" source="OPT" target="UI">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e11" value="chiếm / trả quyền điều khiển" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;" edge="1" parent="1" source="UI" target="VEH">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e12" value="tạm dừng / điều chỉnh tốc độ" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;" edge="1" parent="1" source="UI" target="SIM">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <mxCell id="e13" value="5050: dữ liệu mô phỏng" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;exitX=1;exitY=0.25;entryX=0;entryY=0.25;" edge="1" parent="1" source="PY" target="UN">
-          <mxGeometry y="-15" relative="1" as="geometry">
+        <mxCell id="e1" edge="1" parent="1" source="COORD" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;entryX=0.349;entryY=0.014;entryDx=0;entryDy=0;entryPerimeter=0;" target="PNET" value="stream trạng thái (5050)">
+          <mxGeometry relative="1" x="0.2969" y="-10" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="e14" value="5053: vị trí xe lái&lt;br&gt;5054: lệnh điều khiển" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;exitX=0;exitY=0.75;entryX=1;entryY=0.75;" edge="1" parent="1" source="UN" target="PY">
-          <mxGeometry y="20" relative="1" as="geometry">
+        <mxCell id="e2" edge="1" parent="1" source="COORD" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;" target="READ" value="TraCI mỗi bước">
+          <mxGeometry relative="1" x="0.6" y="10" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-
+        <mxCell id="e3" edge="1" parent="1" source="COORD" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;" target="UPD" value="cập nhật xe lái">
+          <mxGeometry relative="1" x="-0.038" y="-20" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="COORD" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;" target="GEN" value="khởi tạo kịch bản">
+          <mxGeometry relative="1" x="0.7627" y="-10" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="260" y="300" />
+              <mxPoint x="360" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="COORD" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;" target="SESS" value="ghi frame &amp;amp; road data">
+          <mxGeometry relative="1" x="0.8182" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="PNET" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" target="UPD" value="thread nhận (5053)">
+          <mxGeometry relative="1" x="-0.6757" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UN" parent="1" style="shape=folder;whiteSpace=wrap;html=1;fillColor=#f0f4ff;strokeColor=#4a6fa5;strokeWidth=2;fontColor=#1a1a1a;fontStyle=1;fontSize=15;fontFamily=Arial;tabWidth=330;tabHeight=40;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;" value="&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; Unity — Hiển thị &amp;amp; tương tác" vertex="1">
+          <mxGeometry height="520" width="590" x="-60" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="SIM" parent="1" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="Simulation&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; (Realtime · Replay)" vertex="1">
+          <mxGeometry height="60" width="160" x="-20" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="UNET" parent="1" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="Network&lt;br&gt;(nhận · giải nén)" vertex="1">
+          <mxGeometry height="60" width="160" x="310" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="TRAFFIC" parent="1" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="Traffic&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; (TrafficerManager · TrafficLight)" vertex="1">
+          <mxGeometry height="60" width="160" x="310" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="VEH" parent="1" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="UnityVehicle&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; (chiếm quyền · xác xe · gửi batch)" vertex="1">
+          <mxGeometry height="60" width="160" x="340" y="985" as="geometry" />
+        </mxCell>
+        <mxCell id="UI" parent="1" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="UI&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; (Camera · HUD · nút điều khiển)" vertex="1">
+          <mxGeometry height="60" width="160" x="-20" y="930" as="geometry" />
+        </mxCell>
+        <mxCell id="OPT" parent="1" style="shape=component;align=center;verticalAlign=middle;spacingLeft=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontColor=#1a1a1a;fontFamily=Arial;fontSize=14;" value="Optimization&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; (lọc vùng · giảm draw call)" vertex="1">
+          <mxGeometry height="60" width="160" x="-20" y="1050" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="SIM" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;" target="UNET" value="khởi tạo kết nối TCP">
+          <mxGeometry relative="1" x="-0.0588" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="UNET" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;" target="TRAFFIC" value="cấp dữ liệu mỗi bước">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="TRAFFIC" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;" target="VEH" value="quản lý vòng đời xe">
+          <mxGeometry relative="1" x="0.069" y="18" as="geometry">
+            <mxPoint y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="OPT" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;" target="UI" value="lắng nghe di chuyển camera">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="UI" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;" target="VEH" value="chiếm / trả quyền điều khiển">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="UI" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;" target="SIM" value="tạm dừng / điều chỉnh tốc độ">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="PY" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;exitX=0.214;exitY=1.001;entryX=0;entryY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=130;entryDy=40;entryPerimeter=0;" target="UN" value="5050: dữ liệu mô phỏng">
+          <mxGeometry relative="1" x="-0.0315" y="80" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="UN" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#555555;strokeWidth=1.5;fontFamily=Arial;fontSize=14;fontColor=#1a1a1a;exitX=0;exitY=0;exitDx=425;exitDy=0;exitPerimeter=0;entryX=0.777;entryY=0.994;entryDx=0;entryDy=0;entryPerimeter=0;" target="PY" value="5053: vị trí xe lái&lt;br&gt;5054: lệnh điều khiển">
+          <mxGeometry relative="1" x="-0.0307" y="-85" as="geometry">
+            <mxPoint x="1" y="-5" as="offset" />
+            <mxPoint x="90" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>

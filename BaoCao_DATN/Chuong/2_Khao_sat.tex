@@ -356,18 +356,18 @@ ngưỡng).
 		\hline
 		\textbf{Tên} & Trả quyền điều khiển phương tiện \\
 		\textbf{Tác nhân} & Người dùng, SUMO \\
-		\textbf{Mô tả} & Người dùng thả một phương tiện đang lái; hệ thống đưa xe trở lại làn đường để \gls{SUMO} tiếp tục điều khiển, hoặc loại bỏ xe nếu không thể đưa về làn. \\
+		\textbf{Mô tả} & Người dùng thả một phương tiện đang lái; hệ thống xóa xe khỏi mô phỏng ngay lập tức và Unity tái sử dụng đối tượng khi xe vắng trong luồng tải xuống. \\
 		\textbf{Tiền điều kiện} & Phương tiện đang ở trạng thái do người dùng điều khiển. \\
-		\textbf{Luồng chính} & (1) Người dùng yêu cầu trả quyền. (2) Hệ thống tìm làn đường gần nhất với vị trí hiện tại của xe. (3) Nếu khoảng cách trong ngưỡng cho phép, hệ thống đưa xe về làn, cấp tuyến mới và trả quyền cho \gls{SUMO}. (4) Phương tiện tiếp tục di chuyển tự động. \\
-		\textbf{Luồng phụ} & (2a) Xe ở trạng thái va chạm: chuyển sang xử lý xác xe thay vì trả về \gls{SUMO} (UC16). (3a) Vị trí xe quá xa mọi làn đường: hệ thống loại bỏ phương tiện. \\
-		\textbf{Hậu điều kiện} & Phương tiện được trả về \gls{SUMO} hoặc bị loại bỏ. \\
+		\textbf{Luồng chính} & (1) Người dùng yêu cầu trả quyền. (2) Hệ thống gửi tín hiệu one-shot lên server. (3) Server xóa xe khỏi mô phỏng ngay. (4) Unity tái sử dụng đối tượng khi không còn nhận được dữ liệu xe đó trong luồng tải xuống. \\
+		\textbf{Luồng phụ} & (1a) Xe ở trạng thái va chạm: chuyển sang xử lý xác xe thay vì xóa ngay (UC16). \\
+		\textbf{Hậu điều kiện} & Phương tiện bị xóa khỏi mô phỏng hoặc chuyển sang trạng thái xác xe. \\
 		\hline
 	\end{tabular}
 \end{table}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{Hinhve/hinh2.9-traquyen.png}
+	\includegraphics[width=0.7\textwidth]{Hinhve/hinh2.9-traquyen.png}
 	\caption{Biểu đồ hoạt động use case Trả quyền điều khiển}
 	\label{fig:act-uc15}
 \end{figure}

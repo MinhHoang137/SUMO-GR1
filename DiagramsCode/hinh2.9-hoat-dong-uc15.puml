@@ -14,15 +14,12 @@ start
 :Yêu cầu trả quyền điều khiển;
 
 |Hệ thống|
-if (Xe đã bị va chạm phá hủy?) then (Có)
+if (Xe đã bị va chạm?) then (Có)
   :Chuyển sang luồng xử lý xác xe (UC16);
 else (Không)
-  :Truy vấn máy chủ tìm làn đường gần nhất;
-  if (Khoảng cách trong ngưỡng cho phép?) then (Có)
-    :Đặt lại xe vào làn đường;\nCấp tuyến đường mới,\ntrả quyền cho máy chủ mô phỏng;
-  else (Không)
-    :Loại bỏ phương tiện khỏi mô phỏng;
-  endif
+  :Gửi tín hiệu one-shot state=1 đến server;
+  :Server xóa xe khỏi mô phỏng ngay lập tức;
+  :Unity tái sử dụng đối tượng\nkhi xe vắng trong luồng tải xuống;
 endif
 
 stop

@@ -1,0 +1,95 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="hinh47_ui_layout" name="Trang-1">
+    <mxGraphModel dx="800" dy="500" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="940" pageHeight="580" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="viewport" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="10" y="10" width="760" height="560" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="viewport_lbl" value="Khung nhìn 3D" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=15;fontColor=#6c8ebf;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="280" y="240" width="200" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="crosshair_c" value="&#x271A;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=26;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="372" y="268" width="36" height="36" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="info_box" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffffcc;strokeColor=#555555;strokeWidth=1.5;opacity=80;" vertex="1" parent="1">
+          <mxGeometry x="20" y="452" width="260" height="108" as="geometry"/>
+        </mxCell>
+        <mxCell id="info_title" value="Thông tin" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontStyle=1;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="20" y="455" width="260" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="info_cam" value="Camera: Tự do" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=13;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="20" y="477" width="260" height="18" as="geometry"/>
+        </mxCell>
+        <mxCell id="info_lat" value="Độ trễ: 12 ms" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=13;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="20" y="496" width="260" height="18" as="geometry"/>
+        </mxCell>
+        <mxCell id="info_veh" value="Xe: 48" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=13;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="20" y="515" width="260" height="18" as="geometry"/>
+        </mxCell>
+        <mxCell id="info_ped" value="Người đi bộ: 12" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=13;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="20" y="534" width="260" height="18" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="btn_takeover" value="Chiếm quyền" style="rounded=6;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="286" y="496" width="118" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="btn_pause" value="Tạm dừng" style="rounded=6;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="412" y="496" width="108" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="btn_spawn" value="Tạo xe Unity" style="rounded=6;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="528" y="496" width="116" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="btn_list" value="Người / Xe" style="rounded=6;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="652" y="496" width="108" height="36" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="btn_hint" value="(đang bật)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;fontSize=12;fontColor=#6c8ebf;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="652" y="533" width="108" height="16" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="list_panel" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffffcc;strokeColor=#6c8ebf;strokeWidth=1.5;opacity=85;" vertex="1" parent="1">
+          <mxGeometry x="780" y="10" width="150" height="560" as="geometry"/>
+        </mxCell>
+        <mxCell id="list_title" value="Danh sách Trafficer" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="14" width="150" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="list_sep" value="" style="line;strokeColor=#6c8ebf;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="780" y="36" width="150" height="4" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="li1" value="f_1.0" style="rounded=4;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="786" y="44" width="138" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="li2" value="f_10.0" style="rounded=4;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=14;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="786" y="80" width="138" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="li3" value="f_12.5" style="rounded=4;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=14;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="786" y="116" width="138" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="li4" value="f_8.0" style="rounded=4;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=14;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="786" y="152" width="138" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="li5" value="p_3.0" style="rounded=4;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=14;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="786" y="188" width="138" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="li6" value="p_7.5" style="rounded=4;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=14;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="786" y="224" width="138" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="li_more" value="..." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=17;fontColor=#888888;" vertex="1" parent="1">
+          <mxGeometry x="786" y="260" width="138" height="22" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="note_list" value="(cuộn được)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#888888;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="786" y="540" width="138" height="20" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

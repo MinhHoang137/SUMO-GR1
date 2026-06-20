@@ -1,0 +1,181 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="class-map" name="Trang-1">
+    <mxGraphModel dx="1100" dy="680" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="580" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="py_cont" value="Python Server" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0f4ff;strokeColor=#4a6fa5;strokeWidth=2;strokeDasharray=8 4;fontSize=15;fontStyle=1;verticalAlign=top;spacingTop=4;">
+          <mxGeometry x="20" y="30" width="460" height="510" as="geometry" />
+        </mxCell>
+
+        <mxCell id="crossroad" value="CrossRoadReader" vertex="1" parent="1" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;">
+          <mxGeometry x="40" y="100" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="cr_r1" value="" vertex="1" parent="crossroad" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=1;">
+          <mxGeometry y="30" width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="cr_r1l" value="read_all_junctions()" vertex="1" parent="cr_r1" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=12;overflow=hidden;">
+          <mxGeometry width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="cr_r2" value="" vertex="1" parent="crossroad" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=0;">
+          <mxGeometry y="65" width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="cr_r2l" value="parse_shape(shape)" vertex="1" parent="cr_r2" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=12;overflow=hidden;">
+          <mxGeometry width="200" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edgereader" value="EdgeReader" vertex="1" parent="1" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;">
+          <mxGeometry x="260" y="100" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="er_r1" value="" vertex="1" parent="edgereader" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=1;">
+          <mxGeometry y="30" width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="er_r1l" value="read_edges()" vertex="1" parent="er_r1" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=12;overflow=hidden;">
+          <mxGeometry width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="er_r2" value="" vertex="1" parent="edgereader" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=0;">
+          <mxGeometry y="65" width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="er_r2l" value="_snap_z_to_polygon()" vertex="1" parent="er_r2" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=12;overflow=hidden;">
+          <mxGeometry width="200" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="crossingreader" value="CrossingReader" vertex="1" parent="1" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;">
+          <mxGeometry x="150" y="250" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="cxr_r1" value="" vertex="1" parent="crossingreader" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=1;">
+          <mxGeometry y="30" width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="cxr_r1l" value="read_crossings()" vertex="1" parent="cxr_r1" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=12;overflow=hidden;">
+          <mxGeometry width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="cxr_r2" value="" vertex="1" parent="crossingreader" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=0;">
+          <mxGeometry y="65" width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="cxr_r2l" value="parse_shape(shape)" vertex="1" parent="cxr_r2" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=12;overflow=hidden;">
+          <mxGeometry width="200" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="netxml" value="HelloWorld.net.xml" vertex="1" parent="1" style="shape=document;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=2;">
+          <mxGeometry x="150" y="410" width="200" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="py_label" value="road_data.json&#xa;(jd · ed · cd)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontSize=12;fontStyle=1;">
+          <mxGeometry x="150" y="495" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="un_cont" value="Unity Client" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fff0;strokeColor=#4a6fa5;strokeWidth=2;strokeDasharray=8 4;fontSize=15;fontStyle=1;verticalAlign=top;spacingTop=4;">
+          <mxGeometry x="620" y="30" width="460" height="510" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rdl" value="RoadDataListener" vertex="1" parent="1" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;fontSize=13;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;">
+          <mxGeometry x="640" y="100" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="rdl_r1" value="" vertex="1" parent="rdl" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=1;">
+          <mxGeometry y="30" width="220" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="rdl_r1l" value="StartListening()" vertex="1" parent="rdl_r1" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=12;overflow=hidden;">
+          <mxGeometry width="220" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="rdl_r2" value="" vertex="1" parent="rdl" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=0;">
+          <mxGeometry y="65" width="220" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="rdl_r2l" value="HandleData(json)" vertex="1" parent="rdl_r2" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=12;overflow=hidden;">
+          <mxGeometry width="220" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rdso" value="RoadDataSO" vertex="1" parent="1" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;fontSize=13;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;">
+          <mxGeometry x="640" y="250" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="rdso_r1" value="" vertex="1" parent="rdso" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=1;">
+          <mxGeometry y="30" width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rdso_r1l" value="junctionDatas: List&lt;JunctionData&gt;" vertex="1" parent="rdso_r1" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=11;overflow=hidden;">
+          <mxGeometry width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rdso_r2" value="" vertex="1" parent="rdso" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=1;">
+          <mxGeometry y="60" width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rdso_r2l" value="edgeDatas: List&lt;EdgeData&gt;" vertex="1" parent="rdso_r2" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=11;overflow=hidden;">
+          <mxGeometry width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rdso_r3" value="" vertex="1" parent="rdso" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=0;">
+          <mxGeometry y="90" width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rdso_r3l" value="crossingDatas: List&lt;CrossingData&gt;" vertex="1" parent="rdso_r3" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=11;overflow=hidden;">
+          <mxGeometry width="220" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="em" value="EdgeMaker" vertex="1" parent="1" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;fontSize=13;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;">
+          <mxGeometry x="630" y="430" width="140" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="em_r1" value="" vertex="1" parent="em" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=0;">
+          <mxGeometry y="30" width="140" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="em_r1l" value="CreateEdges()" vertex="1" parent="em_r1" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=12;overflow=hidden;">
+          <mxGeometry width="140" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="jm" value="JunctionMaker" vertex="1" parent="1" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;fontSize=13;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;">
+          <mxGeometry x="790" y="430" width="145" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="jm_r1" value="" vertex="1" parent="jm" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=0;">
+          <mxGeometry y="30" width="145" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="jm_r1l" value="CreateJunctions()" vertex="1" parent="jm_r1" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=12;overflow=hidden;">
+          <mxGeometry width="145" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cxm" value="CrossingMaker" vertex="1" parent="1" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;fontSize=13;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;">
+          <mxGeometry x="710" y="510" width="145" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="cxm_r1" value="" vertex="1" parent="cxm" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;top=0;left=0;right=0;bottom=0;">
+          <mxGeometry y="30" width="145" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="cxm_r1l" value="CreateCrossings()" vertex="1" parent="cxm_r1" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=0;fontSize=12;overflow=hidden;">
+          <mxGeometry width="145" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tcp_arrow" edge="1" source="py_label" target="rdl" parent="1" style="endArrow=block;endFill=1;fontSize=12;strokeColor=#9673a6;strokeWidth=2;fontColor=#9673a6;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" value="TCP :5054">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a_rdl_so" edge="1" source="rdl" target="rdso" parent="1" style="endArrow=block;endFill=1;fontSize=12;strokeColor=#82b366;strokeWidth=2;" value="cập nhật">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a_so_em" edge="1" source="rdso" target="em" parent="1" style="endArrow=block;endFill=1;fontSize=11;strokeColor=#555;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="edgeDatas">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_so_jm" edge="1" source="rdso" target="jm" parent="1" style="endArrow=block;endFill=1;fontSize=11;strokeColor=#555;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="junctionDatas">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_so_cxm" edge="1" source="rdso" target="cxm" parent="1" style="endArrow=block;endFill=1;fontSize=11;strokeColor=#555;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="crossingDatas">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a_net_cr" edge="1" source="netxml" target="crossroad" parent="1" style="endArrow=open;endFill=0;fontSize=11;strokeColor=#888;dashed=1;" value="đọc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_net_er" edge="1" source="netxml" target="edgereader" parent="1" style="endArrow=open;endFill=0;fontSize=11;strokeColor=#888;dashed=1;" value="đọc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_net_cx" edge="1" source="netxml" target="crossingreader" parent="1" style="endArrow=open;endFill=0;fontSize=11;strokeColor=#888;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" value="đọc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a_cr_py" edge="1" source="crossroad" target="py_label" parent="1" style="endArrow=block;endFill=1;fontSize=11;strokeColor=#555;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_er_py" edge="1" source="edgereader" target="py_label" parent="1" style="endArrow=block;endFill=1;fontSize=11;strokeColor=#555;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_cx_py" edge="1" source="crossingreader" target="py_label" parent="1" style="endArrow=block;endFill=1;fontSize=11;strokeColor=#555;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.7;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

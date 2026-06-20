@@ -50,12 +50,16 @@ lệnh tạm dừng, tiếp tục, kết thúc và cập nhật tham số.
 
 \subsection{Thiết kế các mô-đun chính}
 
-Phía Python đảm nhiệm mô phỏng và điều phối, gồm các mô-đun chính: mô-đun điều
-phối khởi tạo các kênh TCP và chạy vòng lặp mô phỏng; mô-đun mạng đóng gói và
-tách khung thông điệp; nhóm mô-đun đọc trạng thái chuyển dữ liệu xe, đèn tín hiệu
-và người đi bộ từ \gls{TraCI} sang định dạng chuẩn; mô-đun cập nhật phương tiện
-xử lý dữ liệu xe do người dùng lái gửi lên; nhóm mô-đun sinh mạng và tuyến tạo
-kịch bản mô phỏng; và mô-đun lưu trữ phiên ghi kết quả của mỗi lần chạy.
+Phía Python đảm nhiệm mô phỏng và điều phối, gồm sáu nhóm mô-đun chính: mô-đun
+\emph{Điều phối} khởi tạo các kênh TCP, chạy vòng lặp mô phỏng và điều phối toàn
+bộ luồng xử lý; mô-đun \emph{Mạng} đóng gói, tách khung thông điệp và nén dữ
+liệu tải xuống; nhóm mô-đun \emph{Đọc trạng thái} trích xuất dữ liệu xe, đèn tín
+hiệu và người đi bộ từ \gls{TraCI} sang định dạng JSON chuẩn; mô-đun \emph{Xử lý
+xe lái} nhận lô dữ liệu từ Unity và phản ánh vào \gls{SUMO} (mirror/freeze/hủy);
+nhóm mô-đun \emph{Sinh bản đồ \& tuyến} tạo mạng đường và lịch trình di chuyển
+cho kịch bản mô phỏng; và mô-đun \emph{Lưu phiên} ghi kết quả mỗi lần chạy vào
+thư mục phiên gồm nhật ký hành trình, bản tóm tắt, dữ liệu mạng đường và chuỗi
+trạng thái theo bước.
 
 Phía Unity đảm nhiệm hiển thị và tương tác, gồm các nhóm mô-đun chính trình bày
 trong Bảng \ref{tab:unity-modules}.
@@ -83,7 +87,7 @@ Cách phân chia mô-đun và quan hệ phụ thuộc giữa hai phía được 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.90\linewidth]{Hinhve/hinh4.2-so-do-goi-module.png}
+	\includegraphics[width=0.75\linewidth]{Hinhve/hinh4.2-so-do-goi-module.png}
 	\caption{Sơ đồ gói các nhóm mô-đun hai phía và quan hệ phụ thuộc}
 	\label{fig:packages}
 \end{figure}
@@ -101,7 +105,7 @@ Hình \ref{fig:existstate} mô tả máy trạng thái.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.78\linewidth]{Hinhve/hinh4.3-may-trang-thai-1-phuong-tien.png}
+	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.3-may-trang-thai-1-phuong-tien.png}
 	\caption{Máy trạng thái điều khiển phương tiện}
 	\label{fig:existstate}
 \end{figure}
@@ -112,25 +116,31 @@ vật lý để người dùng lái; vị trí xe được phản ánh ngược 
 khác phản ứng. Khi một xe đang do người dùng điều khiển hoặc một xác xe va chạm
 với xe do \gls{SUMO} điều khiển, xe bị tông chuyển thành xác xe, bị đông cứng
 trong mô phỏng để gây ùn ứ, và tự bị hủy sau một số bước định trước. Khi trả
-quyền mà xe không va chạm, hệ thống đưa xe trở lại làn gần nhất; nếu quá xa, xe bị
-hủy. Trạng thái bị hủy đưa phương tiện về bộ nhớ tái sử dụng. Chi tiết cơ chế
-chuyển đổi vật lý và đưa xe về làn được trình bày trong Chương 5.
+quyền mà xe không va chạm, server nhận tín hiệu một lần và xóa xe khỏi mô phỏng
+ngay lập tức; phía Unity tái sử dụng đối tượng khi xe vắng khỏi luồng tải xuống.
+Trạng thái bị hủy cũng đưa phương tiện về bộ nhớ tái sử dụng theo cùng cơ chế.
 
 \subsection{Hai luồng dữ liệu giữa mô phỏng và hiển thị}
 
-Hệ thống có hai luồng dữ liệu ngược chiều. Luồng tải xuống truyền trạng thái mô
-phỏng từ Python sang Unity theo từng bước, gồm chỉ số bước hiện tại, trạng thái
-đèn tín hiệu và danh sách đối tượng giao thông; trong đó mỗi đối tượng chứa định
-danh, loại, vị trí, hướng và một số cờ trạng thái. Luồng tải lên truyền dữ liệu
-các phương tiện do người dùng điều khiển từ Unity về Python theo lô trong một
-thông điệp, gồm định danh, vị trí, hướng, tốc độ và trạng thái tồn tại của xe.
-Phía Python dùng luồng tải lên để phản ánh xe người lái vào \gls{SUMO} và để đối
-soát danh sách phương tiện đang được quản lý. Trình tự trao đổi thông điệp trong
-mỗi bước mô phỏng được minh họa ở Hình \ref{fig:dataflow-seq}.
+Hệ thống có hai luồng dữ liệu ngược chiều chạy hoàn toàn độc lập với nhau. Luồng
+tải xuống truyền trạng thái mô phỏng từ Python sang Unity sau mỗi bước mô phỏng,
+gồm chỉ số bước hiện tại, trạng thái đèn tín hiệu và danh sách đối tượng giao
+thông; trong đó mỗi đối tượng chứa định danh, loại, vị trí, hướng và một số cờ
+trạng thái. Để giảm băng thông, dữ liệu tải xuống được nén theo thuật toán
+raw-deflate và mã hóa base64 trước khi gửi; Unity nhận biết gói nén qua tiền tố
+\texttt{GZ:} và giải nén bằng \texttt{DeflateStream}. Luồng tải lên chạy độc lập
+theo coroutine mỗi 0,1 giây, không đồng bộ với nhịp tải xuống: \texttt{UnityVehicleManager}
+lấy danh sách xe do người dùng điều khiển từ \texttt{TrafficerManager}, đóng gói
+thành một lô duy nhất gồm định danh, vị trí, hướng, tốc độ và trạng thái tồn tại
+của từng xe, rồi chuyển cho \texttt{VehicleSender} gửi qua cổng 5053. Phía Python
+dùng luồng tải lên để phản ánh xe người lái vào \gls{SUMO} và đối soát danh sách
+phương tiện đang được quản lý. Hình \ref{fig:dataflow-seq} minh họa hai luồng này
+qua hai khung vòng lặp riêng biệt: khung đen là luồng tải xuống, khung xanh là
+luồng tải lên.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.90\linewidth]{Hinhve/hinh4.4-trinh-tu-trao-doi.png}
+	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.4-trinh-tu-trao-doi.png}
 	\caption{Trình tự trao đổi thông điệp giữa mô phỏng và hiển thị trong một bước}
 	\label{fig:dataflow-seq}
 \end{figure}
@@ -147,17 +157,22 @@ Trong phạm vi báo cáo, một số lớp chủ đạo được trình bày nh
 	thành xác xe; bật/tắt vật lý theo trạng thái; thu thập dữ liệu xe để gửi lên.
 	\item \texttt{WheelController} (Unity): điều khiển bốn bánh xe gồm tăng tốc,
 	đánh lái và phanh khi xe ở chế độ lái.
-	\item \texttt{VehicleSender} (Unity): gửi dữ liệu phương tiện theo lô, giữ lô
-	mới nhất để truyền lên server.
+	\item \texttt{VehicleSender} (Unity): gửi dữ liệu phương tiện theo lô lên cổng
+	5053; giữ lô mới nhất để truyền, bỏ qua các lô cũ hơn nếu kịp nhận thêm.
+	\item \texttt{UnityVehicleManager} (Unity): điều phối luồng tải lên; coroutine
+	của lớp này cứ 0,1 giây lấy danh sách xe \texttt{IsClientOwned} từ
+	\texttt{TrafficerManager}, đóng gói thành lô và chuyển cho \texttt{VehicleSender};
+	ngoài ra gửi tín hiệu one-shot trả quyền (state\,=\,1) để server xóa xe ngay.
 	\item \texttt{SimulationSession} (Python): gom toàn bộ kết quả của một lần chạy
-	vào một thư mục phiên và ghi chuỗi trạng thái theo bước dưới dạng luồng.
+	vào thư mục phiên \texttt{result/\{bản\_đồ\}-\{thời\_điểm\}/} và ghi chuỗi
+	trạng thái theo bước dưới dạng luồng đệm vào \texttt{scenario.json}.
 \end{itemize}
 
 Quan hệ giữa các lớp chủ đạo phía Unity được minh họa ở Hình \ref{fig:class-core}.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.95\linewidth]{Hinhve/hinh4.5-so-do-lop-unity.png}
+	\includegraphics[width=1.00\linewidth]{Hinhve/hinh4.5-so-do-lop-unity.png}
 	\caption{Sơ đồ lớp các lớp chủ đạo phía Unity. Lớp \texttt{SimulationSession} thuộc phía Python, không liên kết trực tiếp với nhóm lớp này.}
 	\label{fig:class-core}
 \end{figure}
@@ -174,29 +189,8 @@ phiên tiêu biểu được minh họa ở Hình \ref{fig:session-tree}.
 
 \begin{figure}[H]
 	\centering
-	\begin{tikzpicture}[>=Latex,
-		fname/.style={font=\footnotesize\ttfamily, anchor=west, inner sep=1pt},
-		desc/.style={font=\footnotesize, anchor=west, inner sep=1pt, text=black!60}]
-		% nodes
-		\node[fname] (root) at (0,0) {result/};
-		\node[fname] (sess) at (0.9,-0.75) {HoanKiem-2026-06-13-09-30-05/};
-		\node[fname] (c1) at (1.8,-1.5) {trips.csv};
-		\node[fname] (c2) at (1.8,-2.2) {summary.json};
-		\node[fname] (c3) at (1.8,-2.9) {road\_data.json};
-		\node[fname] (c4) at (1.8,-3.6) {scenario.json};
-		% descriptions
-		\node[desc] at (5.6,-1.5) {nhật ký hành trình của xe};
-		\node[desc] at (5.6,-2.2) {bản tóm tắt lần chạy};
-		\node[desc] at (5.6,-2.9) {dữ liệu mạng đường (nút, cạnh, vạch qua đường)};
-		\node[desc] at (5.6,-3.6) {chuỗi trạng thái mô phỏng theo từng bước};
-		% connectors
-		\draw (0.35,-0.25) |- (sess.west);
-		\draw (1.25,-1.0) |- (c1.west);
-		\draw (1.25,-1.0) |- (c2.west);
-		\draw (1.25,-1.0) |- (c3.west);
-		\draw (1.25,-1.0) |- (c4.west);
-	\end{tikzpicture}
-	\caption{Cấu trúc một thư mục phiên tiêu biểu (bản nháp), đặt tên theo bản đồ và thời điểm chạy. Tệp \texttt{trips.csv} đổi thành \texttt{trips-ped.csv} khi kịch bản có người đi bộ.}
+	\includegraphics[width=0.95\linewidth]{Hinhve/hinh4.6-cau-truc-thu-muc-phien.png}
+	\caption{Cấu trúc một thư mục phiên tiêu biểu, đặt tên theo bản đồ và thời điểm chạy. Tệp \texttt{trips.csv} đổi thành \texttt{trips-ped.csv} khi kịch bản có người đi bộ.}
 	\label{fig:session-tree}
 \end{figure}
 
@@ -255,50 +249,8 @@ bảng hướng dẫn phím điều khiển cũng có thể bật/tắt khi cầ
 
 \begin{figure}[H]
 	\centering
-	\resizebox{0.98\linewidth}{!}{%
-	\begin{tikzpicture}[>=Latex, font=\footnotesize,
-		btn/.style={draw=black!45, rounded corners=3pt, fill=black!12,
-			minimum height=0.6cm, inner xsep=6pt, align=center, font=\scriptsize},
-		item/.style={draw=black!40, fill=white, rounded corners=1pt,
-			minimum width=1.95cm, minimum height=0.44cm, inner sep=1pt,
-			font=\scriptsize\ttfamily},
-		anno/.style={font=\scriptsize\itshape, text=black!55}]
-		\def\W{16.5} \def\Hh{9.3}
-		% --- Khung nhin ba chieu (viewport): nen dong nhat, khong co duong chan troi ---
-		\fill[blue!8] (0,0) rectangle (\W,\Hh);
-		\draw[black!55] (0,0) rectangle (\W,\Hh);              % viền khung nhìn
-		% --- Tam ngam (crosshair) o giua khung nhin ---
-		\coordinate (c) at (\W/2,\Hh/2);
-		\draw[black!70, line width=0.6pt] ($(c)+(-0.30,0)$) -- ($(c)+(-0.10,0)$);
-		\draw[black!70, line width=0.6pt] ($(c)+(0.10,0)$)  -- ($(c)+(0.30,0)$);
-		\draw[black!70, line width=0.6pt] ($(c)+(0,-0.30)$) -- ($(c)+(0,-0.10)$);
-		\draw[black!70, line width=0.6pt] ($(c)+(0,0.10)$)  -- ($(c)+(0,0.30)$);
-		% --- Bang thong tin & trang thai camera (goc duoi trai, tu co vua khit) ---
-		\node[anchor=south west, text=white, fill=black!58, rounded corners=2pt,
-			inner sep=5pt, align=left, font=\scriptsize] (info) at (0.15,0.2)
-			{{\footnotesize\bfseries Trạng thái camera: Tự do}\\[2pt]
-			 Độ trễ: 10\,ms \quad Số xe: 100 \quad Số người: 1000};
-		% --- Lop dieu khien (goc duoi phai): neo tu mep phai, noi lien co khe ho ---
-		\node[btn, anchor=east] (b4) at (\W-0.2,0.85) {Người/Xe};
-		\node[btn, anchor=east] (b3) at ([xshift=-0.18cm]b4.west) {Tạo xe Unity};
-		\node[btn, anchor=east] (b2) at ([xshift=-0.18cm]b3.west) {Tạm dừng};
-		\node[btn, anchor=east] (b1) at ([xshift=-0.18cm]b2.west) {Chiếm quyền};
-		% --- Danh sach Trafficer (hien khi bam Nguoi/Xe), xep ngay tren cac nut ---
-		\foreach \name [count=\i from 0] in {f\_1.0, f\_10.0, f\_14.0, f\_15.0, f\_16.0, f\_2.0} {
-			\node[item, anchor=south east] at (\W-0.2, 1.35 + \i*0.5) {\name};
-		}
-		% --- Chu thich ---
-		\node[anno, anchor=west] (a1) at (\W/2+0.55,\Hh/2+0.5)
-			{tâm ngắm: trỏ--chọn phương tiện};
-		\draw[black!45, ->] (a1.west) -- ($(c)+(0.34,0.16)$);
-		\node[anno, anchor=south west] at (0.15,1.95) {bảng thông tin \& trạng thái camera};
-		\node[anno, anchor=south west] at ($(b1.north west)+(0,0.12)$) {lớp điều khiển};
-		% chu thich danh sach Trafficer
-		\node[anno, anchor=east, align=right] (la) at (13.8,3.1)
-			{\emph{Người/Xe}: mở/đóng danh sách Trafficer;\\chọn một mục để gắn camera vào đối tượng};
-		\draw[black!45, ->] (la.east) -- (\W-2.25,3.1);
-	\end{tikzpicture}}
-	\caption{Bố cục giao diện người dùng trong cảnh ba chiều (bản nháp)}
+	\includegraphics[width=0.98\linewidth]{Hinhve/hinh4.7-bo-cuc-giao-dien.png}
+	\caption{Bố cục giao diện người dùng trong cảnh ba chiều}
 	\label{fig:ui-layout}
 \end{figure}
 
@@ -354,8 +306,8 @@ quy mô mã nguồn do nhóm tự viết, không tính thư viện bên thứ ba
 Các chức năng chính đã hiện thực gồm: sinh mạng đường từ lưới mê cung hoặc bản đồ
 thực tế; chạy mô phỏng và đồng bộ trạng thái sang Unity theo thời gian thực; hiển
 thị phương tiện, đèn tín hiệu và người đi bộ trong không gian ba chiều; chiếm
-quyền điều khiển và lái xe thủ công; xử lý va chạm sinh xác xe và trả quyền đưa xe
-về làn; cùng các thao tác điều khiển quá trình chạy. Các hình minh họa dưới đây
+quyền điều khiển và lái xe thủ công; xử lý va chạm sinh xác xe và trả quyền xóa xe
+khỏi mô phỏng; cùng các thao tác điều khiển quá trình chạy. Các hình minh họa dưới đây
 thể hiện một số chức năng tiêu biểu.
 
 \begin{figure}[htbp]
@@ -409,7 +361,7 @@ kê một số trường hợp kiểm thử tiêu biểu.
 		TC03 & Hiển thị trạng thái đèn & Mô phỏng trả về chuỗi trạng thái đèn; Unity hiển thị đúng đỏ/vàng/xanh. \\
 		TC04 & Chiếm quyền và lái xe & Người dùng chiếm một xe; xe chuyển sang lái bằng vật lý, các xe khác phản ứng theo. \\
 		TC05 & Va chạm sinh xác xe & Xe người lái tông xe của mô phỏng; xe bị tông thành xác xe và biến mất sau N bước. \\
-		TC06 & Trả quyền và đưa về làn & Thả xe gần làn: xe chạy lại tự động; thả xe quá xa làn: xe bị hủy. \\
+		TC06 & Trả quyền điều khiển & Thả xe không va chạm: xe bị xóa khỏi mô phỏng ngay, Unity tái sử dụng đối tượng; thả xe đã va chạm: xe chuyển sang xác xe (TC05). \\
 		\hline
 	\end{tabular}
 \end{table}

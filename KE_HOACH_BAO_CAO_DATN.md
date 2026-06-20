@@ -123,7 +123,28 @@ Chọn 6 use case "xương sống" và có luồng phát sinh phong phú:
 
 ### Chương 4 — Thiết kế, triển khai & đánh giá (viết mới phần lớn)
 - Kiến trúc tổng thể: sơ đồ SUMO ↔ TraCI/Python ↔ (3 cổng TCP 5050/5053/5054) ↔ Unity.
-- Thiết kế module Unity: Network, Traffic (Trafficer/TrafficLight), UnityVehicle, Optimization, UI.
+- **Thiết kế module Python (Server):** sơ đồ lớp phía server gồm các module chính:
+  - `realtime_render` / `pre_render` — vòng lặp mô phỏng, điều phối luồng.
+  - `network` — gửi/nhận TCP (framing `<END>`, nén GZ).
+  - `Traffic/trafficer` (`TrafficerData`, subscription TraCI) — đọc trạng thái xe & người đi bộ.
+  - `Traffic/unity_vehicle` — nhận upload từ Unity, xử lý state 1/2/3, reconcile `managed_ids`.
+  - `Traffic/trafficLight`, `Traffic/crossing` — đèn & vạch sang đường.
+  - `render/scenario_recorder` (`SimulationSession`) — ghi phiên hợp nhất.
+  - `SUMO_xml/route_gen` — sinh tuyến xe, lọc BFS.
+  - `SUMO_xml/create_map_from_maze` / `naive_map_creator` — dựng mạng benchmark.
+  - **Ghi chú vẽ:** tạo file `DiagramsCode/hinh4.6-so-do-lop-server.drawio`. Python không có class
+    theo nghĩa UML cứng, nên dùng **component diagram** hoặc **package diagram**: mỗi module là
+    một hộp, mũi tên thể hiện quan hệ `import` / gọi hàm quan trọng. Không cần liệt kê mọi hàm.
+- **Thiết kế module Unity:** sơ đồ lớp `hinh4.5` (đã vẽ). Giữ nguyên mô tả Network, Traffic
+  (Trafficer/TrafficLight), UnityVehicle, Optimization, UI.
+- **Thiết kế pipeline dựng bản đồ 3D** (mức *thiết kế*, thuật toán chi tiết ở Chương 5):
+  - Nguồn dữ liệu: server gửi `road_data.json` (junctions, edges, crossings, buildings) qua TCP :5054
+    ngay sau khi kết nối → Unity nhận qua `RoadDataListener` → lưu vào `RoadDataSO`.
+  - Các lớp dựng hình: `EdgeMaker` (dải mặt đường), `JunctionMaker` (khối nút giao),
+    `CrossingMaker` (vạch sang đường), `BuildingMaker` (nhà OSM). Mỗi Maker đọc SO → sinh Mesh.
+  - **Phân biệt với Chương 5:** Chương 4 mô tả *ai làm gì* (pipeline, data flow, lớp nào chịu
+    trách nhiệm gì); Chương 5 mô tả *làm thế nào* (ribbon+miter, triangulation, prism). Không
+    trùng lặp — không cần chuyển nội dung.
 - Máy trạng thái `ExistState` (4 trạng thái) — lấy từ `HelloWorld/CLAUDE.md`.
 - Thực nghiệm: kịch bản benchmark theo kích thước mê cung, OSM thật, đo FPS/độ trễ, ảnh chụp màn hình.
 
@@ -188,6 +209,13 @@ trau chuốt) — cần vẽ lại đẹp bằng công cụ UML (draw.io / StarU
   `alg:edge`, `alg:junction` (algorithm2e). Có thể chụp ảnh thật từ Unity để minh họa thêm.
 - 🟡 Sơ đồ kiến trúc chi tiết 3 cổng TCP + 2 luồng dữ liệu (Chương 4, `fig:arch-detail`) — **đã vẽ nháp TikZ**.
 - 🟡 Biểu đồ máy trạng thái `ExistState` (Chương 4, `fig:existstate`) — **đã vẽ nháp TikZ**.
+- [ ] **Sơ đồ lớp/module phía Python Server** (Chương 4, `fig:server-modules`) — **chưa vẽ**.
+  File: `DiagramsCode/hinh4.6-so-do-lop-server.drawio`. Dùng component/package diagram, không
+  phải class diagram cứng: mỗi module Python là 1 hộp, nhóm theo thư mục (`render/`, `Traffic/`,
+  `SUMO_xml/`, `osm/`), mũi tên thể hiện quan hệ gọi hàm chính giữa các module.
+- [ ] **Sơ đồ pipeline dựng bản đồ Unity** (Chương 4, `fig:map-pipeline`) — **chưa vẽ**.
+  Sơ đồ đơn giản dạng flow: `road_data.json` → `RoadDataListener` → `RoadDataSO` →
+  `EdgeMaker` / `JunctionMaker` / `CrossingMaker` / `BuildingMaker` → Mesh Unity.
 - [ ] **Ảnh chụp** (Chương 4): cảnh 3D, đèn, người đi bộ, chế độ lái, xác xe — đang để khung `[Chèn ảnh]` (`fig:demo-scene`, `fig:demo-drive`).
 - [ ] **Số liệu thực nghiệm** (Chương 4, `tab:perf`): tốc độ khung hình theo số xe, độ trễ — bảng đang để trống, cần đo và điền.
 

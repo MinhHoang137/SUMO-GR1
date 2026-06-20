@@ -1,157 +1,171 @@
 <mxfile host="app.diagrams.net">
   <diagram id="hinh45_class_unity" name="Trang-1">
-    <mxGraphModel dx="800" dy="500" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1040" pageHeight="390" math="0" shadow="0">
+    <mxGraphModel dx="643" dy="387" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1060" pageHeight="430" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-
-        <!-- TrafficDataListener -->
-        <mxCell id="cls_tdl" value="TrafficDataListener" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="10" y="30" width="200" height="112" as="geometry"/>
+        <mxCell id="cls_tdl" parent="1" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=16;" value="TrafficDataListener" vertex="1">
+          <mxGeometry height="112" width="200" x="10" y="30" as="geometry" />
         </mxCell>
-        <mxCell id="cls_tdl_a" value="-tcpClient: TcpClient" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=10;" vertex="1" parent="cls_tdl">
-          <mxGeometry y="28" width="200" height="20" as="geometry"/>
+        <mxCell id="cls_tdl_a" parent="cls_tdl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="-tcpClient: TcpClient" vertex="1">
+          <mxGeometry height="20" width="200" y="28" as="geometry" />
         </mxCell>
-        <mxCell id="cls_tdl_d" value="" style="line;strokeColor=#6c8ebf;fillColor=none;" vertex="1" parent="cls_tdl">
-          <mxGeometry y="48" width="200" height="6" as="geometry"/>
+        <mxCell id="cls_tdl_d" parent="cls_tdl" style="line;strokeColor=#6c8ebf;fillColor=none;" value="" vertex="1">
+          <mxGeometry height="6" width="200" y="54" as="geometry" />
         </mxCell>
-        <mxCell id="cls_tdl_m" value="-ListenForData()&#xa;-HandleData(json: string)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=10;" vertex="1" parent="cls_tdl">
-          <mxGeometry y="54" width="200" height="58" as="geometry"/>
+        <mxCell id="cls_tdl_m" parent="cls_tdl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="-ListenForData()&#xa;-HandleData(json: string)" vertex="1">
+          <mxGeometry height="52" width="200" y="60" as="geometry" />
         </mxCell>
-
-        <!-- Network (static) -->
-        <mxCell id="cls_net" value="&lt;i&gt;«static»&lt;/i&gt;&lt;br&gt;&lt;b&gt;Network&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=34;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;html=1;" vertex="1" parent="1">
-          <mxGeometry x="10" y="200" width="200" height="100" as="geometry"/>
+        <mxCell id="cls_net" parent="1" style="swimlane;fontStyle=0;align=center;startSize=34;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=16;html=1;" value="&lt;i&gt;«static»&lt;/i&gt;&lt;br&gt;&lt;b&gt;Network&lt;/b&gt;" vertex="1">
+          <mxGeometry height="100" width="200" x="10" y="260" as="geometry" />
         </mxCell>
-        <mxCell id="cls_net_m" value="+CreateTcpClient(host, port)&#xa;+ReadMessage(...): string&#xa;+SendMessage(...)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=10;" vertex="1" parent="cls_net">
-          <mxGeometry y="34" width="200" height="66" as="geometry"/>
+        <mxCell id="cls_net_m" parent="cls_net" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="+CreateTcpClient(host, port)&#xa;+ReadMessage(...): string&#xa;+SendMessage(...)" vertex="1">
+          <mxGeometry height="66" width="200" y="34" as="geometry" />
         </mxCell>
-
-        <!-- TrafficerManager -->
-        <mxCell id="cls_tm" value="TrafficerManager" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="270" y="30" width="210" height="140" as="geometry"/>
+        <mxCell id="cls_tm" parent="1" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=16;" value="TrafficerManager" vertex="1">
+          <mxGeometry height="160" width="210" x="270" y="30" as="geometry" />
         </mxCell>
-        <mxCell id="cls_tm_a" value="+Instance: TrafficerManager&#xa;+CurrentStep: int&#xa;-wreckLifetimeSteps: int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=10;" vertex="1" parent="cls_tm">
-          <mxGeometry y="28" width="210" height="44" as="geometry"/>
+        <mxCell id="cls_tm_a" parent="cls_tm" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="+Instance: TrafficerManager&#xa;+CurrentStep: int&#xa;-wreckLifetimeSteps: int" vertex="1">
+          <mxGeometry height="72" width="210" y="28" as="geometry" />
         </mxCell>
-        <mxCell id="cls_tm_d" value="" style="line;strokeColor=#d6b656;fillColor=none;" vertex="1" parent="cls_tm">
-          <mxGeometry y="72" width="210" height="6" as="geometry"/>
+        <mxCell id="cls_tm_d" parent="cls_tm" style="line;strokeColor=#d6b656;fillColor=none;" value="" vertex="1">
+          <mxGeometry height="10" width="210" y="90" as="geometry" />
         </mxCell>
-        <mxCell id="cls_tm_m" value="+ProcessData(datas: List)&#xa;-SpawnTrafficer(data)&#xa;-RecycleTrafficer(t)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=10;" vertex="1" parent="cls_tm">
-          <mxGeometry y="78" width="210" height="62" as="geometry"/>
+        <mxCell id="cls_tm_m" parent="cls_tm" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="+ProcessData(datas: List)&#xa;+GetTrafficers(): List&#xa;-SpawnTrafficer(data)" vertex="1">
+          <mxGeometry height="70" width="210" y="90" as="geometry" />
         </mxCell>
-
-        <!-- VehicleSender -->
-        <mxCell id="cls_vs" value="VehicleSender" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="270" y="240" width="210" height="70" as="geometry"/>
+        <mxCell id="cls_vs" parent="1" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=16;" value="VehicleSender" vertex="1">
+          <mxGeometry height="70" width="210" x="270" y="300" as="geometry" />
         </mxCell>
-        <mxCell id="cls_vs_m" value="+SendBatch(batch: List)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=10;" vertex="1" parent="cls_vs">
-          <mxGeometry y="28" width="210" height="42" as="geometry"/>
+        <mxCell id="cls_vs_m" parent="cls_vs" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="+SendBatch(batch: List)" vertex="1">
+          <mxGeometry height="42" width="210" y="28" as="geometry" />
         </mxCell>
-
-        <!-- Trafficer -->
-        <mxCell id="cls_tr" value="Trafficer" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="550" y="30" width="205" height="158" as="geometry"/>
+        <mxCell id="cls_tr" parent="1" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=16;" value="Trafficer" vertex="1">
+          <mxGeometry height="158" width="205" x="550" y="30" as="geometry" />
         </mxCell>
-        <mxCell id="cls_tr_a" value="+existState: ExistState&#xa;+seenThisFrame: bool&#xa;+isStandaloneClient: bool&#xa;+IsClientOwned: bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=10;" vertex="1" parent="cls_tr">
-          <mxGeometry y="28" width="205" height="60" as="geometry"/>
+        <mxCell id="cls_tr_a" parent="cls_tr" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="+existState: ExistState&#xa;+seenThisFrame: bool&#xa;+isStandaloneClient: bool&#xa;+IsClientOwned: bool" vertex="1">
+          <mxGeometry height="82" width="205" y="28" as="geometry" />
         </mxCell>
-        <mxCell id="cls_tr_d" value="" style="line;strokeColor=#d6b656;fillColor=none;" vertex="1" parent="cls_tr">
-          <mxGeometry y="88" width="205" height="6" as="geometry"/>
+        <mxCell id="cls_tr_d" parent="cls_tr" style="line;strokeColor=#d6b656;fillColor=none;" value="" vertex="1">
+          <mxGeometry height="6" width="205" y="110" as="geometry" />
         </mxCell>
-        <mxCell id="cls_tr_m" value="+Set(data: TrafficerData)&#xa;+Move()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=10;" vertex="1" parent="cls_tr">
-          <mxGeometry y="94" width="205" height="64" as="geometry"/>
+        <mxCell id="cls_tr_m" parent="cls_tr" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="+Set(data: TrafficerData)&#xa;+Move()" vertex="1">
+          <mxGeometry height="58" width="205" y="110" as="geometry" />
         </mxCell>
-
-        <!-- UnityVehicle -->
-        <mxCell id="cls_uv" value="UnityVehicle" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="550" y="240" width="205" height="118" as="geometry"/>
+        <mxCell id="cls_uv" parent="1" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=16;" value="UnityVehicle" vertex="1">
+          <mxGeometry height="118" width="205" x="550" y="300" as="geometry" />
         </mxCell>
-        <mxCell id="cls_uv_a" value="+wreckStartStep: int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=10;" vertex="1" parent="cls_uv">
-          <mxGeometry y="28" width="205" height="20" as="geometry"/>
+        <mxCell id="cls_uv_a" parent="cls_uv" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="+wreckStartStep: int" vertex="1">
+          <mxGeometry height="20" width="205" y="28" as="geometry" />
         </mxCell>
-        <mxCell id="cls_uv_d" value="" style="line;strokeColor=#d6b656;fillColor=none;" vertex="1" parent="cls_uv">
-          <mxGeometry y="48" width="205" height="6" as="geometry"/>
+        <mxCell id="cls_uv_d" parent="cls_uv" style="line;strokeColor=#d6b656;fillColor=none;" value="" vertex="1">
+          <mxGeometry height="6" width="205" y="54" as="geometry" />
         </mxCell>
-        <mxCell id="cls_uv_m" value="+TakeControl()&#xa;+ReleaseControl()&#xa;+BecomeWreck()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=10;" vertex="1" parent="cls_uv">
-          <mxGeometry y="54" width="205" height="64" as="geometry"/>
+        <mxCell id="cls_uv_m" parent="cls_uv" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="+TakeControl()&#xa;+ReleaseControl()&#xa;+BecomeWreck()" vertex="1">
+          <mxGeometry height="64" width="205" y="54" as="geometry" />
         </mxCell>
-
-        <!-- WheelController -->
-        <mxCell id="cls_wc" value="WheelController" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="820" y="240" width="195" height="118" as="geometry"/>
+        <mxCell id="cls_uvm" parent="1" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=16;" value="UnityVehicleManager" vertex="1">
+          <mxGeometry height="146" width="240" x="820" y="30" as="geometry" />
         </mxCell>
-        <mxCell id="cls_wc_m" value="+Drive(v: float)&#xa;+Steer(v: float)&#xa;+Brake(v: float)&#xa;+SetCollidersEnabled(b)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=10;" vertex="1" parent="cls_wc">
-          <mxGeometry y="28" width="195" height="90" as="geometry"/>
+        <mxCell id="cls_uvm_a" parent="cls_uvm" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="+Instance: UnityVehicleManager" vertex="1">
+          <mxGeometry height="20" width="240" y="28" as="geometry" />
         </mxCell>
-
-        <!-- ===== RELATIONS ===== -->
-
-        <!-- R1: TDL uses Network -->
-        <mxCell id="r1" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;strokeColor=#6c8ebf;fontSize=9;" value="">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="110" y="142" as="sourcePoint"/>
-            <mxPoint x="110" y="200" as="targetPoint"/>
+        <mxCell id="cls_uvm_d" parent="cls_uvm" style="line;strokeColor=#d6b656;fillColor=none;" value="" vertex="1">
+          <mxGeometry height="6" width="240" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_uvm_m" parent="cls_uvm" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="+EnqueueRelease(data)&#xa;-SendVehicleDataRoutine()" vertex="1">
+          <mxGeometry height="76" width="240" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_wc" parent="1" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=16;" value="WheelController" vertex="1">
+          <mxGeometry height="118" width="210" x="820" y="300" as="geometry">
+            <mxRectangle height="30" width="140" x="820" y="300" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-
-        <!-- R2: TDL calls TrafficerManager -->
-        <mxCell id="r2" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;strokeColor=#999999;fontSize=9;" value="">
+        <mxCell id="cls_wc_m" parent="cls_wc" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;overflow=hidden;rotatable=0;fontSize=15;" value="+Drive(v: float)&#xa;+Steer(v: float)&#xa;+Brake(v: float)&#xa;+SetCollidersEnabled(b)" vertex="1">
+          <mxGeometry height="90" width="210" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;strokeColor=#6c8ebf;fontSize=14;" value="">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="210" y="85" as="sourcePoint"/>
-            <mxPoint x="270" y="100" as="targetPoint"/>
+            <mxPoint x="110" y="142" as="sourcePoint" />
+            <mxPoint x="110" y="260" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-
-        <!-- R3: TrafficerManager manages Trafficer (aggregation) -->
+        <mxCell id="r2" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;strokeColor=#999999;fontSize=14;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="85" as="sourcePoint" />
+            <mxPoint x="270" y="100" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
         <mxCell id="r3" edge="1" parent="1" style="startArrow=diamondThin;startFill=0;endArrow=open;endFill=0;strokeColor=#d6b656;" value="">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="480" y="100" as="sourcePoint"/>
-            <mxPoint x="550" y="107" as="targetPoint"/>
+            <mxPoint x="480" y="100" as="sourcePoint" />
+            <mxPoint x="550" y="107" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r3_c1" value="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;" vertex="1" parent="1">
-          <mxGeometry x="488" y="84" width="16" height="14" as="geometry"/>
+        <mxCell id="r3_c1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=14;" value="1" vertex="1">
+          <mxGeometry height="14" width="16" x="488" y="84" as="geometry" />
         </mxCell>
-        <mxCell id="r3_c2" value="0..*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;" vertex="1" parent="1">
-          <mxGeometry x="530" y="84" width="30" height="14" as="geometry"/>
+        <mxCell id="r3_c2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=14;" value="0..*" vertex="1">
+          <mxGeometry height="14" width="30" x="530" y="84" as="geometry" />
         </mxCell>
-
-        <!-- R4: Trafficer / UnityVehicle (same Vehicle prefab) -->
         <mxCell id="r4" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#999999;" value="">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="652" y="188" as="sourcePoint"/>
-            <mxPoint x="652" y="240" as="targetPoint"/>
+            <mxPoint x="652" y="188" as="sourcePoint" />
+            <mxPoint x="652" y="300" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r4_lbl" value="«component»" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=9;fontStyle=2;" vertex="1" parent="1">
-          <mxGeometry x="658" y="203" width="78" height="14" as="geometry"/>
+        <mxCell id="r4_lbl" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontStyle=2;" value="«component»" vertex="1">
+          <mxGeometry height="14" width="78" x="650" y="260" as="geometry" />
         </mxCell>
-
-        <!-- R5: UnityVehicle *-> WheelController (composition) -->
         <mxCell id="r5" edge="1" parent="1" style="startArrow=diamondThin;startFill=1;endArrow=open;endFill=0;strokeColor=#d6b656;" value="">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="755" y="299" as="sourcePoint"/>
-            <mxPoint x="820" y="299" as="targetPoint"/>
+            <mxPoint x="755" y="359" as="sourcePoint" />
+            <mxPoint x="820" y="359" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-
-        <!-- R6: UnityVehicle uses VehicleSender (dependency) -->
-        <mxCell id="r6" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;strokeColor=#d6b656;fontSize=9;" value="">
+        <mxCell id="r6" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;strokeColor=#d6b656;fontSize=14;" value="">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="550" y="299" as="sourcePoint"/>
-            <mxPoint x="480" y="275" as="targetPoint"/>
+            <mxPoint x="550" y="340" as="sourcePoint" />
+            <mxPoint x="480" y="325" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-
-        <!-- R7: VehicleSender uses Network (dependency) -->
-        <mxCell id="r7" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;strokeColor=#6c8ebf;fontSize=9;" value="">
+        <mxCell id="r7" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;strokeColor=#6c8ebf;fontSize=14;" value="">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="270" y="275" as="sourcePoint"/>
-            <mxPoint x="210" y="250" as="targetPoint"/>
+            <mxPoint x="270" y="325" as="sourcePoint" />
+            <mxPoint x="210" y="310" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-
+        <mxCell id="r8" edge="1" parent="1" source="cls_uvm_m" style="endArrow=open;endFill=0;dashed=1;strokeColor=#d6b656;fontSize=14;entryX=1;entryY=0.25;entryDx=0;entryDy=0;exitX=0;exitY=1;exitDx=0;exitDy=0;" target="cls_vs" value="-vehicleSender">
+          <mxGeometry relative="1" x="0.3794" y="-12" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="820" y="160" as="sourcePoint" />
+            <mxPoint x="480" y="335" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r10" edge="1" parent="1" source="cls_uvm" style="startArrow=diamondThin;startFill=0;endArrow=open;endFill=0;strokeColor=#d6b656;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="930" y="160" as="sourcePoint" />
+            <mxPoint x="755" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r10_c2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=14;" value="0..1" vertex="1">
+          <mxGeometry height="14" width="30" x="770" y="295" as="geometry" />
+        </mxCell>
+        <mxCell id="r9" edge="1" parent="1" source="cls_uvm_a" style="endArrow=open;endFill=0;dashed=1;strokeColor=#999999;fontSize=14;edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="801" y="68" />
+              <mxPoint x="801" y="10" />
+              <mxPoint x="490" y="10" />
+              <mxPoint x="490" y="80" />
+            </Array>
+            <mxPoint x="800" y="70" as="sourcePoint" />
+            <mxPoint x="480" y="80" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r10_c1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=14;" value="1" vertex="1">
+          <mxGeometry height="14" width="16" x="932" y="180" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>

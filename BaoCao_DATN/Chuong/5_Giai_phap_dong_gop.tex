@@ -245,71 +245,6 @@ chạm thực tế, sau đó tự được dọn khỏi hiện trường. Tính 
 các tình huống mà người dùng có thể quan sát và thử nghiệm, và là hệ quả tự nhiên
 của khả năng lái xe tương tác.
 
-\section{Trả quyền điều khiển và đưa phương tiện về làn đường}
-\label{sec:re-anchor}
-
-% [ĐỀ XUẤT THÊM] Mục này hoàn thiện câu chuyện lái xe (cùng với mục chiếm quyền và
-% va chạm). Nếu thầy thấy trùng, có thể gộp vào mục chiếm quyền.
-\subsection{Vấn đề}
-
-Sau khi lái một phương tiện đã chiếm quyền, người dùng cần trả nó về cho
-\gls{SUMO} để mô phỏng tiếp tục một cách tự nhiên. Vấn đề là sau quá trình lái tự
-do, vị trí của xe thường không còn nằm đúng trên làn đường của \gls{SUMO}. Nếu trả
-về ngay, xe có thể bị lệch khỏi mạng hoặc gây lỗi mô phỏng. Hệ thống cần phân biệt
-được trường hợp có thể đưa xe trở lại dòng giao thông với trường hợp xe đã đi quá
-xa và không thể đưa về.
-
-\subsection{Giải pháp}
-
-Khi người dùng trả quyền, hệ thống tìm làn đường gần nhất với vị trí hiện tại của
-xe. Nếu khoảng cách nằm trong một ngưỡng cho phép, hệ thống đưa xe về đúng làn,
-cấp cho nó một tuyến đường mới và trả quyền điều khiển lại cho \gls{SUMO}; phương
-tiện sau đó tiếp tục di chuyển tự động như một xe bình thường. Nếu vị trí xe vượt
-quá ngưỡng, hệ thống loại bỏ phương tiện thay vì cố đưa về. Ngưỡng khoảng cách
-được tách thành tham số riêng để dễ điều chỉnh. Trường hợp xe đã va chạm thì được
-chuyển sang xử lý xác xe thay vì trả về dòng giao thông. Quy trình xử lý khi trả
-quyền được tóm tắt ở Hình \ref{fig:reanchor-flow}.
-
-\begin{figure}[htbp]
-	\centering
-	\begin{tikzpicture}[node distance=1.0cm and 2.2cm, >=Latex,
-		every node/.style={font=\footnotesize},
-		startstop/.style={draw, rounded corners=8pt, fill=black!5, align=center,
-			minimum width=3cm, minimum height=0.8cm},
-		process/.style={draw, align=center, minimum width=3.4cm, minimum height=0.8cm, fill=black!2},
-		decision/.style={draw, diamond, aspect=2.2, align=center, inner sep=1pt, fill=black!2},
-		arrow/.style={-{Latex}}]
-		% main column
-		\node[startstop] (start) {Người dùng trả quyền};
-		\node[decision, below=of start] (crash) {Đã va chạm?};
-		\node[process, below=of crash] (findlane) {Tìm làn gần nhất\\với vị trí xe};
-		\node[decision, below=of findlane] (thr) {Khoảng cách\\$\le$ ngưỡng?};
-		\node[process, below=of thr] (reanchor) {Đưa về làn, cấp tuyến mới,\\trả quyền cho SUMO};
-		\node[startstop, below=of reanchor] (run) {Xe chạy tự động tiếp};
-		% right branches
-		\node[process, right=of crash] (wreck) {Chuyển sang\\xử lý xác xe};
-		\node[process, right=of thr] (remove) {Loại bỏ\\phương tiện};
-		% main flow
-		\draw[arrow] (start) -- (crash);
-		\draw[arrow] (crash) -- node[left, font=\scriptsize]{không} (findlane);
-		\draw[arrow] (findlane) -- (thr);
-		\draw[arrow] (thr) -- node[left, font=\scriptsize]{có} (reanchor);
-		\draw[arrow] (reanchor) -- (run);
-		% branch flow
-		\draw[arrow] (crash) -- node[above, font=\scriptsize]{có} (wreck);
-		\draw[arrow] (thr) -- node[above, font=\scriptsize]{không} (remove);
-	\end{tikzpicture}
-	\caption{Biểu đồ hoạt động xử lý khi người dùng trả quyền điều khiển (bản nháp)}
-	\label{fig:reanchor-flow}
-\end{figure}
-
-\subsection{Kết quả đạt được}
-
-Phương tiện sau khi lái có thể được trả về dòng giao thông và chạy tiếp một cách
-liền mạch khi còn gần làn đường, hoặc được loại bỏ gọn gàng khi đã đi quá xa. Giải
-pháp này khép kín vòng đời của một phương tiện do người dùng điều khiển, giúp việc
-lái xe không phá vỡ tính nhất quán của mô phỏng.
-
 \section{Lưu trữ kịch bản và phát lại}
 \label{sec:luu-tru}
 
@@ -398,9 +333,8 @@ Chương này đã trình bày các giải pháp và đóng góp nổi bật c�
 toán dựng đoạn đường và nút giao ba chiều bám sát dữ liệu, dùng chung cho mạng
 sinh tự động và bản đồ thực tế; cơ chế tạo phương tiện của người dùng và chiếm
 quyền điều khiển dựa trên máy trạng thái và bật tắt vật lý theo trạng thái; hệ
-thống va chạm giả lập tai nạn; cơ chế trả quyền và đưa phương tiện về làn; cơ chế
-lưu trữ phiên và phát lại; giao tiếp thời gian thực tin cậy bằng tách khung bản
-tin; và các kỹ thuật tối ưu hiệu năng hiển thị. Các giải pháp này vừa giải quyết
+thống va chạm giả lập tai nạn; cơ chế lưu trữ phiên và phát lại; giao tiếp thời
+gian thực tin cậy bằng tách khung bản tin; và các kỹ thuật tối ưu hiệu năng hiển thị. Các giải pháp này vừa giải quyết
 các vấn đề kỹ thuật cụ thể, vừa tạo nên những tính năng làm nên giá trị của hệ
 thống. Chương tiếp theo tổng kết kết quả đạt được và đề xuất hướng phát triển.
 

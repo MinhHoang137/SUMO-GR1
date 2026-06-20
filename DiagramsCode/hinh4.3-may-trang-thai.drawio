@@ -1,0 +1,58 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="may-trang-thai" name="Trang-1">
+    <mxGraphModel dx="1071" dy="644" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1060" pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="init" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;aspect=fixed;" value="" vertex="1">
+          <mxGeometry height="20" width="20" x="235" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" value="&lt;b&gt;ServerControlled&lt;/b&gt;&#xa;kinematic · Trafficer.Move() · SUMO tự lái" vertex="1">
+          <mxGeometry height="72" width="270" x="110" y="162" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;" value="&lt;b&gt;ClientControlled&lt;/b&gt;&#xa;dynamic · người chơi · mirror moveToXY" vertex="1">
+          <mxGeometry height="72" width="270" x="690" y="162" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=14;" value="&lt;b&gt;Wrecked&lt;/b&gt;&#xa;dynamic · không ai lái · SUMO setSpeed(0)" vertex="1">
+          <mxGeometry height="72" width="270" x="395" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="s4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;" value="&lt;b&gt;Destroyed&lt;/b&gt;&#xa;Bị hủy → tái sử dụng đối tượng" vertex="1">
+          <mxGeometry height="72" width="270" x="390" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="t0" edge="1" parent="1" source="init" style="endArrow=block;endFill=1;fontSize=12;" target="s1" value="xe xuất hiện trong SUMO">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t1" edge="1" parent="1" source="s1" style="endArrow=block;endFill=1;fontSize=12;" target="s2" value="chiếm quyền · TakeControl()">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t2" edge="1" parent="1" source="s2" style="endArrow=block;endFill=1;fontSize=12;align=right;" target="s3" value="trả quyền + đã va chạm · BecomeWreck()">
+          <mxGeometry relative="1" x="-0.7335" y="40" as="geometry">
+            <mxPoint x="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t3" edge="1" parent="1" source="s1" style="endArrow=block;endFill=1;fontSize=12;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.138;entryY=-0.045;entryDx=0;entryDy=0;entryPerimeter=0;" target="s3" value="bị xe người lái tông · BecomeWreck()">
+          <mxGeometry relative="1" x="-0.1973" y="-1" as="geometry">
+            <mxPoint x="-1" as="offset" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t4" edge="1" parent="1" source="s3" style="endArrow=block;endFill=1;fontSize=12;" target="s4" value="sau N bước SUMO">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t5" edge="1" parent="1" source="s1" style="endArrow=block;endFill=1;fontSize=12;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="s4" value="vắng khỏi luồng tải xuống">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t6" edge="1" parent="1" source="s2" style="endArrow=block;endFill=1;fontSize=12;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="s4" value="trả quyền, không va chạm&#xa;(server xóa ngay · Unity recycle)">
+          <mxGeometry relative="1" x="0.2963" y="14" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="note1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=2;align=left;" value="* CLIENT_CAR bắt đầu thẳng ở ClientControlled, không qua ServerControlled" vertex="1">
+          <mxGeometry height="20" width="550" x="130" y="580" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
