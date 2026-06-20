@@ -1,0 +1,89 @@
+<mxfile host="app.diagrams.net" agent="5.0">
+  <diagram id="diagram_class_map" name="hinh4.2.1-so-do-lop-ban-do-unity">
+    <mxGraphModel dx="964" dy="580" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="RDL" parent="1" style="swimlane;fontFamily=Arial;fontSize=14;fontStyle=0;startSize=54;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;font style=&#39;font-size:12px&#39;&gt;«MonoBehaviour»&lt;/font&gt;&lt;br/&gt;&lt;b&gt;RoadDataListener&lt;/b&gt;" vertex="1">
+          <mxGeometry height="145" width="290" x="160" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="RDL_c" parent="RDL" style="text;html=1;align=left;fontFamily=Arial;fontSize=13;spacingLeft=6;strokeColor=none;fillColor=none;" value="- roadDataSO : RoadDataSO&lt;br/&gt;- networkSO : NetworkSO&lt;br/&gt;+ OnRoadDataReceived : UnityEvent&lt;hr/&gt;+ StartListening() : void" vertex="1">
+          <mxGeometry height="91" width="290" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="RDAT" parent="1" style="swimlane;fontFamily=Arial;fontSize=14;fontStyle=0;startSize=54;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&#39;font-size:12px&#39;&gt;«DTO»&lt;/font&gt;&lt;br/&gt;&lt;b&gt;RoadData&lt;/b&gt;" vertex="1">
+          <mxGeometry height="130" width="260" x="530" y="37.5" as="geometry" />
+        </mxCell>
+        <mxCell id="RDAT_c" parent="RDAT" style="text;html=1;align=left;fontFamily=Arial;fontSize=13;spacingLeft=6;strokeColor=none;fillColor=none;" value="+ EdgeDatas : List&lt;EdgeData&gt;&lt;br/&gt;+ JunctionDatas : List&lt;JunctionData&gt;&lt;br/&gt;+ CrossingDatas : List&lt;CrossingData&gt;&lt;br/&gt;+ BuildingDatas : List&lt;BuildingData&gt;" vertex="1">
+          <mxGeometry height="76" width="260" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="SO" parent="1" style="swimlane;fontFamily=Arial;fontSize=14;fontStyle=0;startSize=54;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;font style=&#39;font-size:12px&#39;&gt;«ScriptableObject»&lt;/font&gt;&lt;br/&gt;&lt;b&gt;RoadDataSO&lt;/b&gt;" vertex="1">
+          <mxGeometry height="135" width="290" x="160" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="SO_c" parent="SO" style="text;html=1;align=left;fontFamily=Arial;fontSize=13;spacingLeft=6;strokeColor=none;fillColor=none;" value="+ edgeDatas : List&lt;EdgeData&gt;&lt;br/&gt;+ junctionDatas : List&lt;JunctionData&gt;&lt;br/&gt;+ crossingDatas : List&lt;CrossingData&gt;&lt;br/&gt;+ buildingDatas : List&lt;BuildingData&gt;" vertex="1">
+          <mxGeometry height="81" width="290" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="EM" parent="1" style="swimlane;fontFamily=Arial;fontSize=14;fontStyle=0;startSize=54;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;font style=&#39;font-size:12px&#39;&gt;«MonoBehaviour»&lt;/font&gt;&lt;br/&gt;&lt;b&gt;EdgeMaker&lt;/b&gt;" vertex="1">
+          <mxGeometry height="135" width="215" x="10" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="EM_c" parent="EM" style="text;html=1;align=left;fontFamily=Arial;fontSize=13;spacingLeft=6;strokeColor=none;fillColor=none;" value="- roadData : RoadDataSO&lt;br/&gt;- edgePrefab : Edge&lt;hr/&gt;- Start() : void" vertex="1">
+          <mxGeometry height="81" width="215" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="JM" parent="1" style="swimlane;fontFamily=Arial;fontSize=14;fontStyle=0;startSize=54;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;font style=&#39;font-size:12px&#39;&gt;«MonoBehaviour»&lt;/font&gt;&lt;br/&gt;&lt;b&gt;JunctionMaker&lt;/b&gt;" vertex="1">
+          <mxGeometry height="145" width="225" x="245" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="JM_c" parent="JM" style="text;html=1;align=left;fontFamily=Arial;fontSize=13;spacingLeft=6;strokeColor=none;fillColor=none;" value="- roadData : RoadDataSO&lt;br/&gt;- crossRoadPrefab : Junction&lt;br/&gt;- junctionLabelPrefab&lt;hr/&gt;- Start() : void" vertex="1">
+          <mxGeometry height="91" width="225" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="CM" parent="1" style="swimlane;fontFamily=Arial;fontSize=14;fontStyle=0;startSize=54;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;font style=&#39;font-size:12px&#39;&gt;«MonoBehaviour»&lt;/font&gt;&lt;br/&gt;&lt;b&gt;CrossingMaker&lt;/b&gt;" vertex="1">
+          <mxGeometry height="135" width="225" x="490" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="CM_c" parent="CM" style="text;html=1;align=left;fontFamily=Arial;fontSize=13;spacingLeft=6;strokeColor=none;fillColor=none;" value="- roadData : RoadDataSO&lt;br/&gt;- crossingPrefab : Crossing&lt;hr/&gt;- Start() : void" vertex="1">
+          <mxGeometry height="81" width="225" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="BM" parent="1" style="swimlane;fontFamily=Arial;fontSize=14;fontStyle=0;startSize=66;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;font style=&#39;font-size:12px&#39;&gt;«MonoBehaviour»&lt;br/&gt;(chỉ bản đồ OSM)&lt;/font&gt;&lt;br/&gt;&lt;b&gt;BuildingMaker&lt;/b&gt;" vertex="1">
+          <mxGeometry height="150" width="225" x="735" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="BM_c" parent="BM" style="text;html=1;align=left;fontFamily=Arial;fontSize=13;spacingLeft=6;strokeColor=none;fillColor=none;" value="- roadData : RoadDataSO&lt;br/&gt;- buildingPrefab : Building&lt;br/&gt;- buildingMaterials : Material[]&lt;hr/&gt;- Start() : void" vertex="1">
+          <mxGeometry height="84" width="225" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="e_rdl_so" edge="1" parent="1" source="RDL" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#555555;strokeWidth=2;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;endArrow=open;endFill=0;" target="SO" value="ghi vào">
+          <mxGeometry relative="1" x="-0.1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_rdl_rdat" edge="1" parent="1" source="RDL" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#555555;strokeWidth=2;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;dashed=1;endArrow=open;endFill=0;" target="RDAT" value="deserialize">
+          <mxGeometry relative="1" y="13" as="geometry">
+            <mxPoint y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_em_so" edge="1" parent="1" source="EM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#555555;strokeWidth=2;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;dashed=1;endArrow=open;endFill=0;" target="SO" value="đọc">
+          <mxGeometry relative="1" x="0.7686" y="-15" as="geometry">
+            <mxPoint y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_jm_so" edge="1" parent="1" source="JM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#555555;strokeWidth=2;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;dashed=1;endArrow=open;endFill=0;" target="SO" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_cm_so" edge="1" parent="1" source="CM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#555555;strokeWidth=2;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;dashed=1;endArrow=open;endFill=0;" target="SO" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="603" y="450" />
+              <mxPoint x="305" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_bm_so" edge="1" parent="1" source="BM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#555555;strokeWidth=2;fontFamily=Arial;fontSize=12;fontColor=#1a1a1a;dashed=1;endArrow=open;endFill=0;" target="SO" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="848" y="450" />
+              <mxPoint x="305" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LEG" parent="1" style="text;html=1;align=left;fontFamily=Arial;fontSize=12;strokeColor=none;fillColor=none;" value="— nét liền: association (ghi/tham chiếu)&lt;br/&gt;- - nét đứt: dependency (đọc/dùng)" vertex="1">
+          <mxGeometry height="44" width="340" x="20" y="730" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

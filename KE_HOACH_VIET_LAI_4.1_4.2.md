@@ -74,86 +74,111 @@ drawio được cập nhật).
 
 ## 2. Thay đổi tại Mục 4.2 — Thiết kế chi tiết
 
-**Nguyên tắc:** không xóa tiểu mục nào hiện có; chỉ **chèn thêm** một tiểu mục mới và
-**cập nhật nhẹ** tiểu mục 4.2.3.
+**Nguyên tắc:** viết lại tương đối nhiều. Cần thêm 2 tiểu mục mới và sửa lại tiểu mục cũ
+"Thiết kế một số lớp chủ đạo". Các tiểu mục khác (máy trạng thái, hai luồng dữ liệu,
+lưu trữ, giao diện) giữ nguyên văn bản.
 
-### 2a. Thêm tiểu mục mới: "Thiết kế pipeline dựng bản đồ 3D"
+### Cấu trúc mục 4.2 sau khi hoàn chỉnh
 
-**Vị trí:** chèn làm tiểu mục đầu tiên của mục 4.2, trước "Máy trạng thái điều khiển
-phương tiện". Lý do: bản đồ được dựng một lần ngay khi kết nối (trước khi xe xuất hiện),
-nên về mặt logic nó xảy ra sớm nhất trong vòng đời phiên mô phỏng.
-
-**Nội dung tiểu mục (khoảng 300–400 chữ + 1 sơ đồ pipeline):**
-
-#### Phía Python — sinh `road_data.json`
-
-Ngay sau khi SUMO khởi chạy và kết nối TraCI, server trích xuất dữ liệu mạng đường
-thông qua các API của TraCI và thư viện phân tích `osmnx`/`sumolib`:
-
-- **Junctions** (`traci.junction`): tọa độ các nút giao, hình dạng đa giác của mặt nút.
-- **Edges** (`traci.edge`, `traci.lane`): danh sách làn đường với đa tuyến trung tâm,
-  chiều rộng, số làn.
-- **Crossings** (`crossing.py`): các vạch sang đường dành cho người đi bộ.
-- **Buildings** (OSM/`sumolib`): đa giác nhà khi bản đồ nguồn là OpenStreetMap.
-
-Dữ liệu được gom thành một gói JSON duy nhất và gửi qua cổng TCP 5050 **một lần** khi Unity
-gửi yêu cầu `"RoadDataRequest"` (trước phiên mô phỏng chính). Không gửi lại trong suốt phiên.
-Cùng lúc, gói này cũng được ghi vào `road_data.json` trong thư mục phiên để phục vụ phát lại.
-
-#### Phía Unity — pipeline 4 Maker
-
-Unity nhận gói qua `RoadDataListener`, lưu vào `RoadDataSO` (ScriptableObject dùng chung),
-sau đó bốn lớp Maker đọc SO và dựng Mesh song song:
-
-| Lớp | Đầu vào | Đầu ra |
-|-----|---------|--------|
-| `EdgeMaker` | Danh sách làn + đa tuyến trung tâm | Dải mặt đường (ribbon + miter) |
-| `JunctionMaker` | Đa giác nút giao | Khối nút giao (triangulation → extrude) |
-| `CrossingMaker` | Tọa độ vạch sang đường | Lưới vạch kẻ (quads) |
-| `BuildingMaker` | Đa giác công trình + chiều cao | Khối nhà (prism) |
-
-Mỗi Maker chạy một lần khi nhận SO, tạo `MeshFilter`/`MeshRenderer` cho từng đối tượng
-và không cần cập nhật lại trong phiên (bản đồ tĩnh). Hình `\ref{fig:map-pipeline}` mô tả
-luồng dữ liệu dựng bản đồ.
-
-> **Phân biệt với Chương 5:** mục này mô tả *ai nhận gì, ai làm gì* (pipeline, phân chia
-> trách nhiệm giữa các lớp). Chương 5 mô tả *làm thế nào* (thuật toán ribbon+miter,
-> triangulation, prism). Không trùng lặp.
-
-**Hình cần có:** `fig:map-pipeline` — sơ đồ flow đơn giản:
-
-```
-[Python: SUMO/TraCI/OSM]
-        ↓ road_data.json (:5050, một lần)
-[Unity: RoadDataListener]
-        ↓ ghi vào
-[RoadDataSO]
-   ↙      ↓      ↘       ↘
-EdgeMaker JunctionMaker CrossingMaker BuildingMaker
-   ↓          ↓              ↓              ↓
-Mesh đường  Mesh nút giao  Mesh vạch   Mesh nhà
-```
-
-File drawio: `DiagramsCode/hinh4.X-pipeline-dung-ban-do.drawio` (X = số hình tiếp theo
-sau hinh4.2, cần điều chỉnh số hình cho phù hợp với thứ tự trong báo cáo).
+| # | Tiểu mục | Hình | Trạng thái |
+|---|----------|------|-----------|
+| 4.2.1 | **[MỚI]** Thiết kế module dựng bản đồ 3D | hinh4.2.1 (sơ đồ lớp Unity) | viết mới |
+| 4.2.2 | Máy trạng thái điều khiển phương tiện | hinh4.2.2 | giữ nguyên |
+| 4.2.3 | Hai luồng dữ liệu | hinh4.2.3 | giữ nguyên |
+| 4.2.4 | Thiết kế một số lớp chủ đạo | hinh4.2.4 (Unity) + hinh4.2.5 (Python traffic, MỚI) | bổ sung đáng kể |
+| 4.2.6 | Lưu trữ dữ liệu | hinh4.2.6 | giữ nguyên |
+| 4.2.7 | Thiết kế giao diện người dùng | hinh4.2.7 | giữ nguyên |
 
 ---
 
-### 2b. Cập nhật tiểu mục 4.2.3 — Thiết kế một số lớp chủ đạo
+### 2a. Tiểu mục mới 4.2.1 — Thiết kế module dựng bản đồ 3D
 
-Hiện tại mục này chỉ liệt kê 6 lớp, tất cả thuộc phần mô phỏng/tương tác. Cần bổ sung
-các lớp phía bản đồ:
+**Hình sơ đồ lớp cần vẽ:**
 
-Thêm vào danh sách `\begin{itemize}` (sau `SimulationSession`):
+Vì Python không có class theo nghĩa UML chặt chẽ (module dựng bản đồ phía server
+chủ yếu là hàm trong `render_map.py` + class `CrossingReader` trong `crossing.py`),
+phía server mô tả bằng văn. Chỉ vẽ **sơ đồ lớp phía Unity**:
+
+```
+hinh4.2.1 — Sơ đồ lớp module dựng bản đồ 3D (phía Unity)
+```
+
+**Các lớp cần thể hiện:**
+
+| Lớp | Stereotype | Thuộc tính chính | Phương thức chính |
+|-----|-----------|-----------------|------------------|
+| `RoadDataListener` | MonoBehaviour | -roadData: RoadDataSO; -networkSO: NetworkSO | +StartListening(); OnRoadDataReceived (event) |
+| `RoadData` | (POCO) | +EdgeDatas, +JunctionDatas, +CrossingDatas, +BuildingDatas | — |
+| `RoadDataSO` | ScriptableObject | +edgeDatas: List\<EdgeData\>; +junctionDatas; +crossingDatas; +buildingDatas | — |
+| `EdgeMaker` | MonoBehaviour | -roadData: RoadDataSO; -edgePrefab: Edge | +BuildAll() |
+| `JunctionMaker` | MonoBehaviour | -roadData: RoadDataSO; -crossRoadPrefab: Junction | +BuildAll() |
+| `CrossingMaker` | MonoBehaviour | -roadData: RoadDataSO; -crossingPrefab: Crossing | +BuildAll() |
+| `BuildingMaker` | MonoBehaviour | -roadData: RoadDataSO; -buildingPrefab: Building | +BuildAll() |
+
+**Quan hệ:**
+- `RoadDataListener` → writes → `RoadDataSO`
+- `RoadDataListener` → deserializes → `RoadData` → copies into → `RoadDataSO`
+- `EdgeMaker`, `JunctionMaker`, `CrossingMaker`, `BuildingMaker` → reads → `RoadDataSO` (dependency)
+- `RoadDataSO` aggregates `EdgeData`, `JunctionData`, `CrossingData`, `BuildingData`
+
+**File drawio:** `DiagramsCode/hinh4.2.1-so-do-lop-ban-do-unity.drawio`
+> File `hinh4.2.1-pipeline-dung-ban-do.drawio` (sơ đồ luồng) đã xóa — không cần thiết vì 4.1.2 đã đóng vai trò tương tự.
+
+**Nội dung văn tiểu mục 4.2.1 (khoảng 400 chữ):**
+
+*Phía Python:* Khi SUMO khởi chạy, `render_map.py` gọi các API TraCI/sumolib để đọc
+junctions (hình dạng nút giao), edges/lanes (đa tuyến trung tâm, chiều rộng),
+`CrossingReader.read_crossings()` để đọc vạch sang đường, và đọc đa giác nhà từ OSM.
+Dữ liệu được đóng gói thành một gói JSON và gửi qua cổng 5050 một lần khi Unity gửi
+`"RoadDataRequest"`, đồng thời ghi ra `road_data.json` trong thư mục phiên.
+
+*Phía Unity:* Mô tả cấu trúc các lớp (dựa vào bảng và sơ đồ hinh4.2.1). Pipeline hoạt
+động theo thứ tự: kết nối → nhận → ghi SO → kích hoạt 4 Maker → dựng Mesh.
+
+> **Phân biệt với Chương 5:** 4.2.1 mô tả *ai làm gì, cấu trúc lớp*. Chương 5 mô tả
+> *thuật toán* (ribbon+miter, triangulation, prism). Không trùng lặp.
+
+---
+
+### 2b. Bổ sung đáng kể tiểu mục 4.2.4 — Thiết kế một số lớp chủ đạo
+
+Tiểu mục hiện tại liệt kê 6 lớp Unity (TrafficerManager, UnityVehicle, WheelController,
+VehicleSender, UnityVehicleManager, SimulationSession) và kèm hinh4.2.4 (sơ đồ lớp Unity).
+
+**Cần bổ sung:**
+
+**1. Sơ đồ lớp module giao thông phía Python server (hinh4.2.5 — hình mới):**
+
+Python Traffic module có các class rõ ràng:
+
+| Lớp / Module | Loại | Thuộc tính/Phương thức chính |
+|-------------|------|------------------------------|
+| `TrafficerData` | dataclass | id, obj_type, speed, position, forward; `to_dict()` |
+| `TrafficLightData` | dataclass | id, position, state, direction; `to_dict()` |
+| `CrossingReader` | class | `parse_shape()`, `read_crossings()` |
+| `trafficer.py` (module) | — | `read_trafficers(traci)`, `_sync_subscriptions()` |
+| `unity_vehicle.py` (module) | — | `process_vehicle_updates(traci)`, `_remove_vehicle()`, `_re_anchor()` |
+
+Vì `trafficer.py` và `unity_vehicle.py` là module-level functions (không phải class),
+dùng **component/package diagram** cho phần này thay vì class diagram thuần túy.
+Kết hợp: vẽ class `TrafficerData`, `TrafficLightData`, `CrossingReader` + module
+`trafficer` và `unity_vehicle` như component.
+
+**File drawio:** `DiagramsCode/hinh4.2.5-so-do-lop-traffic-server.drawio`
+**File PNG:** `BaoCao_DATN/Hinhve/hinh4.2.5-so-do-lop-traffic-server.png`
+
+**2. Thêm bullet lớp Road vào danh sách văn bản (sau `SimulationSession`):**
 
 ```latex
 \item \texttt{RoadDataListener} (Unity): kết nối cổng 5050, gửi yêu cầu
-\texttt{"RoadDataRequest"}, nhận gói dữ liệu mạng đường một lần, giải mã JSON
-và ghi vào \texttt{RoadDataSO} rồi đóng kết nối.
-
+\texttt{"RoadDataRequest"}, nhận gói dữ liệu bản đồ một lần, ghi vào
+\texttt{RoadDataSO} rồi đóng kết nối.
 \item \texttt{EdgeMaker}, \texttt{JunctionMaker}, \texttt{CrossingMaker},
-\texttt{BuildingMaker} (Unity): bốn lớp dựng Mesh bản đồ 3D từ \texttt{RoadDataSO};
-mỗi lớp chịu trách nhiệm một loại đối tượng địa lý và chạy một lần khi nhận SO.
+\texttt{BuildingMaker} (Unity): bốn lớp dựng Mesh từ \texttt{RoadDataSO};
+mỗi lớp chịu trách nhiệm một loại đối tượng địa lý, chạy một lần.
+\item \texttt{TrafficerData}, \texttt{TrafficLightData} (Python): lớp dữ liệu
+đóng gói trạng thái phương tiện và đèn tín hiệu mỗi bước; \texttt{to\_dict()}
+chuyển sang JSON để gửi qua TCP.
 ```
 
 ---
@@ -172,12 +197,13 @@ mỗi lớp chịu trách nhiệm một loại đối tượng địa lý và ch
 |--------|---------------------|----------------------|-----------|
 | **4.1.1** | `hinh4.1-thiet-ke-kien-truc-chi-tiet.png` | `hinh4.1.1-thiet-ke-kien-truc-chi-tiet.png` | đổi tên |
 | **4.1.2** | `hinh4.2-so-do-goi-module.png` | `hinh4.1.2-so-do-goi-module.png` | đổi tên + nội dung thay đổi (thêm module Road) |
-| **4.2.1** | *(chưa có)* | `hinh4.2.1-pipeline-dung-ban-do.png` | **tạo mới** |
+| **4.2.1** | *(chưa có)* | `hinh4.2.1-so-do-lop-ban-do-unity.png` | **tạo mới** (sơ đồ lớp Unity map) |
 | **4.2.2** | `hinh4.3-may-trang-thai-1-phuong-tien.png` | `hinh4.2.2-may-trang-thai-1-phuong-tien.png` | đổi tên |
 | **4.2.3** | `hinh4.4-trinh-tu-trao-doi.png` | `hinh4.2.3-trinh-tu-trao-doi.png` | đổi tên |
 | **4.2.4** | `hinh4.5-so-do-lop-unity.png` | `hinh4.2.4-so-do-lop-unity.png` | đổi tên |
-| **4.2.5** | `hinh4.6-cau-truc-thu-muc-phien.png` | `hinh4.2.5-cau-truc-thu-muc-phien.png` | đổi tên |
-| **4.2.6** | `hinh4.7-bo-cuc-giao-dien.png` | `hinh4.2.6-bo-cuc-giao-dien.png` | đổi tên |
+| **4.2.5** | *(chưa có)* | `hinh4.2.5-so-do-lop-traffic-server.png` | **tạo mới** (lớp Python traffic) |
+| **4.2.6** | `hinh4.6-cau-truc-thu-muc-phien.png` | `hinh4.2.6-cau-truc-thu-muc-phien.png` | đổi tên ✅ |
+| **4.2.7** | `hinh4.7-bo-cuc-giao-dien.png` | `hinh4.2.7-bo-cuc-giao-dien.png` | đổi tên ✅ |
 | **4.3.1** | `hinh4.8-anh-goc-nhin-3d-tu-tren-cao.png` | `hinh4.3.1-anh-goc-nhin-3d-tu-tren-cao.png` | đổi tên |
 | **4.3.2a** | `hinh4.9.2-goc-nhin-cua-1-xe-tu-hanh-boi-may-chu.png` | `hinh4.3.2a-goc-nhin-cua-1-xe-tu-hanh-boi-may-chu.png` | đổi tên (subfigure a) |
 | **4.3.2b** | `hinh4.9-goc-nhin-trong-xe.png` | `hinh4.3.2b-goc-nhin-trong-xe.png` | đổi tên (subfigure b) |
@@ -196,7 +222,8 @@ mỗi lớp chịu trách nhiệm một loại đối tượng địa lý và ch
 | `hinh4.5-so-do-lop-unity.drawio` | `hinh4.2.4-so-do-lop-unity.drawio` | |
 | `hinh4.6-cau-truc-thu-muc-phien.drawio` | `hinh4.2.5-cau-truc-thu-muc-phien.drawio` | |
 | `hinh4.7-bo-cuc-giao-dien.drawio` | `hinh4.2.6-bo-cuc-giao-dien.drawio` | |
-| *(chưa có)* | `hinh4.2.1-pipeline-dung-ban-do.drawio` | **tạo mới** |
+| *(chưa có)* | `hinh4.2.1-so-do-lop-ban-do-unity.drawio` | **tạo mới** ✅ |
+| *(chưa có)* | `hinh4.2.5-so-do-lop-traffic-server.drawio` | **tạo mới** ✅ |
 
 > `hinh4.1` (kiến trúc chi tiết) không có file drawio → không cần đổi.
 
@@ -225,9 +252,21 @@ sang tên file mới theo bảng 3a. **Không đổi bất kỳ thứ gì khác*
 - ✅ Mở rộng đoạn văn 4.1.3 phía Unity: thêm mô tả nhóm bản đồ
 - ⏳ Export PNG → `BaoCao_DATN/Hinhve/hinh4.1.2-so-do-goi-module.png` (cần mở draw.io thủ công)
 
-**Bước 2 — Vẽ mới drawio hinh4.2.1 (pipeline bản đồ):**
-- Tạo `DiagramsCode/hinh4.2.1-pipeline-dung-ban-do.drawio`
-- Export PNG → `BaoCao_DATN/Hinhve/hinh4.2.1-pipeline-dung-ban-do.png`
+**Bước 2 — Vẽ các sơ đồ lớp mới:** ⏳ ĐANG LÀM
+
+> File `hinh4.2.1-pipeline-dung-ban-do.drawio` đã tạo nhưng là sơ đồ luồng (flow),
+> không phải sơ đồ lớp. Giữ lại để tham khảo nội bộ; **không dùng làm hình chính**.
+
+**2a. Sơ đồ lớp module dựng bản đồ Unity** — `hinh4.2.1-so-do-lop-ban-do-unity.drawio` ✅ XONG
+- ✅ Tạo drawio với 7 lớp: RoadDataListener, RoadData, RoadDataSO, EdgeMaker, JunctionMaker, CrossingMaker, BuildingMaker
+- ✅ Thể hiện quan hệ: RDL writes→SO, RDL deserializes RoadData, 4 Maker reads→SO
+- ⏳ Export PNG → `BaoCao_DATN/Hinhve/hinh4.2.1-so-do-lop-ban-do-unity.png` (cần mở draw.io thủ công)
+
+**2b. Sơ đồ lớp/module traffic phía Python server** — `hinh4.2.5-so-do-lop-traffic-server.drawio` ✅ XONG
+- ✅ Vẽ class TrafficerData, TrafficLightData, CrossingReader (có thuộc tính + phương thức)
+- ✅ Vẽ module trafficer, unity_vehicle, trafficLight như component
+- ✅ Thể hiện quan hệ: module tạo dataclass, dataclass to_dict()→TCP 5050
+- ⏳ Export PNG → `BaoCao_DATN/Hinhve/hinh4.2.5-so-do-lop-traffic-server.png` (cần mở draw.io thủ công)
 
 **Bước 3 — Viết lại nội dung tex:**
 - Bổ sung 1 câu + hàng bảng vào 4.1.3 (mục 1b, 1c)
