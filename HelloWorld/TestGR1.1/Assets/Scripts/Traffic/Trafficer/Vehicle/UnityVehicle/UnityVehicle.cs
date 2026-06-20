@@ -64,7 +64,7 @@ public class UnityVehicle : MonoBehaviour
 		}
 	}
 
-	/// <summary>Trả quyền cho server (xe tự chạy lại). Re-anchor do server xử lý.</summary>
+	/// <summary>Trả quyền — xe bị hủy ngay (server remove, Unity recycle khi vắng trong stream).</summary>
 	public void ReleaseControl()
 	{
 		if (hasCrashed)
@@ -78,7 +78,7 @@ public class UnityVehicle : MonoBehaviour
 		{
 			vehicle.enabled = true;
 		}
-		// Chunk 5: gửi one-shot state=1 → server re-anchor. Không áp dụng cho CLIENT_CAR.
+		// Gửi one-shot state=1 → server hủy xe. Không áp dụng cho CLIENT_CAR.
 		if (!trafficer.isStandaloneClient && UnityVehicleManager.Instance != null)
 			UnityVehicleManager.Instance.EnqueueRelease(GetUnityVehicleData());
 	}

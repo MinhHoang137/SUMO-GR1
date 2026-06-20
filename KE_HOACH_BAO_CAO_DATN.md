@@ -81,7 +81,7 @@ Bốn nhóm để phân rã:
 | UC12 | Điều chỉnh tốc độ mô phỏng | Người dùng | Đổi `timeStep`/hệ số tốc độ lúc đang chạy | `UI/SpeedMultiplierUI.cs`, `Traffic/SpeedMultiplier.cs` |
 | UC13 | Lọc đối tượng hiển thị theo vùng | Người dùng | Cull đối tượng ngoài tầm để tối ưu hiệu năng | `Optimization/FilterTransform.cs`, `FilterUI.cs` |
 | UC14 | Chiếm quyền điều khiển & lái xe thủ công | Người dùng | Chọn xe server → `TakeControl` → lái bằng bàn phím (physics) | `UnityVehicle.cs`, `WheelController.cs`, `UI/VehicleTakeoverUI.cs` |
-| UC15 | Trả quyền điều khiển xe (re-anchor / hủy) | Người dùng | Thả xe → SUMO snap về lane gần nhất & chạy lại, hoặc hủy nếu quá xa | `UnityVehicle.ReleaseControl`, `Server/Traffic/unity_vehicle.py` |
+| UC15 | Trả quyền điều khiển xe | Người dùng | Thả xe → xe bị hủy ngay khỏi SUMO (không re-anchor); xe bị tông → thành xác xe (UC16) | `UnityVehicle.ReleaseControl`, `Server/Traffic/unity_vehicle.py` (state 1 → `_remove_vehicle`) |
 | UC16 | Gây va chạm sinh xác xe | Người dùng | Va chạm vật lý → `BecomeWreck`, xe mất điều khiển, despawn sau N bước | `UnityVehicle.OnCollisionEnter`, `unity_vehicle.py` (state 3) |
 | UC17 | Ghi & lưu trữ phiên mô phỏng | Người dùng | `SimulationSession` gom `trips.csv`, `summary.json`, `road_data.json`, `scenario.json` vào `result/{map}-{timestamp}/`; realtime cũng phát lại được | `render/scenario_recorder.py` |
 
@@ -97,12 +97,11 @@ Chọn 6 use case "xương sống" và có luồng phát sinh phong phú:
 1. **UC7 – Chạy mô phỏng Realtime** (luồng phụ: mất kết nối TCP, gói JSON phân mảnh).
 2. **UC4 – Sinh tuyến đường cho xe** (luồng phụ: cặp OD không liên thông → lọc bỏ).
 3. **UC14 – Chiếm quyền & lái xe** (luồng phụ: xe đang lái bị tông → latch `hasCrashed`).
-4. **UC15 – Trả quyền & re-anchor** (luồng phụ: thả quá xa lane → hủy xe).
+4. **UC15 – Trả quyền** (luồng chính: xe bị hủy ngay; luồng phụ: xe đã bị tông → thành xác xe thay vì hủy trực tiếp).
 5. **UC11 – Tạm dừng/tiếp tục** (đồng bộ `pause_event` ↔ Unity, người đi bộ không trôi).
 6. **UC2 – Nhập bản đồ OSM** (luồng phụ: OSM lỗi/không build được mạng).
 
-> Vẽ **biểu đồ hoạt động** kèm theo cho UC14 và UC15 (luồng phức tạp, có nhánh trạng thái
-> `ServerControlled / ClientControlled / Wrecked / Destroyed` — xem máy trạng thái `ExistState` trong `CLAUDE.md`).
+> Vẽ **biểu đồ hoạt động** kèm theo cho UC14 và UC15. UC15 đã đơn giản hơn: không còn nhánh "tìm làn / trong ngưỡng?"; chỉ còn hai nhánh: đã va chạm → `BecomeWreck`, chưa va chạm → hủy xe ngay (`_remove_vehicle`, Unity recycle). Cập nhật lại `fig:act-uc15` và `fig:reanchor-flow`.
 
 ---
 
@@ -133,7 +132,7 @@ Chọn 6 use case "xương sống" và có luồng phát sinh phong phú:
 - **Cập nhật giải pháp "ghi log":** đổi từ CSV/JSON rời rạc sang mô hình **phiên hợp nhất `SimulationSession`** (`render/scenario_recorder.py`) — một thư mục `result/{map}-{timestamp}/` chứa `trips.csv` + `summary.json` + `road_data.json` + `scenario.json`; ghi `scenario.json` dạng streaming có buffer 10MB; realtime nay cũng ghi lại được để phát lại như pre-render.
 - **Bổ sung 2 giải pháp mới (điểm nhấn ĐATN):**
   - 5.x Cơ chế **takeover hybrid** (kinematic↔dynamic, khóa điều khiển bằng `existState`, upload batch).
-  - 5.y Cơ chế **wreck + re-anchor** (đếm despawn tập trung chống cull, snap lane bằng `convertRoad`/`moveTo`, ngưỡng `SNAP_THRESHOLD`).
+  - 5.y Cơ chế **wreck + hủy xe khi thả quyền** (đếm despawn tập trung chống cull; khi thả quyền không va chạm → `_remove_vehicle` ngay, không tìm đường).
 
 #### [ĐỀ XUẤT THÊM — CHỜ CÂN NHẮC] 5.z Tối ưu luồng dữ liệu SUMO↔Unity
 > Nguồn: `HelloWorld/KE_HOACH_TOI_UU_LUONG_DU_LIEU.md` (đã hiện thực + đo). Có số liệu thật nên hợp

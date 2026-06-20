@@ -224,7 +224,7 @@ def process_vehicle_updates(traci):
         for v in vehicles:
             try:
                 veh_id = v['i']
-                # ExistState: 0 = Destroyed, 1 = ServerControlled (re-anchor — chunk 5),
+                # ExistState: 0 = Destroyed, 1 = ServerControlled (trả quyền → hủy xe ngay),
                 # 2 = ClientControlled (client lái, SUMO mirror), 3 = Wrecked (xác xe đông cứng).
                 state = v.get('e', 1)
 
@@ -244,10 +244,10 @@ def process_vehicle_updates(traci):
                 speed = v['sp']
                 angle = math.degrees(math.atan2(forward[0], forward[1]))
 
-                # state 1 = re-anchor (chunk 5): thả quyền → snap về lane, cấp route, trả autopilot.
-                # Không add vào present_ids → reconcile không đụng sau khi managed_ids.discard.
+                # state 1 = trả quyền: hủy xe ngay; Unity sẽ recycle khi vắng trong download.
+                # Không add vào present_ids để reconcile không đụng sau khi discard.
                 if state == 1:
-                    _re_anchor(traci, veh_id, pos)
+                    _remove_vehicle(traci, veh_id)
                     managed_ids.discard(veh_id)
                     wrecked_ids.discard(veh_id)
                     continue
