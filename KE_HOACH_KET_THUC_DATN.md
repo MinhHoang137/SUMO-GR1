@@ -72,38 +72,46 @@
 A.1  Yêu cầu phần cứng và phần mềm
      - Windows 10/11
      - Python 3.10+
-     - SUMO (đặt SUMO_HOME)
+     - SUMO + traci (cài qua install.bat, xem A.2)
+     - Microsoft Visual C++ Redistributable 2022 x64 (cài qua install.bat)
      - Unity build (không cần Editor)
 
-A.2  Cài đặt môi trường Python
-     - pip install -r requirements.txt
-     - Kiểm tra: python -c "import traci"
+A.2  Cài đặt môi trường — chạy install.bat
+     - Gói duy nhất cần pip: eclipse-sumo (bao gồm SUMO, traci, sumolib)
+     - File: HelloWorld/install.bat — chạy 1 lần, tự động:
+         (1) Kiểm tra Python
+         (2) pip install eclipse-sumo
+         (3) Cài Visual C++ Redistributable (nếu chưa có)
+         (4) Xác nhận import traci thành công
+     - Kiểm tra thủ công: python -c "import traci; print(traci.VERSION)"
 
-A.3  Cài đặt SUMO
-     - Tải từ sumo.dlr.de, thêm vào PATH
-     - Đặt biến môi trường SUMO_HOME
+A.3  Khởi chạy hệ thống
+     Chia 2 trường hợp:
 
-A.4  Khởi chạy hệ thống
-Chia 2 trường hợp chạy thời gian thực hoặc tiền kết xuất:
-1. chạy thời gian thực:
-- Bước 1: chọn kịch bản, nhấn start server
-- Bước 2: khi Unity mở lên, nhấn "Mô phỏng thời gian thực" -> "Lấy dữ liệu đường" -> chờ thông báo lấy dữ liệu thành công -> nhấn "Bắt đầu mô phỏng"
+     1. Chạy thời gian thực:
+        - Bước 1: python launcher.py → chọn kịch bản, nhấn Start Server
+        - Bước 2: khi Unity mở lên → "Mô phỏng thời gian thực"
+                  → "Lấy dữ liệu đường" → chờ thông báo thành công
+                  → "Bắt đầu mô phỏng"
 
-2. Phát lại 1 kịch bản có sẵn:
-- Bước 1: lấy kịch bản, hoặc tạo mới bằng launcher, hoặc kịch bản hợp lệ có sẵn
-- Bước 2: mở TestGR1.1.exe trong UnityBuild, nhấn "Tiền kết xuất" -> nhập đường dẫn tuyệt đối của "road_data.json" vào ô "Đường dẫn bản đồ", đường dẫn tuyệt đối của "scenario.json" vào "Đường dẫn kịch bản"
-- Bước 3: nhấn "Phát lại"
+     2. Phát lại kịch bản có sẵn (tiền kết xuất):
+        - Bước 1: chuẩn bị kịch bản (tạo bằng launcher hoặc dùng kịch bản có sẵn)
+        - Bước 2: mở TestGR1.1.exe → "Tiền kết xuất"
+                  → nhập đường dẫn road_data.json và scenario.json
+        - Bước 3: nhấn "Phát lại"
 
-A.5  Xử lý sự cố thường gặp
+A.4  Xử lý sự cố thường gặp
      - Lỗi kết nối TCP: kiểm tra port 5050/5053/5054
-     - SUMO không tìm thấy: kiểm tra SUMO_HOME và PATH
+     - sumo-gui báo lỗi DLL: chạy lại install.bat (cài VC++ Redist)
+     - traci không tìm thấy: chạy lại install.bat
 ```
 
 **Việc cần làm:**
 - [ ] Xóa nội dung template trong `Phu_luc_A.tex`
 - [ ] Viết nội dung theo cấu trúc trên
-- [ ] Xem `HelloWorld/Server/` để liệt kê đủ gói pip cần thiết
-- [ ] Thêm lệnh kiểm tra nhanh xác nhận cài thành công
+- [x] Xem `HelloWorld/Server/` để liệt kê đủ gói pip cần thiết → chỉ có `eclipse-sumo`
+- [x] Thêm lệnh kiểm tra nhanh xác nhận cài thành công → có trong `install.bat`
+- [x] Tạo `HelloWorld/install.bat` — cài eclipse-sumo + VC++ Redist tự động
 
 ---
 

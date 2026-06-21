@@ -5,7 +5,7 @@
     Tab 3: chạy kịch bản do người dùng tự dựng bằng netedit — chỉ cần trỏ thư mục
            chứa .net.xml + .rou.xml (+ tuỳ chọn .sumocfg).
 
-Phần shared (dưới notebook): Run with GUI, Monitor, Start Server, Stop All —
+Phần shared (dưới notebook): Chế độ hiển thị, Theo dõi mô phỏng, Khởi động Server, Dừng tất cả —
 dispatch theo tab đang active."""
 
 import os
@@ -15,6 +15,14 @@ import subprocess
 import threading
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
+
+# Ánh xạ trạng thái server sang tiếng Việt
+_STATE_VI = {
+    "PLAYING": "ĐANG CHẠY",
+    "STOPPED": "ĐÃ DỪNG",
+    "PAUSED": "TẠM DỪNG",
+    "STARTING": "ĐANG KHỞI ĐỘNG",
+}
 
 
 class ScrollableFrame(ttk.Frame):
@@ -61,7 +69,7 @@ class ClampedSpinbox(ttk.Spinbox):
 class AppLauncher:
     def __init__(self, root):
         self.root = root
-        self.root.title("SUMO-Unity System Launcher")
+        self.root.title("SUMO-Unity: Khởi chạy hệ thống")
         self.root.geometry("640x820")
         self.root.resizable(True, True)
 
@@ -135,9 +143,9 @@ class AppLauncher:
         maze_tab = ttk.Frame(self.notebook)
         osm_tab = ttk.Frame(self.notebook)
         custom_tab = ttk.Frame(self.notebook)
-        self.notebook.add(maze_tab, text="Maze (.map) Simulation")
-        self.notebook.add(osm_tab, text="OSM (.osm) Simulation")
-        self.notebook.add(custom_tab, text="Custom Script (netedit)")
+        self.notebook.add(maze_tab, text="Mô phỏng Maze (.map)")
+        self.notebook.add(osm_tab, text="Mô phỏng OSM (.osm)")
+        self.notebook.add(custom_tab, text="Kịch bản netedit")
 
         self._build_maze_tab(maze_tab)
         self._build_osm_tab(osm_tab)
@@ -154,21 +162,21 @@ class AppLauncher:
         main_frame = ttk.Frame(sf.inner, padding=15)
         main_frame.pack(fill=tk.BOTH, expand=True)
 
-        ttk.Label(main_frame, text="Map Type:").grid(row=0, column=0, sticky=tk.W, pady=5)
+        ttk.Label(main_frame, text="Kiểu bản đồ:").grid(row=0, column=0, sticky=tk.W, pady=5)
         ttk.Label(main_frame, text="Maze (.map)").grid(row=0, column=1, sticky=tk.W, padx=5)
 
-        ttk.Label(main_frame, text="Map File (.map):").grid(row=1, column=0, sticky=tk.W, pady=5)
+        ttk.Label(main_frame, text="Tệp bản đồ (.map):").grid(row=1, column=0, sticky=tk.W, pady=5)
         ttk.Entry(main_frame, textvariable=self.map_file, width=40).grid(row=1, column=1, padx=5, pady=5)
-        ttk.Button(main_frame, text="Browse", command=self._browse_map).grid(row=1, column=2, pady=5)
+        ttk.Button(main_frame, text="Duyệt...", command=self._browse_map).grid(row=1, column=2, pady=5)
 
-        ttk.Label(main_frame, text="Num Lanes (xe/bên):").grid(row=2, column=0, sticky=tk.W, pady=5)
+        ttk.Label(main_frame, text="Số làn (xe/bên):").grid(row=2, column=0, sticky=tk.W, pady=5)
         lane_frame = ttk.Frame(main_frame)
         lane_frame.grid(row=2, column=1, sticky=tk.W, padx=5, pady=5)
         ClampedSpinbox(lane_frame, from_=1, to=3, textvariable=self.num_lanes, width=10).pack(side=tk.LEFT)
         ttk.Label(lane_frame, text="(1–3 làn xe mỗi bên, +1 làn đi bộ)",
                   foreground="#666").pack(side=tk.LEFT, padx=6)
 
-        ttk.Label(main_frame, text="Simulation Mode:").grid(row=3, column=0, sticky=tk.W, pady=5)
+        ttk.Label(main_frame, text="Chế độ mô phỏng:").grid(row=3, column=0, sticky=tk.W, pady=5)
         mode_frame = ttk.Frame(main_frame)
         mode_frame.grid(row=3, column=1, sticky=tk.W)
         ttk.Radiobutton(mode_frame, text="1. Benchmark", variable=self.sim_mode,
@@ -176,20 +184,20 @@ class AppLauncher:
         ttk.Radiobutton(mode_frame, text="2. VRP", variable=self.sim_mode,
                         value=2, command=self._toggle_mode).pack(side=tk.LEFT, padx=5)
 
-        ttk.Label(main_frame, text="Render Mode:").grid(row=4, column=0, sticky=tk.W, pady=5)
+        ttk.Label(main_frame, text="Chế độ kết xuất:").grid(row=4, column=0, sticky=tk.W, pady=5)
         render_frame = ttk.Frame(main_frame)
         render_frame.grid(row=4, column=1, sticky=tk.W)
-        ttk.Radiobutton(render_frame, text="Realtime", variable=self.render_mode, value=1, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
-        ttk.Radiobutton(render_frame, text="Pre-render", variable=self.render_mode, value=2, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(render_frame, text="Thời gian thực", variable=self.render_mode, value=1, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(render_frame, text="Tiền kết xuất", variable=self.render_mode, value=2, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
 
         # Benchmark frame
-        self.bench_frame = ttk.LabelFrame(main_frame, text="Benchmark Mode Options", padding=10)
+        self.bench_frame = ttk.LabelFrame(main_frame, text="Tùy chọn Benchmark", padding=10)
         self.bench_frame.grid(row=5, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=10)
 
-        ttk.Label(self.bench_frame, text="Number of Pairs:").grid(row=0, column=0, sticky=tk.W, pady=2)
+        ttk.Label(self.bench_frame, text="Số cặp nguồn–đích:").grid(row=0, column=0, sticky=tk.W, pady=2)
         ClampedSpinbox(self.bench_frame, from_=1, to=1000, textvariable=self.num_pairs, width=10).grid(row=0, column=1, sticky=tk.W, pady=2)
 
-        ttk.Label(self.bench_frame, text="Car Crossroad Type:").grid(row=1, column=0, sticky=tk.W, pady=2)
+        ttk.Label(self.bench_frame, text="Kiểu nút giao (xe):").grid(row=1, column=0, sticky=tk.W, pady=2)
         ttk.Combobox(self.bench_frame, textvariable=self.car_cr_type,
                      values=["CS", "SS", "IO", "OI"], width=8, state="readonly").grid(row=1, column=1, sticky=tk.W, pady=2)
 
@@ -197,16 +205,16 @@ class AppLauncher:
         ClampedSpinbox(self.bench_frame, from_=1, to=600, increment=1,
                     textvariable=self.car_period, width=10).grid(row=2, column=1, sticky=tk.W, pady=2)
 
-        ttk.Checkbutton(self.bench_frame, text="Create pedestrians?",
+        ttk.Checkbutton(self.bench_frame, text="Tạo người đi bộ?",
                         variable=self.has_ped, command=self._toggle_ped).grid(row=3, column=0, columnspan=2, sticky=tk.W, pady=5)
 
-        self.ped_cr_lbl = ttk.Label(self.bench_frame, text="Ped Crossroad Type:")
+        self.ped_cr_lbl = ttk.Label(self.bench_frame, text="Kiểu nút giao (người đi bộ):")
         self.ped_cr_lbl.grid(row=4, column=0, sticky=tk.W, pady=2)
         self.ped_cr_cb = ttk.Combobox(self.bench_frame, textvariable=self.ped_cr_type,
                                        values=["CS", "SS", "IO", "OI"], width=8, state="readonly")
         self.ped_cr_cb.grid(row=4, column=1, sticky=tk.W, pady=2)
 
-        self.ped_imp_lbl = ttk.Label(self.bench_frame, text="Ped Impatience (0-1):")
+        self.ped_imp_lbl = ttk.Label(self.bench_frame, text="Độ thiếu kiên nhẫn người đi bộ (0–1):")
         self.ped_imp_lbl.grid(row=5, column=0, sticky=tk.W, pady=2)
         self.ped_imp_sb = ClampedSpinbox(self.bench_frame, from_=0.0, to=1.0,
                                        increment=0.1, textvariable=self.ped_impatience, width=10)
@@ -236,13 +244,13 @@ class AppLauncher:
         self.max_p_sb.grid(row=10, column=1, sticky=tk.W, pady=2)
 
         # VRP frame
-        self.vrp_frame = ttk.LabelFrame(main_frame, text="VRP Mode Options", padding=10)
+        self.vrp_frame = ttk.LabelFrame(main_frame, text="Tùy chọn VRP", padding=10)
         self.vrp_frame.grid(row=6, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=5)
 
-        ttk.Label(self.vrp_frame, text="Number of Clients:").grid(row=0, column=0, sticky=tk.W, pady=2)
+        ttk.Label(self.vrp_frame, text="Số khách hàng:").grid(row=0, column=0, sticky=tk.W, pady=2)
         ClampedSpinbox(self.vrp_frame, from_=1, to=1000, textvariable=self.num_clients, width=10).grid(row=0, column=1, sticky=tk.W, pady=2)
 
-        ttk.Label(self.vrp_frame, text="Number of Staff:").grid(row=1, column=0, sticky=tk.W, pady=2)
+        ttk.Label(self.vrp_frame, text="Số nhân viên:").grid(row=1, column=0, sticky=tk.W, pady=2)
         ClampedSpinbox(self.vrp_frame, from_=1, to=100, textvariable=self.num_staff, width=10).grid(row=1, column=1, sticky=tk.W, pady=2)
 
     def _browse_map(self):
@@ -250,8 +258,8 @@ class AppLauncher:
         if not os.path.exists(init_dir):
             init_dir = self.base_dir
         path = filedialog.askopenfilename(
-            initialdir=init_dir, title="Select Map File",
-            filetypes=[("Map Files", "*.map"), ("All Files", "*.*")],
+            initialdir=init_dir, title="Chọn tệp bản đồ",
+            filetypes=[("Tệp bản đồ", "*.map"), ("Tất cả tệp", "*.*")],
         )
         if path:
             self.map_file.set(path)
@@ -310,17 +318,17 @@ class AppLauncher:
         frame.pack(fill=tk.BOTH, expand=True)
         frame.columnconfigure(1, weight=1)
 
-        ttk.Label(frame, text="OSM File (.osm):").grid(row=0, column=0, sticky=tk.W, pady=4)
+        ttk.Label(frame, text="Tệp OSM (.osm):").grid(row=0, column=0, sticky=tk.W, pady=4)
         ttk.Entry(frame, textvariable=self.osm_file).grid(row=0, column=1, columnspan=3, sticky=tk.EW, padx=5, pady=4)
-        ttk.Button(frame, text="Browse", command=self._browse_osm).grid(row=0, column=4, pady=4)
+        ttk.Button(frame, text="Duyệt...", command=self._browse_osm).grid(row=0, column=4, pady=4)
 
-        ttk.Label(frame, text="→ Output:", foreground="#555").grid(row=1, column=0, sticky=tk.W, pady=4)
+        ttk.Label(frame, text="→ Đầu ra:", foreground="#555").grid(row=1, column=0, sticky=tk.W, pady=4)
         ttk.Label(frame, textvariable=self.osm_output_str,
                   foreground="#555").grid(row=1, column=1, columnspan=4, sticky=tk.W, padx=5)
 
         ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=2, column=0, columnspan=5, sticky=tk.EW, pady=8)
 
-        ttk.Label(frame, text="Map mode:").grid(row=3, column=0, sticky=tk.W, pady=4)
+        ttk.Label(frame, text="Chế độ bản đồ:").grid(row=3, column=0, sticky=tk.W, pady=4)
         mode_frame = ttk.Frame(frame)
         mode_frame.grid(row=3, column=1, columnspan=4, sticky=tk.W)
         ttk.Radiobutton(mode_frame, text="2D (khuyến khích — bản đồ không có cầu vượt chồng chéo)",
@@ -346,12 +354,12 @@ class AppLauncher:
         ttk.Radiobutton(algo_frame, text="Maximum (cố gắng đủ K đoạn, có thể dừng sớm)",
                         variable=self.osm_algorithm, value="max").pack(anchor=tk.W)
 
-        ttk.Label(frame, text="Sinh route cho:").grid(row=7, column=0, sticky=tk.W, pady=4)
+        ttk.Label(frame, text="Sinh tuyến cho:").grid(row=7, column=0, sticky=tk.W, pady=4)
         types_frame = ttk.Frame(frame)
         types_frame.grid(row=7, column=1, columnspan=4, sticky=tk.W)
         ttk.Checkbutton(types_frame, text="Xe", variable=self.osm_gen_car).pack(side=tk.LEFT, padx=(0, 12))
         ttk.Checkbutton(types_frame, text="Người đi bộ", variable=self.osm_gen_ped).pack(side=tk.LEFT, padx=(0, 12))
-        ttk.Label(types_frame, text="Impatience:").pack(side=tk.LEFT)
+        ttk.Label(types_frame, text="Độ thiếu kiên nhẫn:").pack(side=tk.LEFT)
         ClampedSpinbox(types_frame, textvariable=self.osm_ped_impatience, from_=0.0, to=1.0, increment=0.1, width=6).pack(side=tk.LEFT, padx=4)
 
         ttk.Label(frame, text="Tần suất sinh (s):").grid(row=8, column=0, sticky=tk.W, pady=4)
@@ -368,11 +376,11 @@ class AppLauncher:
                   foreground="#666").grid(row=9, column=2, columnspan=3, sticky=tk.W)
 
         # Render Mode — share self.render_mode với Tab Maze để 2 tab đồng bộ
-        ttk.Label(frame, text="Render Mode:").grid(row=10, column=0, sticky=tk.W, pady=4)
+        ttk.Label(frame, text="Chế độ kết xuất:").grid(row=10, column=0, sticky=tk.W, pady=4)
         render_frame = ttk.Frame(frame)
         render_frame.grid(row=10, column=1, columnspan=4, sticky=tk.W)
-        ttk.Radiobutton(render_frame, text="Realtime", variable=self.render_mode, value=1, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
-        ttk.Radiobutton(render_frame, text="Pre-render", variable=self.render_mode, value=2, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(render_frame, text="Thời gian thực", variable=self.render_mode, value=1, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(render_frame, text="Tiền kết xuất", variable=self.render_mode, value=2, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
 
         ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=11, column=0, columnspan=5, sticky=tk.EW, pady=8)
 
@@ -399,8 +407,8 @@ class AppLauncher:
         if not os.path.isdir(init_dir):
             init_dir = self.base_dir
         path = filedialog.askopenfilename(
-            initialdir=init_dir, title="Select OSM File",
-            filetypes=[("OSM Files", "*.osm"), ("All Files", "*.*")],
+            initialdir=init_dir, title="Chọn tệp OSM",
+            filetypes=[("Tệp OSM", "*.osm"), ("Tất cả tệp", "*.*")],
         )
         if path:
             self.osm_file.set(path)
@@ -422,14 +430,14 @@ class AppLauncher:
         ttk.Label(info, text=(
             "1. Dùng netedit để tạo mạng lưới đường (network) và tuyến đường (routes).\n"
             "2. Export ra .net.xml và .rou.xml vào cùng 1 thư mục.\n"
-            "3. Chọn thư mục đó bên dưới rồi nhấn Start Server."
+            "3. Chọn thư mục đó bên dưới rồi nhấn Khởi động Server."
         ), justify=tk.LEFT, foreground="#333").pack(anchor=tk.W)
 
         ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=1, column=0, columnspan=3, sticky=tk.EW, pady=8)
 
         ttk.Label(frame, text="Thư mục kịch bản:").grid(row=2, column=0, sticky=tk.W, pady=4)
         ttk.Entry(frame, textvariable=self.custom_folder).grid(row=2, column=1, sticky=tk.EW, padx=5, pady=4)
-        ttk.Button(frame, text="Browse", command=self._browse_custom_folder).grid(row=2, column=2, pady=4)
+        ttk.Button(frame, text="Duyệt...", command=self._browse_custom_folder).grid(row=2, column=2, pady=4)
 
         ttk.Label(frame, text="→ Bắt buộc:", foreground="#555").grid(row=3, column=0, sticky=tk.W, pady=2)
         ttk.Label(frame, text=".net.xml  và  .rou.xml  (+ tuỳ chọn: .sumocfg)",
@@ -438,12 +446,12 @@ class AppLauncher:
         ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=4, column=0, columnspan=3, sticky=tk.EW, pady=8)
 
         # Render Mode — chia sẻ cùng self.render_mode với 2 tab kia
-        ttk.Label(frame, text="Render Mode:").grid(row=5, column=0, sticky=tk.W, pady=4)
+        ttk.Label(frame, text="Chế độ kết xuất:").grid(row=5, column=0, sticky=tk.W, pady=4)
         render_frame = ttk.Frame(frame)
         render_frame.grid(row=5, column=1, columnspan=2, sticky=tk.W)
-        ttk.Radiobutton(render_frame, text="Realtime", variable=self.render_mode,
+        ttk.Radiobutton(render_frame, text="Thời gian thực", variable=self.render_mode,
                         value=1, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
-        ttk.Radiobutton(render_frame, text="Pre-render", variable=self.render_mode,
+        ttk.Radiobutton(render_frame, text="Tiền kết xuất", variable=self.render_mode,
                         value=2, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
 
     def _browse_custom_folder(self):
@@ -464,25 +472,25 @@ class AppLauncher:
 
         gui_frame = ttk.Frame(shared)
         gui_frame.pack(anchor=tk.W, pady=(0, 5))
-        ttk.Label(gui_frame, text="Chế độ hiển thị (Realtime):").pack(side=tk.LEFT, padx=(0, 8))
+        ttk.Label(gui_frame, text="Chế độ hiển thị (Thời gian thực):").pack(side=tk.LEFT, padx=(0, 8))
         self.gui_3d_rb = ttk.Radiobutton(gui_frame, text="Chỉ 3D", variable=self.gui_mode, value=1)
         self.gui_3d_rb.pack(side=tk.LEFT, padx=4)
         self.gui_2d3d_rb = ttk.Radiobutton(gui_frame, text="Cả 2D và 3D", variable=self.gui_mode, value=2)
         self.gui_2d3d_rb.pack(side=tk.LEFT, padx=4)
 
-        monitor = ttk.LabelFrame(shared, text="Simulation Monitor", padding=10)
+        monitor = ttk.LabelFrame(shared, text="Theo dõi mô phỏng", padding=10)
         monitor.pack(fill=tk.X, pady=5)
-        self.status_lbl = ttk.Label(monitor, text="Status: IDLE",
+        self.status_lbl = ttk.Label(monitor, text="Trạng thái: CHƯA CHẠY",
                                     font=("Segoe UI", 10, "bold"), foreground="blue")
         self.status_lbl.grid(row=0, column=0, sticky=tk.W, pady=2)
-        self.timestep_lbl = ttk.Label(monitor, text="Time Step: N/A", font=("Segoe UI", 10))
+        self.timestep_lbl = ttk.Label(monitor, text="Bước thời gian: N/A", font=("Segoe UI", 10))
         self.timestep_lbl.grid(row=1, column=0, sticky=tk.W, pady=2)
 
         btn_frame = tk.Frame(shared)
         btn_frame.pack(pady=10)
-        tk.Button(btn_frame, text="Start Server", font=("Segoe UI", 11, "bold"),
+        tk.Button(btn_frame, text="Khởi động Server", font=("Segoe UI", 11, "bold"),
                   bg="#4CAF50", fg="white", width=15, command=self._start_server).pack(side=tk.LEFT, padx=10)
-        tk.Button(btn_frame, text="Stop All", font=("Segoe UI", 11, "bold"),
+        tk.Button(btn_frame, text="Dừng tất cả", font=("Segoe UI", 11, "bold"),
                   bg="#f44336", fg="white", width=15, command=self._stop_all).pack(side=tk.LEFT, padx=10)
 
     # ═════════════════════════════════════════════════════════════════
@@ -491,7 +499,7 @@ class AppLauncher:
 
     def _start_server(self):
         if self.server_process and self.server_process.poll() is None:
-            messagebox.showinfo("Info", "Server is already running!")
+            messagebox.showinfo("Thông tin", "Server đang chạy rồi!")
             return
 
         active = self.notebook.index(self.notebook.select())
@@ -505,10 +513,10 @@ class AppLauncher:
     # ── Tab 1 path: maze .map ────────────────────────────────────────
     def _start_from_maze(self):
         if not self.map_file.get():
-            messagebox.showerror("Error", "Hãy chọn 1 file .map.")
+            messagebox.showerror("Lỗi", "Hãy chọn 1 file .map.")
             return
         if not os.path.isfile(self.map_file.get()):
-            messagebox.showerror("Error", "File .map không tồn tại.")
+            messagebox.showerror("Lỗi", "File .map không tồn tại.")
             return
 
         inputs = [str(self.sim_mode.get())]
@@ -539,10 +547,10 @@ class AppLauncher:
     def _start_from_osm(self):
         osm = self.osm_file.get()
         if not osm or not os.path.isfile(osm):
-            messagebox.showerror("Error", "Hãy chọn 1 file .osm hợp lệ.")
+            messagebox.showerror("Lỗi", "Hãy chọn 1 file .osm hợp lệ.")
             return
         if not (self.osm_gen_car.get() or self.osm_gen_ped.get()):
-            messagebox.showerror("Error", "Phải chọn ít nhất 1 trong 'Xe' hoặc 'Người đi bộ'.")
+            messagebox.showerror("Lỗi", "Phải chọn ít nhất 1 trong 'Xe' hoặc 'Người đi bộ'.")
             return
         try:
             n_junc = int(self.osm_num_junctions.get())
@@ -552,13 +560,13 @@ class AppLauncher:
             ped_period = float(self.osm_ped_period.get())
             end_time = float(self.osm_sim_duration.get())
         except ValueError:
-            messagebox.showerror("Error", "Số junction / edges / impatience / tần suất / độ dài phải là số hợp lệ.")
+            messagebox.showerror("Lỗi", "Số junction / edges / impatience / tần suất / độ dài phải là số hợp lệ.")
             return
         if n_junc <= 0 or k_edges <= 0:
-            messagebox.showerror("Error", "Số junction và edges/route phải > 0.")
+            messagebox.showerror("Lỗi", "Số junction và edges/route phải > 0.")
             return
         if car_period <= 0 or ped_period <= 0 or end_time <= 0:
-            messagebox.showerror("Error", "Tần suất sinh và độ dài mô phỏng phải > 0.")
+            messagebox.showerror("Lỗi", "Tần suất sinh và độ dài mô phỏng phải > 0.")
             return
 
         os.makedirs(self.sumo_xml_dir, exist_ok=True)
@@ -570,7 +578,7 @@ class AppLauncher:
             "ped_impatience": ped_imp,
             "car_period": car_period, "ped_period": ped_period, "end_time": end_time,
         }
-        self.status_lbl.configure(text=f"Status: BUILDING OSM ({params['mode'].upper()})…",
+        self.status_lbl.configure(text=f"Trạng thái: ĐANG XÂY DỰNG OSM ({params['mode'].upper()})…",
                                   foreground="orange")
         threading.Thread(target=self._build_then_launch, args=(params,), daemon=True).start()
 
@@ -600,10 +608,10 @@ class AppLauncher:
 
         def after_build():
             if not ok:
-                self.status_lbl.configure(text="Status: BUILD FAILED", foreground="red")
+                self.status_lbl.configure(text="Trạng thái: XÂY DỰNG THẤT BẠI", foreground="red")
                 messagebox.showerror(
-                    "Failed",
-                    "Build kịch bản OSM thất bại. Kiểm tra console (cần SUMO/netconvert trong PATH).",
+                    "Thất bại",
+                    "Xây dựng kịch bản OSM thất bại. Kiểm tra console (cần SUMO/netconvert trong PATH).",
                 )
                 return
             # Custom Script mode: pass folder path, main.py detect isdir
@@ -623,10 +631,10 @@ class AppLauncher:
     def _start_from_custom(self):
         folder = self.custom_folder.get().strip()
         if not folder:
-            messagebox.showerror("Error", "Hãy chọn thư mục chứa kịch bản netedit.")
+            messagebox.showerror("Lỗi", "Hãy chọn thư mục chứa kịch bản netedit.")
             return
         if not os.path.isdir(folder):
-            messagebox.showerror("Error", "Thư mục không tồn tại.")
+            messagebox.showerror("Lỗi", "Thư mục không tồn tại.")
             return
 
         # Kiểm tra sơ bộ sự tồn tại file bắt buộc trước khi launch
@@ -639,7 +647,7 @@ class AppLauncher:
             if not has_rou:
                 missing.append(".rou.xml")
             messagebox.showerror(
-                "Error",
+                "Lỗi",
                 f"Thư mục thiếu file bắt buộc: {', '.join(missing)}\n"
                 "Hãy export kịch bản từ netedit vào thư mục đã chọn.",
             )
@@ -666,10 +674,10 @@ class AppLauncher:
             all_inputs = [map_path, str(num_lanes)] + inputs
             self.server_process.stdin.write("\n".join(all_inputs) + "\n")
             self.server_process.stdin.flush()
-            self.status_lbl.configure(text="Status: STARTING SERVER...", foreground="orange")
+            self.status_lbl.configure(text="Trạng thái: ĐANG KHỞI ĐỘNG SERVER...", foreground="orange")
             threading.Thread(target=self._monitor_process, daemon=True).start()
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to start Server:\n{e}")
+            messagebox.showerror("Lỗi", f"Không thể khởi động Server:\n{e}")
 
     def _monitor_process(self):
         if not self.server_process:
@@ -682,25 +690,26 @@ class AppLauncher:
                 print(f"[Server] {line}")
                 if "[MONITOR] STATE:" in line:
                     state = line.split("STATE:")[1].strip()
+                    state_vi = _STATE_VI.get(state, state)
                     color = "green" if state == "PLAYING" else ("red" if state == "STOPPED" else "orange")
-                    self.root.after(0, lambda s=state, c=color: self.status_lbl.configure(text=f"Status: {s}", foreground=c))
+                    self.root.after(0, lambda s=state_vi, c=color: self.status_lbl.configure(text=f"Trạng thái: {s}", foreground=c))
                 elif "[MONITOR] TIME_STEP:" in line:
                     ts = line.split("TIME_STEP:")[1].strip()
-                    self.root.after(0, lambda t=ts: self.timestep_lbl.configure(text=f"Time Step: {t}s"))
+                    self.root.after(0, lambda t=ts: self.timestep_lbl.configure(text=f"Bước thời gian: {t}s"))
                 elif "[MONITOR] CLIENT_CONNECTED" in line:
-                    self.root.after(0, lambda: self.status_lbl.configure(text="Status: CLIENT CONNECTED, WAITING...", foreground="blue"))
+                    self.root.after(0, lambda: self.status_lbl.configure(text="Trạng thái: ĐÃ KẾT NỐI, ĐANG CHỜ...", foreground="blue"))
         except Exception as e:
             print(f"Monitor thread error: {e}")
-        self.root.after(0, lambda: self.status_lbl.configure(text="Status: STOPPED", foreground="red"))
-        self.root.after(0, lambda: self.timestep_lbl.configure(text="Time Step: N/A"))
+        self.root.after(0, lambda: self.status_lbl.configure(text="Trạng thái: ĐÃ DỪNG", foreground="red"))
+        self.root.after(0, lambda: self.timestep_lbl.configure(text="Bước thời gian: N/A"))
 
     def _stop_all(self):
         if self.server_process and self.server_process.poll() is None:
             self.server_process.terminate()
             self.server_process = None
-            messagebox.showinfo("Info", "Stopped running processes.")
+            messagebox.showinfo("Thông tin", "Đã dừng các tiến trình đang chạy.")
         else:
-            messagebox.showinfo("Info", "No processes are currently running from Launcher.")
+            messagebox.showinfo("Thông tin", "Không có tiến trình nào đang chạy từ Launcher.")
 
     # ═════════════════════════════════════════════════════════════════
     # Shutdown
