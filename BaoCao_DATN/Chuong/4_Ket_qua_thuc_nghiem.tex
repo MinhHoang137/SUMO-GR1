@@ -290,7 +290,12 @@ thị thường trực để người dùng định hướng.
 \textbf{Lớp điều khiển và bảng thông tin (HUD).} Phủ trên khung nhìn là một lớp
 giao diện gọn nhẹ. Góc dưới bên trái là bảng thông tin hiển thị trạng thái
 camera (tự do hay đang gắn vào phương tiện nào) cùng các chỉ số tổng quan của
-phiên chạy: độ trễ đầu--cuối, số phương tiện và số người đi bộ. Góc dưới bên
+phiên chạy: độ trễ đầu--cuối, số phương tiện và số người đi bộ. Độ trễ
+đầu--cuối được đo bằng cách server Python đính nhãn thời gian vào mỗi gói dữ
+liệu ngay trước khi gửi; phía Unity tính hiệu số giữa thời điểm nhận và nhãn đó
+để ra độ trễ của bước vừa hoàn tất. Vì cả hai tiến trình chạy trên cùng một máy
+nên đồng hồ hệ thống là thống nhất và số đo phản ánh chính xác chi phí xử lý và
+truyền dữ liệu qua TCP nội bộ. Góc dưới bên
 phải là hàng nút điều khiển chính gồm: nút \emph{chiếm/trả quyền điều khiển}
 mang tính ngữ cảnh (chỉ hiện khi camera đang gắn vào một phương tiện có thể lái,
 và tự đổi nhãn giữa ``Chiếm quyền'' và ``Trả quyền'' theo trạng thái xe); nút
@@ -452,23 +457,38 @@ quyền.
 
 \subsection{Kết quả}
 
-% [GHI CHÚ] Cần điền số liệu đo thực tế (tốc độ khung hình theo số lượng xe, độ
-% trễ đồng bộ) và ảnh chụp đối chiếu. Bảng dưới là khung để điền kết quả.
-Bảng \ref{tab:perf} là khung ghi nhận kết quả hiệu năng theo quy mô kịch bản; các
-giá trị cụ thể được điền sau khi đo trên môi trường thực nghiệm.
+Bảng \ref{tab:perf} ghi nhận kết quả hiệu năng trên máy bàn (Intel Core i5-14400F,
+NVIDIA RTX~4060, 32\,GB RAM DDR4) với Unity giới hạn ở 120\,FPS. Mỗi kịch bản mê cung chạy khoảng 100 phương tiện và 100 người đi bộ;
+kịch bản OSM chạy khoảng 50 phương tiện và 50 người đi bộ.
 
 \begin{table}[htbp]
 	\centering
-	\caption{Khung ghi nhận hiệu năng theo quy mô kịch bản}
+	\caption{Kết quả hiệu năng theo quy mô kịch bản (máy bàn)}
 	\label{tab:perf}
-	\begin{tabular}{p{0.30\textwidth} c c c}
+	\begin{tabular}{p{0.28\textwidth} c c c c}
 		\hline
-		\textbf{Kịch bản} & \textbf{Số phương tiện} & \textbf{Tốc độ khung hình} & \textbf{Ghi chú} \\
+		\textbf{Kịch bản} & \textbf{Xe / Người đi bộ} & \textbf{FPS TB} & \textbf{FPS thấp nhất} & \textbf{Độ trễ TB (ms)} \\
 		\hline
-		Mê cung nhỏ & --- & --- & --- \\
-		Mê cung trung bình & --- & --- & --- \\
-		Mê cung lớn & --- & --- & --- \\
-		Bản đồ OpenStreetMap & --- & --- & --- \\
+		Mê cung nhỏ        & 100 / 100 & --- & --- & --- \\
+		Mê cung trung bình & 100 / 100 & --- & --- & --- \\
+		Mê cung lớn        & 100 / 100 & --- & --- & --- \\
+		Bản đồ OSM         & 50 / 50   & --- & --- & --- \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Bảng \ref{tab:perf-laptop} đối chiếu hiệu năng kịch bản OSM trên máy tính xách tay
+(Dell Inspiron 5620, Intel Core i5-1240P, NVIDIA MX570, 16\,GB RAM DDR4).
+
+\begin{table}[htbp]
+	\centering
+	\caption{Kết quả hiệu năng kịch bản OSM trên máy tính xách tay}
+	\label{tab:perf-laptop}
+	\begin{tabular}{p{0.28\textwidth} c c c c}
+		\hline
+		\textbf{Kịch bản} & \textbf{Xe / Người đi bộ} & \textbf{FPS TB} & \textbf{FPS thấp nhất} & \textbf{Độ trễ TB (ms)} \\
+		\hline
+		Bản đồ OSM & 50 / 50 & --- & --- & --- \\
 		\hline
 	\end{tabular}
 \end{table}
