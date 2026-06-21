@@ -51,11 +51,12 @@
 2. **Trang chủ SUMO** - https://eclipse.dev/sumo/
 3. **Unity RigidBody** - https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Rigidbody.html
 4. **Unity WheelCollider** - https://docs.unity3d.com/ScriptReference/WheelCollider.html
+5. **Tài liệu Traci API** - https://sumo.dlr.de/docs/TraCI/index.html
 
 **Việc cần làm:**
-- [ ] Xóa 7 mục template không liên quan trong `.bib`
-- [ ] Thêm các mục trên với đầy đủ trường `title`, `author`, `year`, `url`/`journal`
-- [ ] Kiểm tra `\cite{}` trong các chương dùng đúng key chưa
+- [x] Xóa 7 mục template không liên quan trong `.bib`
+- [x] Thêm các mục trên với đầy đủ trường `title`, `author`, `year`, `url`/`journal`
+- [x] Kiểm tra `\cite{}` trong các chương dùng đúng key chưa — đã thêm vào ch1, ch3
 - [ ] Chạy BibTeX/biber, xác nhận không lỗi
 
 ---
@@ -107,8 +108,8 @@ A.4  Xử lý sự cố thường gặp
 ```
 
 **Việc cần làm:**
-- [ ] Xóa nội dung template trong `Phu_luc_A.tex`
-- [ ] Viết nội dung theo cấu trúc trên
+- [x] Xóa nội dung template trong `Phu_luc_A.tex`
+- [x] Viết nội dung theo cấu trúc trên
 - [x] Xem `HelloWorld/Server/` để liệt kê đủ gói pip cần thiết → chỉ có `eclipse-sumo`
 - [x] Thêm lệnh kiểm tra nhanh xác nhận cài thành công → có trong `install.bat`
 - [x] Tạo `HelloWorld/install.bat` — cài eclipse-sumo + VC++ Redist tự động

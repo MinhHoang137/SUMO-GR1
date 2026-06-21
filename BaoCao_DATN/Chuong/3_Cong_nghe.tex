@@ -51,7 +51,7 @@ Hình \ref{fig:congnghe-architecture} minh họa kiến trúc tổng quát này.
 \subsection{Giới thiệu}
 
 \gls{SUMO} là công cụ mô phỏng giao thông đô thị mã nguồn mở, được thiết kế để mô
-phỏng giao thông theo mô hình vi mô. Trong mô hình vi mô, mỗi phương tiện được
+phỏng giao thông theo mô hình vi mô~\cite{sumo2012,sumo_web}. Trong mô hình vi mô, mỗi phương tiện được
 xem như một thực thể có trạng thái riêng gồm vị trí, vận tốc, gia tốc và hướng di
 chuyển, tuân theo các quy tắc chuyển động, tuân thủ làn đường và điều khiển giao
 lộ. Cách tiếp cận này phù hợp khi mục tiêu là tái hiện chuyển động phương tiện
@@ -126,7 +126,7 @@ phỏng.
 \subsection{Giới thiệu}
 
 \gls{TraCI} là giao diện cho phép một chương trình bên ngoài kết nối tới
-\gls{SUMO} để điều khiển mô phỏng theo từng bước thời gian. Thay vì để \gls{SUMO}
+\gls{SUMO} để điều khiển mô phỏng theo từng bước thời gian~\cite{traci2008}. Thay vì để \gls{SUMO}
 tự chạy độc lập và chỉ xuất nhật ký sau khi kết thúc, \gls{TraCI} cho phép hệ
 thống điều khiển tiến trình mô phỏng theo bước, truy vấn trạng thái đối tượng tại
 thời điểm đang chạy, thay đổi trạng thái hoặc ra lệnh điều khiển, và đồng bộ dữ
@@ -229,7 +229,7 @@ các kịch bản xử lý dữ liệu.
 \subsection{Giới thiệu và lý do lựa chọn}
 
 Unity là nền tảng phát triển ứng dụng ba chiều thời gian thực, hỗ trợ dựng cảnh,
-điều khiển camera, chiếu sáng, vật lý và xây dựng giao diện tương tác. Trong đồ
+điều khiển camera, chiếu sáng, vật lý và xây dựng giao diện tương tác~\cite{unity_manual}. Trong đồ
 án, Unity đảm nhiệm trực quan hóa giao thông ba chiều dựa trên dữ liệu mô phỏng,
 cho phép người dùng quan sát mật độ xe, dòng xe qua nút giao và hành vi di chuyển
 theo thời gian. Unity được lựa chọn vì có hệ sinh thái phong phú cho dựng cảnh và
@@ -250,8 +250,8 @@ dụng đối tượng và chỉ hiển thị trong phạm vi quan sát để du
 Khi người dùng chiếm quyền điều khiển một phương tiện, phương tiện đó chuyển từ
 chế độ được cập nhật vị trí theo dữ liệu mô phỏng sang chế độ chuyển động theo
 vật lý. Unity cung cấp các thành phần cần thiết cho chế độ này. Thành phần thân
-cứng (Rigidbody) cho phép phương tiện chịu tác động của lực, va chạm và quán
-tính. Thành phần bộ va chạm bánh xe (Wheel Collider) mô phỏng lực kéo, lực phanh
+cứng (Rigidbody)~\cite{unity_rigidbody} cho phép phương tiện chịu tác động của lực, va chạm và quán
+tính. Thành phần bộ va chạm bánh xe (Wheel Collider)~\cite{unity_wheelcollider} mô phỏng lực kéo, lực phanh
 và độ bám của từng bánh, qua đó tái hiện chuyển động lái có tính vật lý thay vì
 dịch chuyển tức thời. Khi phương tiện không do người dùng điều khiển, hệ thống
 tắt phần vật lý và chuyển về chế độ cập nhật vị trí theo dữ liệu để bảo đảm hiệu
@@ -271,7 +271,7 @@ quan hóa ba chiều có tương tác trong đồ án.
 \subsection{Phương thức trao đổi dữ liệu}
 \label{subsec:trao-doi-du-lieu}
 
-Trong đồ án, dữ liệu được truyền theo thời gian thực bằng giao thức TCP. Ở quan hệ
+Trong đồ án, dữ liệu được truyền theo thời gian thực bằng giao thức TCP~\cite{rfc793}. Ở quan hệ
 này, Python đóng vai trò máy chủ và phía gửi, còn Unity đóng vai trò máy khách và
 phía nhận, liên tục đọc gói dữ liệu và cập nhật trạng thái hiển thị. Đây chính là
 quan hệ máy chủ--máy khách thứ hai đã nêu ở Mục \ref{subsec:traci-cs}, và ngược
