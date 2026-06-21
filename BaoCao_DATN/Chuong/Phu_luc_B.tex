@@ -80,9 +80,9 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
     {Người dùng, SUMO}
     {Hệ thống chạy trước toàn bộ mô phỏng, ghi lại trạng thái từng bước, sau đó ứng dụng hiển thị đọc dữ liệu để phát lại.}
     {Đã có kịch bản mô phỏng hợp lệ.}
-    {(1) Người dùng chọn chế độ tiền kết xuất và khởi chạy. (2) Hệ thống chạy mô phỏng đến khi kết thúc và ghi trạng thái từng bước ra tệp kịch bản. (3) Hệ thống lưu dữ liệu mạng đường. (4) Ứng dụng hiển thị đọc tệp kịch bản và phát lại diễn biến.}
-    {(2a) Quá trình chạy bị ngắt giữa chừng: hệ thống lưu phần dữ liệu đã ghi được trước khi dừng.}
-    {Tệp kịch bản được tạo và có thể phát lại nhiều lần.}
+    {(1) Người dùng chọn chế độ tiền kết xuất và khởi chạy. (2) Hệ thống lưu dữ liệu hình học mạng đường vào \texttt{road\_data.json}. (3) Hệ thống chạy mô phỏng đến khi kết thúc, ghi trạng thái từng bước vào \texttt{scenario.json}. (4) Người dùng mở ứng dụng hiển thị, chọn chế độ tiền kết xuất, nhập đường dẫn đến \texttt{road\_data.json} và \texttt{scenario.json}, rồi nhấn \textbf{Phát lại}.}
+    {(3a) Quá trình chạy bị ngắt giữa chừng: hệ thống lưu phần dữ liệu đã ghi được trước khi dừng.}
+    {Tệp kịch bản được tạo và có thể phát lại nhiều lần mà không cần chạy lại mô phỏng.}
 
 % ---------------------------------------------------------------
 \section{Đặc tả use case Chạy kèm giao diện sumo-gui}
@@ -176,7 +176,7 @@ hệ thống ngoài ở những use case có tương tác với mô phỏng.
     {Người dùng, SUMO}
     {Khi phương tiện do người dùng điều khiển va chạm với một phương tiện đang do \gls{SUMO} điều khiển, phương tiện bị tông chuyển sang trạng thái xác xe gây ùn ứ và tự biến mất sau một số bước.}
     {Người dùng đang điều khiển một phương tiện; tồn tại phương tiện khác do \gls{SUMO} điều khiển.}
-    {(1) Hệ thống phát hiện va chạm giữa hai phương tiện. (2) Hệ thống chuyển phương tiện bị tông sang trạng thái xác xe và bật vật lý để nó bị đẩy. (3) Phía mô phỏng giữ phương tiện này đứng yên, tạo ùn ứ cho các phương tiện phía sau. (4) Sau một số bước mô phỏng định trước, hệ thống loại bỏ xác xe.}
+    {(1) Hệ thống phát hiện va chạm giữa hai phương tiện. (2) Hệ thống chuyển phương tiện bị tông sang trạng thái xác xe và bật vật lý để nó bị đẩy trong Unity. (3) Phía mô phỏng đặt tốc độ xe về 0 để tạo ùn ứ cho các phương tiện phía sau; đồng thời vẫn đồng bộ vị trí từ Unity sang SUMO nếu xác xe bị đẩy dịch chuyển do vật lý. (4) Sau một số bước mô phỏng định trước, hệ thống loại bỏ xác xe.}
     {(4a) Mô phỏng tạm dừng: bộ đếm số bước dừng lại, việc loại bỏ xác xe cũng tạm hoãn.}
     {Phương tiện bị tông trở thành xác xe rồi biến mất; dòng giao thông phản ánh tình huống ùn ứ.}
 
