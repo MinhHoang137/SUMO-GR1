@@ -61,7 +61,7 @@ public class UnityVehicleManager : MonoBehaviour
 			Debug.Log("Vehicle already exists");
 			return;
 		}
-		if (!TryGetRandomLaneSpawn(out Vector3 spawnPos, out Quaternion spawnRot))
+		if (!TryGetNearestLaneSpawn(out Vector3 spawnPos, out Quaternion spawnRot))
 		{
 			Debug.LogWarning("Không tìm được lane generic phù hợp (segment đầu > 5m) để sinh xe client.");
 			return;
@@ -83,36 +83,48 @@ public class UnityVehicleManager : MonoBehaviour
 		Debug.Log("Client car spawned on lane at " + spawnPos);
 	}
 
-	// Tìm 1 edge ngẫu nhiên có lane generic đầu tiên với segment đầu dài hơn 5m;
+	// Tìm edge có lane generic đầu tiên gần camera nhất với segment đầu dài hơn 5m;
 	// trả về vị trí cách điểm đầu lane 5m về phía trước, quay theo hướng lane.
-	private bool TryGetRandomLaneSpawn(out Vector3 position, out Quaternion rotation)
+	private bool TryGetNearestLaneSpawn(out Vector3 position, out Quaternion rotation)
 	{
 		position = Vector3.zero;
 		rotation = Quaternion.identity;
 		if (roadData == null || roadData.edgeDatas == null || roadData.edgeDatas.Count == 0)
-		{
 			return false;
-		}
 
-		List<EdgeData> edges = new List<EdgeData>(roadData.edgeDatas);
-		Shuffle(edges);
+		Vector3 camPos = CameraController.Instance != null
+			? CameraController.Instance.transform.position
+			: (Camera.main != null ? Camera.main.transform.position : Vector3.zero);
 
-		foreach (EdgeData edge in edges)
+		EdgeData bestEdge = null;
+		float bestDist = float.MaxValue;
+
+		foreach (EdgeData edge in roadData.edgeDatas)
 		{
 			Lane lane = FirstGenericLane(edge);
 			if (lane == null || lane.points == null || lane.points.Count < 2) continue;
 
 			Vector3 start = Converter.ToVector3(lane.points[0]);
 			Vector3 next = Converter.ToVector3(lane.points[1]);
-			Vector3 segment = next - start;
-			if (segment.magnitude <= SPAWN_FORWARD_OFFSET) continue;  // segment đầu phải dài hơn 5m
+			if ((next - start).magnitude <= SPAWN_FORWARD_OFFSET) continue;
 
-			Vector3 dir = segment.normalized;
-			position = start + dir * SPAWN_FORWARD_OFFSET;
-			rotation = Quaternion.LookRotation(dir);
-			return true;
+			float dist = Vector3.Distance(camPos, start);
+			if (dist < bestDist)
+			{
+				bestDist = dist;
+				bestEdge = edge;
+			}
 		}
-		return false;
+
+		if (bestEdge == null) return false;
+
+		Lane bestLane = FirstGenericLane(bestEdge);
+		Vector3 s = Converter.ToVector3(bestLane.points[0]);
+		Vector3 n = Converter.ToVector3(bestLane.points[1]);
+		Vector3 dir = (n - s).normalized;
+		position = s + dir * SPAWN_FORWARD_OFFSET;
+		rotation = Quaternion.LookRotation(dir);
+		return true;
 	}
 
 	private static Lane FirstGenericLane(EdgeData edge)
@@ -123,15 +135,6 @@ public class UnityVehicleManager : MonoBehaviour
 			if (lane.type == GENERIC_LANE) return lane;
 		}
 		return null;
-	}
-
-	private static void Shuffle<T>(List<T> list)
-	{
-		for (int i = list.Count - 1; i > 0; i--)
-		{
-			int j = Random.Range(0, i + 1);
-			(list[i], list[j]) = (list[j], list[i]);
-		}
 	}
 
 	private void Destroy()

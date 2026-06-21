@@ -12,11 +12,14 @@ actor "SUMO" as SUMO
 rectangle "D. Lái xe tương tác" {
   usecase "UC14. Chiếm quyền\nvà lái xe" as UC14
   usecase "UC15. Trả quyền\nđiều khiển" as UC15
+  usecase "UC16. Xử lý va chạm\nsinh xác xe" as UC16
 }
 
 User -- UC14
 User -- UC15
 UC14 -- SUMO
 UC15 -- SUMO
+
+UC16 .> UC14 : <<extend>>
 
 @enduml

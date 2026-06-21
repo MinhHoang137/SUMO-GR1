@@ -96,14 +96,18 @@ cho mỗi phiên mô phỏng, do đó vai trò ``lái xe'' không phải một n
 mà chỉ là một chế độ tương tác của chính người dùng đó. Bên cạnh đó, \textbf{trình
 mô phỏng \gls{SUMO}} đóng vai trò một tác nhân phụ (hệ thống ngoài) chịu trách
 nhiệm sinh dữ liệu mô phỏng vi mô và thực thi các lệnh điều khiển nhận được.
+Một số hành vi xảy ra tự động trong khi use case đang chạy được mô hình hóa qua
+quan hệ \textit{«extend»}: UC13 (lọc đối tượng theo vùng quan sát) mở rộng UC10
+khi chức năng lọc đang được bật, và UC16 (xử lý va chạm sinh xác xe) mở rộng
+UC14 khi phát hiện va chạm trong lúc lái xe.
 
-Các use case của hệ thống được nhóm thành năm nhóm chức năng: chuẩn bị kịch bản
-và bản đồ, vận hành mô phỏng, quan sát và điều khiển, lái xe tương tác, và kết
-quả. Lưu ý việc hiển thị phương tiện, đèn tín hiệu và người đi bộ là hành vi tự
-động của hệ thống xảy ra trong quá trình chạy mô phỏng (nhóm B), không phải thao
-tác độc lập của người dùng; chúng được mô hình hóa là quan hệ \textit{«include»}
-bên trong UC7 và UC8. Biểu đồ use case tổng quát ở Hình \ref{fig:uc-tongquat}
-thể hiện quan hệ giữa tác nhân với năm nhóm chức năng này.
+Các use case của hệ thống được nhóm thành bốn nhóm chức năng: chuẩn bị kịch bản
+và bản đồ, vận hành mô phỏng, quan sát và điều khiển, và lái xe tương tác. Lưu ý
+việc hiển thị phương tiện, đèn tín hiệu và người đi bộ là hành vi tự động của hệ
+thống xảy ra trong quá trình chạy mô phỏng (nhóm B), không phải thao tác độc lập
+của người dùng; chúng được mô hình hóa là quan hệ \textit{«include»} bên trong
+UC7 và UC8. Biểu đồ use case tổng quát ở Hình \ref{fig:uc-tongquat} thể hiện quan
+hệ giữa tác nhân với bốn nhóm chức năng này.
 
 \begin{figure}[H]
 	\centering
@@ -112,7 +116,7 @@ thể hiện quan hệ giữa tác nhân với năm nhóm chức năng này.
 	\label{fig:uc-tongquat}
 \end{figure}
 
-Bảng \ref{tab:uc-list} liệt kê toàn bộ các use case của hệ thống theo năm nhóm,
+Bảng \ref{tab:uc-list} liệt kê toàn bộ các use case của hệ thống theo bốn nhóm,
 làm cơ sở cho các biểu đồ phân rã ở các mục tiếp theo.
 
 \begin{table}[H]
@@ -131,20 +135,18 @@ làm cơ sở cho các biểu đồ phân rã ở các mục tiếp theo.
 		UC5 & Sinh tuyến đường cho người đi bộ & Người dùng \\
 		UC6 & Cấu hình tham số mô phỏng & Người dùng \\
 		\multicolumn{3}{l}{\textit{B. Vận hành mô phỏng}} \\
-		UC7 & Chạy mô phỏng thời gian thực & Người dùng \\
-		UC8 & Chạy mô phỏng chế độ phát lại & Người dùng \\
-		UC9 & Chạy kèm giao diện sumo-gui & Người dùng \\
+		UC7 & Chạy mô phỏng thời gian thực & Người dùng, SUMO \\
+		UC8 & Chạy mô phỏng chế độ phát lại & Người dùng, SUMO \\
+		UC9 & Chạy kèm giao diện sumo-gui & Người dùng, SUMO \\
 		\multicolumn{3}{l}{\textit{C. Quan sát \& điều khiển}} \\
 		UC10 & Điều khiển camera quan sát & Người dùng \\
 		UC11 & Tạm dừng / tiếp tục mô phỏng & Người dùng \\
-		UC12 & Điều chỉnh tốc độ mô phỏng & Người dùng \\
+		UC12 & Điều chỉnh tốc độ mô phỏng & Người dùng, SUMO \\
 		UC13 & Lọc đối tượng hiển thị theo vùng & Người dùng \\
 		\multicolumn{3}{l}{\textit{D. Lái xe tương tác}} \\
-		UC14 & Chiếm quyền điều khiển và lái xe & Người dùng \\
-		UC15 & Trả quyền điều khiển phương tiện & Người dùng \\
-		\multicolumn{3}{l}{\textit{E. Kết quả \& lưu trữ}} \\
+		UC14 & Chiếm quyền điều khiển và lái xe & Người dùng, SUMO \\
+		UC15 & Trả quyền điều khiển phương tiện & Người dùng, SUMO \\
 		UC16 & Xử lý va chạm sinh xác xe & Người dùng \\
-		UC17 & Ghi và lưu trữ phiên mô phỏng & Người dùng \\
 		\hline
 	\end{tabular}
 \end{table}
@@ -185,8 +187,10 @@ này.
 \label{subsection:2.2.4}
 
 Nhóm này gồm các use case quan sát và kiểm soát quá trình chạy mô phỏng: điều
-khiển camera, tạm dừng/tiếp tục, điều chỉnh tốc độ và lọc đối tượng hiển thị.
-Hình \ref{fig:uc-nhomC} thể hiện nhóm chức năng này.
+khiển camera, tạm dừng/tiếp tục và điều chỉnh tốc độ. UC13 (lọc đối tượng hiển
+thị theo vùng quan sát) được mô hình hóa là quan hệ \textit{«extend»} của UC10:
+chức năng lọc có thể bật hoặc tắt, nên chỉ mở rộng UC10 khi đang được kích
+hoạt. Hình \ref{fig:uc-nhomC} thể hiện nhóm chức năng này.
 
 \begin{figure}[H]
 	\centering
@@ -200,7 +204,9 @@ Hình \ref{fig:uc-nhomC} thể hiện nhóm chức năng này.
 
 Nhóm này gồm các use case tương tác trực tiếp với phương tiện trong cảnh mô
 phỏng: chiếm quyền điều khiển một phương tiện để lái thủ công và trả quyền về
-cho SUMO. Hình \ref{fig:uc-nhomD} thể hiện nhóm này.
+cho SUMO. UC16 (xử lý va chạm sinh xác xe) được mô hình hóa là quan hệ
+\textit{«extend»} của UC14: khi đang lái xe, nếu xảy ra va chạm thì hệ thống tự
+động kích hoạt luồng xử lý xác xe. Hình \ref{fig:uc-nhomD} thể hiện nhóm này.
 
 \begin{figure}[H]
 	\centering
@@ -209,19 +215,6 @@ cho SUMO. Hình \ref{fig:uc-nhomD} thể hiện nhóm này.
 	\label{fig:uc-nhomD}
 \end{figure}
 
-\subsection{Biểu đồ use case phân rã nhóm Kết quả và lưu trữ}
-\label{subsection:2.2.6}
-
-Nhóm này gồm use case xử lý va chạm sinh xác xe (kết quả của tương tác lái xe) và
-use case lưu trữ, kết thúc phiên mô phỏng. Hình \ref{fig:uc-nhomE} thể hiện nhóm
-chức năng này.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.6\textwidth]{Hinhve/hinh2.7-ketqua.png}
-	\caption{Use case nhóm Kết quả và lưu trữ}
-	\label{fig:uc-nhomE}
-\end{figure}
 
 \section{Đặc tả chức năng}
 \label{section:2.3}
@@ -400,8 +393,8 @@ ba chiều.
 
 Chương này đã khảo sát hiện trạng các công cụ quan sát mô phỏng giao thông, chỉ
 ra khoảng trống về khả năng hiển thị ba chiều có tương tác theo góc nhìn người
-tham gia giao thông, và phân tích yêu cầu của hệ thống thông qua mười bảy use case
-thuộc năm nhóm chức năng. Các use case quan trọng đã được đặc tả chi tiết kèm
+tham gia giao thông, và phân tích yêu cầu của hệ thống thông qua mười sáu use case
+thuộc bốn nhóm chức năng. Các use case quan trọng đã được đặc tả chi tiết kèm
 biểu đồ hoạt động cho những luồng phức tạp. Các yêu cầu này là cơ sở để lựa chọn
 công nghệ ở Chương 3 và thiết kế hệ thống ở Chương 4.
 

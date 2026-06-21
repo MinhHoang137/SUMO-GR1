@@ -18,6 +18,7 @@ rectangle "C. Quan sát & điều khiển" {
 User -- UC10
 User -- UC11
 User -- UC12
-User -- UC13
+
+UC13 .> UC10 : <<extend>>
 
 @enduml

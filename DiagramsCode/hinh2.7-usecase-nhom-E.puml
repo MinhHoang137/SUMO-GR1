@@ -9,11 +9,9 @@ skinparam ArrowColor #333333
 actor "Người dùng" as User
 
 rectangle "E. Kết quả & lưu trữ" {
-  usecase "UC16. Xử lý va chạm\nsinh xác xe" as UC16
   usecase "UC17. Ghi và lưu trữ\nphiên mô phỏng" as UC17
 }
 
-User -- UC16
 User -- UC17
 
 @enduml
