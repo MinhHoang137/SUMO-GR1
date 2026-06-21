@@ -45,6 +45,7 @@ public class TrafficerManager : MonoBehaviour
 	public int PedestrianCount {get; private set;} = 0;
 	// Số bước SUMO xác xe tồn tại trước khi bị despawn.
 	[SerializeField, Min(0)] private int wreckLifetimeSteps = 150;
+	public int WreckLifetimeSteps {set {wreckLifetimeSteps = Mathf.Max(0, value);}}
 	[SerializeField] private TrafficerKeyPrefabSO trafficerKeyPrefabSO;
 	
 	private Dictionary<string, Trafficer> trafficerDict = new Dictionary<string, Trafficer>();

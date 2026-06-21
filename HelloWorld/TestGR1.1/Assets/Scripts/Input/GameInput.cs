@@ -118,6 +118,7 @@ public class GameInput : MonoBehaviour
 			Binding.FreeToggle => inputActions.CameraMap.SetFreeToggle.bindings[0].ToDisplayString(),
 			Binding.MouseToggle => inputActions.CameraMap.MouseToggle.bindings[0].ToDisplayString(),
 			Binding.ToggleController => inputActions.UI.ToggleController.bindings[0].ToDisplayString(),
+			Binding.BrakeCar => inputActions.CameraMap.Brake.bindings[0].ToDisplayString(),
 			Binding.ToggleOptions => inputActions.UI.ToggleOptions.bindings[0].ToDisplayString(),
 			_ => "",
 		};

@@ -417,7 +417,7 @@ def start_network_services(config):
     server_thread = async_task(network.server_thread, server_socket, client_thread_function, daemon=False)
     
     # Realtime luôn khởi chạy Unity (3D). Chế độ headless đã được thay bằng pre-render.
-    # subprocess.Popen([os.path.abspath(os.path.join(os.path.dirname(__file__), target_exe))])
+    subprocess.Popen([os.path.abspath(os.path.join(os.path.dirname(__file__), target_exe))])
 
     receive_thread = async_task(receive, receive_socket, daemon=False)
     listen_thread = async_task(listen_for_control_commands, cmd_socket, daemon=False)

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Threading;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class ReplayManager : MonoBehaviour
@@ -15,6 +16,11 @@ public class ReplayManager : MonoBehaviour
     [SerializeField] private TMP_Text playButtonText;
     [SerializeField] private Button closeSimulationButton;
     private bool isPlaying = true;
+
+    [Header("Events")]
+    [SerializeField] private UnityEvent onLoadDataStart;
+    [SerializeField] private UnityEvent onLoadDataEnd;
+    [SerializeField] private UnityEvent onReplayEnd;
 
     [Header("Replay Settings")]
     [SerializeField] private float timeStep = 0.1f;
@@ -50,16 +56,26 @@ public class ReplayManager : MonoBehaviour
             // Hủy task cũ nếu người dùng kéo liên tục
             loadCancellationTokenSource?.Cancel();
             loadCancellationTokenSource = new CancellationTokenSource();
-            
+
+            onLoadDataStart?.Invoke();
             try
             {
                 await SetStepAsync((int)value, true, loadCancellationTokenSource.Token);
+                onLoadDataEnd?.Invoke();
             }
             catch (System.OperationCanceledException)
             {
-                // Bỏ qua lỗi do bị hủy
+                // Task bị hủy bởi lần kéo tiếp theo — onLoadDataEnd sẽ do task mới gọi
             }
         }
+    }
+    public void RestartReplay()
+    {
+        currentStep = 0;
+        timeSlider.value = currentStep;
+        isPlaying = true;
+        playButtonText.text = "Tạm dừng";
+        StartCoroutine(ReplayCoroutine());
     }
 
     // Update is called once per frame
@@ -89,8 +105,13 @@ public class ReplayManager : MonoBehaviour
             }
             else
             {
-                // break; // Hết dữ liệu thì dừng
-                continue; // Hoặc loop lại từ đầu nếu muốn
+                isPlaying = false;
+                onReplayEnd?.Invoke();
+                if (CursorManager.Instance != null)
+                {
+                    CursorManager.Instance.UnlockCursor();
+                }
+                yield break;
             }
         }
     }
@@ -119,7 +140,7 @@ public class ReplayManager : MonoBehaviour
     }
     private void OnPlayButtonClicked(bool isPlaying)
     {
-        playButtonText.text = isPlaying ? "Tạm dừng" : "Phát lại";
+        playButtonText.text = isPlaying ? "Tạm dừng" : "Tiếp tục";
         this.isPlaying = isPlaying;
     }
 

@@ -51,6 +51,7 @@ MonoBehaviour:
   selectRange: 100
   moveThreshold: 100
   rollLevelSpeed: 8
+  maxDegPerFrame: 30
 --- !u!114 &5768535769304134173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,7 +125,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &8026645196576467089
 MonoBehaviour:

@@ -30,6 +30,8 @@ public class CameraController : MonoBehaviour
 	[Header("Free Camera Leveling")]
 	[Tooltip("Tốc độ lerp roll (trục Z) về 0 khi camera trả về tự do.")]
 	[SerializeField] private float rollLevelSpeed = 8f;
+	[Tooltip("Góc quay tối đa mỗi frame (độ) — giới hạn cứng để tránh giật khi frame dài.")]
+	[SerializeField] private float maxDegPerFrame = 3f;
 	private bool isLevelingRoll = false;
 	private void Awake()
 	{
@@ -86,6 +88,8 @@ public class CameraController : MonoBehaviour
 		Vector2 delta = GameInput.Instance.GetMouseDelta();
 		float mouseX = delta.x * sensitivity * Time.deltaTime;
 		float mouseY = delta.y * sensitivity * Time.deltaTime;
+		mouseX = Mathf.Clamp(mouseX, -maxDegPerFrame, maxDegPerFrame);
+		mouseY = Mathf.Clamp(mouseY, -maxDegPerFrame, maxDegPerFrame);
 		if (transform.eulerAngles.x - mouseY > 90 && transform.eulerAngles.x - mouseY < 270)
 		{
 			mouseY = 0;

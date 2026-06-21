@@ -7,5 +7,6 @@ public enum Binding
 	FreeToggle,
 	MouseToggle,
 	ToggleController,
+	BrakeCar,
 	ToggleOptions,
 }

@@ -25,6 +25,9 @@ public class InputUI : MonoBehaviour
 	[SerializeField] private TMP_Text toggleControllerText;
 	[SerializeField] private Button toggleControllerButton;
 
+	[SerializeField] private TMP_Text brakeCarText;
+	[SerializeField] private Button brakeCarButton;
+
 	[SerializeField] private TMP_Text toggleOptionsText;
 	[SerializeField] private Button toggleOptionsButton;
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -37,6 +40,7 @@ public class InputUI : MonoBehaviour
 		SetInputUiText(freeToggleText, freeToggleButton, Binding.FreeToggle);
 		SetInputUiText(mouseToggleText, mouseToggleButton, Binding.MouseToggle);
 		SetInputUiText(toggleControllerText, toggleControllerButton, Binding.ToggleController);
+		SetInputUiText(brakeCarText, brakeCarButton, Binding.BrakeCar);
 		SetInputUiText(toggleOptionsText, toggleOptionsButton, Binding.ToggleOptions);
 	}
 
