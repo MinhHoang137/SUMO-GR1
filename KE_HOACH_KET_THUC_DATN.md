@@ -46,6 +46,12 @@
 | Python Software Foundation — docs.python.org | Ngôn ngữ triển khai server |
 | Newtonsoft.Json — James Newton-King | Thư viện parse JSON phía Unity |
 
+## Gợi ý các nguồn tham khảo:
+1. **Trang chủ Unity** - http://unity.com/en/industry
+2. **Trang chủ SUMO** - https://eclipse.dev/sumo/
+3. **Unity RigidBody** - https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Rigidbody.html
+4. **Unity WheelCollider** - https://docs.unity3d.com/ScriptReference/WheelCollider.html
+
 **Việc cần làm:**
 - [ ] Xóa 7 mục template không liên quan trong `.bib`
 - [ ] Thêm các mục trên với đầy đủ trường `title`, `author`, `year`, `url`/`journal`
@@ -78,9 +84,15 @@ A.3  Cài đặt SUMO
      - Đặt biến môi trường SUMO_HOME
 
 A.4  Khởi chạy hệ thống
-     - Bước 1: Chạy Unity build (UnityBuild/...)
-     - Bước 2: python HelloWorld/launcher.py
-     - Chọn tab Maze hoặc OSM, cấu hình, nhấn Start
+Chia 2 trường hợp chạy thời gian thực hoặc tiền kết xuất:
+1. chạy thời gian thực:
+- Bước 1: chọn kịch bản, nhấn start server
+- Bước 2: khi Unity mở lên, nhấn "Mô phỏng thời gian thực" -> "Lấy dữ liệu đường" -> chờ thông báo lấy dữ liệu thành công -> nhấn "Bắt đầu mô phỏng"
+
+2. Phát lại 1 kịch bản có sẵn:
+- Bước 1: lấy kịch bản, hoặc tạo mới bằng launcher, hoặc kịch bản hợp lệ có sẵn
+- Bước 2: mở TestGR1.1.exe trong UnityBuild, nhấn "Tiền kết xuất" -> nhập đường dẫn tuyệt đối của "road_data.json" vào ô "Đường dẫn bản đồ", đường dẫn tuyệt đối của "scenario.json" vào "Đường dẫn kịch bản"
+- Bước 3: nhấn "Phát lại"
 
 A.5  Xử lý sự cố thường gặp
      - Lỗi kết nối TCP: kiểm tra port 5050/5053/5054
@@ -155,3 +167,4 @@ A.5  Xử lý sự cố thường gặp
 2. **Tài liệu tham khảo** — Thu thập link/thông tin, nhập vào `.bib`
 3. **Hình PNG → PDF** — Compile thử, kiểm tra, đổi những cái cần
 4. **Hình chương 5** — Quyết định TikZ hay draw.io, hoàn thiện, bỏ nhãn nháp
+
