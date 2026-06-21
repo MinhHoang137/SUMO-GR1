@@ -13,6 +13,7 @@ public class ReplayManager : MonoBehaviour
     [SerializeField] private TMP_Text stepText;
     [SerializeField] private Button playButton;
     [SerializeField] private TMP_Text playButtonText;
+    [SerializeField] private Button closeSimulationButton;
     private bool isPlaying = true;
 
     [Header("Replay Settings")]
@@ -35,6 +36,10 @@ public class ReplayManager : MonoBehaviour
         timeSlider.value = currentStep;
         timeSlider.onValueChanged.AddListener(OnSliderValueChanged);
         playButton.onClick.AddListener(() => OnPlayButtonClicked(!isPlaying));
+        closeSimulationButton.onClick.AddListener(() =>
+        {
+            Application.Quit();
+        });
         StartCoroutine(ReplayCoroutine());
     }
 

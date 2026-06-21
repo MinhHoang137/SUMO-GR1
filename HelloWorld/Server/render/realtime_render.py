@@ -419,7 +419,8 @@ def run_realtime(maze_file, num_lanes, config):
 
     initialize_map_and_routes(maze_file_path, num_lanes, config)
 
-    simulation_session = SimulationSession(maze_file_path, has_ped=has_ped)
+    session_name = config.get("session_name") or maze_file_path
+    simulation_session = SimulationSession(session_name, has_ped=has_ped)
     print(f"Session directory: {simulation_session.session_dir}")
 
     # Lưu road data ngay sau khi map được tạo để session luôn đầy đủ

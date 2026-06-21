@@ -10,6 +10,7 @@ dispatch theo tab đang active."""
 
 import os
 import sys
+import shutil
 import subprocess
 import threading
 import tkinter as tk
@@ -93,6 +94,7 @@ class AppLauncher:
 
         # ── Tab 2 (OSM) vars ──────────────────────────────────────────
         self.osm_net_path = os.path.join(self.sumo_xml_dir, "HelloWorld.net.xml")
+        self.osm_output_str = tk.StringVar(value="(chọn file .osm trước)")
 
         # ── Tab 3 (Custom Script) vars ────────────────────────────────
         self.custom_folder = tk.StringVar()
@@ -313,7 +315,7 @@ class AppLauncher:
         ttk.Button(frame, text="Browse", command=self._browse_osm).grid(row=0, column=4, pady=4)
 
         ttk.Label(frame, text="→ Output:", foreground="#555").grid(row=1, column=0, sticky=tk.W, pady=4)
-        ttk.Label(frame, text=os.path.relpath(self.osm_net_path, self.base_dir) + " (+ .rou.xml + .sumocfg)",
+        ttk.Label(frame, textvariable=self.osm_output_str,
                   foreground="#555").grid(row=1, column=1, columnspan=4, sticky=tk.W, padx=5)
 
         ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=2, column=0, columnspan=5, sticky=tk.EW, pady=8)
@@ -387,6 +389,11 @@ class AppLauncher:
         self.osm_max_p_sb = ClampedSpinbox(frame, from_=1, to=10000, textvariable=self.max_ped_count, width=10)
         self.osm_max_p_sb.grid(row=14, column=1, sticky=tk.W, padx=5, pady=2)
 
+    def _get_osm_result_dir(self):
+        osm = self.osm_file.get()
+        name = os.path.splitext(os.path.basename(osm))[0] if osm else "output"
+        return os.path.join(self.server_dir, "result", name)
+
     def _browse_osm(self):
         init_dir = os.path.join(self.server_dir, "osm")
         if not os.path.isdir(init_dir):
@@ -397,6 +404,8 @@ class AppLauncher:
         )
         if path:
             self.osm_file.set(path)
+            rel = os.path.relpath(self._get_osm_result_dir(), self.base_dir)
+            self.osm_output_str.set(f"{rel}/HelloWorld.net.xml (+ .rou.xml + .sumocfg)")
 
     # ═════════════════════════════════════════════════════════════════
     # Tab 3 — Custom Script (netedit)
@@ -598,8 +607,9 @@ class AppLauncher:
                 )
                 return
             # Custom Script mode: pass folder path, main.py detect isdir
-            inputs = [str(self.render_mode.get())]
-            if self.render_mode.get() == 1:  # realtime mới cần chọn chế độ hiển thị
+            inputs = [params["osm"]]  # session_name = path file .osm gốc
+            inputs.append(str(self.render_mode.get()))
+            if self.render_mode.get() == 1:
                 inputs.append(str(self.gui_mode.get()))
             inputs.append("y" if self.enable_cap.get() else "n")
             if self.enable_cap.get():
@@ -635,10 +645,10 @@ class AppLauncher:
             )
             return
 
-        inputs = [str(self.render_mode.get())]
-        if self.render_mode.get() == 1:  # realtime mới cần chọn chế độ hiển thị
+        inputs = [""]  # session_name trống → dùng tên thư mục
+        inputs.append(str(self.render_mode.get()))
+        if self.render_mode.get() == 1:
             inputs.append(str(self.gui_mode.get()))
-        # num_lanes không dùng trong custom mode; truyền 1 cho đúng cú pháp main.py
         self._launch_main(folder, 1, inputs)
 
     # ── Subprocess + monitor (chung cho cả 3 tab) ────────────────────
@@ -647,13 +657,14 @@ class AppLauncher:
             python_cmd = "python" if getattr(sys, 'frozen', False) else sys.executable
             env = os.environ.copy()
             env["PYTHONIOENCODING"] = "utf-8"
-            cmd = [python_cmd, "main.py", map_path, str(num_lanes)]
+            cmd = [python_cmd, "main.py"]
             self.server_process = subprocess.Popen(
                 cmd, cwd=self.server_dir,
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                 text=True, bufsize=1, encoding='utf-8', errors='replace', env=env,
             )
-            self.server_process.stdin.write("\n".join(inputs) + "\n")
+            all_inputs = [map_path, str(num_lanes)] + inputs
+            self.server_process.stdin.write("\n".join(all_inputs) + "\n")
             self.server_process.stdin.flush()
             self.status_lbl.configure(text="Status: STARTING SERVER...", foreground="orange")
             threading.Thread(target=self._monitor_process, daemon=True).start()

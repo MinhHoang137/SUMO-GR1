@@ -1,4 +1,3 @@
-import sys
 import os
 
 from render.realtime_render import run_realtime
@@ -8,16 +7,6 @@ CS = "CS"
 SS = "SS"
 IO = "IO"
 OI = "OI"
-
-def parse_arguments():
-    """Lấy danh sách tham số đường dẫn file mê cung và số làn đường từ command-line."""
-    if len(sys.argv) < 3:
-        print("Usage: python main.py <maze_file_path> <num_lanes>")
-        sys.exit(1)
-    
-    maze_file = sys.argv[1]
-    lanes = int(sys.argv[2])
-    return maze_file, lanes
 
 def setup_simulation_config(is_custom: bool = False):
     """Tương tác CLI với user nhằm khởi tạo thông số Traffic và GUI."""
@@ -29,6 +18,7 @@ def setup_simulation_config(is_custom: bool = False):
             "custom": True,
             "has_ped": False,
             "ped_impatience": None,
+            "session_name": input("Tên phiên (để trống = dùng tên thư mục): ").strip() or None,
         }
         render_option = input("Chế độ render? (1: Realtime, 2: Pre-render) (mặc định 1): ")
         config["render_mode"] = "pre_render" if render_option == "2" else "realtime"
@@ -109,8 +99,9 @@ def setup_simulation_config(is_custom: bool = False):
     return config
 
 def main():
-    # 1. Parse command-line args
-    maze_file_path, num_lanes = parse_arguments()
+    # 1. Đọc maze_file và num_lanes từ stdin (launcher gửi trước khi gửi config)
+    maze_file_path = input().strip()
+    num_lanes = int(input().strip())
 
     # 2. Detect Custom Script mode: launcher truyền 1 thư mục chứa kịch bản
     # do user dựng sẵn bằng netedit thay vì 1 file .map.
