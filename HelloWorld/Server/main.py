@@ -36,6 +36,12 @@ def setup_simulation_config(is_custom: bool = False):
         if config["render_mode"] == "realtime":
             gui_option = input("Chế độ hiển thị? (1: Chỉ 3D, 2: Cả 2D và 3D) (mặc định 1): ")
             config["gui_mode"] = "2d3d" if gui_option == "2" else "3d"
+        _cap = input("Giới hạn số đối tượng gửi xuống Unity không? (y/n, mặc định n): ")
+        if _cap.lower() == 'y':
+            _max_v = input("Số xe tối đa trong cảnh (mặc định 100): ")
+            config["max_vehicles_in_scene"] = int(_max_v) if _max_v else 100
+            _max_p = input("Số người đi bộ tối đa trong cảnh (mặc định 100): ")
+            config["max_ped_in_scene"] = int(_max_p) if _max_p else 100
         return config
 
     mode_option = input("Chạy ở chế độ nào? (1: Benchmark, 2: VRP) (mặc định 1): ")
@@ -74,6 +80,13 @@ def setup_simulation_config(is_custom: bool = False):
 
         _end_time = input("Độ dài mô phỏng — thời điểm dừng sinh agent (giây, mặc định 3600): ")
         config["end_time"] = float(_end_time) if _end_time else 3600.0
+
+        _cap = input("Giới hạn số đối tượng gửi xuống Unity không? (y/n, mặc định n): ")
+        if _cap.lower() == 'y':
+            _max_v = input("Số xe tối đa trong cảnh (mặc định 100): ")
+            config["max_vehicles_in_scene"] = int(_max_v) if _max_v else 100
+            _max_p = input("Số người đi bộ tối đa trong cảnh (mặc định 100): ")
+            config["max_ped_in_scene"] = int(_max_p) if _max_p else 100
     else:
         # VRP mode không mặc định sinh người đi bộ
         config["has_ped"] = False

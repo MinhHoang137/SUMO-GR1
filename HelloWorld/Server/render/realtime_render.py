@@ -63,6 +63,8 @@ sim_count = 1
 ped_impatience = None
 maze_file_path = ""
 simulation_session: SimulationSession | None = None
+max_vehicles_in_scene: int | None = None  # None = không giới hạn
+max_ped_in_scene: int | None = None
 
 def set_pause_sim(is_paused: bool) -> None:
     """Set pause state in a thread-safe way."""
@@ -180,10 +182,19 @@ def run_simulation(client_socket: socket.socket):
             trip_logger.log_step(traci, step_index)
             step_index += 1
             process_vehicle_updates(traci)
+            tr = read_trafficers(traci)
+            if max_vehicles_in_scene is not None or max_ped_in_scene is not None:
+                cars = [t for t in tr if t.get("t") != "p"]
+                peds = [t for t in tr if t.get("t") == "p"]
+                if max_vehicles_in_scene is not None:
+                    cars = cars[:max_vehicles_in_scene]
+                if max_ped_in_scene is not None:
+                    peds = peds[:max_ped_in_scene]
+                tr = cars + peds
             data = {
                 "st": step_index,  # bước SUMO hiện tại — client dùng để đếm vòng đời xác xe (wreck)
                 "tl": read_traffic_lights(traci),
-                "tr": read_trafficers(traci)
+                "tr": tr
             }
 
             try:
@@ -397,12 +408,14 @@ def start_network_services(config):
     }
 
 def run_realtime(maze_file, num_lanes, config):
-    global has_ped, ped_impatience, maze_file_path, show_sumo_gui, simulation_session
+    global has_ped, ped_impatience, maze_file_path, show_sumo_gui, simulation_session, max_vehicles_in_scene, max_ped_in_scene
 
     maze_file_path = maze_file
     has_ped = config["has_ped"]
     ped_impatience = config["ped_impatience"]
     show_sumo_gui = config.get("gui_mode") == "2d3d"  # mặc định chỉ 3D
+    max_vehicles_in_scene = config.get("max_vehicles_in_scene")
+    max_ped_in_scene = config.get("max_ped_in_scene")
 
     initialize_map_and_routes(maze_file_path, num_lanes, config)
 

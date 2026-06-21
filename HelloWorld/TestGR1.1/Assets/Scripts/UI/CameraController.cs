@@ -108,6 +108,11 @@ public class CameraController : MonoBehaviour
 	}
 	private void SetFreeToggle()
 	{
+		if (currentTrafficer != null)
+		{
+			SetTrafficerView((Trafficer)null);
+			return;
+		}
 		if (!PointAndSelectTrafficer())
 		{
 			SetTrafficerView((Trafficer)null);
@@ -175,6 +180,7 @@ public class CameraController : MonoBehaviour
 			currentTrafficer = null;
 			return;
 		}
+		newTrafficer.gameObject.SetActive(true);
 		isFree = false;
 		transform.SetParent(newTrafficer.GetCameraHolder());
 		Trafficer preTrafficer = currentTrafficer;

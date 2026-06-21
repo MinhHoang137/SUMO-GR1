@@ -458,20 +458,21 @@ quyền.
 \subsection{Kết quả}
 
 Bảng \ref{tab:perf} ghi nhận kết quả hiệu năng trên máy bàn (Intel Core i5-14400F,
-NVIDIA RTX~4060, 32\,GB RAM DDR4) với Unity giới hạn ở 120\,FPS. Mỗi kịch bản mê cung chạy khoảng 100 phương tiện và 100 người đi bộ;
+NVIDIA RTX~4060, 32\,GB RAM DDR4) với Unity giới hạn ở 120\,FPS. Ba kịch bản mê cung có kích thước lần lượt 32$\times$32, 64$\times$64 và 128$\times$128 ô, mỗi kịch bản chạy khoảng 100 phương tiện và 100 người đi bộ;
 kịch bản OSM chạy khoảng 50 phương tiện và 50 người đi bộ.
 
 \begin{table}[htbp]
 	\centering
 	\caption{Kết quả hiệu năng theo quy mô kịch bản (máy bàn)}
 	\label{tab:perf}
-	\begin{tabular}{p{0.28\textwidth} c c c c}
+	\small
+	\begin{tabular}{p{0.32\textwidth} c c c c}
 		\hline
 		\textbf{Kịch bản} & \textbf{Xe / Người đi bộ} & \textbf{FPS TB} & \textbf{FPS thấp nhất} & \textbf{Độ trễ TB (ms)} \\
 		\hline
-		Mê cung nhỏ        & 100 / 100 & --- & --- & --- \\
-		Mê cung trung bình & 100 / 100 & --- & --- & --- \\
-		Mê cung lớn        & 100 / 100 & --- & --- & --- \\
+		Mê cung nhỏ (32$\times$32)    & 100 / 100 & 119.5 & 52.9 & 6.2 \\
+		Mê cung vừa (64$\times$64)    & 100 / 100 & 112.1 & 40.6 & 8.3 \\
+		Mê cung lớn (128$\times$128)  & 100 / 100 & 100.1 & 11.9 & 13.0 \\
 		Bản đồ OSM         & 50 / 50   & --- & --- & --- \\
 		\hline
 	\end{tabular}
@@ -484,7 +485,8 @@ Bảng \ref{tab:perf-laptop} đối chiếu hiệu năng kịch bản OSM trên 
 	\centering
 	\caption{Kết quả hiệu năng kịch bản OSM trên máy tính xách tay}
 	\label{tab:perf-laptop}
-	\begin{tabular}{p{0.28\textwidth} c c c c}
+	\small
+	\begin{tabular}{p{0.32\textwidth} c c c c}
 		\hline
 		\textbf{Kịch bản} & \textbf{Xe / Người đi bộ} & \textbf{FPS TB} & \textbf{FPS thấp nhất} & \textbf{Độ trễ TB (ms)} \\
 		\hline

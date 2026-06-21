@@ -67,6 +67,9 @@ class AppLauncher:
         self.car_period = tk.DoubleVar(value=30.0)   # tần suất sinh xe (s)
         self.ped_period = tk.DoubleVar(value=30.0)   # tần suất sinh người đi bộ (s)
         self.sim_duration = tk.DoubleVar(value=3600.0)  # độ dài mô phỏng (s)
+        self.enable_cap = tk.BooleanVar(value=False)
+        self.max_vehicles = tk.IntVar(value=100)
+        self.max_ped_count = tk.IntVar(value=100)
 
         # ── Tab 2 (OSM) vars ──────────────────────────────────────────
         self.osm_net_path = os.path.join(self.sumo_xml_dir, "HelloWorld.net.xml")
@@ -93,6 +96,7 @@ class AppLauncher:
         self._build_ui()
         self._toggle_mode()
         self._toggle_gui()
+        self._toggle_cap()
         self.root.protocol("WM_DELETE_WINDOW", self._on_closing)
 
     # ═════════════════════════════════════════════════════════════════
@@ -194,6 +198,19 @@ class AppLauncher:
         ClampedSpinbox(self.bench_frame, from_=60, to=86400, increment=60,
                     textvariable=self.sim_duration, width=10).grid(row=7, column=1, sticky=tk.W, pady=2)
 
+        ttk.Checkbutton(self.bench_frame, text="Giới hạn đối tượng gửi xuống Unity?",
+                        variable=self.enable_cap, command=self._toggle_cap).grid(row=8, column=0, columnspan=2, sticky=tk.W, pady=5)
+
+        self.max_v_lbl = ttk.Label(self.bench_frame, text="Số xe tối đa:")
+        self.max_v_lbl.grid(row=9, column=0, sticky=tk.W, pady=2)
+        self.max_v_sb = ClampedSpinbox(self.bench_frame, from_=1, to=10000, textvariable=self.max_vehicles, width=10)
+        self.max_v_sb.grid(row=9, column=1, sticky=tk.W, pady=2)
+
+        self.max_p_lbl = ttk.Label(self.bench_frame, text="Số người đi bộ tối đa:")
+        self.max_p_lbl.grid(row=10, column=0, sticky=tk.W, pady=2)
+        self.max_p_sb = ClampedSpinbox(self.bench_frame, from_=1, to=10000, textvariable=self.max_ped_count, width=10)
+        self.max_p_sb.grid(row=10, column=1, sticky=tk.W, pady=2)
+
         # VRP frame
         self.vrp_frame = ttk.LabelFrame(main_frame, text="VRP Mode Options", padding=10)
         self.vrp_frame.grid(row=6, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=5)
@@ -220,6 +237,7 @@ class AppLauncher:
             for child in self.bench_frame.winfo_children(): child.configure(state='normal')
             for child in self.vrp_frame.winfo_children(): child.configure(state='disabled')
             self._toggle_ped()
+            self._toggle_cap()
         else:
             for child in self.bench_frame.winfo_children(): child.configure(state='disabled')
             for child in self.vrp_frame.winfo_children(): child.configure(state='normal')
@@ -246,6 +264,16 @@ class AppLauncher:
             self.ped_imp_sb.configure(state='disabled')
             self.ped_period_lbl.configure(state='disabled')
             self.ped_period_sb.configure(state='disabled')
+
+    def _toggle_cap(self):
+        if not hasattr(self, 'max_v_lbl'):
+            return
+        state = 'normal' if self.enable_cap.get() else 'disabled'
+        for w in [self.max_v_lbl, self.max_v_sb, self.max_p_lbl, self.max_p_sb]:
+            w.configure(state=state)
+        if hasattr(self, 'osm_max_v_lbl'):
+            for w in [self.osm_max_v_lbl, self.osm_max_v_sb, self.osm_max_p_lbl, self.osm_max_p_sb]:
+                w.configure(state=state)
 
     # ═════════════════════════════════════════════════════════════════
     # Tab 2 — OSM .osm
@@ -319,6 +347,21 @@ class AppLauncher:
         render_frame.grid(row=10, column=1, columnspan=4, sticky=tk.W)
         ttk.Radiobutton(render_frame, text="Realtime", variable=self.render_mode, value=1, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
         ttk.Radiobutton(render_frame, text="Pre-render", variable=self.render_mode, value=2, command=self._toggle_gui).pack(side=tk.LEFT, padx=5)
+
+        ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=11, column=0, columnspan=5, sticky=tk.EW, pady=8)
+
+        ttk.Checkbutton(frame, text="Giới hạn đối tượng gửi xuống Unity?",
+                        variable=self.enable_cap, command=self._toggle_cap).grid(row=12, column=0, columnspan=2, sticky=tk.W, pady=4)
+
+        self.osm_max_v_lbl = ttk.Label(frame, text="Số xe tối đa:")
+        self.osm_max_v_lbl.grid(row=13, column=0, sticky=tk.W, pady=2)
+        self.osm_max_v_sb = ClampedSpinbox(frame, from_=1, to=10000, textvariable=self.max_vehicles, width=10)
+        self.osm_max_v_sb.grid(row=13, column=1, sticky=tk.W, padx=5, pady=2)
+
+        self.osm_max_p_lbl = ttk.Label(frame, text="Số người đi bộ tối đa:")
+        self.osm_max_p_lbl.grid(row=14, column=0, sticky=tk.W, pady=2)
+        self.osm_max_p_sb = ClampedSpinbox(frame, from_=1, to=10000, textvariable=self.max_ped_count, width=10)
+        self.osm_max_p_sb.grid(row=14, column=1, sticky=tk.W, padx=5, pady=2)
 
     def _browse_osm(self):
         init_dir = os.path.join(self.server_dir, "osm")
@@ -446,6 +489,10 @@ class AppLauncher:
                 inputs.append(str(self.ped_impatience.get()))
                 inputs.append(str(self.ped_period.get()))
             inputs.append(str(self.sim_duration.get()))
+            inputs.append("y" if self.enable_cap.get() else "n")
+            if self.enable_cap.get():
+                inputs.append(str(self.max_vehicles.get()))
+                inputs.append(str(self.max_ped_count.get()))
         else:
             inputs.append(str(self.num_clients.get()))
             inputs.append(str(self.num_staff.get()))
@@ -530,6 +577,10 @@ class AppLauncher:
             inputs = [str(self.render_mode.get())]
             if self.render_mode.get() == 1:  # realtime mới cần chọn chế độ hiển thị
                 inputs.append(str(self.gui_mode.get()))
+            inputs.append("y" if self.enable_cap.get() else "n")
+            if self.enable_cap.get():
+                inputs.append(str(self.max_vehicles.get()))
+                inputs.append(str(self.max_ped_count.get()))
             self._launch_main(self.sumo_xml_dir, self.num_lanes.get(), inputs)
 
         self.root.after(0, after_build)
