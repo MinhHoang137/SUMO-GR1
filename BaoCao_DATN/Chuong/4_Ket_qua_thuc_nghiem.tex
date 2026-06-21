@@ -490,17 +490,22 @@ Bảng \ref{tab:perf-laptop} đối chiếu hiệu năng kịch bản OSM trên 
 		\hline
 		\textbf{Kịch bản} & \textbf{Xe / Người đi bộ} & \textbf{FPS TB} & \textbf{FPS thấp nhất} & \textbf{Độ trễ TB (ms)} \\
 		\hline
-		Bản đồ OSM & 50 / 50 & --- & --- & --- \\
+		Bản đồ OSM & 50 / 50 & 81.5 & 40.8 & 11.8 \\
 		\hline
 	\end{tabular}
 \end{table}
 
-Trên cơ sở quan sát trong quá trình phát triển, hệ thống dựng được mạng đường từ
-cả hai nguồn dữ liệu, tái hiện chuyển động của phương tiện và người đi bộ một cách
-ổn định, và cho phép người dùng tương tác lái xe trong cảnh. Việc lọc đối tượng
-theo vùng quan sát và tái sử dụng đối tượng giúp duy trì hiệu năng khi số lượng
-phương tiện tăng. Các số liệu định lượng chi tiết sẽ được bổ sung sau khi hoàn
-tất quá trình đo trên môi trường thực nghiệm.
+Kết quả cho thấy trên máy bàn, hệ thống duy trì FPS trung bình sát giới hạn 120
+với kịch bản mê cung nhỏ (119{,}5~FPS) và bản đồ OSM (119{,}8~FPS). Khi quy mô
+tăng lên mê cung vừa và lớn, FPS trung bình giảm lần lượt xuống 112{,}1 và
+100{,}1, trong khi độ trễ truyền thông tăng từ 6{,}2\,ms lên 8{,}3 và 13{,}0\,ms
+do SUMO cần nhiều thời gian tính toán hơn mỗi bước mô phỏng trên mạng đường lớn hơn. Bản đồ OSM với 50 phương tiện và 50 người
+đi bộ đạt FPS thấp nhất là 93{,}3, ổn định hơn đáng kể so với mê cung 128$\times$128
+(FPS thấp nhất 11{,}9) vốn xuất hiện các đỉnh tải ngắn trong giai đoạn khởi tạo
+cảnh. Trên máy tính xách tay phổ thông (i5-1240P, MX570), kịch bản OSM đạt 81{,}5~FPS
+trung bình, cho thấy hệ thống có thể vận hành ổn định với các kịch bản quy mô
+thông thường mà không đòi hỏi phần cứng chuyên dụng. Nhìn chung, kiến trúc
+pipeline đủ đáp ứng yêu cầu hiển thị thời gian thực trên cả hai lớp thiết bị.
 
 \subsection{Triển khai}
 
