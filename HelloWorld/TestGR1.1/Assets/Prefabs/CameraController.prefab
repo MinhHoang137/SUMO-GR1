@@ -50,6 +50,7 @@ MonoBehaviour:
   roadData: {fileID: 11400000, guid: 98c754257f84660489d00622e8bfd4fa, type: 2}
   selectRange: 100
   moveThreshold: 100
+  rollLevelSpeed: 8
 --- !u!114 &5768535769304134173
 MonoBehaviour:
   m_ObjectHideFlags: 0

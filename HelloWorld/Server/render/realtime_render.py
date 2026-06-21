@@ -53,6 +53,8 @@ END_MARKER = '<END>'
 
 target_exe = "../../UnityBuild/TestGR1.1.exe"  # tương đối từ Server/render/ → HelloWorld/UnityBuild/
 stop_event = threading.Event()
+_cmd_client_socket: socket.socket | None = None
+_cmd_client_lock = threading.Lock()
 time_step = 0.05  # Giãn cách thời gian thực (giây) giữa các simulationStep khi chạy GUI. Khởi tạo từ launcher, Unity chỉnh được lúc chạy.
 time_step_lock = threading.Lock()
 # Pause/resume simulation (thread-safe). Unity should control this via commands.
@@ -103,6 +105,9 @@ def client_thread_function(socket: socket.socket):
     return 0
 
 def cmd_handler(client_socket: socket.socket):
+    global _cmd_client_socket
+    with _cmd_client_lock:
+        _cmd_client_socket = client_socket
     try:
         while True:
             try:
@@ -152,6 +157,9 @@ def cmd_handler(client_socket: socket.socket):
     except Exception as e:
         print(f"Error in command handler: {e}")
     finally:
+        with _cmd_client_lock:
+            if _cmd_client_socket is client_socket:
+                _cmd_client_socket = None
         client_socket.close()
 
 def listen_for_control_commands(cmd_socket):
@@ -226,7 +234,23 @@ def run_simulation(client_socket: socket.socket):
     except Exception as e:
         print(f"Error during simulation: {e}")
     finally:
+        ended_naturally = not stop_event.is_set()
+        empty_frame = {"st": step_index, "tl": [], "tr": []}
+        try:
+            network.send_data(client_socket, empty_frame, compress=network.COMPRESS_DOWNLOAD)
+        except Exception:
+            pass
+        if ended_naturally:
+            with _cmd_client_lock:
+                _cmd_sock = _cmd_client_socket
+            if _cmd_sock:
+                try:
+                    _cmd_sock.sendall(("Simulation end" + END_MARKER).encode('utf-8'))
+                    print("Sent 'Simulation end' to Unity via cmd socket.")
+                except Exception:
+                    pass
         if simulation_session:
+            simulation_session.record_frame(empty_frame)
             simulation_session.close()
         finish_simulation_logging(
             trip_logger, len(ped_seen), ped_impatience, maze_file_path,
@@ -393,7 +417,7 @@ def start_network_services(config):
     server_thread = async_task(network.server_thread, server_socket, client_thread_function, daemon=False)
     
     # Realtime luôn khởi chạy Unity (3D). Chế độ headless đã được thay bằng pre-render.
-    subprocess.Popen([os.path.abspath(os.path.join(os.path.dirname(__file__), target_exe))])
+    # subprocess.Popen([os.path.abspath(os.path.join(os.path.dirname(__file__), target_exe))])
 
     receive_thread = async_task(receive, receive_socket, daemon=False)
     listen_thread = async_task(listen_for_control_commands, cmd_socket, daemon=False)

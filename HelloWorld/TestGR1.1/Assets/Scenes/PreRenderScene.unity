@@ -756,6 +756,7 @@ MonoBehaviour:
   stepText: {fileID: 1704699956}
   playButton: {fileID: 97629002}
   playButtonText: {fileID: 362338577}
+  closeSimulationButton: {fileID: 545002939}
   timeStep: 0.1
   currentStep: 0
 --- !u!1 &131661318
@@ -5031,6 +5032,9 @@ MonoBehaviour:
   pauseSO: {fileID: 0}
   closeButton: {fileID: 545002939}
   networkSO: {fileID: 11400000, guid: 7a3054cfa94a8e341861d89798db945a, type: 2}
+  onSimulationEnd:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &656688418
 GameObject:
   m_ObjectHideFlags: 0

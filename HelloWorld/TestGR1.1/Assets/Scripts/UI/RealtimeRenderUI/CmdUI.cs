@@ -1,5 +1,8 @@
+using System;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
@@ -10,23 +13,48 @@ public class CmdUI : MonoBehaviour
     [SerializeField] private PauseSO pauseSO;
     [SerializeField] private Button closeButton;
     [SerializeField] private NetworkSO networkSO;
+    [SerializeField] private UnityEvent onSimulationEnd;
+
 
     private TcpClient cmdClient;
     private const int BUFFER_SIZE = 1024;
+    private CancellationTokenSource _cts;
 
     private bool isPaused;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         cmdClient = Network.CreateTcpClient(networkSO.Host, Constant.CMD_PORT);
         if (pauseButton != null)
-        {
             pauseButton.onClick.AddListener(OnPauseClicked);
-        }
-
         if (closeButton != null)
-        {
             closeButton.onClick.AddListener(OnCloseClicked);
+        
+        onSimulationEnd.AddListener(() =>
+        {
+            CursorManager.Instance.UnlockCursor();
+        });
+
+        _cts = new CancellationTokenSource();
+        Task.Run(() => ListenForServerCommands(_cts.Token));
+    }
+
+    private void ListenForServerCommands(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            try
+            {
+                if (cmdClient == null || !cmdClient.Connected) break;
+                string msg = Network.ReadMessage(cmdClient, BUFFER_SIZE, Constant.END_MESSAGE);
+                if (string.IsNullOrEmpty(msg)) break;
+                if (msg == "Simulation end")
+                    UnityMainThreadDispatcher.Instance()?.Enqueue(() => onSimulationEnd?.Invoke());
+            }
+            catch (Exception)
+            {
+                break;
+            }
         }
     }
 
@@ -90,6 +118,7 @@ public class CmdUI : MonoBehaviour
 
     void OnDestroy()
     {
+        _cts?.Cancel();
         Network.CloseTcpClient(cmdClient);
     }
 }
