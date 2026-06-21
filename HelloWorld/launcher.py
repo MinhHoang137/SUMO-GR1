@@ -16,6 +16,26 @@ import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 
 
+class ScrollableFrame(ttk.Frame):
+    """Frame có thanh cuộn dọc; nội dung đặt vào .inner."""
+    def __init__(self, parent, **kwargs):
+        super().__init__(parent, **kwargs)
+        self._canvas = tk.Canvas(self, highlightthickness=0)
+        sb = ttk.Scrollbar(self, orient="vertical", command=self._canvas.yview)
+        self.inner = ttk.Frame(self._canvas)
+        self.inner.bind("<Configure>", lambda _e: self._canvas.configure(
+            scrollregion=self._canvas.bbox("all")))
+        self._win_id = self._canvas.create_window((0, 0), window=self.inner, anchor="nw")
+        self._canvas.configure(yscrollcommand=sb.set)
+        self._canvas.pack(side="left", fill="both", expand=True)
+        sb.pack(side="right", fill="y")
+        self._canvas.bind("<Configure>", lambda e: self._canvas.itemconfig(
+            self._win_id, width=e.width))
+        self._canvas.bind("<Enter>", lambda _e: self._canvas.bind_all(
+            "<MouseWheel>", lambda e: self._canvas.yview_scroll(-1*(e.delta//120), "units")))
+        self._canvas.bind("<Leave>", lambda _e: self._canvas.unbind_all("<MouseWheel>"))
+
+
 class ClampedSpinbox(ttk.Spinbox):
     """Spinbox tự snap về [from_, to] khi người dùng rời field (FocusOut)."""
     def __init__(self, parent, **kw):
@@ -127,7 +147,9 @@ class AppLauncher:
     # ═════════════════════════════════════════════════════════════════
 
     def _build_maze_tab(self, parent):
-        main_frame = ttk.Frame(parent, padding=15)
+        sf = ScrollableFrame(parent)
+        sf.pack(fill=tk.BOTH, expand=True)
+        main_frame = ttk.Frame(sf.inner, padding=15)
         main_frame.pack(fill=tk.BOTH, expand=True)
 
         ttk.Label(main_frame, text="Map Type:").grid(row=0, column=0, sticky=tk.W, pady=5)
@@ -280,7 +302,9 @@ class AppLauncher:
     # ═════════════════════════════════════════════════════════════════
 
     def _build_osm_tab(self, parent):
-        frame = ttk.Frame(parent, padding=15)
+        sf = ScrollableFrame(parent)
+        sf.pack(fill=tk.BOTH, expand=True)
+        frame = ttk.Frame(sf.inner, padding=15)
         frame.pack(fill=tk.BOTH, expand=True)
         frame.columnconfigure(1, weight=1)
 
