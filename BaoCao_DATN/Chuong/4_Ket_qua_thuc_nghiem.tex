@@ -155,8 +155,9 @@ Khi một phương tiện do \gls{SUMO} điều khiển, vị trí của nó đ�
 liệu mô phỏng và phần vật lý được tắt. Khi người dùng chiếm quyền, hệ thống bật
 vật lý để người dùng lái; vị trí xe được phản ánh ngược về \gls{SUMO} để các xe
 khác phản ứng. Khi một xe đang do người dùng điều khiển hoặc một xác xe va chạm
-với xe do \gls{SUMO} điều khiển, xe bị tông chuyển thành xác xe, bị đông cứng
-trong mô phỏng để gây ùn ứ, và tự bị hủy sau một số bước định trước. Khi trả
+với xe do \gls{SUMO} điều khiển, xe bị tông chuyển thành xác xe, phía \gls{SUMO}
+đặt tốc độ về 0 để tạo vật cản gây ùn ứ trong khi vẫn đồng bộ vị trí từ Unity,
+và tự bị hủy sau một số bước định trước. Khi trả
 quyền mà xe không va chạm, server nhận tín hiệu một lần và xóa xe khỏi mô phỏng
 ngay lập tức; phía Unity tái sử dụng đối tượng khi xe vắng khỏi luồng tải xuống.
 Trạng thái bị hủy cũng đưa phương tiện về bộ nhớ tái sử dụng theo cùng cơ chế.

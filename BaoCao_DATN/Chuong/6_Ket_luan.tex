@@ -54,7 +54,7 @@ thiện. Thứ nhất, mặc dù luồng truyền thông đã được tối ưu
 thức vẫn dựa trên định dạng văn bản \gls{JSON}, nên với mạng có rất nhiều đối
 tượng vẫn còn dư địa cải thiện về tải xử lý và băng thông. Thứ hai, mô hình vật lý cho chế độ lái còn ở mức cơ bản, chưa phản ánh đầy
 đủ động lực học của phương tiện; khi trả quyền, xe bị xóa ngay thay vì được
-đưa trở lại dòng giao thông, do cơ chế re-anchor chưa được hiện thực. Thứ
+đưa trở lại dòng giao thông, do cơ chế tái nhập làn chưa được hiện thực. Thứ
 ba, hệ thống hiện chạy trên một máy và hỗ trợ một người dùng cho mỗi phiên mô
 phỏng, chưa hỗ trợ nhiều người dùng cùng tham gia một phiên. Thứ tư, hệ thống va
 chạm giả lập tai nạn hiện mới chỉ xử lý va chạm giữa xe với xe, chưa hỗ trợ va
@@ -88,8 +88,8 @@ Trong thời gian tới, đồ án có thể được phát triển theo các h�
 	tiện riêng; đây là tính năng chưa có trong phiên bản hiện tại và đòi hỏi cơ
 	chế đồng bộ quyền điều khiển và trạng thái giữa các máy.
 	\item \textbf{Nâng cấp mô hình lái, trả quyền và xử lý va chạm}: cải thiện
-	động lực học phương tiện cho chế độ lái thủ công; hiện thực cơ chế re-anchor
-	khi trả quyền — snap xe về làn gần nhất, cấp tuyến mới và trả lại cho
+	động lực học phương tiện cho chế độ lái thủ công; hiện thực cơ chế tái nhập làn
+	khi trả quyền — định vị xe về làn gần nhất, cấp tuyến mới và trả lại cho
 	\gls{SUMO} thay vì xóa xe ngay, giúp xe hòa lại dòng giao thông tự nhiên
 	hơn; đồng thời mở rộng hệ thống va chạm để xử lý cả va chạm giữa người đi
 	bộ với xe, không chỉ giới hạn ở va chạm giữa xe với xe.

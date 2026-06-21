@@ -232,7 +232,8 @@ xe phải đáng tin cậy ngay cả khi đối tượng tạm thời bị ẩn 
 Hệ thống phát hiện va chạm giữa phương tiện do người dùng điều khiển (hoặc xác xe)
 với phương tiện do \gls{SUMO} điều khiển. Phương tiện bị tông được chuyển sang
 trạng thái xác xe: nó được bật vật lý để bị xô đẩy theo va chạm, đồng thời phía
-\gls{SUMO} giữ nó đứng yên để tạo ùn ứ thực sự cho dòng xe phía sau. Mỗi xác xe
+\gls{SUMO} đặt tốc độ về 0 và tiếp tục đồng bộ vị trí từ Unity, tạo vật cản gây
+ùn ứ cho dòng xe phía sau. Mỗi xác xe
 được dọn sau một số bước mô phỏng định trước. Để việc dọn xe đáng tin cậy, bộ đếm
 số bước được quản lý tập trung theo bước mô phỏng thay vì đặt trên từng đối tượng,
 nhờ đó không bị sai lệch khi đối tượng tạm bị ẩn để tối ưu hiển thị. Khi đủ số
