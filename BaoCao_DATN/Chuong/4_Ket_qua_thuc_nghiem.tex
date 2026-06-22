@@ -205,13 +205,6 @@ Trong phạm vi báo cáo, một số lớp chủ đạo của module giao thôn
 	của lớp này cứ 0,1 giây lấy danh sách xe \texttt{IsClientOwned} từ
 	\texttt{TrafficerManager}, đóng gói thành lô và chuyển cho \texttt{VehicleSender};
 	ngoài ra gửi tín hiệu one-shot trả quyền (state\,=\,1) để server xóa xe ngay.
-	\item \texttt{SimulationSession} (Python): gom toàn bộ kết quả của một lần chạy
-	vào thư mục phiên \texttt{result/\{bản\_đồ\}-\{thời\_điểm\}/}; mở tệp
-	\texttt{scenario.json} ở chế độ streaming và ghi từng khung trạng thái qua
-	\texttt{record\_frame()}, tự đẩy đệm khi đạt ngưỡng 10\,MB.
-	\item \texttt{TrafficerData}, \texttt{TrafficLightData} (Python): lớp dữ liệu
-	đóng gói trạng thái phương tiện và đèn tín hiệu sau mỗi bước mô phỏng;
-	phương thức \texttt{to\_dict()} chuyển sang \gls{JSON} để gửi qua TCP.
 \end{itemize}
 
 Quan hệ giữa các lớp chủ đạo phía Unity được minh họa ở Hình \ref{fig:class-core}.
@@ -223,12 +216,20 @@ Quan hệ giữa các lớp chủ đạo phía Unity được minh họa ở Hì
 	\label{fig:class-core}
 \end{figure}
 
+Ngoài nhóm quản lý phương tiện, module giao thông phía Unity còn có nhóm đèn tín hiệu
+với lớp \texttt{TrafficLight} (bật/tắt đèn đỏ--vàng--xanh theo trạng thái nhận được)
+và \texttt{TrafficLightManager} (tạo, cập nhật và tái sử dụng đối tượng đèn). Cấu trúc
+hai lớp này tương tự nhóm phương tiện nhưng không đưa vào sơ đồ để giữ hình gọn.
+
 Phía Python server, các lớp và mô-đun giao thông được tổ chức thành ba nhóm:
 tầng dữ liệu gồm \texttt{TrafficerData} và \texttt{TrafficLightData} đóng gói
 trạng thái từng đối tượng; tầng đọc trạng thái gồm các mô-đun
 \texttt{trafficer.py}, \texttt{unity\_vehicle.py} và \texttt{trafficLight.py}
 gọi \gls{TraCI} để trích xuất dữ liệu mỗi bước; và lớp \texttt{SimulationSession}
-quản lý toàn bộ đầu ra của một phiên chạy vào thư mục riêng.
+gom toàn bộ kết quả của một lần chạy vào thư mục phiên
+\texttt{result/\{bản\_đồ\}-\{thời\_điểm\}/}, mở tệp \texttt{scenario.json} ở chế độ
+streaming và ghi từng khung trạng thái qua \texttt{record\_frame()}, tự đẩy đệm khi
+đạt ngưỡng 10\,MB.
 Hình~\ref{fig:class-traffic-server} minh họa quan hệ giữa các thành phần này.
 
 \begin{figure}[H]
@@ -361,8 +362,8 @@ quy mô mã nguồn do nhóm tự viết, không tính thư viện bên thứ ba
 		\hline
 		\textbf{Thành phần} & \textbf{Số tệp} & \textbf{Số dòng} \\
 		\hline
-		Python (mô phỏng và điều phối) & 40 & 5775 \\
-		Unity (mã nguồn C\#) & 100 & 8060 \\
+		Python (mô phỏng và điều phối) & 39 & 5081 \\
+		Unity (mã nguồn C\#) & 106 & 7501 \\
 		\hline
 	\end{tabular}
 \end{table}
