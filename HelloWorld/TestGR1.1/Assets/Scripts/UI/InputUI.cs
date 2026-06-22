@@ -46,6 +46,10 @@ public class InputUI : MonoBehaviour
 
 	private void SetInputUiText(TMP_Text inputText, Button button, Binding binding)
 	{
+		if (inputText == null || button == null)
+		{
+			return;
+		}
 		inputText.text = GameInput.Instance.GetBindingText(binding);
 		RectTransform rect = button.GetComponent<RectTransform>();
 		rect.sizeDelta = new Vector2(50 + 25 * (inputText.text.Length - 1), rect.sizeDelta.y);

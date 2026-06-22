@@ -52,7 +52,7 @@ def convert_osm_to_net_3d_roads(osm_file, output_net_file=None, mode="3d"):
     if mode == "3d":
         cmd += [
             "--osm.elevation",                # Lấy cao độ từ OSM nếu có
-            "--osm.layer-elevation", "4",     # Nâng mỗi layer (cầu vượt) lên 4 mét
+            "--osm.layer-elevation", "5",     # Nâng mỗi layer (cầu vượt) lên 4 mét
         ]
 
     print(f"\n[Thông báo] Đang chạy netconvert (mode = {mode.upper()})...")
