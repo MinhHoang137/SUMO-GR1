@@ -73,6 +73,18 @@ if errorlevel 1 (
 )
 if "%FAILED%"=="1" goto :end
 
+:: ---- 4b. Dang ky sumo/tools vao sys.path cua venv ---------------
+:: eclipse-sumo dat traci trong sumo/tools/ nhung khong tu them vao sys.path.
+:: Tao file .pth de Python tim thay "import traci" ma khong can SUMO global.
+echo.
+echo [*] Dang ky sumo/tools vao .venv (cho import traci)...
+"%VENV%\Scripts\python.exe" -c "import sumo, os, site; p=os.path.join(sumo.SUMO_HOME,'tools'); [open(os.path.join(s,'sumo_tools.pth'),'w').write(p+'\n') for s in site.getsitepackages() if os.path.isdir(s)]; print('[OK] Da dang ky:', p)"
+if errorlevel 1 (
+    echo [LOI] Khong dang ky duoc sumo/tools.
+    set FAILED=1
+)
+if "%FAILED%"=="1" goto :end
+
 :: ---- 5. Cai Microsoft Visual C++ Redistributable ---------------
 echo.
 echo [*] Kiem tra Visual C++ Redistributable...
