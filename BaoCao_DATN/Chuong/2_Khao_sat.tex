@@ -127,15 +127,18 @@ làm cơ sở cho các biểu đồ phân rã ở các mục tiếp theo.
 		UC4 & Sinh tuyến đường cho phương tiện & Người dùng \\
 		UC5 & Sinh tuyến đường cho người đi bộ & Người dùng \\
 		UC6 & Cấu hình tham số mô phỏng & Người dùng \\
+		\hline
 		\multicolumn{3}{l}{\textit{B. Vận hành mô phỏng}} \\
 		UC7 & Chạy mô phỏng thời gian thực & Người dùng, SUMO \\
 		UC8 & Chạy mô phỏng chế độ phát lại & Người dùng, SUMO \\
 		UC9 & Chạy kèm giao diện sumo-gui & Người dùng, SUMO \\
+		\hline
 		\multicolumn{3}{l}{\textit{C. Quan sát \& điều khiển}} \\
 		UC10 & Điều khiển camera quan sát & Người dùng \\
 		UC11 & Tạm dừng / tiếp tục mô phỏng & Người dùng \\
 		UC12 & Điều chỉnh tốc độ mô phỏng & Người dùng \\
 		UC13 & Lọc đối tượng hiển thị theo vùng & Người dùng \\
+		\hline
 		\multicolumn{3}{l}{\textit{D. Lái xe tương tác}} \\
 		UC14 & Chiếm quyền điều khiển và lái xe & Người dùng, SUMO \\
 		UC15 & Trả quyền điều khiển phương tiện & Người dùng, SUMO \\
@@ -224,14 +227,14 @@ dùng có dữ liệu bản đồ thực tế.
 \begin{table}[H]
 	\centering
 	\caption{Đặc tả use case UC2 -- Nhập bản đồ từ OpenStreetMap}
-	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+	\begin{tabular}{|p{0.22\textwidth}|p{0.70\textwidth}|}
 		\hline
-		\textbf{Tên} & Nhập bản đồ từ OpenStreetMap \\
-		\textbf{Tác nhân} & Người dùng \\
-		\textbf{Mô tả} & Hệ thống chuyển một tệp bản đồ OpenStreetMap thành mạng đường và kịch bản mô phỏng. \\
-		\textbf{Tiền điều kiện} & Người dùng có tệp bản đồ OpenStreetMap hợp lệ. \\
-		\textbf{Luồng chính} & (1) Người dùng chọn tệp bản đồ. (2) Hệ thống chuyển đổi thành mạng đường. (3) Hệ thống sinh tuyến cho phương tiện và người đi bộ. (4) Hệ thống tạo tệp cấu hình mô phỏng. \\
-		\textbf{Luồng phụ} & (2a) Bản đồ lỗi hoặc không dựng được mạng: hệ thống báo lỗi và dừng quá trình. \\
+		\textbf{Tên} & Nhập bản đồ từ OpenStreetMap \\ \hline
+		\textbf{Tác nhân} & Người dùng \\ \hline
+		\textbf{Mô tả} & Hệ thống chuyển một tệp bản đồ OpenStreetMap thành mạng đường và kịch bản mô phỏng. \\ \hline
+		\textbf{Tiền điều kiện} & Người dùng có tệp bản đồ OpenStreetMap hợp lệ. \\ \hline
+		\textbf{Luồng chính} & (1) Người dùng chọn tệp bản đồ. (2) Hệ thống chuyển đổi thành mạng đường. (3) Hệ thống sinh tuyến cho phương tiện và người đi bộ. (4) Hệ thống tạo tệp cấu hình mô phỏng. \\ \hline
+		\textbf{Luồng phụ} & (2a) Bản đồ lỗi hoặc không dựng được mạng: hệ thống báo lỗi và dừng quá trình. \\ \hline
 		\textbf{Hậu điều kiện} & Kịch bản mô phỏng từ bản đồ thực tế được tạo, sẵn sàng chạy. \\
 		\hline
 	\end{tabular}
@@ -245,14 +248,14 @@ sinh các tuyến di chuyển cho phương tiện trong kịch bản.
 \begin{table}[H]
 	\centering
 	\caption{Đặc tả use case UC4 -- Sinh tuyến đường cho phương tiện}
-	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+	\begin{tabular}{|p{0.22\textwidth}|p{0.70\textwidth}|}
 		\hline
-		\textbf{Tên} & Sinh tuyến đường cho phương tiện \\
-		\textbf{Tác nhân} & Người dùng \\
-		\textbf{Mô tả} & Hệ thống sinh tập tuyến đường cho phương tiện dựa trên cách chọn cặp điểm đầu--cuối và lọc các cặp không liên thông. \\
-		\textbf{Tiền điều kiện} & Đã có mạng đường hợp lệ. \\
-		\textbf{Luồng chính} & (1) Người dùng chọn kiểu phân chia cặp điểm đầu--cuối và số lượng. (2) Hệ thống sinh các cặp theo phân bố tọa độ. (3) Hệ thống kiểm tra tính liên thông của từng cặp. (4) Hệ thống ghi các tuyến hợp lệ ra tệp tuyến đường. \\
-		\textbf{Luồng phụ} & (3a) Cặp điểm không có đường đi: hệ thống loại bỏ cặp đó và tiếp tục. (4a) Không còn cặp hợp lệ: hệ thống báo lỗi và yêu cầu cấu hình lại. \\
+		\textbf{Tên} & Sinh tuyến đường cho phương tiện \\ \hline
+		\textbf{Tác nhân} & Người dùng \\ \hline
+		\textbf{Mô tả} & Hệ thống sinh tập tuyến đường cho phương tiện dựa trên cách chọn cặp điểm đầu--cuối và lọc các cặp không liên thông. \\ \hline
+		\textbf{Tiền điều kiện} & Đã có mạng đường hợp lệ. \\ \hline
+		\textbf{Luồng chính} & (1) Người dùng chọn kiểu phân chia cặp điểm đầu--cuối và số lượng. (2) Hệ thống sinh các cặp theo phân bố tọa độ. (3) Hệ thống kiểm tra tính liên thông của từng cặp. (4) Hệ thống ghi các tuyến hợp lệ ra tệp tuyến đường. \\ \hline
+		\textbf{Luồng phụ} & (3a) Cặp điểm không có đường đi: hệ thống loại bỏ cặp đó và tiếp tục. (4a) Không còn cặp hợp lệ: hệ thống báo lỗi và yêu cầu cấu hình lại. \\ \hline
 		\textbf{Hậu điều kiện} & Tệp tuyến đường được tạo, sẵn sàng cho mô phỏng. \\
 		\hline
 	\end{tabular}
@@ -266,14 +269,14 @@ Python với \gls{SUMO} và truyền dữ liệu liên tục sang ứng dụng U
 \begin{table}[H]
 	\centering
 	\caption{Đặc tả use case UC7 -- Chạy mô phỏng thời gian thực}
-	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+	\begin{tabular}{|p{0.22\textwidth}|p{0.70\textwidth}|}
 		\hline
-		\textbf{Tên} & Chạy mô phỏng thời gian thực \\
-		\textbf{Tác nhân} & Người dùng, SUMO \\
-		\textbf{Mô tả} & Hệ thống chạy mô phỏng và truyền trạng thái từng bước sang ứng dụng hiển thị để cập nhật tức thời. \\
-		\textbf{Tiền điều kiện} & Đã có kịch bản mô phỏng hợp lệ; ứng dụng hiển thị đã kết nối. \\
-		\textbf{Luồng chính} & (1) Người dùng chọn chế độ thời gian thực và khởi chạy. (2) Hệ thống khởi tạo \gls{SUMO} và mở các kênh truyền. (3) Mỗi bước, hệ thống lấy trạng thái phương tiện, đèn, người đi bộ. (4) Hệ thống đóng gói và gửi sang ứng dụng hiển thị. (5) Ứng dụng hiển thị cập nhật cảnh. (6) Lặp lại đến khi hết mô phỏng hoặc có lệnh dừng. \\
-		\textbf{Luồng phụ} & (3a) Gói tin bị phân mảnh trên đường truyền: phía nhận đệm dữ liệu đến khi đủ một bản tin. (2a) Không kết nối được ứng dụng hiển thị: hệ thống thử lại; nếu thất bại thì dừng. \\
+		\textbf{Tên} & Chạy mô phỏng thời gian thực \\ \hline
+		\textbf{Tác nhân} & Người dùng, SUMO \\ \hline
+		\textbf{Mô tả} & Hệ thống chạy mô phỏng và truyền trạng thái từng bước sang ứng dụng hiển thị để cập nhật tức thời. \\ \hline
+		\textbf{Tiền điều kiện} & Đã có kịch bản mô phỏng hợp lệ; ứng dụng hiển thị đã kết nối. \\ \hline
+		\textbf{Luồng chính} & (1) Người dùng chọn chế độ thời gian thực và khởi chạy. (2) Hệ thống khởi tạo \gls{SUMO} và mở các kênh truyền. (3) Mỗi bước, hệ thống lấy trạng thái phương tiện, đèn, người đi bộ. (4) Hệ thống đóng gói và gửi sang ứng dụng hiển thị. (5) Ứng dụng hiển thị cập nhật cảnh. (6) Lặp lại đến khi hết mô phỏng hoặc có lệnh dừng. \\ \hline
+		\textbf{Luồng phụ} & (3a) Gói tin bị phân mảnh trên đường truyền: phía nhận đệm dữ liệu đến khi đủ một bản tin. (2a) Không kết nối được ứng dụng hiển thị: hệ thống thử lại; nếu thất bại thì dừng. \\ \hline
 		\textbf{Hậu điều kiện} & Trạng thái mô phỏng được hiển thị theo thời gian; dữ liệu phiên được ghi lại. \\
 		\hline
 	\end{tabular}
@@ -287,14 +290,14 @@ phỏng, đảm bảo đồng bộ trạng thái giữa \gls{SUMO} và ứng d�
 \begin{table}[H]
 	\centering
 	\caption{Đặc tả use case UC11 -- Tạm dừng và tiếp tục mô phỏng}
-	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+	\begin{tabular}{|p{0.22\textwidth}|p{0.70\textwidth}|}
 		\hline
-		\textbf{Tên} & Tạm dừng và tiếp tục mô phỏng \\
-		\textbf{Tác nhân} & Người dùng \\
-		\textbf{Mô tả} & Người dùng tạm dừng hoặc tiếp tục quá trình mô phỏng đang chạy để quan sát kỹ một thời điểm. \\
-		\textbf{Tiền điều kiện} & Mô phỏng đang chạy ở chế độ thời gian thực. \\
-		\textbf{Luồng chính} & (1) Người dùng gửi lệnh tạm dừng. (2) Hệ thống dừng tiến trình bước mô phỏng nhưng giữ nguyên trạng thái. (3) Người dùng gửi lệnh tiếp tục. (4) Hệ thống tiếp tục bước mô phỏng từ trạng thái đã giữ. \\
-		\textbf{Luồng phụ} & (2a) Khi tạm dừng, các đối tượng động (kể cả người đi bộ) phải đứng yên, không tiếp tục chuyển động tại chỗ. \\
+		\textbf{Tên} & Tạm dừng và tiếp tục mô phỏng \\ \hline
+		\textbf{Tác nhân} & Người dùng \\ \hline
+		\textbf{Mô tả} & Người dùng tạm dừng hoặc tiếp tục quá trình mô phỏng đang chạy để quan sát kỹ một thời điểm. \\ \hline
+		\textbf{Tiền điều kiện} & Mô phỏng đang chạy ở chế độ thời gian thực. \\ \hline
+		\textbf{Luồng chính} & (1) Người dùng gửi lệnh tạm dừng. (2) Hệ thống dừng tiến trình bước mô phỏng nhưng giữ nguyên trạng thái. (3) Người dùng gửi lệnh tiếp tục. (4) Hệ thống tiếp tục bước mô phỏng từ trạng thái đã giữ. \\ \hline
+		\textbf{Luồng phụ} & (2a) Khi tạm dừng, các đối tượng động (kể cả người đi bộ) phải đứng yên, không tiếp tục chuyển động tại chỗ. \\ \hline
 		\textbf{Hậu điều kiện} & Mô phỏng ở trạng thái tạm dừng hoặc đang chạy theo lệnh. \\
 		\hline
 	\end{tabular}
@@ -309,14 +312,14 @@ Bảng dưới đây đặc tả use case UC14. Do use case này có luồng tr�
 \begin{table}[H]
 	\centering
 	\caption{Đặc tả use case UC14 -- Chiếm quyền điều khiển và lái xe}
-	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+	\begin{tabular}{|p{0.22\textwidth}|p{0.70\textwidth}|}
 		\hline
-		\textbf{Tên} & Chiếm quyền điều khiển và lái xe \\
-		\textbf{Tác nhân} & Người dùng, SUMO \\
-		\textbf{Mô tả} & Người dùng chọn một phương tiện đang do \gls{SUMO} điều khiển và chuyển nó sang chế độ lái thủ công bằng vật lý. \\
-		\textbf{Tiền điều kiện} & Mô phỏng đang chạy; tồn tại phương tiện có thể chiếm quyền. \\
-		\textbf{Luồng chính} & (1) Người dùng chọn phương tiện và yêu cầu chiếm quyền. (2) Hệ thống chuyển phương tiện sang chế độ điều khiển bởi người dùng và bật vật lý. (3) Người dùng điều khiển bằng bàn phím. (4) Hệ thống phản ánh vị trí xe sang \gls{SUMO} để các xe khác phản ứng. \\
-		\textbf{Luồng phụ} & (3a) Xe đang lái va chạm với xe khác: hệ thống đánh dấu trạng thái va chạm để xử lý khi trả quyền (xem UC16). \\
+		\textbf{Tên} & Chiếm quyền điều khiển và lái xe \\ \hline
+		\textbf{Tác nhân} & Người dùng, SUMO \\ \hline
+		\textbf{Mô tả} & Người dùng chọn một phương tiện đang do \gls{SUMO} điều khiển và chuyển nó sang chế độ lái thủ công bằng vật lý. \\ \hline
+		\textbf{Tiền điều kiện} & Mô phỏng đang chạy; tồn tại phương tiện có thể chiếm quyền. \\ \hline
+		\textbf{Luồng chính} & (1) Người dùng chọn phương tiện và yêu cầu chiếm quyền. (2) Hệ thống chuyển phương tiện sang chế độ điều khiển bởi người dùng và bật vật lý. (3) Người dùng điều khiển bằng bàn phím. (4) Hệ thống phản ánh vị trí xe sang \gls{SUMO} để các xe khác phản ứng. \\ \hline
+		\textbf{Luồng phụ} & (3a) Xe đang lái va chạm với xe khác: hệ thống đánh dấu trạng thái va chạm để xử lý khi trả quyền (xem UC16). \\ \hline
 		\textbf{Hậu điều kiện} & Phương tiện ở trạng thái do người dùng điều khiển. \\
 		\hline
 	\end{tabular}
@@ -324,7 +327,7 @@ Bảng dưới đây đặc tả use case UC14. Do use case này có luồng tr�
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\textwidth]{Hinhve/hinh2.8-chiemquyen.png}
+	\includegraphics[width=0.84\textwidth]{Hinhve/hinh2.8-chiemquyen.png}
 	\caption{Biểu đồ hoạt động use case Chiếm quyền và lái xe}
 	\label{fig:act-uc14}
 \end{figure}
@@ -337,14 +340,14 @@ Bảng dưới đây đặc tả use case UC15. Hình \ref{fig:act-uc15} mô t�
 \begin{table}[H]
 	\centering
 	\caption{Đặc tả use case UC15 -- Trả quyền điều khiển phương tiện}
-	\begin{tabular}{p{0.22\textwidth} p{0.70\textwidth}}
+	\begin{tabular}{|p{0.22\textwidth}|p{0.70\textwidth}|}
 		\hline
-		\textbf{Tên} & Trả quyền điều khiển phương tiện \\
-		\textbf{Tác nhân} & Người dùng, SUMO \\
-		\textbf{Mô tả} & Người dùng thả một phương tiện đang lái; hệ thống xóa xe khỏi mô phỏng ngay lập tức và Unity tái sử dụng đối tượng khi xe vắng trong luồng tải xuống. \\
-		\textbf{Tiền điều kiện} & Phương tiện đang ở trạng thái do người dùng điều khiển. \\
-		\textbf{Luồng chính} & (1) Người dùng yêu cầu trả quyền. (2) Hệ thống gửi tín hiệu one-shot lên server. (3) Server xóa xe khỏi mô phỏng ngay. (4) Unity tái sử dụng đối tượng khi không còn nhận được dữ liệu xe đó trong luồng tải xuống. \\
-		\textbf{Luồng phụ} & (1a) Xe ở trạng thái va chạm: chuyển sang xử lý xác xe thay vì xóa ngay (UC16). \\
+		\textbf{Tên} & Trả quyền điều khiển phương tiện \\ \hline
+		\textbf{Tác nhân} & Người dùng, SUMO \\ \hline
+		\textbf{Mô tả} & Người dùng thả một phương tiện đang lái; hệ thống xóa xe khỏi mô phỏng ngay lập tức và Unity tái sử dụng đối tượng khi xe vắng trong luồng tải xuống. \\ \hline
+		\textbf{Tiền điều kiện} & Phương tiện đang ở trạng thái do người dùng điều khiển. \\ \hline
+		\textbf{Luồng chính} & (1) Người dùng yêu cầu trả quyền. (2) Hệ thống gửi tín hiệu one-shot lên server. (3) Server xóa xe khỏi mô phỏng ngay. (4) Unity tái sử dụng đối tượng khi không còn nhận được dữ liệu xe đó trong luồng tải xuống. \\ \hline
+		\textbf{Luồng phụ} & (1a) Xe ở trạng thái va chạm: chuyển sang xử lý xác xe thay vì xóa ngay (UC16). \\ \hline
 		\textbf{Hậu điều kiện} & Phương tiện bị xóa khỏi mô phỏng hoặc chuyển sang trạng thái xác xe. \\
 		\hline
 	\end{tabular}
@@ -352,7 +355,7 @@ Bảng dưới đây đặc tả use case UC15. Hình \ref{fig:act-uc15} mô t�
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\textwidth]{Hinhve/hinh2.9-traquyen.png}
+	\includegraphics[width=0.84\textwidth]{Hinhve/hinh2.9-traquyen.png}
 	\caption{Biểu đồ hoạt động use case Trả quyền điều khiển}
 	\label{fig:act-uc15}
 \end{figure}

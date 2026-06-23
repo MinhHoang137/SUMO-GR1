@@ -67,8 +67,15 @@ Script này thực hiện tuần tự các bước:
           hoàn toàn khỏi các phiên bản Python khác trên máy).
     \item Nâng cấp \texttt{pip} và cài gói \texttt{eclipse-sumo}
           (bao gồm SUMO, TraCI và sumolib) vào \texttt{.venv}.
+    \item Đăng ký thư mục \texttt{sumo/tools} vào \texttt{sys.path} của \texttt{.venv}
+          qua file \texttt{sumo\_tools.pth}, để \texttt{import traci} hoạt động
+          mà không cần cài SUMO toàn cục
+          (\texttt{eclipse-sumo} chứa TraCI trong \texttt{sumo/tools/}
+          nhưng không tự thêm thư mục đó vào \texttt{sys.path}).
     \item Kiểm tra và cài Microsoft Visual C++ Redistributable nếu chưa có.
-    \item Xác nhận \texttt{import traci} thành công.
+    \item Xác nhận \texttt{import traci} thành công và in đường dẫn
+          \texttt{SUMO\_HOME} để xác nhận toàn bộ chuỗi cài đặt hoạt động
+          đúng.
 \end{enumerate}
 
 Để chạy script, nhấp đúp vào \texttt{install.bat} hoặc thực thi lệnh sau
@@ -84,6 +91,7 @@ Khi cài đặt thành công, script in ra phiên bản TraCI và đường dẫ
 \begin{lstlisting}[style=cmd]
 [OK] Python 3.14.3
 [OK] .venv da tao xong.
+[OK] Da dang ky: C:\Users\...\site-packages\sumo\tools
 [OK] Visual C++ Redistributable da co san.
 [OK] traci 1.27.0
 [OK] SUMO_HOME: C:\Users\...\site-packages\sumo

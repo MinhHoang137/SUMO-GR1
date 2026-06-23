@@ -72,7 +72,7 @@
 ```
 A.1  Yêu cầu phần cứng và phần mềm
      - Windows 10/11
-     - Python 3.10+
+     - Python 3.14+
      - SUMO + traci (cài qua install.bat, xem A.2)
      - Microsoft Visual C++ Redistributable 2022 x64 (cài qua install.bat)
      - Unity build (không cần Editor)
