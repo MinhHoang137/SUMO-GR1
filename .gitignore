@@ -132,6 +132,7 @@ dist/
 *.fdb_latexmk
 *.synctex.gz
 *.synctex.gz(busy)
+*.synctex(busy)
 *.pdfsync
 *.toc
 *.lof
