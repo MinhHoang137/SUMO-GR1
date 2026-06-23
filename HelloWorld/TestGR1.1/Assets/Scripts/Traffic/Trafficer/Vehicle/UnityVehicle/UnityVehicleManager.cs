@@ -141,8 +141,9 @@ public class UnityVehicleManager : MonoBehaviour
 	{
 		if (vehicle != null)
 		{
-			// Set Destroyed → biến mất khỏi batch client-owned → server reconcile xoá khỏi SUMO.
-			vehicle.SetState(ExistState.Destroyed);
+			if (vehicle.TryGetComponent<Trafficer>(out var trafficer))
+				TrafficerManager.Instance.RemoveTrafficer(trafficer);
+			Destroy(vehicle.gameObject);
 			vehicle = null;
 			stateText.text = CMD_CREATE;
 		}
