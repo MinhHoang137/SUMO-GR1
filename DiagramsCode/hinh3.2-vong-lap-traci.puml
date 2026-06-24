@@ -19,7 +19,7 @@ start
 :Kết nối SUMO;
 
 repeat
-  :Tiến một bước;
+  :Thực thi bước thời gian;
   :Lấy trạng thái;
   :Gửi sang Unity;
 repeat while (còn bước mô phỏng?) is (có)

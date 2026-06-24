@@ -32,12 +32,8 @@ vuông góc với hướng đi để sinh ra hai đỉnh lưới ở hai mép l�
 nằm trên khúc cua, vector vuông góc được lấy theo phân giác của hai đoạn kề và độ
 rộng được nhân thêm một hệ số theo góc cua, nhờ đó dải mặt đường không bị bóp lại
 ở chỗ gấp khúc. Trên cơ sở đó, hệ thống vẽ thêm vạch phân làn liền hoặc đứt đoạn
-và vạch biên. Để xe có thể chạy và đổi làn tự do trong lòng đường, mỗi đoạn được
-sinh một bộ va chạm gồm tấm sàn và hai vách hai bên. Vì hai đoạn đường kề nhau
-sinh vách sát nhau gây trùng lặp, hệ thống bổ sung một bước dọn vách: sau khi dựng,
-mỗi vách dò các vách lân cận bằng kiểm tra chồng lấn và tia quét; nếu phát hiện
-vách của đoạn khác sát bên, cả hai vách trùng được loại bỏ. Bước dọn này được hoãn
-một khung hình để bảo đảm mọi đoạn đã dựng xong và hệ vật lý đã cập nhật. Hình
+và vạch biên. Để xe có thể di chuyển trong lòng đường, mỗi đoạn được sinh một tấm sàn va chạm
+phẳng bao phủ toàn bộ bề mặt đoạn đó. Hình
 \ref{fig:edge-ribbon} minh họa cách dựng dải mặt đường và hiệu chỉnh tại khúc cua;
 Giải thuật \ref{alg:edge} tóm tắt bước sinh đỉnh lưới.
 

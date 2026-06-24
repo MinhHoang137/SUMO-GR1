@@ -17,4 +17,8 @@ public class DespawnStepUI : MonoBehaviour
     {
         
     }
+    private void OnDestroy()
+    {
+        despawnStepValueUI.Destroy();
+    }
 }

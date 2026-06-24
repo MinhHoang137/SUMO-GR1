@@ -195,15 +195,18 @@ def process_vehicle_updates(traci):
                     # Xác xe: đông cứng tại chỗ không phải là không di chuyển, mà là nó không thể tự di chuyển nữa
                     # Do đó, vẫn mirror vị trí client gửi nhưng set tốc độ = 0 để SUMO không di chuyển.
                     # Despawn do client điều khiển (gửi state 0 khi hết N bước).
+                    # keepRoute=2: đặt tại đúng toạ độ Unity physics, không snap về lane gần nhất.
                     traci.vehicle.setSpeed(veh_id, 0)
                     traci.vehicle.moveToXY(vehID=veh_id,
                                        edgeID="", laneIndex=0,
                                        x=pos[0], y=pos[1],
-                                       angle=angle, keepRoute=0)
+                                       angle=angle, keepRoute=2)
                     if veh_id not in wrecked_ids:
                         traci.vehicle.setColor(veh_id, (255, 165, 0, 255))  # cam: xác xe
                         wrecked_ids.add(veh_id)
                         print(f"  [x] Xe {veh_id} thành xác → cam, tốc độ 0 tại {pos}")
+                    else:
+                        print(f"  [x] Xác xe {veh_id} → {pos} | góc {angle:.2f}")
                     continue
 
                 # state 2 (mirror) — SUMO bám theo vị trí client lái.
@@ -233,7 +236,7 @@ def process_vehicle_updates(traci):
                 print(f"  [>] Di chuyển {veh_id} đến {pos} | góc {angle:.2f} | tốc độ {speed}")
 
             except Exception as e:
-                print(f"  [!] Lỗi khi cập nhật xe {v.get('id', '?')}: {e}")
+                print(f"  [!] Lỗi khi cập nhật xe {v.get('i', '?')}: {e}")
 
         # Reconcile: xe từng do client chi phối nhưng vắng khỏi batch (client thả/huỷ/despawn) → xoá khỏi SUMO.
         for gone in managed_ids - present_ids:

@@ -21,5 +21,5 @@ MonoBehaviour:
     - {fileID: 7231671763871209301, guid: cf9b93ff64c5a3c48925afe5b7f0a8d0, type: 3}
   - type: p
     trafficers:
-    - {fileID: 1757447728914360919, guid: 7cec9a30282253844991bb97a65a4fdc, type: 3}
     - {fileID: 6770102097116420907, guid: 60f4e4f6453824b4b97ccac8dd1f7714, type: 3}
+    - {fileID: 276717637631153300, guid: 61a8eea35d38db749b3830ac833dea85, type: 3}
