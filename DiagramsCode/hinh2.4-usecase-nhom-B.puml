@@ -9,10 +9,10 @@ skinparam ArrowColor #333333
 actor "Người dùng" as User
 actor "SUMO" as SUMO
 
-rectangle "B. Vận hành mô phỏng" {
-  usecase "UC7. Chạy thời\ngian thực" as UC7
-  usecase "UC8. Chạy chế độ\nphát lại" as UC8
-  usecase "UC9. Chạy kèm\nsumo-gui" as UC9
+rectangle "Vận hành mô phỏng" {
+  usecase "Chạy thời\ngian thực" as UC7
+  usecase "Chạy chế độ\nphát lại" as UC8
+  usecase "Chạy kèm\nsumo-gui" as UC9
   usecase "Hiển thị xe,\nđèn, người đi bộ" as INC
 }
 

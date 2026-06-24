@@ -8,13 +8,13 @@ skinparam ArrowColor #333333
 
 actor "Người dùng" as User
 
-rectangle "A. Chuẩn bị kịch bản & bản đồ" {
-  usecase "UC1. Tạo bản đồ\ntừ mê cung" as UC1
-  usecase "UC2. Nhập bản đồ\nOpenStreetMap" as UC2
-  usecase "UC3. Nạp kịch bản\ntự dựng (netedit)" as UC3
-  usecase "UC4. Sinh tuyến\ncho phương tiện" as UC4
-  usecase "UC5. Sinh tuyến\ncho người đi bộ" as UC5
-  usecase "UC6. Cấu hình\ntham số mô phỏng" as UC6
+rectangle "Chuẩn bị kịch bản & bản đồ" {
+  usecase "Tạo bản đồ\ntừ mê cung" as UC1
+  usecase "Nhập bản đồ\nOpenStreetMap" as UC2
+  usecase "Nạp kịch bản\ntự dựng (netedit)" as UC3
+  usecase "Sinh tuyến\ncho phương tiện" as UC4
+  usecase "Sinh tuyến\ncho người đi bộ" as UC5
+  usecase "Cấu hình\ntham số mô phỏng" as UC6
 }
 
 User -- UC1

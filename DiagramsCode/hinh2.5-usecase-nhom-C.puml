@@ -8,11 +8,11 @@ skinparam ArrowColor #333333
 
 actor "Người dùng" as User
 
-rectangle "C. Quan sát & điều khiển" {
-  usecase "UC10. Điều khiển\ncamera quan sát" as UC10
-  usecase "UC11. Tạm dừng /\ntiếp tục" as UC11
-  usecase "UC12. Điều chỉnh\ntốc độ" as UC12
-  usecase "UC13. Lọc đối tượng\nhiển thị" as UC13
+rectangle "Quan sát & điều khiển" {
+  usecase "Điều khiển\ncamera quan sát" as UC10
+  usecase "Tạm dừng /\ntiếp tục" as UC11
+  usecase "Điều chỉnh\ntốc độ" as UC12
+  usecase "Lọc đối tượng\nhiển thị" as UC13
 }
 
 User -- UC10

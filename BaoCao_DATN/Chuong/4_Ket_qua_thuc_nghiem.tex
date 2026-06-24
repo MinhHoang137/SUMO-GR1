@@ -71,16 +71,16 @@ toàn bộ phiên mô phỏng.
 	\centering
 	\caption{Các nhóm mô-đun chính phía Unity}
 	\label{tab:unity-modules}
-	\begin{tabular}{p{0.26\textwidth} p{0.64\textwidth}}
+	\begin{tabular}{|p{0.26\textwidth}|p{0.64\textwidth}|}
 		\hline
 		\textbf{Nhóm mô-đun} & \textbf{Nhiệm vụ} \\
 		\hline
-		Mạng (Network) & Kết nối TCP, nhận dữ liệu mạng đường và dữ liệu mô phỏng. \\
-		Dựng bản đồ 3D (Road) & Nhận dữ liệu mạng đường một lần khi khởi chạy; dựng Mesh mặt đường, nút giao, vạch sang đường và công trình. \\
-		Giao thông (Traffic) & Quản lý vòng đời và cập nhật phương tiện, đèn tín hiệu, người đi bộ; nội suy chuyển động. \\
-		Phương tiện người lái (UnityVehicle) & Chiếm quyền, lái bằng vật lý, gửi dữ liệu xe lên server, xử lý va chạm. \\
-		Tối ưu (Optimization) & Lọc đối tượng theo vùng quan sát, giảm số lệnh vẽ. \\
-		Giao diện (UI) & Điều khiển camera, tạm dừng, tốc độ, nút chiếm/trả quyền. \\
+		Mạng (Network) & Kết nối TCP, nhận dữ liệu mạng đường và dữ liệu mô phỏng. \\ \hline
+		Dựng bản đồ 3D (Road) & Nhận dữ liệu mạng đường một lần khi khởi chạy; dựng Mesh mặt đường, nút giao, vạch sang đường và công trình. \\ \hline
+		Giao thông (Traffic) & Quản lý vòng đời và cập nhật phương tiện, đèn tín hiệu, người đi bộ; nội suy chuyển động. \\ \hline
+		Phương tiện người lái (UnityVehicle) & Chiếm quyền, lái bằng vật lý, gửi dữ liệu xe lên server, xử lý va chạm. \\ \hline
+		Tối ưu (Optimization) & Lọc đối tượng theo vùng quan sát, giảm số lệnh vẽ. \\ \hline
+		Giao diện (UI) & Điều khiển camera, tạm dừng, tốc độ, nút chiếm/trả quyền. \\ \hline
 		Mô phỏng (Simulation) & Điều phối chế độ thời gian thực và chế độ phát lại. \\
 		\hline
 	\end{tabular}
@@ -331,17 +331,17 @@ Bảng \ref{tab:tools} liệt kê các công cụ chính được sử dụng tr
 	\centering
 	\caption{Danh sách thư viện và công cụ sử dụng}
 	\label{tab:tools}
-	\begin{tabular}{p{0.34\textwidth} p{0.30\textwidth} p{0.26\textwidth}}
+	\begin{tabular}{|p{0.34\textwidth}|p{0.30\textwidth}|p{0.26\textwidth}|}
 		\hline
 		\textbf{Mục đích} & \textbf{Công cụ} & \textbf{Phiên bản} \\
 		\hline
-		Mô phỏng giao thông vi mô & Eclipse SUMO & 1.27.0 \\
-		Điều khiển mô phỏng & TraCI (Python) & đi kèm SUMO \\
-		Ngôn ngữ điều phối & Python & 3.14+ \\
-		Hiển thị 3D và tương tác & Unity Editor & 6000.3.9f1 \\
-		Phân tích JSON trong Unity & Newtonsoft.Json & 3.2.x \\
-		Môi trường phát triển & Visual Studio Code & --- \\
-		Quản lý phiên bản & Git & --- \\
+		Mô phỏng giao thông vi mô & Eclipse SUMO & 1.27.0 \\ \hline
+		Điều khiển mô phỏng & TraCI (Python) & đi kèm SUMO \\ \hline
+		Ngôn ngữ điều phối & Python & 3.14+ \\ \hline
+		Hiển thị 3D và tương tác & Unity Editor & 6000.3.9f1 \\ \hline
+		Phân tích JSON trong Unity & Newtonsoft.Json & 3.2.x \\ \hline
+		Môi trường phát triển & Visual Studio Code & --- \\ \hline
+		Quản lý phiên bản & Git & --- \\ \hline
 		Hệ điều hành thử nghiệm & Windows & 10/11 \\
 		\hline
 	\end{tabular}
@@ -358,11 +358,11 @@ quy mô mã nguồn do nhóm tự viết, không tính thư viện bên thứ ba
 	\centering
 	\caption{Thống kê quy mô mã nguồn}
 	\label{tab:loc}
-	\begin{tabular}{p{0.40\textwidth} c c}
+	\begin{tabular}{|p{0.40\textwidth}|c|c|}
 		\hline
 		\textbf{Thành phần} & \textbf{Số tệp} & \textbf{Số dòng} \\
 		\hline
-		Python (mô phỏng và điều phối) & 39 & 5081 \\
+		Python (mô phỏng và điều phối) & 39 & 5081 \\ \hline
 		Unity (mã nguồn C\#) & 106 & 7501 \\
 		\hline
 	\end{tabular}
@@ -419,15 +419,15 @@ kê một số trường hợp kiểm thử tiêu biểu.
 	\centering
 	\caption{Một số trường hợp kiểm thử tiêu biểu}
 	\label{tab:testcases}
-	\begin{tabular}{p{0.08\textwidth} p{0.34\textwidth} p{0.46\textwidth}}
+	\begin{tabular}{|p{0.08\textwidth}|p{0.34\textwidth}|p{0.46\textwidth}|}
 		\hline
 		\textbf{Mã} & \textbf{Mục tiêu} & \textbf{Dữ liệu vào / Kỳ vọng} \\
 		\hline
-		TC01 & Tách khung thông điệp TCP & Gửi hai thông điệp liên tiếp trong một lần gửi; phía nhận tách đúng hai thông điệp. \\
-		TC02 & Nhận dữ liệu mạng đường một lần & Unity yêu cầu dữ liệu mạng; nhận đủ và dựng cảnh đúng. \\
-		TC03 & Hiển thị trạng thái đèn & Mô phỏng trả về chuỗi trạng thái đèn; Unity hiển thị đúng đỏ/vàng/xanh. \\
-		TC04 & Chiếm quyền và lái xe & Người dùng chiếm một xe; xe chuyển sang lái bằng vật lý, các xe khác phản ứng theo. \\
-		TC05 & Va chạm sinh xác xe & Xe người lái tông xe của mô phỏng; xe bị tông thành xác xe và biến mất sau N bước. \\
+		TC01 & Tách khung thông điệp TCP & Gửi hai thông điệp liên tiếp trong một lần gửi; phía nhận tách đúng hai thông điệp. \\ \hline
+		TC02 & Nhận dữ liệu mạng đường một lần & Unity yêu cầu dữ liệu mạng; nhận đủ và dựng cảnh đúng. \\ \hline
+		TC03 & Hiển thị trạng thái đèn & Mô phỏng trả về chuỗi trạng thái đèn; Unity hiển thị đúng đỏ/vàng/xanh. \\ \hline
+		TC04 & Chiếm quyền và lái xe & Người dùng chiếm một xe; xe chuyển sang lái bằng vật lý, các xe khác phản ứng theo. \\ \hline
+		TC05 & Va chạm sinh xác xe & Xe người lái tông xe của mô phỏng; xe bị tông thành xác xe và biến mất sau N bước. \\ \hline
 		TC06 & Trả quyền điều khiển & Thả xe không va chạm: xe bị xóa khỏi mô phỏng ngay, Unity tái sử dụng đối tượng; thả xe đã va chạm: xe chuyển sang xác xe (TC05). \\
 		\hline
 	\end{tabular}
@@ -467,13 +467,13 @@ kịch bản OSM chạy khoảng 50 phương tiện và 50 người đi bộ.
 	\caption{Kết quả hiệu năng theo quy mô kịch bản (máy bàn)}
 	\label{tab:perf}
 	\small
-	\begin{tabular}{p{0.32\textwidth} c c c c}
+	\begin{tabular}{|p{0.32\textwidth}|c|c|c|c|}
 		\hline
 		\textbf{Kịch bản} & \textbf{Xe / Người đi bộ} & \textbf{FPS TB} & \textbf{FPS thấp nhất} & \textbf{Độ trễ TB (ms)} \\
 		\hline
-		Mê cung nhỏ (32$\times$32)    & 100 / 100 & 119.5 & 52.9 & 6.2 \\
-		Mê cung vừa (64$\times$64)    & 100 / 100 & 112.1 & 40.6 & 8.3 \\
-		Mê cung lớn (128$\times$128)  & 100 / 100 & 100.1 & 11.9 & 13.0 \\
+		Mê cung nhỏ (32$\times$32)    & 100 / 100 & 119.5 & 52.9 & 6.2 \\ \hline
+		Mê cung vừa (64$\times$64)    & 100 / 100 & 112.1 & 40.6 & 8.3 \\ \hline
+		Mê cung lớn (128$\times$128)  & 100 / 100 & 100.1 & 11.9 & 13.0 \\ \hline
 		Bản đồ OSM         & 50 / 50   & 119.8 & 93.3 & 6.2 \\
 		\hline
 	\end{tabular}
@@ -487,7 +487,7 @@ Bảng \ref{tab:perf-laptop} đối chiếu hiệu năng kịch bản OSM trên 
 	\caption{Kết quả hiệu năng kịch bản OSM trên máy tính xách tay}
 	\label{tab:perf-laptop}
 	\small
-	\begin{tabular}{p{0.32\textwidth} c c c c}
+	\begin{tabular}{|p{0.32\textwidth}|c|c|c|c|}
 		\hline
 		\textbf{Kịch bản} & \textbf{Xe / Người đi bộ} & \textbf{FPS TB} & \textbf{FPS thấp nhất} & \textbf{Độ trễ TB (ms)} \\
 		\hline

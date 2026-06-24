@@ -8,8 +8,8 @@ skinparam ArrowColor #333333
 
 actor "Người dùng" as User
 
-rectangle "E. Kết quả & lưu trữ" {
-  usecase "UC17. Ghi và lưu trữ\nphiên mô phỏng" as UC17
+rectangle "Kết quả & lưu trữ" {
+  usecase "Ghi và lưu trữ\nphiên mô phỏng" as UC17
 }
 
 User -- UC17

@@ -9,10 +9,10 @@ skinparam ArrowColor #333333
 actor "Người dùng" as User
 actor "SUMO" as SUMO
 
-rectangle "D. Lái xe tương tác" {
-  usecase "UC14. Chiếm quyền\nvà lái xe" as UC14
-  usecase "UC15. Trả quyền\nđiều khiển" as UC15
-  usecase "UC16. Xử lý va chạm\nsinh xác xe" as UC16
+rectangle "Lái xe tương tác" {
+  usecase "Chiếm quyền\nvà lái xe" as UC14
+  usecase "Trả quyền\nđiều khiển" as UC15
+  usecase "Xử lý va chạm\nsinh xác xe" as UC16
 }
 
 User -- UC14

@@ -12,10 +12,10 @@ actor "Người dùng" as User
 actor "SUMO\n(hệ thống ngoài)" as SUMO
 
 rectangle "Hệ thống mô phỏng--hiển thị 3D" {
-  usecase "A. Chuẩn bị kịch bản & bản đồ" as A
-  usecase "B. Vận hành mô phỏng" as B
-  usecase "C. Quan sát & điều khiển" as C
-  usecase "D. Lái xe tương tác" as D
+  usecase "Chuẩn bị kịch bản & bản đồ" as A
+  usecase "Vận hành mô phỏng" as B
+  usecase "Quan sát & điều khiển" as C
+  usecase "Lái xe tương tác" as D
 }
 
 User -- A
