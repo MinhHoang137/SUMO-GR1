@@ -94,7 +94,7 @@ khả năng tái hiện diễn biến theo thời gian và tính ổn định c�
 Ngoài phạm vi của đồ án là các bài toán tối ưu điều khiển giao thông, hiệu
 chỉnh hay tham số hóa mô hình mô phỏng của \gls{SUMO}, cũng như hỗ trợ nhiều
 người dùng đồng thời trong cùng một phiên. Trong phạm vi này, hệ thống đóng vai
-trò là lớp trực quan hóa, tương tác và hỗ trợ phân tích dựa trên dữ liệu mô
+trò là tầng trực quan hóa, tương tác và hỗ trợ phân tích dựa trên dữ liệu mô
 phỏng sẵn có, qua đó tăng khả năng quan sát và trình bày kịch bản thay vì can
 thiệp vào thuật toán mô phỏng.
 
@@ -116,19 +116,19 @@ phát triển trò chơi (game) vốn quen thuộc với Unity nay có thể t�
 giao thông được mô phỏng sát thực tế làm nền tảng cho các sản phẩm tương tác.
 
 Trên cơ sở đó, giải pháp được triển khai theo một quy trình tổng quát gồm các
-thành phần chính. Thứ nhất, mô-đun chuẩn bị dữ liệu sinh mạng đường (từ mê cung
+thành phần chính. Thứ nhất, module chuẩn bị dữ liệu sinh mạng đường (từ mê cung
 hoặc từ OpenStreetMap) cùng tuyến đường cho phương tiện và người đi bộ, tạo
-thành kịch bản mô phỏng đầu vào cho \gls{SUMO}. Thứ hai, mô-đun thu thập dữ liệu
+thành kịch bản mô phỏng đầu vào cho \gls{SUMO}. Thứ hai, module thu thập dữ liệu
 động kết nối với phiên mô phỏng qua \gls{TraCI} để lấy trạng thái theo từng bước,
 sau đó chuẩn hóa thành một định dạng trao đổi thống nhất và truyền sang Unity qua
-TCP/IP. Thứ ba, mô-đun hiển thị trong Unity nhận dữ liệu, ánh xạ hệ tọa độ, tạo
+TCP/IP. Thứ ba, module hiển thị trong Unity nhận dữ liệu, ánh xạ hệ tọa độ, tạo
 và cập nhật các đối tượng 3D, đồng thời nội suy chuyển động để hiển thị mượt. Thứ
-tư, mô-đun tương tác cho phép người dùng chiếm quyền điều khiển một phương tiện,
+tư, module tương tác cho phép người dùng chiếm quyền điều khiển một phương tiện,
 lái bằng vật lý, xử lý va chạm để sinh trạng thái ``xác xe'', và trả quyền điều
 khiển để xóa xe khỏi mô phỏng ngay lập tức.
 
 Trong quá trình triển khai, một yêu cầu quan trọng là bảo đảm tính nhất quán của
-dữ liệu giữa các mô-đun: dữ liệu hình học mạng đường cần dùng chung chuẩn tọa độ
+dữ liệu giữa các module: dữ liệu hình học mạng đường cần dùng chung chuẩn tọa độ
 với dữ liệu phương tiện; các đối tượng trong Unity cần có vòng đời phù hợp với
 trạng thái mô phỏng (tạo mới khi xuất hiện, cập nhật khi di chuyển, loại bỏ khi
 rời mạng). Đồng thời, để bảo đảm khả năng mở rộng, giải pháp ưu tiên tách biệt
@@ -155,7 +155,7 @@ cùng các yêu cầu phi chức năng. Chương 3 giới thiệu nền tảng l
 công nghệ được sử dụng, bao gồm \gls{SUMO}, \gls{TraCI}, Python và Unity, đồng
 thời phân tích vai trò của từng thành phần và lý do lựa chọn so với các phương án
 thay thế. Chương 4 trình bày phân tích thiết kế, triển khai và đánh giá hệ thống,
-tập trung vào kiến trúc tổng thể, các mô-đun chính, cơ chế đồng bộ dữ liệu và
+tập trung vào kiến trúc tổng thể, các module chính, cơ chế đồng bộ dữ liệu và
 kết quả thực nghiệm trên các kịch bản mẫu. Chương 5 trình bày các giải pháp kỹ
 thuật và đóng góp nổi bật của đồ án, trong đó có cơ chế giao tiếp thời gian thực,
 cơ chế chiếm quyền điều khiển và xử lý va chạm, cũng như cơ chế trả quyền và lưu

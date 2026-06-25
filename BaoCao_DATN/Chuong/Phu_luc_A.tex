@@ -40,7 +40,7 @@ kịch bản OSM thông thường mà không gặp vấn đề về hiệu năng
 
 \textbf{Phần mềm bắt buộc:}
 \begin{itemize}
-    \item \textbf{Python 3.14 trở lên} — ngôn ngữ triển khai server mô phỏng.
+    \item \textbf{Python 3.14 trở lên} — ngôn ngữ triển khai máy chủ mô phỏng.
         Tải tại \url{https://www.python.org/downloads/release/python-3140/}.
         Trong quá trình cài đặt, cần tích chọn \textit{``Add python.exe to PATH''}.
         Nếu máy đã có nhiều phiên bản Python, cần đảm bảo Python~3.14 được ưu tiên
@@ -118,7 +118,7 @@ kịch bản đã ghi sẵn.
 Chế độ này khởi động SUMO song song với Unity, truyền dữ liệu vị trí phương
 tiện theo từng bước mô phỏng. Thứ tự khởi chạy như sau.
 
-\textbf{Bước 1 — Khởi động server mô phỏng.}
+\textbf{Bước 1 — Khởi động máy chủ mô phỏng.}
 Nhấp đúp vào file \texttt{Simulation.bat}
 (hoặc chạy trực tiếp trong terminal):
 
@@ -178,7 +178,7 @@ kịch bản mà không cần kết nối mạng hay SUMO.
 \label{sec:pla-sucố}
 
 \textbf{Lỗi kết nối TCP (``Connection refused'' hoặc ``Connection timed out'').}
-Server Python và Unity giao tiếp qua các cổng TCP 5050, 5053 và 5054.
+Máy chủ Python và Unity giao tiếp qua các cổng TCP 5050, 5053 và 5054.
 Nếu gặp lỗi kết nối, cần kiểm tra: (i) launcher đã được khởi động trước
 Unity; (ii) tường lửa Windows không chặn các cổng trên;
 (iii) không có tiến trình SUMO hoặc Python nào từ phiên trước còn đang giữ cổng

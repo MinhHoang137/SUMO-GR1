@@ -5,7 +5,7 @@
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
 
-        <mxCell id="json" value="&lt;b&gt;road_data.json&lt;/b&gt;&#xa;(Python Server)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=13;verticalAlign=middle;">
+        <mxCell id="json" value="&lt;b&gt;road_data.json&lt;/b&gt;&#xa;(Máy chủ Python)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=13;verticalAlign=middle;">
           <mxGeometry x="30" y="190" width="160" height="80" as="geometry" />
         </mxCell>
 

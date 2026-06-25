@@ -346,7 +346,7 @@ Bảng dưới đây đặc tả use case UC15. Hình \ref{fig:act-uc15} mô t�
 		\textbf{Tác nhân} & Người dùng, SUMO \\ \hline
 		\textbf{Mô tả} & Người dùng thả một phương tiện đang lái; hệ thống xóa xe khỏi mô phỏng ngay lập tức và Unity tái sử dụng đối tượng khi xe vắng trong luồng tải xuống. \\ \hline
 		\textbf{Tiền điều kiện} & Phương tiện đang ở trạng thái do người dùng điều khiển. \\ \hline
-		\textbf{Luồng chính} & (1) Người dùng yêu cầu trả quyền. (2) Hệ thống gửi tín hiệu one-shot lên server. (3) Server xóa xe khỏi mô phỏng ngay. (4) Unity tái sử dụng đối tượng khi không còn nhận được dữ liệu xe đó trong luồng tải xuống. \\ \hline
+		\textbf{Luồng chính} & (1) Người dùng yêu cầu trả quyền. (2) Hệ thống gửi tín hiệu one-shot lên máy chủ. (3) Máy chủ xóa xe khỏi mô phỏng ngay. (4) Unity tái sử dụng đối tượng khi không còn nhận được dữ liệu xe đó trong luồng tải xuống. \\ \hline
 		\textbf{Luồng phụ} & (1a) Xe ở trạng thái va chạm: chuyển sang xử lý xác xe thay vì xóa ngay (UC16). \\ \hline
 		\textbf{Hậu điều kiện} & Phương tiện bị xóa khỏi mô phỏng hoặc chuyển sang trạng thái xác xe. \\
 		\hline

@@ -120,6 +120,9 @@ dist/
 
 .fake
 
+# Claude Code internal files
+.claude/
+
 # LaTeX generated files
 *.aux
 *.bbl
