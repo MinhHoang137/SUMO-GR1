@@ -167,7 +167,7 @@ trình.
 \subsection{Kết quả đạt được}
 
 Hệ thống dựng được mạng đường ba chiều bám sát dữ liệu nguồn cho cả mạng sinh tự
-động và bản đồ thực tế từ OpenStreetMap. Mặt đường liền lạc tại khúc cua, nút giao
+động và bản đồ thực tế từ OpenStreetMap. Mặt đường liền mạch tại khúc cua, nút giao
 được phủ kín kể cả với hình dạng phức tạp, và bề mặt va chạm cho phép xe di chuyển
 cùng đổi làn liên tục. Đây là nền tảng để hiển thị giao thông và để người dùng lái
 xe trong cảnh.
@@ -194,9 +194,12 @@ phương tiện chuyển sang trạng thái do người dùng điều khiển: h
 cứng (Rigidbody) và các bộ va chạm bánh xe (Wheel Collider) để xe chuyển động
 theo vật lý, đồng thời ngừng cập nhật vị trí theo dữ liệu mô phỏng. Vị trí của xe
 do người dùng lái được gửi ngược về phía \gls{SUMO} để cập nhật vào mô phỏng,
-giúp các phương tiện khác phản ứng theo. Khi không còn do người dùng điều khiển,
-phương tiện tắt phần vật lý và trở lại chế độ cập nhật theo dữ liệu để bảo đảm
-hiệu năng. Cách bật tắt vật lý theo trạng thái như vậy được gọi là cơ chế lai,
+giúp các phương tiện khác phản ứng theo. Khi người dùng trả quyền mà xe không va chạm,
+hệ thống gửi tín hiệu một lần để máy chủ xóa xe khỏi mô phỏng ngay lập tức;
+phía Unity tái sử dụng đối tượng khi xe vắng khỏi luồng dữ liệu tải xuống.
+Nếu xe đã va chạm, nó chuyển sang trạng thái xác xe: giữ nguyên vật lý bật,
+nằm tại chỗ và có thể bị xô đẩy tiếp, sau đó tự được dọn sau một số bước mô
+phỏng định trước. Cách bật tắt vật lý theo trạng thái như vậy được gọi là cơ chế lai,
 chỉ trả chi phí vật lý cho đúng phương tiện đang được lái. Bên cạnh đó, hệ thống
 cho phép sinh một phương tiện riêng của người dùng, là phương tiện luôn do người
 dùng điều khiển và không bị \gls{SUMO} chiếm lại.
