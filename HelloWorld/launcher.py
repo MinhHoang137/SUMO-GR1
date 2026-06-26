@@ -140,16 +140,16 @@ class AppLauncher:
         self.notebook = ttk.Notebook(root_frame)
         self.notebook.pack(fill=tk.BOTH, expand=True)
 
-        maze_tab = ttk.Frame(self.notebook)
         osm_tab = ttk.Frame(self.notebook)
         custom_tab = ttk.Frame(self.notebook)
-        self.notebook.add(maze_tab, text="Mô phỏng Maze (.map)")
+        maze_tab = ttk.Frame(self.notebook)
         self.notebook.add(osm_tab, text="Mô phỏng OSM (.osm)")
         self.notebook.add(custom_tab, text="Kịch bản netedit")
+        self.notebook.add(maze_tab, text="Mô phỏng Maze (.map)")
 
-        self._build_maze_tab(maze_tab)
         self._build_osm_tab(osm_tab)
         self._build_custom_tab(custom_tab)
+        self._build_maze_tab(maze_tab)
         self._build_shared_section(root_frame)
 
     # ═════════════════════════════════════════════════════════════════
@@ -504,11 +504,11 @@ class AppLauncher:
 
         active = self.notebook.index(self.notebook.select())
         if active == 0:
-            self._start_from_maze()
-        elif active == 1:
             self._start_from_osm()
-        else:
+        elif active == 1:
             self._start_from_custom()
+        else:
+            self._start_from_maze()
 
     # ── Tab 1 path: maze .map ────────────────────────────────────────
     def _start_from_maze(self):
@@ -657,6 +657,7 @@ class AppLauncher:
         inputs.append(str(self.render_mode.get()))
         if self.render_mode.get() == 1:
             inputs.append(str(self.gui_mode.get()))
+        inputs.append("n")  # không giới hạn đối tượng (custom tab không có UI cap)
         self._launch_main(folder, 1, inputs)
 
     # ── Subprocess + monitor (chung cho cả 3 tab) ────────────────────

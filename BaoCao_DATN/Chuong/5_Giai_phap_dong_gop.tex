@@ -27,11 +27,14 @@ phải khớp nhau để xe có thể di chuyển liên tục mà không vướn
 là đoạn đường và nút giao.
 
 \textbf{Thuật toán dựng đoạn đường.} Mỗi làn được dựng thành một dải lưới bám theo
-đường gấp khúc của nó. Tại mỗi đỉnh của đường gấp khúc, hệ thống tính một vector
-vuông góc với hướng đi để sinh ra hai đỉnh lưới ở hai mép làn. Ở các đỉnh giữa
-nằm trên khúc cua, vector vuông góc được lấy theo phân giác của hai đoạn kề và độ
-rộng được nhân thêm một hệ số theo góc cua, nhờ đó dải mặt đường không bị bóp lại
-ở chỗ gấp khúc. Trên cơ sở đó, hệ thống vẽ thêm vạch phân làn liền hoặc đứt đoạn
+đường gấp khúc của nó. Tại hai đỉnh đầu và cuối, hướng mép làn lấy vuông góc với
+đoạn duy nhất kề đó và khoảng lệch bằng đúng $w/2$. Tại các đỉnh giữa nằm trên khúc cua, hai đỉnh lưới
+mép làn được xác định bằng kỹ thuật \emph{miter join}: kéo dài mép làn của đoạn
+trước và mép làn của đoạn sau, lấy giao điểm của hai đường thẳng đó làm đỉnh lưới.
+Giao điểm này nằm trên tia phân giác của góc giữa hai đoạn kề, cách tim đường một
+khoảng $\delta = w/(2\cos\alpha)$, trong đó $w$ là bề rộng làn và $\alpha$ là nửa
+góc gấp khúc. Hệ số $1/\cos\alpha$ bù trừ độ doãng tại khúc cua, đảm bảo mép làn
+liên tục mà không bị bóp vào. Trên cơ sở đó, hệ thống vẽ thêm vạch phân làn liền hoặc đứt đoạn
 và vạch biên. Để xe có thể di chuyển trong lòng đường, mỗi đoạn được sinh một tấm sàn va chạm
 phẳng bao phủ toàn bộ bề mặt đoạn đó. Hình
 \ref{fig:edge-ribbon} minh họa cách dựng dải mặt đường và hiệu chỉnh tại khúc cua;
@@ -66,7 +69,7 @@ Giải thuật \ref{alg:edge} tóm tắt bước sinh đỉnh lưới.
 		\node[red, font=\scriptsize, align=center] at (3.5,-1.0) {khúc cua: nhân $1/\cos\alpha$\\để mesh không bị bóp};
 		\draw[red, ->] (3.5,-0.75) -- (2.95,-0.25);
 	\end{tikzpicture}
-	\caption{Dựng dải mặt đường bám đường gấp khúc và hiệu chỉnh tại khúc cua (bản nháp)}
+	\caption{Dựng dải mặt đường bám đường gấp khúc và hiệu chỉnh tại khúc cua}
 	\label{fig:edge-ribbon}
 \end{figure}
 
@@ -137,7 +140,7 @@ hóa và đùn khối; Giải thuật \ref{alg:junction} tóm tắt các bước
 			\node[font=\scriptsize] at (1,-1.2) {(b) đùn thành khối ba chiều};
 		\end{scope}
 	\end{tikzpicture}
-	\caption{Tam giác hóa đa giác nút giao rồi đùn thành khối ba chiều (bản nháp)}
+	\caption{Tam giác hóa đa giác nút giao rồi đùn thành khối ba chiều}
 	\label{fig:junction-prism}
 \end{figure}
 
