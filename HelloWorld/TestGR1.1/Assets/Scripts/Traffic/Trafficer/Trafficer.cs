@@ -92,9 +92,12 @@ public class Trafficer : MonoBehaviour
 		// Xe client sở hữu (đang lái / xác xe) lấy vị trí từ vật lý, không snap về server.
 		if (!IsClientOwned) transform.position = destination;
 	}
+	public event EventHandler OnDestinationChanged;
+
 	public void SetDestination(Vector3 destination)
 	{
 		this.destination = destination;
+		OnDestinationChanged?.Invoke(this, EventArgs.Empty);
 	}
 	public Vector3 GetDestination()
 	{
