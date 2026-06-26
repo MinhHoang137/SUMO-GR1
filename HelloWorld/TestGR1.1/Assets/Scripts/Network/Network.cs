@@ -64,7 +64,7 @@ public class Network
     // Đọc đúng một message kết thúc bằng endMarker từ luồng TCP.
     // - Giữ buffer bền per-connection → phần dư sau marker dành cho lần đọc kế (không rớt frame khi gói dính nhau).
     // - Quét marker ở mức byte (endMarker toàn ASCII <0x80 nên không đụng chuỗi UTF-8 đa byte) và quét
-    //   incremental từ scanPos → tổng chi phí O(n) thay vì O(n²) như bản cũ (ToString().Contains mỗi chunk).
+    //   incremental từ scanPos → tổng chi phí O(n).
     // Trả về "" khi kết nối đã đóng.
     public static string ReadMessage(TcpClient client, int bufferSize, string endMarker)
     {

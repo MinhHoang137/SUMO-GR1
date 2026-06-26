@@ -27,8 +27,8 @@ public class Trafficer : MonoBehaviour
 	[SerializeField] private bool moveByServer = true;
 
 	public ExistState existState = ExistState.ServerControlled;
-	// Cờ quét tạm thời mỗi frame trong TrafficerManager.ProcessData ("đã thấy frame này chưa").
-	// Runtime-only, không serialize — tách khỏi existState (state bền vững).
+	// Cờ quét mỗi packet trong TrafficerManager.ProcessData — xe không thấy trong packet bị recycle.
+	// Runtime-only, không serialize.
 	[System.NonSerialized] public bool seenThisFrame = true;
 	// Xe người chơi sinh từ máy khách (CLIENT_CAR): không pool, hủy hẳn khi recycle.
 	[System.NonSerialized] public bool isStandaloneClient = false;

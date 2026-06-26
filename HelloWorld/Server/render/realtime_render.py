@@ -36,9 +36,8 @@ from SUMO_xml.create_map_from_maze import create_map_from_maze_file
 from SUMO_xml.route_gen import create_routes, create_routes_osm
 from SUMO_xml.create_city_map import create_map
 from naive_map_creator import naive_create_map
-# osm_to_net: đường dẫn .osm→.net.xml CŨ, chỉ còn osm_launcher.py / debug tay dùng.
-# Luồng OSM chính hiện nay đi qua osm.build_scenario (sinh sẵn net+rou+cfg vào SUMO_xml/),
-# rồi nạp lại bằng apply_custom_script (xem custom_script.py để hiểu vai trò loader này).
+# osm_to_net: chỉ dùng bởi osm_launcher.py hoặc debug trực tiếp .osm.
+# Luồng OSM chính đi qua osm.build_scenario → apply_custom_script.
 from osm.osm_to_net import convert_osm_to_net_3d_roads
 from custom_script import apply_custom_script
 
@@ -287,9 +286,7 @@ def send_road_data(client_socket: socket.socket):
 
 def initialize_map_and_routes(maze_file, num_lanes, config):
     net_xml_path = "./SUMO_xml/HelloWorld.net.xml"
-    # Nạp kịch bản dựng-sẵn từ một thư mục (config["custom"], bật khi maze_file là dir):
-    # luồng OSM auto-gen đã sinh net/rou/cfg vào SUMO_xml/ → chỉ chốt lại bộ file và bỏ
-    # qua sinh route tự động. (Không phải mode người dùng tự dựng — xem custom_script.py.)
+    # Custom Script: copy kịch bản từ thư mục maze_file vào SUMO_xml/ và bỏ qua sinh route.
     if config.get("custom"):
         if not apply_custom_script(maze_file):
             print("[Error] Failed to apply custom script folder.")
@@ -297,24 +294,19 @@ def initialize_map_and_routes(maze_file, num_lanes, config):
         return
 
     if maze_file.lower().endswith(".osm"):
-        # DEPRECATED: nhánh OSM tự động không còn được launcher chính sử dụng.
-        # Giữ lại để osm_launcher.py / debug tay có thể tận dụng pipeline cũ.
+        # Nhánh OSM trực tiếp: chỉ dùng qua osm_launcher.py hoặc debug tay.
         osm_output = net_xml_path
         if not convert_osm_to_net_3d_roads(maze_file, osm_output):
             print("[Error] Failed to convert OSM file to SUMO network.")
             sys.exit(1)
     else:
-        # Benchmark: sinh mạng theo kiểu vét cạn (mỗi ô '.' là một node) để tạo mạng dày,
-        # đúng tinh thần đo tải hệ thống. KHÔNG dùng create_map_from_maze_file (sinh mạng
-        # thưa, tối ưu node) cho tệp .map nữa.
+        # Benchmark .map: sinh mạng vét cạn (mỗi ô '.' là một node) để tạo mạng dày,
+        # phù hợp đo tải hệ thống.
         if not naive_create_map(maze_file, num_lanes):
             print("[Error] Failed to create map from maze file.")
             sys.exit(1)
 
     if config["mode"] == "benchmark":
-        # DEPRECATED: nhánh OSM benchmark không còn đi qua launcher chính.
-        # Launcher hiện chỉ ghép Benchmark với .map; nhánh dưới chỉ chạy khi
-        # gọi main.py trực tiếp với tham số .osm (debug/legacy).
         if maze_file.lower().endswith(".osm"):
             # OSM mode: dùng explicit Dijkstra routes thay vì TAZ routing
             create_routes_osm(
@@ -363,9 +355,6 @@ def initialize_map_and_routes(maze_file, num_lanes, config):
         
         print("[Info] Đang khởi tạo lộ trình VRP...")
         net_xml_path = "./SUMO_xml/HelloWorld.net.xml"
-        # DEPRECATED: nhánh nhận .osm trực tiếp này chỉ còn cho main.py legacy/debug tay.
-        # Luồng OSM chính giờ sinh sẵn file qua build_scenario rồi nạp dạng thư mục
-        # (config["custom"]), nên maze_file ở đây hiếm khi còn là .osm.
         if maze_file.lower().endswith(".osm"):
             # OSM path: chỉ có .net.xml, đọc trực tiếp từ đó
             graph = NetworkGraph.from_net_xml(net_xml_path)
@@ -416,7 +405,6 @@ def start_network_services(config):
 
     server_thread = async_task(network.server_thread, server_socket, client_thread_function, daemon=False)
     
-    # Realtime luôn khởi chạy Unity (3D). Chế độ headless đã được thay bằng pre-render.
     subprocess.Popen([os.path.abspath(os.path.join(os.path.dirname(__file__), target_exe))])
 
     receive_thread = async_task(receive, receive_socket, daemon=False)
@@ -447,8 +435,7 @@ def run_realtime(maze_file, num_lanes, config):
     simulation_session = SimulationSession(session_name, has_ped=has_ped)
     print(f"Session directory: {simulation_session.session_dir}")
 
-    # Lưu road data ngay sau khi map được tạo để session luôn đầy đủ
-    # (Unity cũng sẽ yêu cầu road data qua RoadDataRequest khi kết nối).
+    # Lưu road data vào session ngay sau khi map được tạo.
     crossroads = CrossRoadReader.read_all_junctions()
     edges = EdgeReader.read_edges()
     crossings = CrossingReader.read_crossings()

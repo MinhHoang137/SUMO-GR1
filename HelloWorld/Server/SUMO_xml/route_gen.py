@@ -15,19 +15,11 @@ from SUMO_xml import write_to_xml
 
 def create_routes_osm(num_pairs, car_cr_type, has_ped=True, ped_cr_type="CS",
                       ped_impatience=0.5, net_xml_path="SUMO_xml/HelloWorld.net.xml"):
-    """
-    [DEPRECATED khỏi launcher chính] Sinh route tự động cho OSM network.
-
-    Đã được thay thế bằng Custom Script mode (user tự dựng .rou.xml bằng netedit).
-    Hàm này được giữ lại làm tham chiếu / phục vụ debug pipeline OSM cũ.
+    """Sinh route tự động cho OSM network. Không được launcher chính gọi trực tiếp.
 
     Tạo file .rou.xml cho OSM network bằng cách pre-compute đường đi explicit.
-
-    Lý do cần hàm này:
-        - OSM network không hỗ trợ tốt TAZ routing (fromJunction/toJunction)
-          do SUMO không tìm được route giữa các junction TAZ.
-        - Thay vào đó: dùng NetworkGraph (Dijkstra) để tính sẵn chuỗi edges,
-          rồi ghi <flow><route edges="..."/></flow> để SUMO nhận route trực tiếp.
+    OSM network không hỗ trợ tốt TAZ routing (fromJunction/toJunction) nên dùng
+    NetworkGraph (Dijkstra) để tính sẵn chuỗi edges, rồi ghi <flow><route edges="..."/>.
     """
     from VRP.network_graph import NetworkGraph
 

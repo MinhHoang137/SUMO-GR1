@@ -20,10 +20,10 @@ class BuildingReader:
 
     @classmethod
     def read_buildings(cls):
-        """Trả list building dict (schema {i,h,v}) hoặc [] nếu không có / đã cũ.
+        """Trả list building dict (schema {i,h,v}) hoặc [] nếu không có / không khớp map hiện tại.
 
         Chống lệch map: nếu net.xml được dựng lại SAU buildings.json (vd chuyển sang
-        benchmark hay map OSM khác), building cũ không còn khớp → bỏ qua.
+        benchmark hay map OSM khác), building không còn khớp → bỏ qua.
         """
         path = cls.BUILDINGS_JSON_PATH
         if not os.path.exists(path):

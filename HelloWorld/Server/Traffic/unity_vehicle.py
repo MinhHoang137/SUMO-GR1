@@ -210,7 +210,6 @@ def process_vehicle_updates(traci):
                     continue
 
                 # state 2 (mirror) — SUMO bám theo vị trí client lái.
-                # state 1 (re-anchor) sẽ xử lý riêng ở chunk 5; uploader hiện chỉ gửi 2/3.
                 traci.vehicle.moveToXY(vehID=veh_id,
                                        edgeID="", laneIndex=0,
                                        x=pos[0], y=pos[1],

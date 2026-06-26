@@ -94,17 +94,13 @@ public class RoadDataListener : MonoBehaviour
 		try
 		{
 			roadData = JsonConvert.DeserializeObject<RoadData>(jsonContent);
-			//RoadDataSO newRoadDataSO = JsonConvert.DeserializeObject<RoadDataSO>(jsonContent);
 			if (roadData != null)
 			{
 				roadDataSO.edgeDatas = roadData.EdgeDatas;
 				roadDataSO.junctionDatas = roadData.JunctionDatas;
 				roadDataSO.crossingDatas = roadData.CrossingDatas;
-				// null ở chế độ không phải OSM → clear danh sách cũ (tránh giữ nhà của lần chạy trước trên SO asset).
+				// null ở chế độ không phải OSM → SO asset nhận danh sách rỗng thay vì dữ liệu cũ.
 				roadDataSO.buildingDatas = roadData.BuildingDatas;
-				//roadDataSO.edgeDatas = newRoadDataSO.edgeDatas;
-				//roadDataSO.junctionDatas = newRoadDataSO.junctionDatas;
-				//roadDataSO.crossingDatas = newRoadDataSO.crossingDatas;
 				isListening = false; // Stop listening after processing data
 				try { Network.CloseTcpClient(tcpClient); } catch { }
 				listenerThread.Abort();

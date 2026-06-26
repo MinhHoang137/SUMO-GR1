@@ -18,7 +18,6 @@ public class UnityVehicle : MonoBehaviour
 	// Bắn khi xe trở thành xác xe (sau va chạm) — dùng để bật icon "xe hỏng".
 	[SerializeField] private UnityEvent onBecomeWreck;
 
-	// Chunk 4: theo dõi va chạm và thời điểm wreck
 	public int wreckStartStep;
 	private bool hasCrashed;
 

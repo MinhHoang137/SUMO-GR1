@@ -27,7 +27,7 @@ from osm.building import BuildingReader
 from SUMO_xml.create_map_from_maze import create_map_from_maze_file
 from SUMO_xml.route_gen import create_routes, create_routes_osm
 from naive_map_creator import naive_create_map
-# osm_to_net giữ lại cho osm_launcher.py phụ trợ; Custom Script mode không đi qua đây.
+# osm_to_net: chỉ dùng bởi osm_launcher.py hoặc debug trực tiếp .osm.
 from osm.osm_to_net import convert_osm_to_net_3d_roads
 from custom_script import apply_custom_script
 
@@ -41,23 +41,19 @@ def initialize_map_and_routes(maze_file, num_lanes, config):
         return
 
     if maze_file.lower().endswith(".osm"):
-        # DEPRECATED: nhánh OSM tự động không còn được launcher chính sử dụng.
+        # Nhánh OSM trực tiếp: chỉ dùng qua osm_launcher.py hoặc debug tay.
         osm_output = net_xml_path
         if not convert_osm_to_net_3d_roads(maze_file, osm_output):
             print("[Error] Failed to convert OSM file to SUMO network.")
             sys.exit(1)
     else:
-        # Benchmark: sinh mạng theo kiểu vét cạn (mỗi ô '.' là một node) để tạo mạng dày,
-        # đúng tinh thần đo tải hệ thống. KHÔNG dùng create_map_from_maze_file (sinh mạng
-        # thưa, tối ưu node) cho tệp .map nữa.
+        # Benchmark .map: sinh mạng vét cạn (mỗi ô '.' là một node) để tạo mạng dày,
+        # phù hợp đo tải hệ thống.
         if not naive_create_map(maze_file, num_lanes):
             print("[Error] Failed to create map from maze file.")
             sys.exit(1)
 
     if config["mode"] == "benchmark":
-        # DEPRECATED: nhánh OSM benchmark không còn đi qua launcher chính.
-        # Launcher hiện chỉ ghép Benchmark với .map; nhánh dưới chỉ chạy khi
-        # gọi main.py trực tiếp với tham số .osm (debug/legacy).
         if maze_file.lower().endswith(".osm"):
             # OSM mode: dùng explicit Dijkstra routes thay vì TAZ routing
             create_routes_osm(
@@ -106,8 +102,6 @@ def initialize_map_and_routes(maze_file, num_lanes, config):
 
         print("[Info] Đang khởi tạo lộ trình VRP...")
         net_xml_path = "./SUMO_xml/HelloWorld.net.xml"
-        # DEPRECATED: nhánh OSM VRP không còn đi qua launcher chính (OSM đã được
-        # thay bằng Custom Script). Giữ lại để main.py legacy với .osm vẫn chạy.
         if maze_file.lower().endswith(".osm"):
             # OSM path: chỉ có .net.xml, đọc trực tiếp từ đó
             graph = NetworkGraph.from_net_xml(net_xml_path)

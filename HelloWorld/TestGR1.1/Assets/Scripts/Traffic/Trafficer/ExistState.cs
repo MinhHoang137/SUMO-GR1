@@ -1,6 +1,6 @@
 /// <summary>
 /// Trạng thái điều khiển / vòng đời của một trafficer.
-/// Giá trị số khớp ngữ nghĩa cũ của cờ isExist (true→1, false→0) nên tương thích ngược.
+/// Giá trị số: 0=hủy, 1=server, 2=client, 3=xác xe — khớp field "e" trong UnityVehicleData.
 /// Đồng bộ với phía server (field "e" trong UnityVehicleData).
 /// </summary>
 public enum ExistState

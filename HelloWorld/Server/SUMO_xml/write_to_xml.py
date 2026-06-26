@@ -67,11 +67,10 @@ def write_edges_to_xml(edges, output_path, has_ped_lane=False, numLanes=4, carSp
         edges (list[tuple]): Danh sách các cạnh dưới dạng (from_id, to_id).
         output_path (str): Đường dẫn tới file .edg.xml cần ghi.
         has_ped_lane (bool): Có tạo làn đi bộ không.
-        numLanes (int): Tổng số làn cho mỗi cạnh (cả 2 chiều) — ngữ nghĩa cũ.
+        numLanes (int): Tổng số làn cho mỗi cạnh (cả 2 chiều). Bị ghi đè nếu car_lanes_per_dir được cung cấp.
         carSpeed (float): Tốc độ tối đa cho làn xe (m/s).
         pedSpeed (float): Tốc độ tối đa cho làn đi bộ (m/s).
-        car_lanes_per_dir (int|None): Nếu được cung cấp, ngữ nghĩa MỚI: số làn XE
-            cho MỖI chiều (mỗi bên). Mỗi chiều luôn kèm đúng 1 làn đi bộ (index 0).
+        car_lanes_per_dir (int|None): Số làn XE cho MỖI chiều (mỗi bên). Mỗi chiều luôn kèm đúng 1 làn đi bộ (index 0).
             => lanes_per_direction = car_lanes_per_dir + 1. Ghi đè 'numLanes'.
     """
     root = ET.Element("edges")
@@ -82,7 +81,7 @@ def write_edges_to_xml(edges, output_path, has_ped_lane=False, numLanes=4, carSp
         n_car = max(1, int(car_lanes_per_dir))
         lanes_per_direction = n_car + 1
     else:
-        # ✅ Ngữ nghĩa cũ: numLanes là tổng số làn cả 2 chiều.
+        # numLanes là tổng số làn cả 2 chiều.
         if numLanes < 2:
             print("⚠️ Số làn nhỏ hơn 2 — không xuất cạnh nào.")
             return

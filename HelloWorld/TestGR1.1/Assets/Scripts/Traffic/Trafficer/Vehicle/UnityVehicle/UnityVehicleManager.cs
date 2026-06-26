@@ -15,7 +15,7 @@ public class UnityVehicleManager : MonoBehaviour
 	private const float SPAWN_FORWARD_OFFSET = 5f;       // cách điểm đầu lane 5m về phía trước
 	private const int PRE_RENDER_SCENE_INDEX = 2;
 
-	// Chunk 5: one-shot release signal — drain mỗi batch, gửi state=1 cho server re-anchor.
+	// One-shot release signal — drain mỗi batch, gửi state=1 để server xử lý xe vừa trả quyền.
 	private List<UnityVehicleData> pendingReleaseItems = new List<UnityVehicleData>();
 
 	private UnityVehicle vehicle = null;
@@ -72,7 +72,7 @@ public class UnityVehicleManager : MonoBehaviour
 		vehicle.transform.SetPositionAndRotation(spawnPos, spawnRot);
 		if (vehicle.TryGetComponent<Trafficer>(out var trafficer))
 		{
-			// UnityVehicle.Start không còn tự đăng ký — manager gán danh tính tại đây.
+			// Manager gán danh tính CLIENT_CAR ngay sau Instantiate.
 			trafficer.SetId(CLIENT_CAR_ID);
 			trafficer.isStandaloneClient = true;
 			trafficer.SetDestination(spawnPos);
@@ -170,7 +170,7 @@ public class UnityVehicleManager : MonoBehaviour
 			{
 				List<UnityVehicleData> batch = new List<UnityVehicleData>();
 
-				// Chunk 5: drain pending release signals (one-shot, state=1 — re-anchor).
+				// Drain one-shot release signals (state=1) trước batch xe client-owned.
 				if (pendingReleaseItems.Count > 0)
 				{
 					batch.AddRange(pendingReleaseItems);

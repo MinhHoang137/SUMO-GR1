@@ -64,7 +64,7 @@ def _random_height(way_id: str) -> float:
 
 
 def _find_typemap() -> "str | None":
-    """Typemap OSM của SUMO (qua SUMO_HOME); None nếu không có (sẽ dùng fallback tạm)."""
+    """Typemap OSM của SUMO (qua SUMO_HOME); None nếu không có (sẽ dùng fallback nội bộ)."""
     sumo_home = os.environ.get("SUMO_HOME")
     if sumo_home:
         cand = os.path.join(sumo_home, "data", "typemap", "osmPolyconvert.typ.xml")
