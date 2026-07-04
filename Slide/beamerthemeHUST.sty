@@ -80,6 +80,7 @@
 
 \providecommand{\titlePageTitleX}{0cm}
 \providecommand{\titlePageTitleY}{0cm}
+\providecommand{\hustTitleFontSize}{\Huge}
 
 \newcommand{\alignLeft}{\raggedright}
 \newcommand{\alignCenter}{\centering}
@@ -106,7 +107,7 @@
 				]
 				at (current page.center)
 				{
-					{\hustTitleAlign \Huge \bfseries \color{hustprimary} \MakeUppercase{\inserttitle} \par}
+					{\hustTitleAlign \hustTitleFontSize \bfseries \color{hustprimary} \MakeUppercase{\inserttitle} \par}
 					{\hustSubtitleAlign \Large \bfseries \color{black!80} \insertsubtitle \par}
 					\vspace{0.3cm}
 					{\hustAuthorAlign
