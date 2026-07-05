@@ -2,6 +2,7 @@
 \usepackage[utf8]{vietnam}
 \usepackage{amsthm,amsmath,amssymb}
 \usepackage{lmodern}
+\usepackage{graphicx}
 %\usepackage{times} % Đổi font chữ sang Times New Roman (không khuyến khích vì font xấu quá)
 
 % --- CẤU HÌNH LỀ (Phải đặt ở đây) ---
@@ -68,15 +69,67 @@
 	\section{Đặt vấn đề \&{} Mục tiêu}
 
 	\begin{frame}{Vì sao cần mô phỏng giao thông?}
-		% TODO: nội dung
+		\begin{columns}[T]
+			\begin{column}{0.55\textwidth}
+				\begin{itemize}
+					\item \textbf{Thực nghiệm trực tiếp} luôn tiềm ẩn rủi ro an toàn và nhân mạng
+					\item \textbf{Môi trường biệt lập} tái hiện được nhưng \alert{chi phí trang thiết bị quá cao}
+					\item Các biến số ngoài thực địa \textbf{không thể kiểm soát} được
+				\end{itemize}
+
+				\vspace{0.5em}
+				\begin{block}{Giải pháp}
+					\small Mô phỏng giao thông cho phép tái hiện nhiều kịch bản trong điều kiện kiểm soát được, chi phí thấp và không có rủi ro thực địa.
+				\end{block}
+			\end{column}
+			\begin{column}{0.42\textwidth}
+				\includegraphics[width=\textwidth, height=2.9cm, keepaspectratio]{figures/tai-nan.jpg}
+
+				\vspace{0.3em}
+
+				\includegraphics[width=\textwidth, height=2.9cm, keepaspectratio]{figures/chi-phi.png}
+			\end{column}
+		\end{columns}
 	\end{frame}
 
 	\begin{frame}{Hạn chế của SUMO 2D}
-		% TODO: nội dung
+		\begin{columns}[T]
+			\begin{column}{0.48\textwidth}
+				\begin{block}{SUMO là gì?}
+					\begin{itemize}
+						\item Phần mềm mô phỏng giao thông vi mô \textbf{mã nguồn mở}
+						\item Phổ biến trong nghiên cứu và học thuật
+						\item Hỗ trợ mạng đường, làn xe, đèn tín hiệu, người đi bộ\ldots
+					\end{itemize}
+				\end{block}
+			\end{column}
+			\begin{column}{0.48\textwidth}
+				\begin{alertblock}{Hạn chế}
+					\begin{itemize}
+						\item Góc nhìn 2D từ trên cao --- góc nhìn \textbf{người quản lý}
+						\item Không tái hiện góc nhìn \textbf{người tham gia giao thông}
+						\item Khó trình bày cho người không chuyên
+						\item Không có tương tác trực tiếp với kịch bản
+					\end{itemize}
+				\end{alertblock}
+			\end{column}
+		\end{columns}
+
+		\vspace{0.6em}
+		$\Rightarrow$ Cần giải pháp hiển thị \textbf{3D tự động, tương tác được}, không đòi hỏi thao tác thủ công khi thay đổi kịch bản.
 	\end{frame}
 
 	\begin{frame}{Mục tiêu đề tài}
-		% TODO: nội dung
+		\textbf{Chuỗi công nghệ:} SUMO $\;\rightarrow\;$ Python + TraCI $\;\rightarrow\;$ Unity (3D)
+
+		\vspace{0.8em}
+		\textbf{Bốn mục tiêu chính:}
+		\begin{enumerate}
+			\item \textbf{Tự động dựng bản đồ 3D} từ dữ liệu SUMO / OpenStreetMap --- không cần thao tác thủ công
+			\item \textbf{Thu thập trạng thái} phương tiện, đèn tín hiệu, người đi bộ theo từng bước mô phỏng qua TraCI
+			\item \textbf{Hiển thị và cập nhật} đối tượng trong Unity theo thời gian thực, duy trì hiệu năng ổn định
+			\item \textbf{Tương tác lái xe}: chiếm quyền điều khiển, xử lý va chạm, lưu \&{} phát lại kịch bản
+		\end{enumerate}
 	\end{frame}
 
 	% =================================================================
@@ -85,7 +138,7 @@
 	\section{Kiến trúc hệ thống}
 
 	\begin{frame}{Pipeline tổng quan}
-		% TODO: nội dung
+		\vspace{1em} % TODO: nội dung
 	\end{frame}
 
 	% =================================================================
@@ -94,19 +147,19 @@
 	\section{Đóng góp kỹ thuật}
 
 	\begin{frame}{Dựng bản đồ 3D chính xác}
-		% TODO: nội dung
+		\vspace{1em} % TODO: nội dung
 	\end{frame}
 
-	\begin{frame}{Chiếm quyền \& lái xe tương tác}
-		% TODO: nội dung
+	\begin{frame}{Chiếm quyền \&{} lái xe tương tác}
+		\vspace{1em} % TODO: nội dung
 	\end{frame}
 
-	\begin{frame}{Lưu \& phát lại kịch bản}
-		% TODO: nội dung
+	\begin{frame}{Lưu \&{} phát lại kịch bản}
+		\vspace{1em} % TODO: nội dung
 	\end{frame}
 
 	\begin{frame}{Tối ưu hiệu năng hiển thị}
-		% TODO: nội dung
+		\vspace{1em} % TODO: nội dung
 	\end{frame}
 
 	% =================================================================
@@ -115,11 +168,11 @@
 	\section{Kết quả}
 
 	\begin{frame}{Kiểm thử}
-		% TODO: nội dung
+		\vspace{1em} % TODO: nội dung
 	\end{frame}
 
 	\begin{frame}{Đánh giá hiệu năng}
-		% TODO: nội dung
+		\vspace{1em} % TODO: nội dung
 	\end{frame}
 
 	% =================================================================
@@ -127,8 +180,8 @@
 	% =================================================================
 	\section{Kết luận}
 
-	\begin{frame}{Kết luận \& Hướng phát triển}
-		% TODO: nội dung
+	\begin{frame}{Kết luận \&{} Hướng phát triển}
+		\vspace{1em} % TODO: nội dung
 	\end{frame}
 
 	% =================================================================

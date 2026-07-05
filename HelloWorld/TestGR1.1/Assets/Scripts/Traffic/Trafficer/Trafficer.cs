@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 
 public class Trafficer : MonoBehaviour
 {
@@ -78,7 +79,9 @@ public class Trafficer : MonoBehaviour
 
 		if ((transform.position - destination).magnitude > 0.1f && speed <= 0.1f) // position error
 		{
-			transform.position = destination;
+			float errorSpeed = 15f; // m/s
+			float lerpFactor = errorSpeed * Time.deltaTime * 1/speedMultiplier;
+			transform.position = Vector3.Slerp(transform.position, destination, lerpFactor);
 		}
 	}
 	public void Hide()
