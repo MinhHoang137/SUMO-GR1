@@ -208,8 +208,13 @@ public class UnityVehicle : MonoBehaviour
 	{
 		float[] position = { transform.position.x, transform.position.z };
 		float[] forward = { transform.forward.x, transform.forward.z };
-		// Khi đang chạy vật lý → báo tốc độ thực từ Rigidbody; ngược lại dùng tốc độ server.
-		float reportedSpeed = (rb != null && !rb.isKinematic) ? rb.linearVelocity.magnitude : trafficer.GetSpeed();
+		// Khi đang chạy vật lý → báo tốc độ thực từ Rigidbody, quy đổi theo time_step (SUMO tiến 1 bước
+		// cố định mỗi lần xử lý, trong khi xe client di chuyển thực suốt khoảng time_step thực tế giữa
+		// 2 lần server đọc batch — nhân time_step để moveToXY/replay tái tạo đúng quãng đường đã đi).
+		// Ngược lại dùng tốc độ server (đã đúng đơn vị SUMO).
+		float reportedSpeed = (rb != null && !rb.isKinematic)
+			? rb.linearVelocity.magnitude * TimeStepUI.CurrentTimeStepSeconds
+			: trafficer.GetSpeed();
 		return new UnityVehicleData(
 			trafficer.GetId(),
 			position,

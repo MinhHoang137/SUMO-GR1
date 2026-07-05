@@ -58,6 +58,7 @@ public class PreRenderPreparer : MonoBehaviour
             roadDataSO.junctionDatas = roadData.JunctionDatas;
             roadDataSO.edgeDatas = roadData.EdgeDatas;
             roadDataSO.crossingDatas = roadData.CrossingDatas;
+            roadDataSO.buildingDatas = roadData.BuildingDatas;
 
             scriptPathSO.scriptPath = scriptPathInputField.text;
 

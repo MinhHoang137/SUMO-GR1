@@ -13,6 +13,9 @@ public class TimeStepUI : MonoBehaviour
     [SerializeField] private NetworkSO networkSO;
     private CancellationTokenSource _debounceCts;
 
+    // time_step hiện tại (giây) — dùng để bù tốc độ xe client mirror trước khi upload (xem UnityVehicle.GetUnityVehicleData).
+    public static float CurrentTimeStepSeconds { get; private set; } = 1f;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -30,10 +33,12 @@ public class TimeStepUI : MonoBehaviour
                 float ratio = value / currentTimeStep;
                 speedMultiplierUI.ScaleValueInversely(ratio);
                 currentTimeStep = (int)value;
+                CurrentTimeStepSeconds = currentTimeStep / 1000f;
             }
         });
         isEditable = true;
         currentTimeStep = (int)timeStepValueUI.GetValue();
+        CurrentTimeStepSeconds = currentTimeStep / 1000f;
         SendParameters(currentTimeStep);
     }
 
