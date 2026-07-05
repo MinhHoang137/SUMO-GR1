@@ -153,7 +153,8 @@ def run_prerender(maze_file, num_lanes, config):
 
     initialize_map_and_routes(maze_file, num_lanes, config)
 
-    session = SimulationSession(maze_file, has_ped=has_ped)
+    session_name = config.get("session_name") or maze_file
+    session = SimulationSession(session_name, has_ped=has_ped)
     print(f"Session directory: {session.session_dir}")
 
     # --ignore-route-errors: bỏ qua person/xe không route được thay vì quit cả mô phỏng.
