@@ -16,10 +16,13 @@ def setup_simulation_config(is_custom: bool = False):
         config = {
             "mode": "custom",
             "custom": True,
-            "has_ped": False,
             "ped_impatience": None,
             "session_name": input("Tên phiên (để trống = dùng tên thư mục): ").strip() or None,
         }
+        # OSM tab truyền lại lựa chọn "Người đi bộ" của người dùng; Custom Script (Tab 3)
+        # không có checkbox này nên launcher luôn gửi "n".
+        _ped_option = input("Kịch bản có người đi bộ không? (y/n, mặc định n): ")
+        config["has_ped"] = _ped_option.lower() == 'y'
         render_option = input("Chế độ render? (1: Realtime, 2: Pre-render) (mặc định 1): ")
         config["render_mode"] = "pre_render" if render_option == "2" else "realtime"
         # GUI mode chỉ áp dụng cho realtime; pre-render luôn headless, chỉ ghi kịch bản.

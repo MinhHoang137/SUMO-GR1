@@ -616,6 +616,7 @@ class AppLauncher:
                 return
             # Custom Script mode: pass folder path, main.py detect isdir
             inputs = [params["osm"]]  # session_name = path file .osm gốc
+            inputs.append("y" if self.osm_gen_ped.get() else "n")
             inputs.append(str(self.render_mode.get()))
             if self.render_mode.get() == 1:
                 inputs.append(str(self.gui_mode.get()))
@@ -654,6 +655,7 @@ class AppLauncher:
             return
 
         inputs = [""]  # session_name trống → dùng tên thư mục
+        inputs.append("n")  # tab netedit không có tuỳ chọn người đi bộ
         inputs.append(str(self.render_mode.get()))
         if self.render_mode.get() == 1:
             inputs.append(str(self.gui_mode.get()))
