@@ -148,3 +148,15 @@ dist/
 *.snm
 *.vrb
 pdflatex*.fls
+
+# Keep locally, not tracked in git
+Slide/
+BaoCao_DATN/
+DiagramsCode/
+Report_old/
+SOICT_DATN_Application_VIE_Template/
+JavaAlgorithm/
+/*.docx
+/*.pptx
+/*.xml
+/*.txt
